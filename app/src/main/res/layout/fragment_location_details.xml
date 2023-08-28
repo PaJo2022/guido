@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".fragments.LocationSearchFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_location_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_location_details">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_landmark_images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Landmark Images"
+                android:gravity="center"
+                android:fontFamily="@font/font_medium"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager_landmark_images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="@dimen/_200sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_landmark_images" />
+
+
+
+            <TextView
+                android:id="@+id/tl_landmark_story"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Landmark Stories"
+                android:gravity="center"
+                android:fontFamily="@font/font_medium"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewpager_landmark_images"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager_landmark_stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="@dimen/_200sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tl_landmark_story" />
+
+
+            <TextView
+                android:id="@+id/tv_landmark_Videos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Landmark Videos"
+                android:gravity="center"
+                android:fontFamily="@font/font_medium"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewpager_landmark_stories"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager_landmark_videos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="@dimen/_200sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_landmark_Videos" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

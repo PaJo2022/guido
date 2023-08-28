@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#F1F1F1</color>
+
+    <color name="theme_orange">#ff4817</color>
+    <color name="transparent">#00000000</color>
+    <color name="color_themeGreeen">#F0002E03</color>
+
+
+    <color name="color_primary">#010713</color>
+    <color name="color_secondary">#1C4BD7</color>
+    <color name="color_ternery">#0D2046</color>
+    <color name="color_fourth">#111824</color>
+    <color name="color2">#171d2b</color>
+    <color name="color_3">#1564e4</color>
+    <color name="color_4">#F7F9FF</color>
+
+    <color name="color_bg_dark">#1e253b</color>
+    <color name="color_bg_dark_60">#661e253b</color>
+
+    <color name="color_light_grey_50">#80D3D3D3</color>
+    <color name="color_light_grey_80">#CCD3D3D3</color>
+    <color name="color_light_grey">#1AD3D3D3</color>
+
+    <color name="color_pro_yellow">#FFC90A</color>
+
+    <color name="color_sound_composer_card_dark_bg1">#21283f</color>
+    <color name="color_sound_composer_card_dark_bg2">#2d344b</color>
+
+
+    <color name="color_sound_compose_selected_color1">#08D9D6</color>
+    <color name="color_sound_compose_selected_color2">#30E3CA</color>
+    <color name="color_sound_compose_selected_color3">#9DF3C4</color>
+    <color name="color_sound_compose_selected_color4">#FFBBCC</color>
+    <color name="color_sound_compose_selected_color5">#435B66</color>
+    <color name="color_sound_compose_selected_color6">#1F6E8C</color>
+    <color name="color_sound_compose_selected_color7">#2E8A99</color>
+    <color name="color_sound_compose_selected_color8">#EAB2A0</color>
+    <color name="red">#FF0000</color>
+
+
+    <color name="card_color1">#2D4356</color>
+    <color name="card_color2">#435B66</color>
+    <color name="card_color3">#3F2E3E</color>
+    <color name="card_color4">#393053</color>
+    <color name="card_color5">#526D82</color>
+    <color name="card_color6">#576CBC</color>
+    <color name="card_color7">#0B2447</color>
+    <color name="card_color8">#6D67E4</color>
+
+
+</resources>
