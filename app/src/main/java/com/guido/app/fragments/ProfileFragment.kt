@@ -72,8 +72,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     adapter = placesTypeChipAdapter
                     layoutManager = GridLayoutManager(requireContext(),5,GridLayoutManager.VERTICAL,false)
                 }
+                btnSave.setOnClickListener {
+                    viewModel.savePlaceTypePreferences()
+                    findNavController().popBackStack()
+                }
             }
-        placesTypeChipAdapter.setPlacesType(Constants.placeTypes)
+        viewModel.apply {
+            userInterestes.observe(viewLifecycleOwner){
+                placesTypeChipAdapter.setPlacesType(it)
+            }
+        }
+        placesTypeChipAdapter.setOnPlaceTypeSelected {
+            viewModel.onPlaceInterestClicked(it.id)
+        }
+
     }
 
 

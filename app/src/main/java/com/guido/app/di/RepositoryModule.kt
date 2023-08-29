@@ -6,6 +6,7 @@ import com.guido.app.data.videos.VideosRepositoryImpl
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.data.places.PlacesRepositoryImpl
 import com.guido.app.data.videos.VideoRepository
+import com.guido.app.db.MyAppDataBase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +19,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlacesRepository(api : GuidoApi) : PlacesRepository = PlacesRepositoryImpl(api)
+    fun providePlacesRepository(api : GuidoApi,db : MyAppDataBase) : PlacesRepository = PlacesRepositoryImpl(api,db)
 
     @Provides
     @Singleton

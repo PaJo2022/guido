@@ -1,8 +1,12 @@
 package com.guido.app.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +21,10 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.guido.app.BaseFragment
+import com.guido.app.Constants
 import com.guido.app.Constants.GCP_API_KEY
+import com.guido.app.MainActivity
+import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesListAdapter
@@ -43,23 +50,32 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        MyApp.userCurrentLocation.collectIn(viewLifecycleOwner){
-            googleMap.clear()
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.first,it.second), 15f))
-            googleMap.addMarker(MarkerOptions().position(LatLng(it.first,it.second)))
-            viewModel.fetchPlacesDetailsNearMe(
-                "${it.first},${it.second}",
-                5000,
-                "tourist_attraction",
-                "landmark",
-                GCP_API_KEY
+    private fun checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is already granted
+            // Get the current location
+            (requireActivity() as MainActivity).getCurrentLocation()
+        } else {
+
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.apply {
             ivSettings.setOnClickListener {
-               // (requireActivity() as MainActivity).getCurrentLocation()
                 findNavController().navigate(R.id.profileFragment)
             }
             rvLocationItems.apply {
@@ -67,9 +83,7 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
                 layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
-
-
-
+        fetchPlacesNearMyLocation()
         viewModel.apply {
         nearByPlaces.collectIn(viewLifecycleOwner){
                 Log.i("JAPAN", "places: $it")
@@ -90,7 +104,7 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
             childFragmentManager.findFragmentById(R.id.autocomplete_fragment)
                     as AutocompleteSupportFragment
 
-
+        checkLocationPermission()
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG))
 
         // Set up a PlaceSelectionListener to handle the response.
@@ -117,10 +131,25 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
 
     }
 
+    private fun fetchPlacesNearMyLocation() {
+        MyApp.userCurrentLocation.collectIn(viewLifecycleOwner){
+            googleMap.clear()
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.first,it.second), 15f))
+            googleMap.addMarker(MarkerOptions().position(LatLng(it.first,it.second)))
+            viewModel.fetchPlacesDetailsNearMe(
+                "${it.first},${it.second}",
+                5000,
+                "tourist_attraction",
+                "",
+                GCP_API_KEY
+            )
+        }
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng( 22.6920897 ,88.4474228), 15f))
-        googleMap.addMarker(MarkerOptions().position(LatLng( 22.6920897 ,88.4474228)))
+        googleMap.clear()
+
     }
 
     override fun onResume() {

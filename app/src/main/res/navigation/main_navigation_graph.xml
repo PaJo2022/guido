@@ -3,7 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation_graph.xml"
-    app:startDestination="@id/locationSearchFragment">
+    app:startDestination="@id/loginFragment">
+
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.guido.app.auth.LoginFragment"
+        android:label="fragment_location_login"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.guido.app.auth.SignUpFragment"
+        android:label="fragment_location_signup"
+        tools:layout="@layout/fragment_sign_up" />
 
     <fragment
         android:id="@+id/locationDetailsFragment"
@@ -20,5 +33,8 @@
         android:name="com.guido.app.fragments.ProfileFragment"
         android:label="fragment_location_search"
         tools:layout="@layout/fragment_profile" />
+
+
+
 
 </navigation>

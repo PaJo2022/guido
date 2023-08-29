@@ -4,15 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.guido.app.Colors
-import com.guido.app.Constants
-import com.guido.app.Constants.PlaceType
 import com.guido.app.R
-import com.guido.app.databinding.LayoutPlaceItemBinding
 import com.guido.app.databinding.LayoutPlaceTypeChipItemBinding
-import com.guido.app.model.placesUiModel.PlaceUiModel
-import com.guido.app.model.videosUiModel.VideoUiModel
+import com.guido.app.model.PlaceType
 
 class PlacesTypeChipAdapter(private val appContext : Context) : RecyclerView.Adapter<PlacesTypeChipAdapter.PlaceTypeChipViewHolder>() {
 
@@ -25,7 +20,7 @@ class PlacesTypeChipAdapter(private val appContext : Context) : RecyclerView.Ada
 
     private var onItemClickListener : ((PlaceType) -> Any?)? =null
 
-    fun setOnLandMarkClicked(onItemClickListener : ((PlaceType) -> Any?)){
+    fun setOnPlaceTypeSelected(onItemClickListener : ((PlaceType) -> Any?)){
         this.onItemClickListener = onItemClickListener
     }
 
@@ -34,7 +29,7 @@ class PlacesTypeChipAdapter(private val appContext : Context) : RecyclerView.Ada
         fun bindItem(type : PlaceType) {
             binding.apply {
                 root.apply {
-                    backgroundTintList =  appContext.getColorStateList(if(type.isSelected) Colors.getColorsBasedOnIndex() else  R.color.card_color1)
+                    backgroundTintList =  appContext.getColorStateList(if(type.isSelected) type.selectedColor else  R.color.card_color1)
                     setOnClickListener {
                         onItemClickListener?.invoke(type)
                     }

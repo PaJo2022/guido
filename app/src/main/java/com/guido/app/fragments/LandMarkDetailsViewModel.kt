@@ -46,7 +46,7 @@ class LandMarkDetailsViewModel @Inject constructor(private val videoRepository: 
 
     fun fetchAllDataForTheLocation(query: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val landMarkVideoJob = async { fetchVideosForTheLandMarkName("Nico Park Tour Guide") }
+            val landMarkVideoJob = async { fetchVideosForTheLandMarkName("${query} Tour Guide") }
             val landMarkVideo = landMarkVideoJob.await()
             setPlaceVideoData(landMarkVideo)
             placesDetailsUiModel?.log()
