@@ -47,5 +47,15 @@ fun Context.getScreenHeight(): Int {
 }
 
 
+fun Any.safeDouble(): Double {
+    val anyToString = this.toString()
+    return try {
+        anyToString.toDouble()
+    }catch (e : Exception){
+        0.0
+    }
+}
+
+
 
 

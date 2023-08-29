@@ -3,10 +3,14 @@ package com.guido.app
 import android.app.Application
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @HiltAndroidApp
 class MyApp : Application() {
 
+    companion object{
+         var userCurrentLocation : MutableSharedFlow<Pair<Double,Double>> = MutableSharedFlow()
+    }
     override fun onCreate() {
         super.onCreate()
 

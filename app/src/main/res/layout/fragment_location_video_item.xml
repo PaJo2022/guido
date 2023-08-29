@@ -10,7 +10,7 @@
   <WebView
       android:id="@+id/webview"
       android:layout_width="match_parent"
-      android:layout_height="@dimen/_200sdp"
+      android:layout_height="@dimen/_150sdp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
@@ -35,9 +35,9 @@
       android:layout_height="wrap_content"
       android:layout_marginHorizontal="@dimen/_12sdp"
       android:layout_marginVertical="@dimen/_12sdp"
-      android:fontFamily="@font/font_medium"
+      android:fontFamily="@font/font_regular"
       android:textColor="@color/color_primary"
-      android:textSize="@dimen/_14ssp"
+      android:textSize="@dimen/_10ssp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"

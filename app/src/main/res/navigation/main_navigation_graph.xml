@@ -15,5 +15,10 @@
         android:name="com.guido.app.fragments.LocationSearchFragment"
         android:label="fragment_location_search"
         tools:layout="@layout/fragment_location_search" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.guido.app.fragments.ProfileFragment"
+        android:label="fragment_location_search"
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

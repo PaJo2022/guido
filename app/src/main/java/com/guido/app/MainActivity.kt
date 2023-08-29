@@ -10,9 +10,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.guido.app.MyApp.Companion.userCurrentLocation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -20,13 +23,17 @@ class MainActivity : AppCompatActivity() {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationClient: LocationClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
+        locationClient = DefaultLocationClient(
+            this,
+            LocationServices.getFusedLocationProviderClient(this)
+        )
         // Check if the location permission is already granted
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -69,35 +76,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                // Handle the retrieved location
-                location?.let {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    // Use the latitude and longitude values as needed
+    fun getCurrentLocation() {
+        locationClient
+            .getLocationUpdates(10000L).collectIn(this){location->
+                val lat = location.latitude.safeDouble()
+                val long = location.longitude.safeDouble()
+                lifecycleScope.launch {
+                    userCurrentLocation.emit(Pair(lat,long))
                 }
-            }
-            .addOnFailureListener { exception: Exception ->
-                // Handle any errors that occurred while retrieving the location
+                Log.i("JAPAN", "latitude longitude: ${lat},${long}")
             }
     }
 }

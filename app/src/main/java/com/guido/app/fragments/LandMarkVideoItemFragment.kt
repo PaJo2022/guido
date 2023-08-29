@@ -1,6 +1,5 @@
 package com.guido.app.fragments
 
-import android.R
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -10,13 +9,13 @@ import com.guido.app.databinding.FragmentLocationVideoItemBinding
 import com.guido.app.model.videosUiModel.VideoUiModel
 
 
-class LandMarkVideoItemFragment(landMarkVideo: VideoUiModel) : BaseFragment<FragmentLocationVideoItemBinding>(FragmentLocationVideoItemBinding::inflate) {
+class LandMarkVideoItemFragment : BaseFragment<FragmentLocationVideoItemBinding>(FragmentLocationVideoItemBinding::inflate) {
 
     companion object {
         private const val LOCATION_VIDEO_DETAILS_ARG = "LOCATION_VIDEO_DETAILS_ARG"
 
         fun newInstance(landMarkVideo : VideoUiModel): LandMarkVideoItemFragment {
-            val fragment = LandMarkVideoItemFragment(landMarkVideo)
+            val fragment = LandMarkVideoItemFragment()
             val args = Bundle()
             args.putParcelable(LOCATION_VIDEO_DETAILS_ARG,landMarkVideo)
             fragment.arguments = args

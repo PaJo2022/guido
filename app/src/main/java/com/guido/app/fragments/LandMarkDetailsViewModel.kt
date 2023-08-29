@@ -37,16 +37,16 @@ class LandMarkDetailsViewModel @Inject constructor(private val videoRepository: 
         placesDetailsUiModel?.locationVideos = locationVideos
     }
 
-    private suspend fun fetchVideosForTheLandMarkName(landMarkName: String): List<VideoUiModel> {
+    private suspend fun fetchVideosForTheLandMarkName(query: String): List<VideoUiModel> {
         return videoRepository.fetchPlacesVideos(
-            query = landMarkName,
+            query = query,
             apiKey = GCP_API_KEY
         )
     }
 
-    fun fetchAllDataForTheLocation(landMarkName: String){
+    fun fetchAllDataForTheLocation(query: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(landMarkName) }
+            val landMarkVideoJob = async { fetchVideosForTheLandMarkName("Nico Park Tour Guide") }
             val landMarkVideo = landMarkVideoJob.await()
             setPlaceVideoData(landMarkVideo)
             placesDetailsUiModel?.log()

@@ -12,7 +12,9 @@ interface VideoApi {
         @Query("part") part : String="snippet",
         @Query("q") q : String,
         @Query("maxResults") maxResults : Int = 5,
-        @Query("order") order : String = "viewCount",
         @Query("key") key : String,
+        @Query("order") order : String = "viewCount",
+        @Query("type") type : String="video",
+        @Query("videoDuration") videoDuration : String = "long",
     ) : Response<YoutubeVideosDTO>
 }
