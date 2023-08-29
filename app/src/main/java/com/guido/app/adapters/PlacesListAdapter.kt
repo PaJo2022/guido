@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.guido.app.databinding.LayoutPlacesItemBinding
+import com.guido.app.databinding.LayoutPlaceItemBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.videosUiModel.VideoUiModel
 
@@ -24,21 +24,21 @@ class PlacesListAdapter(private val appContext : Context) : RecyclerView.Adapter
         this.onItemClickListener = onItemClickListener
     }
 
-    inner class PlacesListAdapterViewHolder(private val binding: LayoutPlacesItemBinding) :
+    inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(place: PlaceUiModel) {
             binding.apply {
-                parent.setOnClickListener {
+                root.setOnClickListener {
                     onItemClickListener?.invoke(place)
                 }
                 tvPlaceName.text = place.name
-                Glide.with(appContext).load(place.icon).into(ivPlaces)
+                Glide.with(appContext).load(place.icon).into(ivPlaceIcon)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlacesListAdapterViewHolder(
-        LayoutPlacesItemBinding.inflate(LayoutInflater.from(parent.context))
+        LayoutPlaceItemBinding.inflate(LayoutInflater.from(parent.context))
     )
 
     override fun getItemCount() = _places.size

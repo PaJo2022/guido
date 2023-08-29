@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fillViewport="true"
     tools:context=".fragments.LocationSearchFragment">
 
    <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,11 +83,11 @@
        <androidx.recyclerview.widget.RecyclerView
            android:id="@+id/rv_location_items"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           tools:listitem="@layout/layout_places_item"
+           android:layout_height="match_parent"
+           tools:listitem="@layout/layout_place_item"
            android:orientation="vertical"
            android:nestedScrollingEnabled="false"
-           tools:itemCount="5"
+           tools:itemCount="50"
            app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"

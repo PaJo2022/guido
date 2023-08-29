@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/color_sound_compose_selected_color1" /> <!-- Change color as needed -->
+    <corners android:radius="@dimen/_16sdp" /> <!-- Adjust radius to control the roundness -->
+</shape>

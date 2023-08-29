@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -20,19 +18,12 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
-import com.guido.app.DefaultLocationClient
-import com.guido.app.LocationClient
-import com.guido.app.MainActivity
 import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
@@ -73,8 +64,7 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
             }
             rvLocationItems.apply {
                 adapter = placesAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
 
