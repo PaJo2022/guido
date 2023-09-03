@@ -12,13 +12,16 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -28,7 +31,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -41,29 +43,32 @@ import com.guido.app.R
 import com.guido.app.adapters.PlacesListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
+import com.guido.app.model.MarkerData
 import com.guido.app.model.MyClusterItem
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.URL
-import com.bumptech.glide.request.transition.Transition
 
 
 @AndroidEntryPoint
-class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
-    OnMapReadyCallback {
+class LocationSearchFragment :
+    BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
+    OnMapReadyCallback, OnMarkerClickListener {
 
 
     private lateinit var clusterManager: ClusterManager<MyClusterItem>
-    private lateinit var viewModel : LocationSearchViewModel
-    private lateinit var placesAdapter : PlacesListAdapter
+    private lateinit var viewModel: LocationSearchViewModel
+    private lateinit var placesAdapter: PlacesListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-
+    private val radius = 15000
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,11 +113,15 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
         }
         fetchPlacesNearMyLocation()
         viewModel.apply {
-        nearByPlaces.collectIn(viewLifecycleOwner){
-            it.forEach {placeUiModel->
-                setLocationMarkers(placeUiModel.icon,placeUiModel.latLng,placeUiModel.name)
-            }
+            nearByPlaces.collectIn(viewLifecycleOwner) {
+                viewModel.markerDataList.clear()
+                it.forEach { placeUiModel ->
+                    setLocationMarkers(placeUiModel)
+                }
                 placesAdapter.setNearByPlaces(it)
+            }
+            searchedFormattedAddress.observe(viewLifecycleOwner){
+                binding.tvUserCurrentAddress.text = it
             }
         }
         placesAdapter.setOnLandMarkClicked{
@@ -136,12 +145,13 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 val latLon = place.latLng ?: return
+                MyApp.searchedLatLng = latLon
                 googleMap.clear()
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, 12f))
                 googleMap.addMarker(MarkerOptions().position(latLon))
                 viewModel.fetchPlacesDetailsNearMe(
                     "${latLon.latitude},${latLon.longitude}",
-                    5000,
+                    radius,
                     "tourist_attraction",
                     "landmark",
                     GCP_API_KEY
@@ -154,19 +164,29 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
             }
         })
 
+
     }
 
-    private fun setLocationMarkers(markerUrl : String?,markerLatLng : LatLng?,landMarkName : String?) {
-        if(markerUrl == null || markerLatLng == null || landMarkName == null)  return
+
+
+    private fun setLocationMarkers(placeUiModel: PlaceUiModel) {
+        val markerUrl = placeUiModel.icon
+        val markerLatLng = placeUiModel.latLng
+        val landMarkName = placeUiModel.name
+        if (markerUrl == null || markerLatLng == null || landMarkName == null) return
         GlobalScope.launch(Dispatchers.IO) {
             val iconBitmap = getBitmapFromURL(markerUrl) ?: return@launch
-            withContext(Dispatchers.Main){
-                googleMap.addMarker(
-                    MarkerOptions()
-                        .position(markerLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
-                        .title(landMarkName)
-                )
+            withContext(Dispatchers.Main) {
+                val markerOptions = MarkerOptions()
+                    .position(markerLatLng)
+                    .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
+                    .title(landMarkName)
+                val marker = googleMap.addMarker(markerOptions)
+                marker?.let {
+                    viewModel.markerDataList.add(MarkerData(it, placeUiModel))
+                }
+
+
             }
         }
     }
@@ -190,13 +210,22 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
     private fun fetchPlacesNearMyLocation() {
         MyApp.userCurrentLocation.collectIn(viewLifecycleOwner){
             googleMap.clear()
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.first,it.second), 12f))
-            googleMap.addMarker(MarkerOptions().position(LatLng(it.first,it.second)))
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(it.first, it.second),
+                    12f
+                )
+            )
+            googleMap.addMarker(MarkerOptions().position(LatLng(it.first, it.second)))
             viewModel.fetchPlacesDetailsNearMe(
                 "${it.first},${it.second}",
-                5000,
+                radius,
                 "tourist_attraction",
                 "",
+                GCP_API_KEY
+            )
+            viewModel.fetchCurrentAddressFromGeoCoding(
+                "${it.first},${it.second}",
                 GCP_API_KEY
             )
         }
@@ -208,7 +237,7 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
         clusterManager = ClusterManager<MyClusterItem>(requireContext(), googleMap)
 //        clusterManager.renderer = RenderClusterInfoWindow(requireContext(),googleMap,clusterManager)
 //        googleMap.setOnCameraIdleListener(clusterManager)
-//        googleMap.setOnMarkerClickListener(clusterManager)
+        googleMap.setOnMarkerClickListener(this)
 
 
 
@@ -222,7 +251,30 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
 
     override fun onResume() {
         super.onResume()
+
         mapView.onResume()
+        MyApp.nearByAttractions.apply {
+            viewModel.markerDataList.clear()
+            forEach { placeUiModel ->
+                setLocationMarkers(placeUiModel)
+            }
+            placesAdapter.setNearByPlaces(this)
+        }
+        MyApp.searchedLatLng?.let {
+           try {
+               lifecycleScope.launch(Dispatchers.IO) {
+                  // delay(500)
+                   withContext(Dispatchers.Main){
+                       googleMap.clear()
+                       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 12f))
+                       googleMap.addMarker(MarkerOptions().position(it))
+                   }
+               }
+           }catch (e : Exception){
+               e.printStackTrace()
+
+           }
+        }
     }
 
     override fun onPause() {
@@ -275,6 +327,16 @@ class LocationSearchFragment : BaseFragment<FragmentLocationSearchBinding>(Fragm
                 })
             super.onBeforeClusterItemRendered(item, markerOptions)
         }
+    }
+
+    override fun onMarkerClick(currentMarker: Marker): Boolean {
+        val markerPlaceUiModel =
+            viewModel.markerDataList.find { it.marker == currentMarker }?.placeUiModel
+        Bundle().apply {
+            putParcelable("LANDMARK_DATA", markerPlaceUiModel)
+            findNavController().navigate(R.id.locationDetailsFragment, this)
+        }
+        return true
     }
 
 

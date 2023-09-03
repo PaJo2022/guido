@@ -2,7 +2,6 @@ package com.guido.app.data.videos
 
 import android.util.Log
 import com.guido.app.api.VideoApi
-import com.guido.app.data.videos.VideoRepository
 import com.guido.app.model.videos.toUiModel
 import com.guido.app.model.videosUiModel.VideoUiModel
 import javax.inject.Inject

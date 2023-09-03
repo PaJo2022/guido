@@ -1,18 +1,12 @@
 package com.guido.app
 
-import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.guido.app.MyApp.Companion.userCurrentLocation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,12 +56,19 @@ class MainActivity : AppCompatActivity() {
     fun getCurrentLocation() {
         locationClient
             .getLocationUpdates(10000L).collectIn(this){location->
+
                 val lat = location.latitude.safeDouble()
                 val long = location.longitude.safeDouble()
-                lifecycleScope.launch {
-                    userCurrentLocation.emit(Pair(lat,long))
+                if (!MyApp.isCurrentLocationFetched) {
+                    lifecycleScope.launch {
+                        userCurrentLocation.emit(Pair(lat, long))
+                    }
+                    MyApp.isCurrentLocationFetched = true
+                    MyApp.searchedLatLng = LatLng(
+                        location.latitude,
+                        location.longitude
+                    )
                 }
-                Log.i("JAPAN", "latitude longitude: ${lat},${long}")
             }
     }
 }

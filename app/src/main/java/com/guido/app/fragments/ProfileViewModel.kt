@@ -1,11 +1,13 @@
 package com.guido.app.fragments
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.model.PlaceType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -15,6 +17,15 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(private val placesRepository: PlacesRepository) :
     ViewModel() {
 
+    private val _formattedAddress: MutableLiveData<String> = MutableLiveData()
+    val formattedAddress: LiveData<String> get() = _formattedAddress
+
+    fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val address = placesRepository.fetchAddressFromLatLng(latLng,key)?.results?.firstOrNull()?.formatted_address.toString()
+            _formattedAddress.postValue(address)
+        }
+    }
 
 
     private val placeTypes = listOf(

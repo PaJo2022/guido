@@ -5,6 +5,7 @@ import androidx.room.withTransaction
 import com.guido.app.api.GuidoApi
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.PlaceType
+import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
 import com.guido.app.model.places.toPlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import kotlinx.coroutines.Dispatchers
@@ -25,19 +26,31 @@ class PlacesRepositoryImpl @Inject constructor(
         return try {
             val response = api.fetchPlacesNearMe(location, radius, keyword, key)
             Log.i("JAPAN", "DATA $response")
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 response.body()?.results?.toPlaceUiModel() ?: emptyList()
-            }else{
+            } else {
                 emptyList()
             }
-        }catch (e : Exception){
+        } catch (e: Exception) {
             Log.i("JAPAN", "DATA $e")
             emptyList()
         }
     }
 
+    override suspend fun fetchAddressFromLatLng(
+        latLng: String,
+        key: String
+    ): ReverseGeoCodingResponse? {
+        return try {
+            val response = api.fetchAddressFromLatLng(latLng, key)
+            response.body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     override suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             db.withTransaction {
                 db.placeTypeDao().apply {
                     deletePlaceTypes()
