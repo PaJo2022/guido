@@ -1,5 +1,6 @@
 package com.guido.app.model.places
 
+import com.google.android.gms.maps.model.LatLng
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.videosUiModel.VideoUiModel
 
@@ -26,6 +27,7 @@ data class Result(
 fun List<Result>.toPlaceUiModel() = map{
     PlaceUiModel(
         name = it.name,
+        latLng = LatLng(it.geometry?.location?.lat ?: 0.0,it.geometry?.location?.lng ?: 0.0),
         address = it.vicinity,
         icon = it.icon,
         iconBackGroundColor = it.icon_background_color,
