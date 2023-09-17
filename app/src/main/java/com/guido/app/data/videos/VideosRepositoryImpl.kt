@@ -12,7 +12,6 @@ class VideosRepositoryImpl @Inject constructor(
     override suspend fun fetchPlacesVideos(query: String,apiKey : String): List<VideoUiModel> {
         return try {
             val response = api.fetchVideosFromYoutube(q = query, key = apiKey)
-            Log.i("JAPAN", "DATA $response")
             if(response.isSuccessful){
                 response.body()?.items?.toUiModel() ?: emptyList()
             }else{

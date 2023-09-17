@@ -12,7 +12,7 @@ interface GuidoApi {
     suspend fun fetchPlacesNearMe(
         @Query("location") location : String,
         @Query("radius") radius : Int,
-        @Query("keyword") keyword : String,
+        @Query("type") keyword : String,
         @Query("key") key : String
     ) : Response<PlacesApiDTO>
 

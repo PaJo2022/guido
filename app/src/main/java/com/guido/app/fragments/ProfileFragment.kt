@@ -1,30 +1,52 @@
 package com.guido.app.fragments
 
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.guido.app.BaseFragment
-import com.guido.app.Constants
 import com.guido.app.MyApp
+import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeChipAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
-import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
+import com.guido.app.db.AppPrefs
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
-class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate){
+class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
+    private lateinit var thumbView: View
+    private lateinit var viewModel: ProfileViewModel
+    private lateinit var placesTypeChipAdapter: PlacesTypeChipAdapter
 
-    private lateinit var viewModel : ProfileViewModel
-    private lateinit var placesTypeChipAdapter : PlacesTypeChipAdapter
+    @Inject
+    lateinit var appPrefs: AppPrefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         placesTypeChipAdapter = PlacesTypeChipAdapter(requireContext())
+        thumbView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.layout_seekbar_thumb, null, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currentDistanceInPref = appPrefs.prefDistance
+        binding.seekbarDistance.progress = currentDistanceInPref / 1000
+        binding.seekbarDistance.thumb = getThumb("${currentDistanceInPref / 1000} Km")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,6 +55,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             binding.etUserAddress.setText(this)
         }
         binding.apply {
+            seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                    binding.seekbarDistance.thumb = getThumb("${p1} Km")
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+                    viewModel.distanceProgress = p0?.progress ?: return
+
+                }
+
+            })
             profileImage.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -43,10 +80,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     GridLayoutManager(requireContext(), 5, GridLayoutManager.VERTICAL, false)
             }
             btnSave.setOnClickListener {
-                    viewModel.savePlaceTypePreferences()
-                    findNavController().popBackStack()
-                }
+                viewModel.savePlaceTypePreferences()
+                appPrefs.prefDistance = viewModel.distanceProgress
+                MyApp.isPrefUpdated.value = true
+                findNavController().popBackStack()
             }
+            }
+
         viewModel.apply {
             userInterestes.observe(viewLifecycleOwner){
                 placesTypeChipAdapter.setPlacesType(it)
@@ -60,6 +100,18 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
 
-
+    private fun getThumb(time: String?): Drawable {
+        (thumbView.findViewById(R.id.tvProgress) as TextView).text = time
+        thumbView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val bitmap = Bitmap.createBitmap(
+            thumbView.measuredWidth,
+            thumbView.measuredHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        thumbView.layout(0, 0, thumbView.measuredWidth, thumbView.measuredHeight)
+        thumbView.draw(canvas)
+        return BitmapDrawable(resources, bitmap)
+    }
 
 }

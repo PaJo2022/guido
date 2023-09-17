@@ -2,6 +2,7 @@ package com.guido.app.di
 
 import android.content.Context
 import androidx.room.Room
+import com.guido.app.db.AppPrefs
 import com.guido.app.db.MyAppDataBase
 import dagger.Module
 import dagger.Provides
@@ -21,6 +22,9 @@ class DataBaseModule {
         MyAppDataBase::class.java, "database-name"
     ).fallbackToDestructiveMigration().build()
 
+    @Provides
+    @Singleton
+    fun provideUserPreference(@ApplicationContext context: Context) : AppPrefs = AppPrefs(context = context)
 
 
 }

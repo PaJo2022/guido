@@ -7,6 +7,7 @@ import com.google.android.libraries.places.api.Places
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @HiltAndroidApp
 class MyApp : Application() {
@@ -17,6 +18,7 @@ class MyApp : Application() {
         var isCurrentLocationFetched : Boolean = false
          var userCurrentLocation : MutableSharedFlow<Pair<Double,Double>> = MutableSharedFlow()
          var userCurrentFormattedAddress : String ?= null
+        var isPrefUpdated : MutableLiveData<Boolean> = MutableLiveData(false)
     }
     override fun onCreate() {
         super.onCreate()

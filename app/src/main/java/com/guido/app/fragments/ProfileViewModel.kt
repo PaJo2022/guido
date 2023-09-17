@@ -17,6 +17,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(private val placesRepository: PlacesRepository) :
     ViewModel() {
 
+    var distanceProgress: Int = 5
     private val _formattedAddress: MutableLiveData<String> = MutableLiveData()
     val formattedAddress: LiveData<String> get() = _formattedAddress
 

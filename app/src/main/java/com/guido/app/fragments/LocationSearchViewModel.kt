@@ -11,6 +11,7 @@ import com.guido.app.MyApp
 import com.guido.app.MyApp.Companion.nearByAttractions
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.model.MarkerData
+import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +67,7 @@ class LocationSearchViewModel @Inject constructor(private val placesRepository: 
         fetchSearchedLocationAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
             placesRepository.getAllSavedPlaceTypePreferences().collect{
-                val interestes =  it.map { it.id }.toString()
+                val interestes =  concatenatePlaceTypeIds(it)
                 nearByAttractions = placesRepository.fetchPlacesNearMe(
                     location, radius,type, interestes, key
                 )
@@ -77,7 +78,10 @@ class LocationSearchViewModel @Inject constructor(private val placesRepository: 
     }
 
 
-
+    fun concatenatePlaceTypeIds(placeTypes: List<PlaceType>): String {
+        val ids = placeTypes.map { it.id }
+        return ids.joinToString(",")
+    }
 
 
 }

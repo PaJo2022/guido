@@ -25,7 +25,6 @@ class PlacesRepositoryImpl @Inject constructor(
     ): List<PlaceUiModel> {
         return try {
             val response = api.fetchPlacesNearMe(location, radius, keyword, key)
-            Log.i("JAPAN", "DATA $response")
             if (response.isSuccessful) {
                 response.body()?.results?.toPlaceUiModel() ?: emptyList()
             } else {

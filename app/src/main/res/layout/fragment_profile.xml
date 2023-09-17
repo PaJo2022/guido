@@ -89,6 +89,32 @@
 
 
        <TextView
+           android:id="@+id/tv_distance"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Choose Your Distance"
+           android:layout_marginHorizontal="@dimen/_12sdp"
+           android:layout_marginTop="@dimen/_20sdp"
+           android:textColorHint="@color/color_fourth"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/et_user_phone" />
+
+
+       <SeekBar
+           android:id="@+id/seekbar_distance"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_marginHorizontal="@dimen/_12sdp"
+           android:layout_marginTop="@dimen/_20sdp"
+           android:max="15"
+           android:progress="3"
+           android:textColorHint="@color/color_fourth"
+           app:layout_constraintEnd_toEndOf="@+id/et_user_phone"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/tv_distance" />
+
+
+       <TextView
            android:id="@+id/tv_interests"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -99,7 +125,7 @@
            android:textSize="@dimen/_14ssp"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/et_user_phone" />
+           app:layout_constraintTop_toBottomOf="@+id/seekbar_distance" />
 
        <androidx.recyclerview.widget.RecyclerView
            android:id="@+id/rv_interests"

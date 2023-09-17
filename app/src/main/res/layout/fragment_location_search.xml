@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,16 +8,7 @@
     android:background="@color/white"
     tools:context=".fragments.LocationSearchFragment">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Your existing content (ImageView, TextViews, AutocompleteFragment, and MapView) here -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/profile_image"
@@ -95,44 +86,23 @@
             <com.google.android.gms.maps.MapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/_150sdp"
                 android:layout_marginTop="@dimen/_16sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:id="@+id/bottom_sheet_behavior"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_location_items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:behavior_peekHeight="@dimen/_30sdp"
-        android:background="@color/white"
+        android:layout_height="0dp"
+        android:nestedScrollingEnabled="false"
         android:orientation="vertical"
-        android:gravity="center"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-        <ImageView
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:rotation="-90"
-            android:background="@drawable/ic_arrow_right"
-            android:backgroundTint="@color/quantum_black_100"/>
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map_view"
+        tools:listitem="@layout/layout_place_item" />
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_location_items"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/layout_place_item"
-            android:visibility="visible"/>
-
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

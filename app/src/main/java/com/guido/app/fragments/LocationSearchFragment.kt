@@ -3,6 +3,7 @@ package com.guido.app.fragments
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources.NotFoundException
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
@@ -43,18 +45,19 @@ import com.guido.app.R
 import com.guido.app.adapters.PlacesListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
+import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
 import com.guido.app.model.MyClusterItem
 import com.guido.app.model.placesUiModel.PlaceUiModel
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.URL
+import javax.inject.Inject
+import kotlin.math.ln
 
 
 @AndroidEntryPoint
@@ -68,7 +71,10 @@ class LocationSearchFragment :
     private lateinit var placesAdapter: PlacesListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-    private val radius = 15000
+   // private val zoom = 16f
+
+    @Inject
+    lateinit var appPrefs: AppPrefs
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,8 +118,16 @@ class LocationSearchFragment :
             }
         }
         fetchPlacesNearMyLocation()
+        MyApp.isPrefUpdated.observe(viewLifecycleOwner){
+            if(it){
+                MyApp.isCurrentLocationFetched = false
+                (requireActivity() as MainActivity).getCurrentLocation()
+                MyApp.isPrefUpdated.value = false
+            }
+        }
         viewModel.apply {
             nearByPlaces.collectIn(viewLifecycleOwner) {
+                Log.i("JAPAN", "onViewCreated: ${it}")
                 viewModel.markerDataList.clear()
                 it.forEach { placeUiModel ->
                     setLocationMarkers(placeUiModel)
@@ -147,11 +161,11 @@ class LocationSearchFragment :
                 val latLon = place.latLng ?: return
                 MyApp.searchedLatLng = latLon
                 googleMap.clear()
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, 12f))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, calculateZoomLevel((appPrefs.prefDistance).toDouble())))
                 googleMap.addMarker(MarkerOptions().position(latLon))
                 viewModel.fetchPlacesDetailsNearMe(
                     "${latLon.latitude},${latLon.longitude}",
-                    radius,
+                    appPrefs.prefDistance,
                     "tourist_attraction",
                     "landmark",
                     GCP_API_KEY
@@ -201,11 +215,7 @@ class LocationSearchFragment :
         }
     }
 
-    fun calculateZoomLevel(radiusInKm: Double): Float {
-        val zoomScale = 156543.03392 // Earth's radius times 2 * pi * inches per meter (Google's constant)
-        val zoom = (16 - Math.log(radiusInKm * 1000 / zoomScale) / Math.log(2.0)).toFloat()
-        return if (zoom < 1) 1f else zoom
-    }
+
 
     private fun fetchPlacesNearMyLocation() {
         MyApp.userCurrentLocation.collectIn(viewLifecycleOwner){
@@ -213,13 +223,13 @@ class LocationSearchFragment :
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(it.first, it.second),
-                    12f
+                    calculateZoomLevel((appPrefs.prefDistance).toDouble())
                 )
             )
             googleMap.addMarker(MarkerOptions().position(LatLng(it.first, it.second)))
             viewModel.fetchPlacesDetailsNearMe(
                 "${it.first},${it.second}",
-                radius,
+                appPrefs.prefDistance,
                 "tourist_attraction",
                 "",
                 GCP_API_KEY
@@ -234,6 +244,22 @@ class LocationSearchFragment :
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.clear()
+        googleMap.uiSettings.setAllGesturesEnabled(true)
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            val success = googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    requireContext(), com.guido.app.R.raw.style_json
+                )
+            )
+
+        } catch (e: NotFoundException) {
+            Log.e("JAPAN", "Can't find style. Error: ", e)
+        }
+
+        // You can set other configurations as needed
+        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL;
         clusterManager = ClusterManager<MyClusterItem>(requireContext(), googleMap)
 //        clusterManager.renderer = RenderClusterInfoWindow(requireContext(),googleMap,clusterManager)
 //        googleMap.setOnCameraIdleListener(clusterManager)
@@ -266,7 +292,7 @@ class LocationSearchFragment :
                   // delay(500)
                    withContext(Dispatchers.Main){
                        googleMap.clear()
-                       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 12f))
+                       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, calculateZoomLevel((appPrefs.prefDistance).toDouble())))
                        googleMap.addMarker(MarkerOptions().position(it))
                    }
                }
@@ -339,5 +365,14 @@ class LocationSearchFragment :
         return true
     }
 
+    fun calculateZoomLevel(radiusInMeters: Double): Float {
+
+
+        // Calculate the zoom level based on the desired radius
+        val zoomLevel = (radiusInMeters/1000).toFloat()
+
+        // Ensure the zoom level is within a reasonable range
+        return if(zoomLevel < 5) 17f else if(zoomLevel < 10) 16f else 12f
+    }
 
 }
