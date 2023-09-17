@@ -372,7 +372,7 @@ class LocationSearchFragment :
         val zoomLevel = (radiusInMeters/1000).toFloat()
 
         // Ensure the zoom level is within a reasonable range
-        return if(zoomLevel < 5) 17f else if(zoomLevel < 10) 16f else 12f
+        return if(zoomLevel < 8) 15f else if(zoomLevel < 11) 10f else 12f
     }
 
 }
