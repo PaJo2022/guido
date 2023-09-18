@@ -66,6 +66,7 @@ class LocationSearchFragment :
     OnMapReadyCallback, OnMarkerClickListener {
 
 
+    private var autocompleteFragment: AutocompleteSupportFragment ?= null
     private lateinit var clusterManager: ClusterManager<MyClusterItem>
     private lateinit var viewModel: LocationSearchViewModel
     private lateinit var placesAdapter: PlacesListAdapter
@@ -117,6 +118,8 @@ class LocationSearchFragment :
                 layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
+
+
         fetchPlacesNearMyLocation()
         MyApp.isPrefUpdated.observe(viewLifecycleOwner){
             if(it){
@@ -148,15 +151,15 @@ class LocationSearchFragment :
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
-        val autocompleteFragment =
+         autocompleteFragment =
             childFragmentManager.findFragmentById(R.id.autocomplete_fragment)
                     as AutocompleteSupportFragment
 
         checkLocationPermission()
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG))
+        autocompleteFragment?.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG))
 
         // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+        autocompleteFragment?.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 val latLon = place.latLng ?: return
                 MyApp.searchedLatLng = latLon
