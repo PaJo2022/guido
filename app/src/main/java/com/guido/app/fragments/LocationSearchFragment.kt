@@ -8,10 +8,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -32,7 +35,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -57,7 +59,6 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.URL
 import javax.inject.Inject
-import kotlin.math.ln
 
 
 @AndroidEntryPoint
@@ -66,13 +67,14 @@ class LocationSearchFragment :
     OnMapReadyCallback, OnMarkerClickListener {
 
 
-    private var autocompleteFragment: AutocompleteSupportFragment ?= null
+    private lateinit var mAutoCompleteAdapter: PlacesAutoCompleteAdapter
+    private var autocompleteFragment: AutocompleteSupportFragment? = null
     private lateinit var clusterManager: ClusterManager<MyClusterItem>
     private lateinit var viewModel: LocationSearchViewModel
     private lateinit var placesAdapter: PlacesListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-   // private val zoom = 16f
+    // private val zoom = 16f
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -151,39 +153,47 @@ class LocationSearchFragment :
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
-         autocompleteFragment =
-            childFragmentManager.findFragmentById(R.id.autocomplete_fragment)
-                    as AutocompleteSupportFragment
+
 
         checkLocationPermission()
-        autocompleteFragment?.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG))
+
 
         // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment?.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                val latLon = place.latLng ?: return
-                MyApp.searchedLatLng = latLon
-                googleMap.clear()
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLon, calculateZoomLevel((appPrefs.prefDistance).toDouble())))
-                googleMap.addMarker(MarkerOptions().position(latLon))
-                viewModel.fetchPlacesDetailsNearMe(
-                    "${latLon.latitude},${latLon.longitude}",
-                    appPrefs.prefDistance,
-                    "tourist_attraction",
-                    "landmark",
-                    GCP_API_KEY
-                )
+
+        mAutoCompleteAdapter = PlacesAutoCompleteAdapter(requireContext());
+        binding.placesRecyclerView.layoutManager = LinearLayoutManager(requireContext());
+        binding.placesRecyclerView.adapter = mAutoCompleteAdapter;
+        mAutoCompleteAdapter.notifyDataSetChanged();
+        binding.placeSearch.doOnTextChanged { text, start, before, count ->
+            if (text.toString() != "") {
+                mAutoCompleteAdapter.filter.filter(text.toString())
+                if (binding.placesRecyclerView.visibility == View.GONE) {
+                    binding.placesRecyclerView.visibility = View.VISIBLE
+                }
+            } else {
+                if (binding.placesRecyclerView.visibility == View.VISIBLE) {
+                    binding.placesRecyclerView.visibility = View.GONE
+                }
             }
-
-            override fun onError(status: Status) {
-                // TODO: Handle the error.
-                Log.i("JAPAN", "An error occurred: $status")
-            }
-        })
-
-
+        }
     }
 
+    private val filterTextWatcher: TextWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable) {
+
+        }
+
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+    }
+
+    fun click(place: Place) {
+        Toast.makeText(
+            requireContext(),
+            place.address + ", " + place.latLng.latitude + place.latLng.longitude,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
 
     private fun setLocationMarkers(placeUiModel: PlaceUiModel) {
