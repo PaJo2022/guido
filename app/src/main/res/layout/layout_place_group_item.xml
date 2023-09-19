@@ -1,0 +1,60 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="@dimen/_8sdp">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:gravity="center">
+
+
+      <!-- Left ImageView -->
+      <ImageView
+          android:id="@+id/placeIcon"
+          android:layout_width="@dimen/_24sdp"
+          android:layout_height="@dimen/_24sdp"
+          android:src="@drawable/ic_arrow_right"
+          android:contentDescription="Left Image"
+          app:tint="@color/color_fourth" />
+
+
+      <!-- Centered TextView -->
+      <TextView
+          android:id="@+id/tv_place_type"
+          android:layout_marginHorizontal="@dimen/_4sdp"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Centered Text"
+          android:fontFamily="@font/font_medium"
+          android:textColor="@color/color_primary"
+          android:maxLines="2"
+          android:ellipsize="end"
+          android:gravity="start"
+          android:textSize="18sp" />
+
+      <!-- Right ImageView -->
+      <ImageView
+          android:id="@+id/rightImageView"
+          android:layout_width="@dimen/_24sdp"
+          android:layout_height="@dimen/_24sdp"
+          android:rotation="90"
+          android:src="@drawable/ic_arrow_right"
+          android:contentDescription="Right Image"
+          app:tint="@color/color_fourth" />
+
+  </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_places"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

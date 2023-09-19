@@ -22,6 +22,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -48,6 +50,7 @@ import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesGroupListAdapter
+import com.guido.app.adapters.PlacesHorizontalListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
@@ -73,6 +76,7 @@ class LocationSearchFragment :
 
     private  val viewModel: LocationSearchViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
+    private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     // private val zoom = 16f
@@ -84,6 +88,7 @@ class LocationSearchFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
+        placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
     }
 
 
@@ -118,6 +123,7 @@ class LocationSearchFragment :
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+        val snapHelper1: SnapHelper = PagerSnapHelper()
 
         binding.apply {
             llSearchHere.setOnClickListener {
@@ -127,6 +133,11 @@ class LocationSearchFragment :
                 adapter = placesAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
             }
+            rvPlaceCards.apply {
+                adapter = placesHorizontalAdapter
+                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+            }
+            snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
 
@@ -156,9 +167,11 @@ class LocationSearchFragment :
             currentLatLng.collectIn(viewLifecycleOwner){
                 fetchPlacesNearMyLocation(it)
             }
-            nearByPlaces.collectIn(viewLifecycleOwner){
-                Log.i("JAPAN", "observeData: ${it}")
+            nearByPlacesInGroup.collectIn(viewLifecycleOwner){
                 placesAdapter.setNearByPlaces(it)
+            }
+            nearByPlaces.collectIn(viewLifecycleOwner){
+                placesHorizontalAdapter.setNearByPlaces(it)
             }
         }
     }

@@ -52,8 +52,12 @@ class LocationSearchViewModel @Inject constructor(
     ViewModel() {
 
 
-    private val _nearByPlaces: MutableStateFlow<List<PlaceTypeUiModel>> = MutableStateFlow(emptyList())
-    val nearByPlaces: StateFlow<List<PlaceTypeUiModel>> get() = _nearByPlaces.asStateFlow()
+    private val _nearByPlacesInGroup: MutableStateFlow<List<PlaceTypeUiModel>> =
+        MutableStateFlow(emptyList())
+    val nearByPlacesInGroup: StateFlow<List<PlaceTypeUiModel>> get() = _nearByPlacesInGroup.asStateFlow()
+
+    private val _nearByPlaces: MutableStateFlow<List<PlaceUiModel>> = MutableStateFlow(emptyList())
+    val nearByPlaces: StateFlow<List<PlaceUiModel>> get() = _nearByPlaces.asStateFlow()
 
 
     private val _currentFormattedAddress: MutableLiveData<String> = MutableLiveData()
@@ -82,6 +86,8 @@ class LocationSearchViewModel @Inject constructor(
             return android.text.style.StyleSpan(Typeface.NORMAL)
         }
 
+    private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
+    private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
 
     fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -123,12 +129,18 @@ class LocationSearchViewModel @Inject constructor(
                             )
                         }
                         val attraction = job2.await()
-                        val placeTypeUiModel = PlaceTypeUiModel(placeType.displayName,attraction.firstOrNull()?.icon,attraction)
-                        nearByAttractions.add(placeTypeUiModel)
+                        val placeTypeUiModel = PlaceTypeUiModel(
+                            placeType.displayName,
+                            attraction.firstOrNull()?.icon,
+                            attraction
+                        )
+                        nearByPlacesListInGroup.add(placeTypeUiModel)
+                        nearByPlacesList.addAll(attraction)
                     }
                 }
                 job.await()
-                _nearByPlaces.emit(nearByAttractions)
+                _nearByPlacesInGroup.emit(nearByPlacesListInGroup)
+                _nearByPlaces.emit(nearByPlacesList)
             }
 
         }
