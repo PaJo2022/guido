@@ -1,10 +1,12 @@
 package com.guido.app.fragments
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guido.app.data.places.PlacesRepository
+import com.guido.app.log
 import com.guido.app.model.PlaceType
 import com.guido.app.model.PlaceTypeContainer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -126,6 +128,7 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
                     val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
                         PlaceTypeContainer(type, placeTypeList)
                     }
+                    Log.i("JAPAN", "onPlaceInterestClicked: ${placeTypeContainers.firstOrNull()?.placeTypes?.size}")
                     userInterestes.postValue(placeTypeContainers)
                 }
             }
@@ -141,6 +144,8 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
             val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
                 PlaceTypeContainer(type, placeTypeList)
             }
+            placeTypeContainers.firstOrNull()?.placeTypes?.find { it.isSelected }?.displayName.log()
+
             userInterestes.postValue(placeTypeContainers)
         }
     }

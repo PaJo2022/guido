@@ -22,6 +22,8 @@ import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.model.placesUiModel.PlaceUiType
+import com.guido.app.model.placesUiModel.addUiType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -114,29 +116,53 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             nearByAttractions.clear()
             nearByPlacesList.clear()
-            placesRepository.getAllSavedPlaceTypePreferences().collect {
-                if(it.size > 5) return@collect
-                val job = async {
-                    it.forEach { placeType ->
-                        val job2 = async {
-                            placesRepository.fetchPlacesNearMe(
-                                location, radius, type, placeType.id, key
-                            )
-                        }
-                        val attraction = job2.await()
-                        val placeTypeUiModel = PlaceTypeUiModel(
-                            placeType.displayName,
-                            attraction.firstOrNull()?.icon,
-                            attraction
+//            placesRepository.getAllSavedPlaceTypePreferences().collect {
+//                if(it.size > 5) return@collect
+//                val job = async {
+//                    it.forEach { placeType ->
+//                        val job2 = async {
+//                            placesRepository.fetchPlacesNearMe(
+//                                location, radius, type, placeType.id, key
+//                            )
+//                        }
+//                        val attraction = job2.await()
+//                        val placeTypeUiModel = PlaceTypeUiModel(
+//                            placeType.displayName,
+//                            attraction.firstOrNull()?.icon,
+//                            attraction
+//                        )
+//                        nearByPlacesListInGroup.add(placeTypeUiModel)
+//                        nearByPlacesList.addAll(attraction)
+//                    }
+//                }
+//                job.await()
+//                _nearByPlacesInGroup.emit(ArrayList(nearByPlacesListInGroup))
+//                _nearByPlaces.emit(ArrayList(nearByPlacesList))
+//            }
+            val interestList =
+                arrayListOf<PlaceType>(PlaceType("1", "bar", "bar"), PlaceType("2", "bank", "bank"))
+            val job = async {
+                interestList.forEach { placeType ->
+                    val job2 = async {
+                        placesRepository.fetchPlacesNearMe(
+                            location, radius, type, placeType.id, key
                         )
-                        nearByPlacesListInGroup.add(placeTypeUiModel)
-                        nearByPlacesList.addAll(attraction)
                     }
+                    val attraction = job2.await()
+
+                    val placeTypeUiModel = PlaceTypeUiModel(
+                        placeType.displayName,
+                        attraction.firstOrNull()?.icon,
+                        attraction.addUiType(PlaceUiType.LARGE),
+
+                        )
+                    nearByPlacesListInGroup.add(placeTypeUiModel)
+                    nearByPlacesList.addAll(attraction)
                 }
-                job.await()
-                _nearByPlacesInGroup.emit(ArrayList(nearByPlacesListInGroup))
-                _nearByPlaces.emit(ArrayList(nearByPlacesList))
             }
+            job.await()
+            _nearByPlacesInGroup.emit(ArrayList(nearByPlacesListInGroup))
+            _nearByPlaces.emit(ArrayList(nearByPlacesList))
 
         }
     }

@@ -21,6 +21,10 @@
         android:id="@+id/profileFragment"
         android:name="com.guido.app.fragments.ProfileFragment"
         android:label="ProfileFragment" />
+    <dialog
+        android:id="@+id/bottomSheetPlaceList"
+        android:name="com.guido.app.fragments.BottomSheetPlaceList"
+        android:label="BottomSheetPlaceList" />
 
 
 </navigation>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/color_primary"
+    android:background="@color/color_fourth"
     tools:context=".fragments.HomeFragment">
 
    <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,25 +16,13 @@
        <ImageView
            android:id="@+id/iv_profile_picture"
            android:layout_width="match_parent"
-           android:layout_height="0dp"
-           app:layout_constraintBottom_toTopOf="@+id/guideline_vertical2"
+           android:layout_height="@dimen/_200sdp"
+           android:background="@drawable/ic_bike"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toTopOf="parent" />
 
-       <androidx.constraintlayout.widget.Guideline
-           android:id="@+id/guideline_vertical1"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="horizontal"
-           app:layout_constraintGuide_percent="0.30" />
 
-       <androidx.constraintlayout.widget.Guideline
-           android:id="@+id/guideline_vertical2"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="horizontal"
-           app:layout_constraintGuide_percent="0.35" />
 
        <androidx.constraintlayout.widget.Guideline
            android:id="@+id/guideline_horizontal1"
@@ -54,10 +42,12 @@
            android:id="@+id/ll_profile_details"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           app:cardBackgroundColor="@color/color_fourth"
+           app:cardBackgroundColor="@color/color_primary"
+           android:layout_marginTop="-32dp"
+           app:cardCornerRadius="@dimen/_12sdp"
            app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal2"
            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal1"
-           app:layout_constraintTop_toTopOf="@+id/guideline_vertical1">
+           app:layout_constraintTop_toBottomOf="@+id/iv_profile_picture">
 
            <androidx.constraintlayout.widget.ConstraintLayout
                android:layout_width="match_parent"
@@ -92,12 +82,13 @@
 
                <View
                    android:id="@+id/tv_divider"
-                   android:layout_width="match_parent"
+                   android:layout_width="0dp"
                    android:layout_height="1dp"
                    android:layout_marginVertical="@dimen/_16sdp"
-                   android:background="@color/color_light_grey_80"
+                   android:layout_marginHorizontal="@dimen/_2sdp"
+                   android:background="@color/color_light_grey"
                    app:layout_constraintEnd_toEndOf="@+id/textView3"
-                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintStart_toStartOf="@+id/textView3"
                    app:layout_constraintTop_toBottomOf="@+id/tv_user_location" />
 
 
@@ -106,7 +97,7 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:fontFamily="@font/font_regular"
-                   android:layout_marginTop="@dimen/_4sdp"
+                   android:layout_marginTop="@dimen/_12sdp"
                    android:text="5"
                    android:textColor="@color/color_sound_compose_selected_color1"
                    android:textSize="@dimen/_14ssp"
@@ -139,7 +130,7 @@
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_marginHorizontal="@dimen/_20sdp"
-           android:layout_marginTop="@dimen/_16sdp"
+           android:layout_marginTop="@dimen/_32sdp"
            android:background="@drawable/rounded_background_primary"
            android:fontFamily="@font/font_semi_bold"
            android:gravity="center"
@@ -160,7 +151,7 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_marginStart="@dimen/_12sdp"
-           android:layout_marginTop="@dimen/_12sdp"
+           android:layout_marginTop="@dimen/_32sdp"
            android:fontFamily="@font/font_semi_bold"
            android:text="Radius"
            android:textColor="@color/white"
@@ -217,7 +208,7 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_marginStart="@dimen/_12sdp"
-           android:layout_marginTop="@dimen/_20sdp"
+           android:layout_marginTop="@dimen/_32sdp"
            android:fontFamily="@font/font_semi_bold"
            android:text="Interests"
            android:textColor="@color/white"
@@ -227,10 +218,11 @@
 
        <androidx.recyclerview.widget.RecyclerView
            android:id="@+id/rv_interests"
-           android:layout_width="0dp"
+           android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           app:layout_constraintEnd_toEndOf="@+id/tv_distance"
-           app:layout_constraintStart_toStartOf="@+id/textView4"
+           android:layout_marginTop="@dimen/_10sdp"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/tv_interests" />
 
    </androidx.constraintlayout.widget.ConstraintLayout>

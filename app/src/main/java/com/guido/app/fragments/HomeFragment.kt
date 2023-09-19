@@ -104,16 +104,17 @@ class HomeFragment :
             llSearchHere.setOnClickListener {
 
             }
+            bottomsheetPlaceList.rvPlaces.apply {
+                adapter = placesAdapter
+                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
+            }
             ivRoundBackground.setOnClickListener {
                 checkLocationPermission()
             }
             tvSearchLocations.setOnClickListener {
                 findNavController().navigate(R.id.discover_fragment)
             }
-            rvPlaces.apply {
-                adapter = placesAdapter
-                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-            }
+
             rvPlaceCards.apply {
                 adapter = placesHorizontalAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
@@ -128,20 +129,7 @@ class HomeFragment :
 
 
         observeData()
-        val bottomSheetContainer = binding.bottomSheetContainer
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
 
-        // Set the initial state (Collapsed, Expanded, etc.)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        // Handle user interactions to expand or collapse the Bottom Sheet
-        bottomSheetContainer.setOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            } else {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
-        }
 
 
     }

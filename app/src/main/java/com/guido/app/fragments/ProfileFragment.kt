@@ -12,9 +12,11 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeChipAdapter
+import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
@@ -27,7 +29,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     private lateinit var thumbView: View
     private lateinit var viewModel: ProfileViewModel
-    private lateinit var placesTypeChipAdapter: PlacesTypeChipAdapter
+    private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -35,7 +37,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
-        placesTypeChipAdapter = PlacesTypeChipAdapter(requireContext())
+        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext())
         thumbView = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_seekbar_thumb, null, false)
     }
@@ -69,20 +71,19 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
             rvInterests.apply {
                 addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
-                adapter = placesTypeChipAdapter
-                layoutManager =
-                    GridLayoutManager(requireContext(), 5, GridLayoutManager.VERTICAL, false)
+                adapter = placesTypeGroupAdapter
+                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
             }
 
         }
 
         viewModel.apply {
             userInterestes.observe(viewLifecycleOwner){
-                placesTypeChipAdapter.setPlacesType(it)
+                placesTypeGroupAdapter.setPlacesType(it)
             }
 
         }
-        placesTypeChipAdapter.setOnPlaceTypeSelected {
+        placesTypeGroupAdapter.setOnPlaceTypeSelected {
             viewModel.onPlaceInterestClicked(it.id)
         }
 

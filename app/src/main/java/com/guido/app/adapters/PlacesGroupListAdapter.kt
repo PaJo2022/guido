@@ -34,12 +34,8 @@ class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Ad
         fun bindItem(place: PlaceTypeUiModel) {
             val placesAdapter = PlacesListAdapter(appContext)
             binding.apply {
-                rightImageView.setOnClickListener {
-                    rvPlaces.isVisible = !rvPlaces.isVisible
-                    rightImageView.rotation = if(rvPlaces.isVisible) -90f else 90f
-                }
+
                 tvPlaceType.text = place.type
-                Glide.with(appContext).load(place.icon).into(placeIcon)
                 rvPlaces.apply {
                     adapter = placesAdapter
                     layoutManager = LinearLayoutManager(appContext,LinearLayoutManager.VERTICAL,false)
@@ -53,7 +49,7 @@ class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Ad
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlacesListAdapterViewHolder(
-        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context))
+        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun getItemCount() = _placeGroupItem.size
