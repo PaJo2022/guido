@@ -38,10 +38,7 @@ class LocationDetailsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
-        binding.apply {
-            viewpagerLandmarkImages.adapter = vpLandmarkImages
-            viewpagerLandmarkVideos.adapter = vpLandmarkVideos
-        }
+
         viewModel.apply {
             setPlaceData(placeUiModel)
             placeUiModel?.name?.let {
@@ -57,27 +54,10 @@ class LocationDetailsFragment :
                     LandMarkImageItemFragment.newInstance(photo)
                 } ?: emptyList()
                 vpLandmarkImages?.setFragmentsItems(imageFragmentList)
-                binding.apply {
-                    profileImage.setOnClickListener { findNavController().popBackStack() }
-                    tvLandmarkName.text = it?.placeUiModel?.name
-                    tvLandMarkLocation.text = it?.placeUiModel?.address
 
-                }
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
-                binding.tvTourGuide.apply {
-                    settings.javaScriptEnabled = true
-                    webViewClient = CustomWebViewClient()
-                    webChromeClient = WebChromeClient()
-                    // Parse the HTML string using Jsoup
-                    val doc = Jsoup.parse(it)
 
-                    // Extract the HTML code
-                    val extractedHtml = doc.html()
-                    val htmlContent = extractedHtml.trimIndent()
-
-                    loadDataWithBaseURL(null, htmlContent, "text/html", "utf-8", null)
-                }
             }
         }
 

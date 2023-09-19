@@ -31,8 +31,7 @@ class PlacesListAdapter(private val appContext : Context) : RecyclerView.Adapter
                 root.setOnClickListener {
                     onItemClickListener?.invoke(place)
                 }
-                tvPlaceName.text = place.name
-                Glide.with(appContext).load(place.icon).into(ivPlaceIcon)
+
             }
         }
     }

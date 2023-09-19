@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
+import com.guido.app.model.placesUiModel.PlaceTypeUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class MyApp : Application() {
 
     companion object{
-        var nearByAttractions: List<PlaceUiModel> = emptyList()
+        var nearByAttractions: ArrayList<PlaceTypeUiModel> = ArrayList()
         var searchedLatLng: LatLng?= null
         var isCurrentLocationFetched : Boolean = false
          var userCurrentLocation : MutableSharedFlow<Pair<Double,Double>> = MutableSharedFlow()

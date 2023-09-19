@@ -18,3 +18,11 @@ data class PlaceUiModel(
     val rating: Double?,
 ): Parcelable
 
+
+@Parcelize
+data class PlaceTypeUiModel(
+    val type : String?,
+    val icon : String?,
+    val places : List<PlaceUiModel>?
+): Parcelable
+

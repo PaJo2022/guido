@@ -2,6 +2,7 @@ package com.guido.app
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -54,6 +55,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getCurrentLocation() {
+        lifecycleScope.launch {
+            val location = locationClient.getCurrentLocation()
+
+        }
         locationClient
             .getLocationUpdates(10000L).collectIn(this){location->
 

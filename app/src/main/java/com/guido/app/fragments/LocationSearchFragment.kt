@@ -15,7 +15,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -44,7 +47,7 @@ import com.guido.app.MainActivity
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
 import com.guido.app.R
-import com.guido.app.adapters.PlacesListAdapter
+import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
@@ -67,11 +70,9 @@ class LocationSearchFragment :
     OnMapReadyCallback, OnMarkerClickListener {
 
 
-    private lateinit var mAutoCompleteAdapter: PlacesAutoCompleteAdapter
-    private var autocompleteFragment: AutocompleteSupportFragment? = null
-    private lateinit var clusterManager: ClusterManager<MyClusterItem>
-    private lateinit var viewModel: LocationSearchViewModel
-    private lateinit var placesAdapter: PlacesListAdapter
+
+    private  val viewModel: LocationSearchViewModel by activityViewModels()
+    private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     // private val zoom = 16f
@@ -82,8 +83,7 @@ class LocationSearchFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        placesAdapter = PlacesListAdapter(requireContext())
-        viewModel = ViewModelProvider(this)[LocationSearchViewModel::class.java]
+        placesAdapter = PlacesGroupListAdapter(requireContext())
     }
 
 
@@ -95,7 +95,7 @@ class LocationSearchFragment :
         ) {
             // Permission is already granted
             // Get the current location
-            (requireActivity() as MainActivity).getCurrentLocation()
+            viewModel.fetchCurrentLocation()
         } else {
 
             ActivityCompat.requestPermissions(
@@ -111,147 +111,79 @@ class LocationSearchFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            ivSettings.setOnClickListener {
-                findNavController().navigate(R.id.profileFragment)
-            }
-            rvLocationItems.apply {
-                adapter = placesAdapter
-                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            }
-        }
 
 
-        fetchPlacesNearMyLocation()
-        MyApp.isPrefUpdated.observe(viewLifecycleOwner){
-            if(it){
-                MyApp.isCurrentLocationFetched = false
-                (requireActivity() as MainActivity).getCurrentLocation()
-                MyApp.isPrefUpdated.value = false
-            }
-        }
-        viewModel.apply {
-            nearByPlaces.collectIn(viewLifecycleOwner) {
-                Log.i("JAPAN", "onViewCreated: ${it}")
-                viewModel.markerDataList.clear()
-                it.forEach { placeUiModel ->
-                    setLocationMarkers(placeUiModel)
-                }
-                placesAdapter.setNearByPlaces(it)
-            }
-            searchedFormattedAddress.observe(viewLifecycleOwner){
-                binding.tvUserCurrentAddress.text = it
-            }
-        }
-        placesAdapter.setOnLandMarkClicked{
-            Bundle().apply {
-                putParcelable("LANDMARK_DATA",it)
-                findNavController().navigate(R.id.locationDetailsFragment,this)
-            }
-        }
+
+
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        binding.apply {
+            llSearchHere.setOnClickListener {
+                checkLocationPermission()
+            }
+            rvPlaces.apply {
+                adapter = placesAdapter
+                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+            }
+        }
 
 
         checkLocationPermission()
 
+        observeData()
+        val bottomSheetContainer = binding.bottomSheetContainer
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
 
-        // Set up a PlaceSelectionListener to handle the response.
+        // Set the initial state (Collapsed, Expanded, etc.)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-        mAutoCompleteAdapter = PlacesAutoCompleteAdapter(requireContext());
-        binding.placesRecyclerView.layoutManager = LinearLayoutManager(requireContext());
-        binding.placesRecyclerView.adapter = mAutoCompleteAdapter;
-        mAutoCompleteAdapter.notifyDataSetChanged();
-        binding.placeSearch.doOnTextChanged { text, start, before, count ->
-            if (text.toString() != "") {
-                mAutoCompleteAdapter.filter.filter(text.toString())
-                if (binding.placesRecyclerView.visibility == View.GONE) {
-                    binding.placesRecyclerView.visibility = View.VISIBLE
-                }
+        // Handle user interactions to expand or collapse the Bottom Sheet
+        bottomSheetContainer.setOnClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
-                if (binding.placesRecyclerView.visibility == View.VISIBLE) {
-                    binding.placesRecyclerView.visibility = View.GONE
-                }
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+        }
+
+
+    }
+
+    private fun observeData() {
+        viewModel.apply {
+            currentLatLng.collectIn(viewLifecycleOwner){
+                fetchPlacesNearMyLocation(it)
+            }
+            nearByPlaces.collectIn(viewLifecycleOwner){
+                Log.i("JAPAN", "observeData: ${it}")
+                placesAdapter.setNearByPlaces(it)
             }
         }
     }
 
-    private val filterTextWatcher: TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable) {
 
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    }
-
-    fun click(place: Place) {
-        Toast.makeText(
-            requireContext(),
-            place.address + ", " + place.latLng.latitude + place.latLng.longitude,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-
-    private fun setLocationMarkers(placeUiModel: PlaceUiModel) {
-        val markerUrl = placeUiModel.icon
-        val markerLatLng = placeUiModel.latLng
-        val landMarkName = placeUiModel.name
-        if (markerUrl == null || markerLatLng == null || landMarkName == null) return
-        GlobalScope.launch(Dispatchers.IO) {
-            val iconBitmap = getBitmapFromURL(markerUrl) ?: return@launch
-            withContext(Dispatchers.Main) {
-                val markerOptions = MarkerOptions()
-                    .position(markerLatLng)
-                    .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
-                    .title(landMarkName)
-                val marker = googleMap.addMarker(markerOptions)
-                marker?.let {
-                    viewModel.markerDataList.add(MarkerData(it, placeUiModel))
-                }
-
-
-            }
-        }
-    }
-
-    private fun getBitmapFromURL(url: String?): Bitmap? {
-        return try {
-            val inputStream = URL(url).openStream()
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-
-
-    private fun fetchPlacesNearMyLocation() {
-        MyApp.userCurrentLocation.collectIn(viewLifecycleOwner){
-            googleMap.clear()
-            googleMap.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(it.first, it.second),
-                    calculateZoomLevel((appPrefs.prefDistance).toDouble())
-                )
+    private fun fetchPlacesNearMyLocation(latLng: LatLng) {
+        googleMap.clear()
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                latLng,
+                12f
             )
-            googleMap.addMarker(MarkerOptions().position(LatLng(it.first, it.second)))
-            viewModel.fetchPlacesDetailsNearMe(
-                "${it.first},${it.second}",
-                appPrefs.prefDistance,
-                "tourist_attraction",
-                "",
-                GCP_API_KEY
-            )
-            viewModel.fetchCurrentAddressFromGeoCoding(
-                "${it.first},${it.second}",
-                GCP_API_KEY
-            )
-        }
+        )
+        googleMap.addMarker(MarkerOptions().position(latLng))
+        viewModel.fetchPlacesDetailsNearMe(
+            "${latLng.latitude},${latLng.longitude}",
+            appPrefs.prefDistance,
+            "tourist_attraction",
+            "",
+            GCP_API_KEY
+        )
+        viewModel.fetchCurrentAddressFromGeoCoding(
+            "${latLng.latitude},${latLng.longitude}",
+            GCP_API_KEY
+        )
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -271,49 +203,15 @@ class LocationSearchFragment :
             Log.e("JAPAN", "Can't find style. Error: ", e)
         }
 
-        // You can set other configurations as needed
-        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL;
-        clusterManager = ClusterManager<MyClusterItem>(requireContext(), googleMap)
-//        clusterManager.renderer = RenderClusterInfoWindow(requireContext(),googleMap,clusterManager)
-//        googleMap.setOnCameraIdleListener(clusterManager)
-        googleMap.setOnMarkerClickListener(this)
-
 
 
     }
 
-    private fun setLocationClusters(placeUiModels: List<PlaceUiModel>) {
-        val clusterItems = placeUiModels.map { MyClusterItem(it.latLng?.latitude!!,it.latLng?.longitude!!,it.name.toString(),it.address.toString(),it.icon.toString()) }
-        clusterManager.addItems(clusterItems)
-        clusterManager.cluster()
-    }
+
 
     override fun onResume() {
         super.onResume()
-
         mapView.onResume()
-        MyApp.nearByAttractions.apply {
-            viewModel.markerDataList.clear()
-            forEach { placeUiModel ->
-                setLocationMarkers(placeUiModel)
-            }
-            placesAdapter.setNearByPlaces(this)
-        }
-        MyApp.searchedLatLng?.let {
-           try {
-               lifecycleScope.launch(Dispatchers.IO) {
-                  // delay(500)
-                   withContext(Dispatchers.Main){
-                       googleMap.clear()
-                       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, calculateZoomLevel((appPrefs.prefDistance).toDouble())))
-                       googleMap.addMarker(MarkerOptions().position(it))
-                   }
-               }
-           }catch (e : Exception){
-               e.printStackTrace()
-
-           }
-        }
     }
 
     override fun onPause() {
@@ -337,55 +235,11 @@ class LocationSearchFragment :
     }
 
 
-    private class RenderClusterInfoWindow constructor(
-        private val context: Context,
-        private val map: GoogleMap?,
-        private val clusterManager: ClusterManager<MyClusterItem>
-    ) :
-        DefaultClusterRenderer<MyClusterItem>(context, map, clusterManager) {
-
-        override fun onClusterRendered(cluster: Cluster<MyClusterItem>, marker: Marker) {
-            super.onClusterRendered(cluster, marker)
-
-        }
-
-        override fun onBeforeClusterItemRendered(item: MyClusterItem, markerOptions: MarkerOptions) {
-            markerOptions.title(item.name)
-            Glide.with(context)
-                .asBitmap()
-                .load(item.iconUrl)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(bitmap: Bitmap, transition: Transition<in Bitmap>?) {
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                        clusterManager.cluster()
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        // Handle clearing the load state if needed
-                    }
-                })
-            super.onBeforeClusterItemRendered(item, markerOptions)
-        }
-    }
-
     override fun onMarkerClick(currentMarker: Marker): Boolean {
-        val markerPlaceUiModel =
-            viewModel.markerDataList.find { it.marker == currentMarker }?.placeUiModel
-        Bundle().apply {
-            putParcelable("LANDMARK_DATA", markerPlaceUiModel)
-            findNavController().navigate(R.id.locationDetailsFragment, this)
-        }
+
         return true
     }
 
-    fun calculateZoomLevel(radiusInMeters: Double): Float {
 
-
-        // Calculate the zoom level based on the desired radius
-        val zoomLevel = (radiusInMeters/1000).toFloat()
-
-        // Ensure the zoom level is within a reasonable range
-        return if(zoomLevel < 8) 15f else if(zoomLevel < 11) 10f else 12f
-    }
 
 }
