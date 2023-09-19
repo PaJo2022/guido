@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.model.PlaceType
+import com.guido.app.model.PlaceTypeContainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -28,86 +29,83 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
         }
     }
 
-
-    private val placeTypes = listOf(
-        PlaceType("airport", "Airport"),
-        PlaceType("amusement_park", "Amusement Park"),
-        PlaceType("aquarium", "Aquarium"),
-        PlaceType("art_gallery", "Art Gallery"),
-        PlaceType("bakery", "Bakery"),
-        PlaceType("bank", "Bank"),
-        PlaceType("bar", "Bar"),
-        PlaceType("beauty_salon", "Beauty Salon"),
-        PlaceType("bicycle_store", "Bicycle Store"),
-        PlaceType("book_store", "Book Store"),
-        PlaceType("bus_station", "Bus Station"),
-        PlaceType("cafe", "Cafe"),
-        PlaceType("campground", "Campground"),
-        PlaceType("car_rental", "Car Rental"),
-        PlaceType("car_repair", "Car Repair"),
-        PlaceType("casino", "Casino"),
-        PlaceType("church", "Church"),
-        PlaceType("city_hall", "City Hall"),
-        PlaceType("clothing_store", "Clothing Store"),
-        PlaceType("convenience_store", "Convenience Store"),
-        PlaceType("courthouse", "Courthouse"),
-        PlaceType("dentist", "Dentist"),
-        PlaceType("department_store", "Department Store"),
-        PlaceType("doctor", "Doctor"),
-        PlaceType("electrician", "Electrician"),
-        PlaceType("electronics_store", "Electronics Store"),
-        PlaceType("embassy", "Embassy"),
-        PlaceType("fire_station", "Fire Station"),
-        PlaceType("florist", "Florist"),
-        PlaceType("furniture_store", "Furniture Store"),
-        PlaceType("gas_station", "Gas Station"),
-        PlaceType("gym", "Gym"),
-        PlaceType("hair_care", "Hair Care"),
-        PlaceType("hardware_store", "Hardware Store"),
-        PlaceType("hindu_temple", "Hindu Temple"),
-        PlaceType("home_goods_store", "Home Goods Store"),
-        PlaceType("hospital", "Hospital"),
-        PlaceType("hotel", "Hotel"),  // Added 'Hotel'
-        PlaceType("jewelry_store", "Jewelry Store"),
-        PlaceType("laundry", "Laundry"),
-        PlaceType("library", "Library"),
-        PlaceType("liquor_store", "Liquor Store"),
-        PlaceType("lodging", "Lodging"),
-        PlaceType("meal_delivery", "Meal Delivery"),
-        PlaceType("meal_takeaway", "Meal Takeaway"),
-        PlaceType("mosque", "Mosque"),
-        PlaceType("movie_theater", "Movie Theater"),
-        PlaceType("museum", "Museum"),
-        PlaceType("night_club", "Night Club"),
-        PlaceType("painter", "Painter"),
-        PlaceType("park", "Park"),
-        PlaceType("parking", "Parking"),
-        PlaceType("pharmacy", "Pharmacy"),
-        PlaceType("physiotherapist", "Physiotherapist"),
-        PlaceType("plumber", "Plumber"),
-        PlaceType("police", "Police"),
-        PlaceType("post_office", "Post Office"),
-        PlaceType("restaurant", "Restaurant"),
-        PlaceType("roofing_contractor", "Roofing Contractor"),
-        PlaceType("rv_park", "RV Park"),
-        PlaceType("school", "School"),
-        PlaceType("shoe_store", "Shoe Store"),
-        PlaceType("shopping_mall", "Shopping Mall"),
-        PlaceType("spa", "Spa"),
-        PlaceType("stadium", "Stadium"),
-        PlaceType("store", "Store"),
-        PlaceType("subway_station", "Subway Station"),
-        PlaceType("supermarket", "Supermarket"),
-        PlaceType("synagogue", "Synagogue"),
-        PlaceType("taxi_stand", "Taxi Stand"),
-        PlaceType("tourist_attraction", "Tourist Attraction"),
-        PlaceType("train_station", "Train Station"),
-        PlaceType("travel_agency", "Travel Agency"),
-        PlaceType("university", "University"),
-        PlaceType("zoo", "Zoo")
+    val placeTypes = listOf(
+        PlaceType("1", "Airport", "Service"),
+        PlaceType("2", "Amusement Park", "Entertainment"),
+        PlaceType("3", "Aquarium", "Entertainment"),
+        PlaceType("4", "Art Gallery", "Entertainment"),
+        PlaceType("5", "Bakery", "Shop"),
+        PlaceType("6", "Bank", "Shop"),
+        PlaceType("7", "Bar", "Shop"),
+        PlaceType("8", "Beauty Salon", "Shop"),
+        PlaceType("9", "Book Store", "Shop"),
+        PlaceType("10", "Bus Station", "Service"),
+        PlaceType("11", "Cafe", "Shop"),
+        PlaceType("12", "Campground", "Entertainment"),
+        PlaceType("13", "Car Rental", "Service"),
+        PlaceType("14", "Car Repair", "Service"),
+        PlaceType("15", "Casino", "Entertainment"),
+        PlaceType("16", "Church", "Service"),
+        PlaceType("17", "City Hall", "Service"),
+        PlaceType("18", "Clothing Store", "Shop"),
+        PlaceType("19", "Convenience Store", "Shop"),
+        PlaceType("20", "Courthouse", "Service"),
+        PlaceType("21", "Dentist", "Service"),
+        PlaceType("22", "Department Store", "Shop"),
+        PlaceType("23", "Doctor", "Service"),
+        PlaceType("24", "Electrician", "Service"),
+        PlaceType("25", "Electronics Store", "Shop"),
+        PlaceType("26", "Embassy", "Service"),
+        PlaceType("27", "Fire Station", "Service"),
+        PlaceType("28", "Florist", "Shop"),
+        PlaceType("29", "Furniture Store", "Shop"),
+        PlaceType("30", "Gas Station", "Service"),
+        PlaceType("31", "Gym", "Shop"),
+        PlaceType("32", "Hair Care", "Shop"),
+        PlaceType("33", "Hardware Store", "Shop"),
+        PlaceType("34", "Hindu Temple", "Service"),
+        PlaceType("35", "Home Goods Store", "Shop"),
+        PlaceType("36", "Hospital", "Service"),
+        PlaceType("37", "Hotel", "Lodging"),
+        PlaceType("38", "Jewelry Store", "Shop"),
+        PlaceType("39", "Laundry", "Service"),
+        PlaceType("40", "Library", "Entertainment"),
+        PlaceType("41", "Liquor Store", "Shop"),
+        PlaceType("42", "Lodging", "Lodging"),
+        PlaceType("43", "Meal Delivery", "Service"),
+        PlaceType("44", "Meal Takeaway", "Service"),
+        PlaceType("45", "Mosque", "Service"),
+        PlaceType("46", "Movie Theater", "Entertainment"),
+        PlaceType("47", "Museum", "Entertainment"),
+        PlaceType("48", "Night Club", "Entertainment"),
+        PlaceType("49", "Painter", "Service"),
+        PlaceType("50", "Park", "Entertainment"),
+        PlaceType("51", "Parking", "Service"),
+        PlaceType("52", "Pharmacy", "Shop"),
+        PlaceType("53", "Physiotherapist", "Service"),
+        PlaceType("54", "Plumber", "Service"),
+        PlaceType("55", "Police", "Service"),
+        PlaceType("56", "Post Office", "Service"),
+        PlaceType("57", "Restaurant", "Shop"),
+        PlaceType("58", "Roofing Contractor", "Service"),
+        PlaceType("59", "RV Park", "Lodging"),
+        PlaceType("60", "School", "Service"),
+        PlaceType("61", "Shoe Store", "Shop"),
+        PlaceType("62", "Shopping Mall", "Shop"),
+        PlaceType("63", "Spa", "Shop"),
+        PlaceType("64", "Stadium", "Entertainment"),
+        PlaceType("65", "Store", "Shop"),
+        PlaceType("66", "Subway Station", "Service"),
+        PlaceType("67", "Supermarket", "Shop"),
+        PlaceType("68", "Synagogue", "Service"),
+        PlaceType("69", "Taxi Stand", "Service"),
+        PlaceType("70", "Tourist Attraction", "Entertainment"),
+        PlaceType("71", "Train Station", "Service"),
+        PlaceType("72", "Travel Agency", "Service"),
+        PlaceType("73", "University", "Education"),
+        PlaceType("74", "Zoo", "Entertainment")
     )
-
-    val userInterestes : MutableLiveData<List<PlaceType>> = MutableLiveData()
+    val userInterestes : MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
 
     init {
         getSavedPlaceTypePreferences()
@@ -122,7 +120,13 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
                         }
                     }
                     job.await()
-                    userInterestes.postValue(placeTypes)
+                    val groupedPlaceTypes = placeTypes.groupBy { it.type }
+
+                    // Map the grouped results into PlaceTypeContainer objects
+                    val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
+                        PlaceTypeContainer(type, placeTypeList)
+                    }
+                    userInterestes.postValue(placeTypeContainers)
                 }
             }
         }
@@ -131,7 +135,13 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
         viewModelScope.launch {
             val isSelected = placeTypes.find { it.id == id }?.isSelected ?: false
             placeTypes.find { it.id == id }?.isSelected = !isSelected
-            userInterestes.postValue(placeTypes)
+            val groupedPlaceTypes = placeTypes.groupBy { it.type }
+
+            // Map the grouped results into PlaceTypeContainer objects
+            val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
+                PlaceTypeContainer(type, placeTypeList)
+            }
+            userInterestes.postValue(placeTypeContainers)
         }
     }
 

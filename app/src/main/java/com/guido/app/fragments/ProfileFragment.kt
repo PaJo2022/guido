@@ -11,10 +11,8 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.guido.app.BaseFragment
-import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeChipAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
@@ -46,18 +44,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         super.onResume()
         val currentDistanceInPref = appPrefs.prefDistance
         binding.seekbarDistance.progress = currentDistanceInPref / 1000
-        binding.seekbarDistance.thumb = getThumb("${currentDistanceInPref / 1000} Km")
+        binding.tvDistance.text = "${currentDistanceInPref / 1000} Km"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MyApp.userCurrentFormattedAddress?.apply {
-            binding.etUserAddress.setText(this)
-        }
+
         binding.apply {
             seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                    binding.seekbarDistance.thumb = getThumb("${p1} Km")
+                    binding.tvDistance.text = "$p1 Km"
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -70,22 +66,15 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 }
 
             })
-            profileImage.setOnClickListener {
-                findNavController().popBackStack()
-            }
+
             rvInterests.apply {
                 addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
                 adapter = placesTypeChipAdapter
                 layoutManager =
                     GridLayoutManager(requireContext(), 5, GridLayoutManager.VERTICAL, false)
             }
-            btnSave.setOnClickListener {
-                viewModel.savePlaceTypePreferences()
-                appPrefs.prefDistance = viewModel.distanceProgress
-                MyApp.isPrefUpdated.value = true
-                findNavController().popBackStack()
-            }
-            }
+
+        }
 
         viewModel.apply {
             userInterestes.observe(viewLifecycleOwner){
@@ -100,18 +89,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
 
-    private fun getThumb(time: String?): Drawable {
-        (thumbView.findViewById(R.id.tvProgress) as TextView).text = time
-        thumbView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-        val bitmap = Bitmap.createBitmap(
-            thumbView.measuredWidth,
-            thumbView.measuredHeight,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        thumbView.layout(0, 0, thumbView.measuredWidth, thumbView.measuredHeight)
-        thumbView.draw(canvas)
-        return BitmapDrawable(resources, bitmap)
-    }
+
 
 }
