@@ -114,7 +114,7 @@ class HomeViewModel @Inject constructor(
     ) {
         fetchSearchedLocationAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
-            nearByAttractions.clear()
+            nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
 //            placesRepository.getAllSavedPlaceTypePreferences().collect {
 //                if(it.size > 5) return@collect
@@ -212,6 +212,7 @@ class HomeViewModel @Inject constructor(
     fun fetchCurrentLocation(){
         viewModelScope.launch(Dispatchers.IO) {
             val currentLocation = locationClient.getCurrentLocation()
+            MyApp.userCurrentLatLng = currentLocation
             currentLocation?.let {
                 _currentLatLng.emit(it)
             }

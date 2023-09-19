@@ -6,6 +6,8 @@ import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -27,14 +29,21 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
+import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.adapters.PlacesHorizontalListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.isVisibleAndEnable
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 @AndroidEntryPoint
@@ -108,7 +117,7 @@ class HomeFragment :
                 adapter = placesAdapter
                 layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
             }
-            ivRoundBackground.setOnClickListener {
+            binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission()
             }
             tvSearchLocations.setOnClickListener {
@@ -117,19 +126,49 @@ class HomeFragment :
 
             rvPlaceCards.apply {
                 adapter = placesHorizontalAdapter
-                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
             ivSoundTimer.setOnClickListener {
                 findNavController().navigate(R.id.profileFragment)
             }
+            bottomsheetPlaceList.bottomSheet
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
 
+// Configure BottomSheet behavior
+
+// Configure BottomSheet behavior
+        val bottomSheetBehavior =
+            BottomSheetBehavior.from<LinearLayout>(binding.bottomsheetPlaceList.bottomSheet)
 
 
+
+        val peekHeight = resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._150sdp)
+        bottomSheetBehavior.peekHeight = peekHeight
+        bottomSheetBehavior.isHideable = false
+
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // Handle state changes as needed
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+
+                    }
+
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
         observeData()
-
 
 
     }
@@ -208,7 +247,7 @@ class HomeFragment :
         googleMap.setOnMarkerClickListener(this)
         // Set the info window close listener
         googleMap.setOnInfoWindowCloseListener(this)
-        googleMap.setOnMapClickListener {latLng->
+        googleMap.setOnMapClickListener { latLng ->
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
@@ -218,8 +257,59 @@ class HomeFragment :
             binding.rvPlaceCards.isVisible = false
         }
 
+        googleMap.setOnCameraIdleListener {
+            val cameraPosition = googleMap.cameraPosition.target
+            MyApp.userCurrentLatLng?.let {
+                val isAtHomePlace = isDistanceUnder50Meters(
+                    MyApp.userCurrentLatLng!!.latitude,
+                    MyApp.userCurrentLatLng!!.longitude,
+                    cameraPosition.latitude,
+                    cameraPosition.longitude
+                )
+
+                binding.apply {
+                    llSearchHere.isVisible = !isAtHomePlace
+                    bottomsheetPlaceList.apply {
+                        llLocateMe.root.isVisibleAndEnable(!isAtHomePlace)
+                    }
+                    llSearchHere.setOnClickListener {
+                        fetchPlacesNearMyLocation(cameraPosition)
+                    }
+                }
+            }
+
+        }
+
+
     }
 
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val radius = 6371 // Earth's radius in kilometers
+
+        // Convert latitude and longitude from degrees to radians
+        val lat1Rad = Math.toRadians(lat1)
+        val lon1Rad = Math.toRadians(lon1)
+        val lat2Rad = Math.toRadians(lat2)
+        val lon2Rad = Math.toRadians(lon2)
+
+        // Calculate the differences
+        val dLat = lat2Rad - lat1Rad
+        val dLon = lon2Rad - lon1Rad
+
+        // Calculate the Haversine distance
+        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        // Calculate the distance in meters
+        val distance = radius * c * 1000 // Convert to meters
+
+        return distance
+    }
+
+    fun isDistanceUnder50Meters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
+        val distance = calculateDistance(lat1, lon1, lat2, lon2)
+        return distance < 50
+    }
 
 
     override fun onResume() {

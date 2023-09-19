@@ -122,30 +122,12 @@
         </androidx.cardview.widget.CardView>
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_round_background"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:src="@color/color_primary"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_12sdp"
-            app:layout_constraintBottom_toTopOf="@+id/rv_place_cards"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_locate_me"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_round_background"
-            app:layout_constraintEnd_toEndOf="@+id/iv_round_background"
-            app:layout_constraintStart_toStartOf="@+id/iv_round_background"
-            app:layout_constraintTop_toTopOf="@+id/iv_round_background" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_place_cards"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -59,21 +59,6 @@ class MainActivity : AppCompatActivity() {
             val location = locationClient.getCurrentLocation()
 
         }
-        locationClient
-            .getLocationUpdates(10000L).collectIn(this){location->
 
-                val lat = location.latitude.safeDouble()
-                val long = location.longitude.safeDouble()
-                if (!MyApp.isCurrentLocationFetched) {
-                    lifecycleScope.launch {
-                        userCurrentLocation.emit(Pair(lat, long))
-                    }
-                    MyApp.isCurrentLocationFetched = true
-                    MyApp.searchedLatLng = LatLng(
-                        location.latitude,
-                        location.longitude
-                    )
-                }
-            }
     }
 }

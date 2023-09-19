@@ -15,7 +15,7 @@ class MyApp : Application() {
 
     companion object{
         var nearByAttractions: ArrayList<PlaceTypeUiModel> = ArrayList()
-        var searchedLatLng: LatLng?= null
+        var userCurrentLatLng: LatLng?= null
         var isCurrentLocationFetched : Boolean = false
          var userCurrentLocation : MutableSharedFlow<Pair<Double,Double>> = MutableSharedFlow()
          var userCurrentFormattedAddress : String ?= null
