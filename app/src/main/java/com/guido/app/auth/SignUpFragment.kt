@@ -21,11 +21,11 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.signUpBtn.setOnClickListener {
-            appPrefs.isUserLoggedIn = true
-            findNavController().popBackStack(R.id.loginFragment,true)
-            findNavController().navigate(R.id.locationSearchFragment)
-        }
+//        binding.signUpBtn.setOnClickListener {
+//            appPrefs.isUserLoggedIn = true
+//            findNavController().popBackStack(R.id.loginFragment,true)
+//            findNavController().navigate(R.id.locationSearchFragment)
+//        }
 
     }
 

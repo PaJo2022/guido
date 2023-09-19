@@ -19,26 +19,26 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            linearLayout.setOnClickListener {
-                appPrefs.isUserLoggedIn = true
-                findNavController().popBackStack()
-                findNavController().navigate(R.id.locationSearchFragment)
-            }
-            button.setOnClickListener {
-                appPrefs.isUserLoggedIn = true
-                findNavController().popBackStack()
-                findNavController().navigate(R.id.locationSearchFragment)
-            }
-            tvSignUp.setOnClickListener {
-                findNavController().navigate(R.id.signupFragment)
-            }
-        }
+//        binding.apply {
+//            linearLayout.setOnClickListener {
+//                appPrefs.isUserLoggedIn = true
+//                findNavController().popBackStack()
+//                findNavController().navigate(R.id.locationSearchFragment)
+//            }
+//            button.setOnClickListener {
+//                appPrefs.isUserLoggedIn = true
+//                findNavController().popBackStack()
+//                findNavController().navigate(R.id.locationSearchFragment)
+//            }
+//            tvSignUp.setOnClickListener {
+//                findNavController().navigate(R.id.signupFragment)
+//            }
+//        }
 
-        if(appPrefs.isUserLoggedIn){
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.locationSearchFragment)
-        }
+//        if(appPrefs.isUserLoggedIn){
+//            findNavController().popBackStack()
+//            findNavController().navigate(R.id.locationSearchFragment)
+//        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.guido.app.fragments
+package com.guido.app.adapters
 
 
 import android.content.Context
@@ -31,8 +31,7 @@ class PlacesAutoCompleteAdapter(private val mContext: Context) :
     inner class PredictionHolder(private val binding: PlaceRecyclerItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(placeAutocomplete: PlaceAutocomplete) {
-            binding.area.text = placeAutocomplete.area
-            binding.address.text = placeAutocomplete.address
+            binding.address.text = placeAutocomplete.address + " , " + placeAutocomplete.area
             binding.root.setOnClickListener {
                 _onPlaceSelected?.invoke(placeAutocomplete.placeId)
             }
@@ -40,7 +39,7 @@ class PlacesAutoCompleteAdapter(private val mContext: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PredictionHolder(
-        PlaceRecyclerItemLayoutBinding.inflate(LayoutInflater.from(parent.context))
+        PlaceRecyclerItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun getItemCount() = _predictedLocations.size

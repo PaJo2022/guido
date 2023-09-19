@@ -1,85 +1,57 @@
 package com.guido.app.fragments
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.SnapHelper
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.maps.android.clustering.Cluster
-import com.google.maps.android.clustering.ClusterManager
-import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
-import com.guido.app.MainActivity
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
-import com.guido.app.MyApp
 import com.guido.app.R
 import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.adapters.PlacesHorizontalListAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
-import com.guido.app.model.MarkerData
-import com.guido.app.model.MyClusterItem
-import com.guido.app.model.placesUiModel.PlaceUiModel
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.net.URL
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class LocationSearchFragment :
+class HomeFragment :
     BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
-    OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener {
+    OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener, GoogleMap.OnCameraMoveListener {
 
 
 
-    private  val viewModel: LocationSearchViewModel by activityViewModels()
+    private  val viewModel: HomeViewModel by activityViewModels()
+    private val sharedViewModel : SharedViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
+    private lateinit var mMap: GoogleMap
+
     // private val zoom = 16f
 
     @Inject
@@ -90,6 +62,7 @@ class LocationSearchFragment :
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
+        checkLocationPermission()
     }
 
 
@@ -124,11 +97,18 @@ class LocationSearchFragment :
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+
         val snapHelper1: SnapHelper = PagerSnapHelper()
 
         binding.apply {
             llSearchHere.setOnClickListener {
+
+            }
+            ivRoundBackground.setOnClickListener {
                 checkLocationPermission()
+            }
+            tvSearchLocations.setOnClickListener {
+                findNavController().navigate(R.id.discover_fragment)
             }
             rvPlaces.apply {
                 adapter = placesAdapter
@@ -138,11 +118,14 @@ class LocationSearchFragment :
                 adapter = placesHorizontalAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
             }
+            ivSoundTimer.setOnClickListener {
+                findNavController().navigate(R.id.profileFragment)
+            }
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
 
-        checkLocationPermission()
+
 
         observeData()
         val bottomSheetContainer = binding.bottomSheetContainer
@@ -176,6 +159,20 @@ class LocationSearchFragment :
                     place.latLng?.let { it1 -> addMarker(it1,place.name.toString()) }
                 }
                 placesHorizontalAdapter.setNearByPlaces(it)
+            }
+            moveToLocation.collectIn(viewLifecycleOwner){latLng->
+                googleMap.clear()
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        latLng,
+                        12f
+                    )
+                )
+            }
+        }
+        sharedViewModel.apply {
+            onLocationSelected.observe(viewLifecycleOwner){
+                viewModel.fetchPlaceDetailsById(it)
             }
         }
     }
@@ -223,7 +220,15 @@ class LocationSearchFragment :
         googleMap.setOnMarkerClickListener(this)
         // Set the info window close listener
         googleMap.setOnInfoWindowCloseListener(this)
-
+        googleMap.setOnMapClickListener {latLng->
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    latLng,
+                    12f
+                )
+            )
+            binding.rvPlaceCards.isVisible = false
+        }
 
     }
 
@@ -271,6 +276,13 @@ class LocationSearchFragment :
 
     override fun onInfoWindowClose(p0: Marker) {
        binding.rvPlaceCards.isVisible = false
+    }
+
+    override fun onCameraMove() {
+        // Get the new center position of the map when the camera stops moving
+        val newCenter = mMap.cameraPosition.target
+
+        binding.tvSearchLocations.text = newCenter.toString()
     }
 
 

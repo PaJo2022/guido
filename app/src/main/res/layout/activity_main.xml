@@ -10,30 +10,14 @@
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_navigation_graph" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        app:itemTextAppearanceActive="@style/BottomNavigationViewTextStyle"
-        app:itemTextAppearanceInactive="@style/BottomNavigationViewTextStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:itemTextColor="@color/bottom_nav_text_color_selector"
-        android:background="@color/color_fourth"
-        app:itemBackground="@null"
-        app:itemRippleColor="@null"
-        app:labelVisibilityMode="labeled"
-        android:paddingVertical="@dimen/_2sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="0dp"
-        app:menu="@menu/menu" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
