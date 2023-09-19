@@ -119,6 +119,7 @@ class LocationSearchViewModel @Inject constructor(
         fetchSearchedLocationAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
             nearByAttractions.clear()
+            nearByPlacesList.clear()
             placesRepository.getAllSavedPlaceTypePreferences().collect {
                 if(it.size > 5) return@collect
                 val job = async {
@@ -140,7 +141,7 @@ class LocationSearchViewModel @Inject constructor(
                 }
                 job.await()
                 _nearByPlacesInGroup.emit(nearByPlacesListInGroup)
-                _nearByPlaces.emit(nearByPlacesList)
+                _nearByPlaces.emit(ArrayList(nearByPlacesList))
             }
 
         }

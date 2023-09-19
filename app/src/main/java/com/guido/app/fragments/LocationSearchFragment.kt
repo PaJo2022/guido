@@ -57,6 +57,7 @@ import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
 import com.guido.app.model.MyClusterItem
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -70,7 +71,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LocationSearchFragment :
     BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
-    OnMapReadyCallback, OnMarkerClickListener {
+    OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener {
 
 
 
@@ -171,6 +172,9 @@ class LocationSearchFragment :
                 placesAdapter.setNearByPlaces(it)
             }
             nearByPlaces.collectIn(viewLifecycleOwner){
+                it.forEach {place->
+                    place.latLng?.let { it1 -> addMarker(it1,place.name.toString()) }
+                }
                 placesHorizontalAdapter.setNearByPlaces(it)
             }
         }
@@ -216,6 +220,9 @@ class LocationSearchFragment :
             Log.e("JAPAN", "Can't find style. Error: ", e)
         }
 
+        googleMap.setOnMarkerClickListener(this)
+        // Set the info window close listener
+        googleMap.setOnInfoWindowCloseListener(this)
 
 
     }
@@ -249,10 +256,22 @@ class LocationSearchFragment :
 
 
     override fun onMarkerClick(currentMarker: Marker): Boolean {
-
-        return true
+        binding.rvPlaceCards.isVisible = true
+        return false
     }
 
+
+    private fun addMarker(latLng: LatLng, name: String) {
+        val markerOptions = MarkerOptions()
+            .position(latLng)
+            .title(name)
+        val marker = googleMap.addMarker(markerOptions)
+        // Customize marker icon or other properties as needed.
+    }
+
+    override fun onInfoWindowClose(p0: Marker) {
+       binding.rvPlaceCards.isVisible = false
+    }
 
 
 }

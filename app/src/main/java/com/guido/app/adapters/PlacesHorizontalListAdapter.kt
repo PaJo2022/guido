@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.guido.app.Constants
 import com.guido.app.databinding.ViewpagerCardPlaceItemBinding
 import com.guido.app.getScreenHeight
 import com.guido.app.getScreenWidth
@@ -47,11 +48,15 @@ class PlacesHorizontalListAdapter(private val appContext: Context) :
                 layoutParams.width = newWidth
                 binding.parentLayout.layoutParams = layoutParams
 
+                val customObject = place.photos?.firstOrNull()
+                val photoUrl =
+                    "https://maps.googleapis.com/maps/api/place/photo?photoreference=${customObject?.photo_reference}&sensor=false&maxheight=${customObject?.height}&maxwidth=${customObject?.width}&key=${Constants.GCP_API_KEY}"
 
-
-                Glide.with(appContext).load(place.photos?.firstOrNull()?.toString()).into(ivPlace)
+                Glide.with(appContext).load(photoUrl).centerCrop().into(ivPlace)
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
+                placeRating.rating = place.rating?.toFloat() ?: 0f
+                placeRatingText.text = "(${place.rating ?: 0.0})"
             }
         }
     }
