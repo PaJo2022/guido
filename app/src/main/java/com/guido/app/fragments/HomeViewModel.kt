@@ -139,7 +139,7 @@ class HomeViewModel @Inject constructor(
 //                _nearByPlaces.emit(ArrayList(nearByPlacesList))
 //            }
             val interestList =
-                arrayListOf<PlaceType>(PlaceType("1", "bar", "bar"), PlaceType("2", "bank", "bank"))
+                arrayListOf<PlaceType>(PlaceType("bar", "bar", "bar"), PlaceType("bank", "bank", "bank"))
             val job = async {
                 interestList.forEach { placeType ->
                     val job2 = async {

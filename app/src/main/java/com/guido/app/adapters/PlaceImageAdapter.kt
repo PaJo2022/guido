@@ -11,6 +11,7 @@ import com.guido.app.databinding.LayoutPlacesStoryItemBinding
 import com.guido.app.databinding.LayoutPlacesVideoItemBinding
 import com.guido.app.model.PlaceDetailsUiModel
 import com.guido.app.model.places.Photo
+import com.guido.app.model.placesUiModel.PlaceUiModel
 
 class PlaceImageAdapter(
     private val appContext: Context
@@ -24,6 +25,12 @@ class PlaceImageAdapter(
         notifyDataSetChanged()
     }
 
+    private var _onItemClickListener: ((String) -> Any?)? = null
+
+    fun setOnPhotoClicked(onItemClickListener : ((String) -> Any?)){
+        _onItemClickListener = onItemClickListener
+    }
+
     inner class PlaceImageViewHolder(private val binding: LayoutPlacesImagesItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(photo: Photo) {
@@ -31,6 +38,9 @@ class PlaceImageAdapter(
                 "https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo.photo_reference}&sensor=false&maxheight=${photo.height}&maxwidth=${photo.width}&key=${Constants.GCP_API_KEY}"
 
             Glide.with(appContext).load(photoUrl).centerCrop().into(binding.ivPlaceImage)
+            binding.ivPlaceImage.setOnClickListener {
+                _onItemClickListener?.invoke(photoUrl)
+            }
         }
     }
 

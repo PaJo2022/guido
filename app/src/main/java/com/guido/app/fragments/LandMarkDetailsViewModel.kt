@@ -6,9 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guido.app.Constants.GCP_API_KEY
+import com.guido.app.MyApp
+import com.guido.app.calculateDistance
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.data.tourData.TourDataRepository
 import com.guido.app.data.videos.VideoRepository
+import com.guido.app.formatDouble
 import com.guido.app.model.PlaceDetailsUiModel
 import com.guido.app.model.chatGptModel.ChatGptRequest
 import com.guido.app.model.chatGptModel.ChatGptResponse
@@ -40,6 +43,9 @@ class LandMarkDetailsViewModel @Inject constructor(
     private val _landMarkTourDataData: MutableLiveData<String> = MutableLiveData()
     val landMarkTourDataData: LiveData<String> = _landMarkTourDataData
 
+    private val _placeDistance: MutableLiveData<String> = MutableLiveData()
+    val placeDistance: LiveData<String> = _placeDistance
+
     init {
         placesDetailsUiModel = PlaceDetailsUiModel()
     }
@@ -54,6 +60,15 @@ class LandMarkDetailsViewModel @Inject constructor(
             _singlePlaceData.postValue(placeData)
         }
 
+    }
+
+    fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?){
+        val placeLatLng = placeUiModel?.latLng ?: return
+
+        val myPlaceLatLng = MyApp.userCurrentLatLng ?: return
+
+        val totalDistance = calculateDistance(myPlaceLatLng.latitude,myPlaceLatLng.longitude,placeLatLng.latitude,placeLatLng.longitude) / 1000
+        _placeDistance.value = "${formatDouble(totalDistance)} Km"
     }
 
     private fun setPlaceVideoData(locationVideos: List<VideoUiModel>) {

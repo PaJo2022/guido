@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.guido.app.BaseFragment
 import com.guido.app.Constants
 import com.guido.app.adapters.CustomItemDecoration
 import com.guido.app.adapters.PlaceImageAdapter
+import com.guido.app.adapters.PlaceReviewAdapter
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,12 +24,14 @@ class LocationDetailsFragment :
 
     private lateinit var viewModel: LandMarkDetailsViewModel
     private lateinit var adapterPlaceImages: PlaceImageAdapter
+    private lateinit var adapterPlaceReview: PlaceReviewAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[LandMarkDetailsViewModel::class.java]
         adapterPlaceImages = PlaceImageAdapter(requireContext())
+        adapterPlaceReview = PlaceReviewAdapter(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,18 +46,28 @@ class LocationDetailsFragment :
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
+            rvPlaceReviews.apply {
+                adapter = adapterPlaceReview
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
         }
         viewModel.apply {
             getSinglePlaceDetails(placeUiModel)
+            getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel)
             placeUiModel?.name?.let {
                 fetchAllDataForTheLocation(it)
+            }
+            placeDistance.observe(viewLifecycleOwner) {
+                binding.tvPlaceDistance.text = it
+
             }
             landMarkData.observe(viewLifecycleOwner) {
 
 
             }
             singlePlaceData.observe(viewLifecycleOwner) {
-                val apply = binding.apply {
+                binding.apply {
                     val customObject = it?.photos?.firstOrNull()
                     val photoUrl =
                         "https://maps.googleapis.com/maps/api/place/photo?photoreference=${customObject?.photo_reference}&sensor=false&maxheight=${customObject?.height}&maxwidth=${customObject?.width}&key=${Constants.GCP_API_KEY}"
@@ -63,9 +77,13 @@ class LocationDetailsFragment :
                     tvPlaceAddress.text = it?.address
                     tvPlaceMobile.text = it?.callNumber ?: "No Contact Number"
                     tvPlaceWebsite.text = it?.website ?: "No Website"
+                    llPlaceReviews.isVisible =  !it?.reviews.isNullOrEmpty()
                 }
                 it?.photos?.let { photos ->
                     adapterPlaceImages.setPlacePhotos(photos)
+                }
+                it?.reviews?.let {
+                    adapterPlaceReview.setPlaceReviews(it)
                 }
 
             }
@@ -74,6 +92,9 @@ class LocationDetailsFragment :
             }
         }
 
+        adapterPlaceImages.setOnPhotoClicked {photoUrl->
+            Glide.with(requireContext()).load(photoUrl).centerCrop().into(binding.ivPlaceImage)
+        }
 
     }
 

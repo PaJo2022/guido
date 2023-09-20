@@ -34,6 +34,7 @@ import com.guido.app.MyApp.Companion.googleMap
 import com.guido.app.R
 import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.adapters.PlacesHorizontalListAdapter
+import com.guido.app.calculateDistance
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
@@ -300,28 +301,7 @@ class HomeFragment :
 
     }
 
-    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val radius = 6371 // Earth's radius in kilometers
 
-        // Convert latitude and longitude from degrees to radians
-        val lat1Rad = Math.toRadians(lat1)
-        val lon1Rad = Math.toRadians(lon1)
-        val lat2Rad = Math.toRadians(lat2)
-        val lon2Rad = Math.toRadians(lon2)
-
-        // Calculate the differences
-        val dLat = lat2Rad - lat1Rad
-        val dLon = lon2Rad - lon1Rad
-
-        // Calculate the Haversine distance
-        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-        // Calculate the distance in meters
-        val distance = radius * c * 1000 // Convert to meters
-
-        return distance
-    }
 
     fun isDistanceUnder50Meters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
         val distance = calculateDistance(lat1, lon1, lat2, lon2)
