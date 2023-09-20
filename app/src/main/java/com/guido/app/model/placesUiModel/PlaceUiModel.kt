@@ -23,6 +23,7 @@ data class PlaceUiModel(
     val isOpenNow: Boolean = false,
     val openTill: String? = null,
     val reviews: List<ReviewUiModel>? = null,
+    var isSelected : Boolean = false,
     var placeUiType: PlaceUiType = PlaceUiType.SMALL
 ) : Parcelable
 
@@ -42,6 +43,7 @@ fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
         it.isOpenNow,
         it.openTill,
         it.reviews,
+        it.isSelected,
         placeUiType
     )
 }

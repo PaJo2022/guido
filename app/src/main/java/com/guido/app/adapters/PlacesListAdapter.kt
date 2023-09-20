@@ -3,11 +3,16 @@ package com.guido.app.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.guido.app.Constants
+import com.guido.app.MyApp
+import com.guido.app.R
+import com.guido.app.calculateDistance
 import com.guido.app.databinding.LayoutPlaceItemBinding
 import com.guido.app.databinding.LayoutPlaceShimmerItemBinding
+import com.guido.app.formatDouble
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiType
 
@@ -56,8 +61,19 @@ class PlacesListAdapter(
                 Glide.with(appContext).load(photoUrl).centerCrop().into(placeImage)
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
+                tvPlaceIsOpen.apply {
+                    text = if(place.isOpenNow) "Open" else "Closed"
+                    val textColor = ContextCompat.getColor(appContext, if(place.isOpenNow) R.color.color_sound_compose_selected_color3 else R.color.white)
+                    setTextColor(textColor)
+                }
+                tvPlaceDescription.text = place.address
+                tvPlaceDescription.isSelected = true
                 placeRating.rating = place.rating?.toFloat() ?: 0f
                 placeRatingText.text = "(${place.rating ?: 0.0})"
+                placeDistance.text = getDistanceBetweenMyPlaceAndTheCurrentPlace(place)
+                root.setOnClickListener {
+                    onItemClickListener?.invoke(place)
+                }
 
             }
         }
@@ -69,6 +85,15 @@ class PlacesListAdapter(
 
         }
 
+    }
+
+    private fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?): String {
+        val placeLatLng = placeUiModel?.latLng ?: return ""
+
+        val myPlaceLatLng = MyApp.userCurrentLatLng ?: return ""
+
+        val totalDistance = calculateDistance(myPlaceLatLng.latitude,myPlaceLatLng.longitude,placeLatLng.latitude,placeLatLng.longitude) / 1000
+        return "${formatDouble(totalDistance)} Km"
     }
 
 

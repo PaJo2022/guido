@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -27,7 +26,10 @@ import com.guido.app.model.placesUiModel.addUiType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Arrays
 import javax.inject.Inject
@@ -54,10 +56,14 @@ class HomeViewModel @Inject constructor(
     val nearByPlaces: LiveData<List<PlaceUiModel>> get() = _nearByPlaces
 
 
-    private val _nearByPlacesMarkerPoints: MutableStateFlow<List<LatLng?>> = MutableStateFlow(
+    private val _nearByPlacesMarkerPoints: MutableStateFlow<List<PlaceUiModel>> = MutableStateFlow(
         emptyList()
     )
-    val nearByPlacesMarkerPoints: MutableStateFlow<List<LatLng?>> get() = _nearByPlacesMarkerPoints
+    val nearByPlacesMarkerPoints: StateFlow<List<PlaceUiModel>> get() = _nearByPlacesMarkerPoints
+
+
+    private val _scrollHorizontalPlaceListToPosition: MutableSharedFlow<Int> = MutableSharedFlow()
+    val scrollHorizontalPlaceListToPosition: SharedFlow<Int> get() = _scrollHorizontalPlaceListToPosition
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -147,7 +153,7 @@ class HomeViewModel @Inject constructor(
                 job.await()
                 _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
                 _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-                _nearByPlacesMarkerPoints.emit(ArrayList(nearByMarkerList))
+                _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
             }
 
 
@@ -225,16 +231,35 @@ class HomeViewModel @Inject constructor(
         _placeUiState.value = PlaceUiState.HORIZONTAL
     }
 
-    fun showVerticalUi(){
+    fun showVerticalUi() {
         _placeUiState.value = PlaceUiState.VERTICAL
     }
 
-    fun showNone(){
+    fun showNone() {
         _placeUiState.value = PlaceUiState.NONE
     }
 
-    enum class PlaceUiState{
-        HORIZONTAL,VERTICAL,NONE
+    fun onMarkerClicked(id: String) {
+        viewModelScope.launch {
+            var selectedPosition = 0
+            val job = async {
+                markerDataList.forEachIndexed { index, it ->
+                    val isItemFound = it.marker.id == id
+                    it.placeUiModel.isSelected = isItemFound
+                    if (isItemFound) {
+                        selectedPosition = index
+                    }
+                }
+            }
+            job.await()
+            _nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
+
+            _scrollHorizontalPlaceListToPosition.emit(selectedPosition)
+        }
+    }
+
+    enum class PlaceUiState {
+        HORIZONTAL, VERTICAL, NONE
     }
 
 
