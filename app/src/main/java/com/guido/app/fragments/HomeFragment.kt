@@ -5,11 +5,14 @@ import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -50,16 +53,21 @@ import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
-class HomeFragment :
-    BaseFragment<FragmentLocationSearchBinding>(FragmentLocationSearchBinding::inflate),
+class HomeFragment : Fragment(),
     OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener, GoogleMap.OnCameraMoveListener {
 
+    companion object {
+        private const val MAP_VIEW_BUNDLE_KEY = "mapview_bundle_key"
+    }
+
+    private var _binding: FragmentLocationSearchBinding? = null
+    private val binding: FragmentLocationSearchBinding get() = _binding!!
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
-    private lateinit var mapView: MapView
+
 
 
 
@@ -76,6 +84,35 @@ class HomeFragment :
         checkLocationPermission()
     }
 
+
+    private var hasMapConfigured: Boolean = false
+
+    private val viewPersistedMapBundle = Bundle()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLocationSearchBinding.inflate(layoutInflater, container, false)
+        val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
+        initMapViewState(binding.mapView, mapViewBundle)
+        binding.mapView.getMapAsync(this)
+        return binding.root
+    }
+
+
+    private fun initMapViewState(mapView: MapView, savedMapViewBundle: Bundle?) {
+        // The state persisted across Fragment transaction.
+        if (!viewPersistedMapBundle.isEmpty) {
+            mapView.onCreate(viewPersistedMapBundle)
+            hasMapConfigured = true
+            return
+        }
+        // The state persisted across Fragment recreation.
+        mapView.onCreate(savedMapViewBundle)
+        hasMapConfigured = savedMapViewBundle != null
+    }
 
     private fun checkLocationPermission(shouldAnimate: Boolean = false) {
         if (ContextCompat.checkSelfPermission(
@@ -105,9 +142,7 @@ class HomeFragment :
 
 
 
-        mapView = binding.mapView
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+
 
         val snapHelper1: SnapHelper = PagerSnapHelper()
 
@@ -240,7 +275,6 @@ class HomeFragment :
     }
 
     private fun moveCamera(latLng: LatLng, shouldAnimateTheCamera: Boolean) {
-        googleMap?.clear()
         googleMap?.setPadding(
             0,
             0,
@@ -269,6 +303,7 @@ class HomeFragment :
         googleMap?.clear()
         googleMap?.addMarker(MarkerOptions().position(latLng))
         viewModel.lastSearchLocationLatLng = latLng
+        viewModel.moveToTheLatLng(latLng)
         viewModel.fetchPlacesDetailsNearMe(
             "${latLng.latitude},${latLng.longitude}",
             appPrefs.prefDistance,
@@ -360,27 +395,38 @@ class HomeFragment :
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        binding.mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+        binding.mapView.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView.onDestroy()
+        binding.mapView.onDestroy()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.mapView.onSaveInstanceState(viewPersistedMapBundle)
+        binding.mapView.onDestroy()
+        _binding = null
+    }
+
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
+        val savedBundle = Bundle()
+        binding.mapView.onSaveInstanceState(savedBundle)
+        outState.putBundle(MAP_VIEW_BUNDLE_KEY, savedBundle)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+        binding.mapView.onLowMemory()
     }
 
 

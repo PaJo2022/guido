@@ -95,6 +95,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun moveToTheLatLng(latLng: LatLng){
+        _moveToLocation.value = Pair(latLng,true)
+    }
+
     private fun fetchSearchedLocationAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val address = placesRepository.fetchAddressFromLatLng(latLng,key)?.results?.firstOrNull()?.formatted_address.toString()
