@@ -3,6 +3,7 @@ package com.guido.app.fragments
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.style.CharacterStyle
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -119,6 +120,30 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun resetSearchWithNewInterestes(){
+        if(lastSearchLocationLatLng == null) return
+        fetchPlacesDetailsNearMe(
+            "${lastSearchLocationLatLng?.latitude},${lastSearchLocationLatLng?.longitude}",
+            appPrefs.prefDistance,
+            "tourist_attraction",
+            "",
+            Constants.GCP_API_KEY
+        )
+    }
+
+    fun formatInterestString(input: String): String {
+        // Convert the input string to lowercase
+        val lowercaseInput = input.lowercase()
+
+        // Split the lowercase string into words based on space
+        val words = lowercaseInput.split(" ")
+
+        // Join the words with underscores to create the final formatted string
+        val formattedString = words.joinToString("_")
+
+        return if(words.size == 1) lowercaseInput else formattedString
+    }
+
 
     @SuppressLint("MissingPermission")
     fun fetchPlacesDetailsNearMe(
@@ -133,34 +158,34 @@ class HomeViewModel @Inject constructor(
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
-            placesRepository.getAllSavedPlaceTypePreferences().collect {interestList->
-                if(interestList.size > 5) return@collect
-                val job = async {
-                    interestList.forEach { placeType ->
-                        val job2 = async {
-                            placesRepository.fetchPlacesNearMe(
-                                location, radius, type, placeType.id, key
-                            )
-                        }
-                        val attraction = job2.await()
-                        val latLangs = attraction.map { it.latLng }
-                        val placeTypeUiModel = PlaceTypeUiModel(
-                            placeType.displayName,
-                            attraction.firstOrNull()?.icon,
-                            attraction.addUiType(PlaceUiType.LARGE),
+           val interestList =  placesRepository.getAllSavedPlaceTypePreferences()
+
+            if(interestList.size > 5) return@launch
+            val job = async {
+                interestList.forEach { placeType ->
+                    val job2 = async {
+                        placesRepository.fetchPlacesNearMe(
+                            location, radius, type, formatInterestString(placeType.displayName), key
                         )
-                        nearByPlacesListInGroup.add(placeTypeUiModel)
-                        nearByPlacesList.addAll(attraction)
-                        ArrayList(latLangs).let { nearByMarkerList.addAll(it) }
                     }
+                    val attraction = job2.await()
+                    Log.i("JAPAN", "nearByPlacesList:${formatInterestString(placeType.displayName)} ${attraction}")
+                    val latLangs = attraction.map { it.latLng }
+                    val placeTypeUiModel = PlaceTypeUiModel(
+                        placeType.displayName,
+                        attraction.firstOrNull()?.icon,
+                        attraction.addUiType(PlaceUiType.LARGE),
+                    )
+                    nearByPlacesListInGroup.add(placeTypeUiModel)
+                    nearByPlacesList.addAll(attraction)
+                    ArrayList(latLangs).let { nearByMarkerList.addAll(it) }
                 }
-                job.await()
-                _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
-                _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-                _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
             }
+            job.await()
 
-
+            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+            _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
 
         }
     }
@@ -211,6 +236,7 @@ class HomeViewModel @Inject constructor(
     fun fetchCurrentLocation(shouldAnimate: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentLocation = locationClient.getCurrentLocation()
+            lastSearchLocationLatLng = currentLocation
             MyApp.userCurrentLatLng = currentLocation
             currentLocation?.let { latLng ->
                 _moveToLocation.postValue(Pair(latLng, shouldAnimate))

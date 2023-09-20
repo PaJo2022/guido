@@ -207,7 +207,7 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
 
         private fun getSavedPlaceTypePreferences(){
             viewModelScope.launch {
-                placesRepository.getAllSavedPlaceTypePreferences().collect{savedPlaceInterestTypes->
+                placesRepository.getAllSavedPlaceTypePreferencesFlow().collect{savedPlaceInterestTypes->
                     val job = async {
                         placeTypes.forEach { placetype->
                             placetype.isSelected = savedPlaceInterestTypes.find { it.id == placetype.id} != null

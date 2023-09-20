@@ -73,6 +73,7 @@ class HomeFragment : Fragment(),
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val viewModel: HomeViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
 
@@ -295,7 +296,9 @@ class HomeFragment : Fragment(),
                 }
             }
         }
-
+        sharedViewModel.onPreferencesSaved.collectIn(viewLifecycleOwner){
+            viewModel.resetSearchWithNewInterestes()
+        }
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)

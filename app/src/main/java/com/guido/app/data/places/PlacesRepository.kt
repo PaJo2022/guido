@@ -27,5 +27,6 @@ interface PlacesRepository {
     ): ReverseGeoCodingResponse?
 
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
-    suspend fun getAllSavedPlaceTypePreferences(): Flow<List<PlaceType>>
+    suspend fun getAllSavedPlaceTypePreferences(): List<PlaceType>
+    suspend fun getAllSavedPlaceTypePreferencesFlow(): Flow<List<PlaceType>>
 }

@@ -1,26 +1,20 @@
 package com.guido.app.fragments
 
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
-import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.guido.app.BaseFragment
 import com.guido.app.R
-import com.guido.app.adapters.PlacesTypeChipAdapter
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -31,6 +25,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private lateinit var thumbView: View
     private lateinit var viewModel: ProfileViewModel
     private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -78,6 +73,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
             tvSavePreferences.setOnClickListener {
                 viewModel.savePlaceTypePreferences()
+                sharedViewModel.onPreferencesSaved()
+                findNavController().popBackStack()
             }
 
         }

@@ -80,6 +80,7 @@ class PlacesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllSavedPlaceTypePreferences()  = db.placeTypeDao().getAllPlaceTypes()
+    override suspend fun getAllSavedPlaceTypePreferencesFlow()  = db.placeTypeDao().getAllPlaceTypesFlow()
 
 
 }

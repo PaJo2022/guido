@@ -13,7 +13,10 @@ interface PlaceTypeDao {
     fun insertNewPlaceType(placeType: PlaceType?)
 
     @Query("SELECT * FROM PLACE_TYPE")
-    fun getAllPlaceTypes() : Flow<List<PlaceType>>
+    suspend fun getAllPlaceTypes() : List<PlaceType>
+
+    @Query("SELECT * FROM PLACE_TYPE")
+    fun getAllPlaceTypesFlow() : Flow<List<PlaceType>>
 
 
 
