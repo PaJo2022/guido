@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,7 +33,6 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.maps.android.ui.IconGenerator
 import com.guido.app.Constants.GCP_API_KEY
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
@@ -148,16 +148,14 @@ class HomeFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
 
-
-
-
-
         val snapHelper1: SnapHelper = PagerSnapHelper()
-
+        val placeCardHorizontalLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.apply {
             bottomsheetPlaceList.rvPlaces.apply {
                 adapter = placesAdapter
-                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission(shouldAnimate = true)
@@ -168,8 +166,7 @@ class HomeFragment : Fragment(),
 
             rvPlaceCards.apply {
                 adapter = placesHorizontalAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                layoutManager = placeCardHorizontalLayoutManager
             }
             ivSoundTimer.setOnClickListener {
                 findNavController().navigate(R.id.profileFragment)
@@ -178,12 +175,21 @@ class HomeFragment : Fragment(),
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
+        binding.rvPlaceCards.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val centerView: View =
+                        snapHelper1.findSnapView(placeCardHorizontalLayoutManager) ?: return
+                    val pos: Int = placeCardHorizontalLayoutManager.getPosition(centerView)
+                    viewModel.setThePositionForHorizontalPlaceAdapter(pos)
+                }
+            }
+        })
 
-// Configure BottomSheet behavior
 
-// Configure BottomSheet behavior
         bottomSheetBehavior =
-            BottomSheetBehavior.from<LinearLayout>(binding.bottomsheetPlaceList.bottomSheet)
+            BottomSheetBehavior.from(binding.bottomsheetPlaceList.bottomSheet)
 
 
         val screenHeight = requireContext().getScreenHeight()
@@ -250,8 +256,16 @@ class HomeFragment : Fragment(),
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
                 placesAdapter.setNearByPlaces(it)
             }
-            scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner){
+            scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
                 binding.rvPlaceCards.smoothScrollToPosition(it)
+            }
+            selectedMarker.collectIn(viewLifecycleOwner) { marker ->
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+
+                // You can also show an info window
+                marker.showInfoWindow()
+
+                moveCamera(marker.position, true)
             }
             nearByPlacesMarkerPoints.collectIn(viewLifecycleOwner) {
                 Log.i("JAPAN", "observeData: ${it.size}")
@@ -465,12 +479,12 @@ class HomeFragment : Fragment(),
             .position(latLng)
             .title(name)
         val marker = googleMap?.addMarker(markerOptions)
-        Log.i("JAPAN", "observeData: ${marker}")
         // Customize marker icon or other properties as needed.
     }
 
     override fun onInfoWindowClose(p0: Marker) {
-        viewModel.showVerticalUi()
+        p0.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+       // viewModel.showVerticalUi()
     }
 
     override fun onCameraMove() {

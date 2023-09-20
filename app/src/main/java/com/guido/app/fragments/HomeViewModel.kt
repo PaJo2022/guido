@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -64,6 +65,9 @@ class HomeViewModel @Inject constructor(
 
     private val _scrollHorizontalPlaceListToPosition: MutableSharedFlow<Int> = MutableSharedFlow()
     val scrollHorizontalPlaceListToPosition: SharedFlow<Int> get() = _scrollHorizontalPlaceListToPosition
+
+    private val _selectedMarker: MutableSharedFlow<Marker> = MutableSharedFlow()
+    val selectedMarker: SharedFlow<Marker> get() = _selectedMarker
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -255,6 +259,12 @@ class HomeViewModel @Inject constructor(
             _nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
 
             _scrollHorizontalPlaceListToPosition.emit(selectedPosition)
+        }
+    }
+
+    fun setThePositionForHorizontalPlaceAdapter(pos: Int) {
+        viewModelScope.launch {
+            _selectedMarker.emit(markerDataList[pos].marker)
         }
     }
 
