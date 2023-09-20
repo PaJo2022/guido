@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -22,7 +23,7 @@ class MyApp : Application() {
     }
     override fun onCreate() {
         super.onCreate()
-
+        FirebaseApp.initializeApp(this)
         // Initialize the Places API with your API key
         Places.initialize(applicationContext, "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY")
     }

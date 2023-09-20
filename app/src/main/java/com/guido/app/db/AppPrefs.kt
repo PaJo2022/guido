@@ -12,6 +12,12 @@ class AppPrefs(context: Context) {
     private val prefs: SharedPreferences
     private val editor: SharedPreferences.Editor
 
+    var userId: String? get() = prefs.getString(PREF_USER_ID, null)
+        set(value) {
+            editor.putString(PREF_USER_ID, value)
+            editor.apply()
+        }
+
     var isUserLoggedIn: Boolean get() = prefs.getBoolean(PREF_IS_DEMO_LOGGED_IN, false)
         set(value) {
             editor.putBoolean(PREF_IS_DEMO_LOGGED_IN, value)
@@ -27,6 +33,7 @@ class AppPrefs(context: Context) {
 
     companion object {
         const val PREF_DISTANCE = "PREF_DISTANCE"
+        const val PREF_USER_ID = "PREF_USER_ID"
         const val PREF_IS_DEMO_LOGGED_IN = "PREF_IS_DEMO_LOGGED_IN"
         const val PREF_NAME = "PREF_NAME"
 

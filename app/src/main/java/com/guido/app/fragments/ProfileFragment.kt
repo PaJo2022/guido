@@ -49,6 +49,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            tvEditProfile.setOnClickListener { findNavController().navigate(R.id.userDetailsFragment) }
             seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     binding.tvDistance.text = "$p1 Km"
