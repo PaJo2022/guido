@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:visibility="invisible"
+        android:layout_marginTop="@dimen/_12sdp"
         android:layout_marginEnd="@dimen/_12sdp"
         android:layout_gravity="end"
         layout="@layout/layout_locate_me"/>
@@ -25,7 +26,6 @@
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
         android:orientation="vertical"
         android:background="@color/color_primary"
         tools:itemCount="5" />

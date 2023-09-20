@@ -25,6 +25,10 @@
         android:id="@+id/bottomSheetPlaceList"
         android:name="com.guido.app.fragments.BottomSheetPlaceList"
         android:label="BottomSheetPlaceList" />
+    <fragment
+        android:id="@+id/locationDetailsFragment"
+        android:name="com.guido.app.fragments.LocationDetailsFragment"
+        android:label="LocationDetailsFragment" />
 
 
 </navigation>

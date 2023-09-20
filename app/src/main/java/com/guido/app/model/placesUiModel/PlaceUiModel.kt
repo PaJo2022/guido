@@ -8,6 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlaceUiModel(
+    val placeId : String?,
     val name : String?,
     val latLng: LatLng? = null,
     val address: String?,
@@ -16,11 +17,18 @@ data class PlaceUiModel(
     val iconBackGroundColor: String?,
     val photos: List<Photo>?,
     val rating: Double?,
+    val callNumber: String? = null,
+    val website: String? = null,
+    val isOpenNow : Boolean = false,
+    val openTill : String?=null,
+    val reviews : List<ReviewUiModel> ?=null,
     var placeUiType: PlaceUiType = PlaceUiType.SMALL
 ) : Parcelable
 
+
 fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
     PlaceUiModel(
+        it.placeId,
         it.name,
         it.latLng,
         it.address,
@@ -28,9 +36,24 @@ fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
         it.iconBackGroundColor,
         it.photos,
         it.rating,
+        it.callNumber,
+        it.website,
+        it.isOpenNow,
+        it.openTill,
+        it.reviews,
         placeUiType
     )
 }
+@Parcelize
+data class ReviewUiModel(
+    val authorName : String,
+    val authorProfilePic : String,
+    val authorRating : Int,
+    val reviewedDateInMillis : Double,
+    val reviewText : String
+): Parcelable
+
+
 
 enum class PlaceUiType {
     SMALL, LARGE

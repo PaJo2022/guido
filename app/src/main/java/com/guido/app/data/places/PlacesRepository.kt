@@ -15,6 +15,12 @@ interface PlacesRepository {
         key: String,
     ): List<PlaceUiModel>
 
+    suspend fun fetchSinglePlacesDetails(
+        placeId: String,
+        key: String,
+    ): PlaceUiModel?
+
+
     suspend fun fetchAddressFromLatLng(
         latLng: String,
         key: String,

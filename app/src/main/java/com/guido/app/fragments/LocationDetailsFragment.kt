@@ -2,64 +2,78 @@ package com.guido.app.fragments
 
 import android.os.Bundle
 import android.view.View
-import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.guido.app.BaseFragment
-import com.guido.app.adapters.TabAdapter
+import com.guido.app.Constants
+import com.guido.app.adapters.CustomItemDecoration
+import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
-import org.jsoup.Jsoup
 
 @AndroidEntryPoint
 class LocationDetailsFragment :
     BaseFragment<FragmentLocationDetailsBinding>(FragmentLocationDetailsBinding::inflate) {
 
     private lateinit var viewModel: LandMarkDetailsViewModel
-    private var vpLandmarkImages: TabAdapter? = null
-    private var vpLandmarkStories: TabAdapter? = null
-    private var vpLandmarkVideos: TabAdapter? = null
+    private lateinit var adapterPlaceImages: PlaceImageAdapter
 
-    private var videoFragmentList: List<Fragment> = emptyList()
-    private var imageFragmentList: List<Fragment> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[LandMarkDetailsViewModel::class.java]
-        vpLandmarkImages = TabAdapter(childFragmentManager, lifecycle)
-        vpLandmarkStories = TabAdapter(childFragmentManager, lifecycle)
-        vpLandmarkVideos = TabAdapter(childFragmentManager, lifecycle)
+        adapterPlaceImages = PlaceImageAdapter(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
 
+        binding.apply {
+            icArrowBack.setOnClickListener { findNavController().popBackStack() }
+            rvPhotos.apply {
+                addItemDecoration(CustomItemDecoration(requireContext()))
+                adapter = adapterPlaceImages
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            }
+        }
         viewModel.apply {
-            setPlaceData(placeUiModel)
+            getSinglePlaceDetails(placeUiModel)
             placeUiModel?.name?.let {
                 fetchAllDataForTheLocation(it)
             }
             landMarkData.observe(viewLifecycleOwner) {
-                videoFragmentList = it?.locationVideos?.map { videoUiModel ->
-                    LandMarkVideoItemFragment.newInstance(videoUiModel)
-                } ?: emptyList()
-                vpLandmarkVideos?.setFragmentsItems(videoFragmentList)
 
-                imageFragmentList = it?.placeUiModel?.photos?.map { photo ->
-                    LandMarkImageItemFragment.newInstance(photo)
-                } ?: emptyList()
-                vpLandmarkImages?.setFragmentsItems(imageFragmentList)
+
+            }
+            singlePlaceData.observe(viewLifecycleOwner) {
+                val apply = binding.apply {
+                    val customObject = it?.photos?.firstOrNull()
+                    val photoUrl =
+                        "https://maps.googleapis.com/maps/api/place/photo?photoreference=${customObject?.photo_reference}&sensor=false&maxheight=${customObject?.height}&maxwidth=${customObject?.width}&key=${Constants.GCP_API_KEY}"
+                    Glide.with(requireContext()).load(photoUrl).centerCrop().into(ivPlaceImage)
+                    tvPlaceName.text = it?.name
+                    tvPlaceName.isSelected = true
+                    tvPlaceAddress.text = it?.address
+                    tvPlaceMobile.text = it?.callNumber ?: "No Contact Number"
+                    tvPlaceWebsite.text = it?.website ?: "No Website"
+                }
+                it?.photos?.let { photos ->
+                    adapterPlaceImages.setPlacePhotos(photos)
+                }
 
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
 
             }
         }
+
 
     }
 

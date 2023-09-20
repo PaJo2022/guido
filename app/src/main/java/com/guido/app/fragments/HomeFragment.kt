@@ -30,6 +30,7 @@ import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
+import com.guido.app.MyApp.Companion.googleMap
 import com.guido.app.R
 import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.adapters.PlacesHorizontalListAdapter
@@ -58,8 +59,8 @@ class HomeFragment :
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var mapView: MapView
-    private lateinit var googleMap: GoogleMap
-    private lateinit var mMap: GoogleMap
+
+
 
     // private val zoom = 16f
 
@@ -145,7 +146,7 @@ class HomeFragment :
 
 
 
-        val peekHeight = resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._150sdp)
+        val peekHeight = resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._180sdp)
         bottomSheetBehavior.peekHeight = peekHeight
         bottomSheetBehavior.isHideable = false
 
@@ -175,6 +176,10 @@ class HomeFragment :
 
     private fun observeData() {
         viewModel.apply {
+            placeUiState.observe(viewLifecycleOwner){
+                binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
+                binding.bottomsheetPlaceList.root.isVisible = it == HomeViewModel.PlaceUiState.VERTICAL
+            }
             currentLatLng.collectIn(viewLifecycleOwner){
                 fetchPlacesNearMyLocation(it)
             }
@@ -188,8 +193,8 @@ class HomeFragment :
                 placesHorizontalAdapter.setNearByPlaces(it)
             }
             moveToLocation.collectIn(viewLifecycleOwner){latLng->
-                googleMap.clear()
-                googleMap.animateCamera(
+                googleMap?.clear()
+                googleMap?.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
                         latLng,
                         12f
@@ -202,18 +207,30 @@ class HomeFragment :
                 viewModel.fetchPlaceDetailsById(it)
             }
         }
+        placesHorizontalAdapter.setOnLandMarkClicked {
+            Bundle().apply {
+                putParcelable("LANDMARK_DATA",it)
+                findNavController().navigate(R.id.locationDetailsFragment,this)
+            }
+        }
+        placesAdapter.setOnLandMarkClicked {
+            Bundle().apply {
+                putParcelable("LANDMARK_DATA",it)
+                findNavController().navigate(R.id.locationDetailsFragment,this)
+            }
+        }
     }
 
 
     private fun fetchPlacesNearMyLocation(latLng: LatLng) {
-        googleMap.clear()
-        googleMap.animateCamera(
+        googleMap?.clear()
+        googleMap?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 latLng,
                 12f
             )
         )
-        googleMap.addMarker(MarkerOptions().position(latLng))
+        googleMap?.addMarker(MarkerOptions().position(latLng))
         viewModel.fetchPlacesDetailsNearMe(
             "${latLng.latitude},${latLng.longitude}",
             appPrefs.prefDistance,
@@ -229,12 +246,12 @@ class HomeFragment :
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap.clear()
-        googleMap.uiSettings.setAllGesturesEnabled(true)
+        googleMap?.clear()
+        googleMap?.uiSettings?.setAllGesturesEnabled(true)
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
-            val success = googleMap.setMapStyle(
+            val success = googleMap?.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
                     requireContext(), com.guido.app.R.raw.style_json
                 )
@@ -244,26 +261,26 @@ class HomeFragment :
             Log.e("JAPAN", "Can't find style. Error: ", e)
         }
 
-        googleMap.setOnMarkerClickListener(this)
+        googleMap?.setOnMarkerClickListener(this)
         // Set the info window close listener
-        googleMap.setOnInfoWindowCloseListener(this)
-        googleMap.setOnMapClickListener { latLng ->
-            googleMap.animateCamera(
+        googleMap?.setOnInfoWindowCloseListener(this)
+        googleMap?.setOnMapClickListener { latLng ->
+            googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
                     12f
                 )
             )
-            binding.rvPlaceCards.isVisible = false
+            viewModel.showVerticalUi()
         }
 
-        googleMap.setOnCameraIdleListener {
-            val cameraPosition = googleMap.cameraPosition.target
+        googleMap?.setOnCameraIdleListener {
+            val cameraPosition = googleMap?.cameraPosition?.target ?: return@setOnCameraIdleListener
             MyApp.userCurrentLatLng?.let {
                 val isAtHomePlace = isDistanceUnder50Meters(
                     MyApp.userCurrentLatLng!!.latitude,
                     MyApp.userCurrentLatLng!!.longitude,
-                    cameraPosition.latitude,
+                    cameraPosition.latitude ,
                     cameraPosition.longitude
                 )
 
@@ -339,7 +356,7 @@ class HomeFragment :
 
 
     override fun onMarkerClick(currentMarker: Marker): Boolean {
-        binding.rvPlaceCards.isVisible = true
+        viewModel.showHorizontalUi()
         return false
     }
 
@@ -348,17 +365,17 @@ class HomeFragment :
         val markerOptions = MarkerOptions()
             .position(latLng)
             .title(name)
-        val marker = googleMap.addMarker(markerOptions)
+        val marker = googleMap?.addMarker(markerOptions)
         // Customize marker icon or other properties as needed.
     }
 
     override fun onInfoWindowClose(p0: Marker) {
-       binding.rvPlaceCards.isVisible = false
+        viewModel.showVerticalUi()
     }
 
     override fun onCameraMove() {
         // Get the new center position of the map when the camera stops moving
-        val newCenter = mMap.cameraPosition.target
+        val newCenter = googleMap?.cameraPosition?.target
 
         binding.tvSearchLocations.text = newCenter.toString()
     }

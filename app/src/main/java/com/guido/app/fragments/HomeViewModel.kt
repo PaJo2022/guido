@@ -14,7 +14,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.guido.app.Constants
 import com.guido.app.LocationClient
 import com.guido.app.MyApp
-import com.guido.app.MyApp.Companion.nearByAttractions
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
@@ -64,8 +63,8 @@ class HomeViewModel @Inject constructor(
     val currentLatLng: SharedFlow<LatLng> get() = _currentLatLng
 
 
-    private val _searchedFormattedAddress: MutableLiveData<String> = MutableLiveData()
-    val searchedFormattedAddress: LiveData<String> get() = _searchedFormattedAddress
+    private val _placeUiState: MutableLiveData<PlaceUiState> = MutableLiveData()
+    val placeUiState: LiveData<PlaceUiState> get() = _placeUiState
 
 
 
@@ -92,14 +91,14 @@ class HomeViewModel @Inject constructor(
                 key
             )?.results?.firstOrNull()?.formatted_address.toString()
             MyApp.userCurrentFormattedAddress = address
-            _searchedFormattedAddress.postValue(address)
+            //_searchedFormattedAddress.postValue(address)
         }
     }
 
     private fun fetchSearchedLocationAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val address = placesRepository.fetchAddressFromLatLng(latLng,key)?.results?.firstOrNull()?.formatted_address.toString()
-            _searchedFormattedAddress.postValue(address)
+           // _searchedFormattedAddress.postValue(address)
         }
     }
 
@@ -218,5 +217,23 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+
+    fun showHorizontalUi(){
+        _placeUiState.value = PlaceUiState.HORIZONTAL
+    }
+
+    fun showVerticalUi(){
+        _placeUiState.value = PlaceUiState.VERTICAL
+    }
+
+    fun showNone(){
+        _placeUiState.value = PlaceUiState.NONE
+    }
+
+    enum class PlaceUiState{
+        HORIZONTAL,VERTICAL,NONE
+    }
+
 
 }

@@ -8,6 +8,7 @@ import com.guido.app.model.PlaceType
 import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
 import com.guido.app.model.places.toPlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.model.singlePlaceDetails.toPlaceUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -33,6 +34,23 @@ class PlacesRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.i("JAPAN", "DATA $e")
             emptyList()
+        }
+    }
+
+    override suspend fun fetchSinglePlacesDetails(
+        placeId: String,
+        key: String
+    ): PlaceUiModel? {
+        return try {
+            val response = api.fetchPlacesDetails(placeId, key)
+            if (response.isSuccessful) {
+                response.body()?.result?.toPlaceUiModel()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.i("JAPAN", "DATA $e")
+            null
         }
     }
 

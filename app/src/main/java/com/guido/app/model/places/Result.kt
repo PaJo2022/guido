@@ -26,12 +26,14 @@ data class Result(
 
 fun List<Result>.toPlaceUiModel() = map{
     PlaceUiModel(
+        placeId = it.place_id,
         name = it.name,
         latLng = LatLng(it.geometry?.location?.lat ?: 0.0,it.geometry?.location?.lng ?: 0.0),
         address = it.vicinity,
         icon = it.icon,
         iconBackGroundColor = it.icon_background_color,
         photos = it.photos,
-        rating = it.rating
+        rating = it.rating,
+        isOpenNow = it.opening_hours?.open_now == true
     )
 }

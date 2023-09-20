@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guido.app.Constants.GCP_API_KEY
+import com.guido.app.data.places.PlacesRepository
 import com.guido.app.data.tourData.TourDataRepository
 import com.guido.app.data.videos.VideoRepository
-import com.guido.app.log
 import com.guido.app.model.PlaceDetailsUiModel
 import com.guido.app.model.chatGptModel.ChatGptRequest
 import com.guido.app.model.chatGptModel.ChatGptResponse
@@ -22,31 +22,48 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LandMarkDetailsViewModel @Inject constructor(private val videoRepository: VideoRepository,private val tourDataRepository: TourDataRepository) :
+class LandMarkDetailsViewModel @Inject constructor(
+    private val videoRepository: VideoRepository,
+    private val tourDataRepository: TourDataRepository,
+    private val placeRepository: PlacesRepository
+) :
     ViewModel() {
 
     private var placesDetailsUiModel: PlaceDetailsUiModel? = null
-    private val _landMarkData : MutableLiveData<PlaceDetailsUiModel?> = MutableLiveData()
-    val landMarkData : LiveData<PlaceDetailsUiModel?> = _landMarkData
 
-    private val _landMarkTourDataData : MutableLiveData<String> = MutableLiveData()
-    val landMarkTourDataData : LiveData<String> = _landMarkTourDataData
+    private val _singlePlaceData: MutableLiveData<PlaceUiModel?> = MutableLiveData()
+    val singlePlaceData: LiveData<PlaceUiModel?> = _singlePlaceData
+
+    private val _landMarkData: MutableLiveData<PlaceDetailsUiModel?> = MutableLiveData()
+    val landMarkData: LiveData<PlaceDetailsUiModel?> = _landMarkData
+
+    private val _landMarkTourDataData: MutableLiveData<String> = MutableLiveData()
+    val landMarkTourDataData: LiveData<String> = _landMarkTourDataData
 
     init {
         placesDetailsUiModel = PlaceDetailsUiModel()
     }
 
-    fun setPlaceData(placeUiModel: PlaceUiModel?) {
-        placesDetailsUiModel?.placeUiModel = placeUiModel
+    fun getSinglePlaceDetails(placeUiModel: PlaceUiModel?) {
+        val placeId = placeUiModel?.placeId ?: return
+        viewModelScope.launch {
+            val placeData = placeRepository.fetchSinglePlacesDetails(
+                placeId = placeId,
+                key = GCP_API_KEY
+            )
+            _singlePlaceData.postValue(placeData)
+        }
+
     }
 
     private fun setPlaceVideoData(locationVideos: List<VideoUiModel>) {
         placesDetailsUiModel?.locationVideos = locationVideos
     }
 
-    private fun setTourDataData(tourDataInHtml : String) {
+    private fun setTourDataData(tourDataInHtml: String) {
         _landMarkTourDataData.postValue(tourDataInHtml)
     }
+
 
     private suspend fun fetchVideosForTheLandMarkName(query: String): List<VideoUiModel> {
         return videoRepository.fetchPlacesVideos(
@@ -77,7 +94,6 @@ class LandMarkDetailsViewModel @Inject constructor(private val videoRepository: 
             val landMarkVideoJob = async { fetchVideosForTheLandMarkName("${query} Tour Guide") }
             val landMarkVideo = landMarkVideoJob.await()
             setPlaceVideoData(landMarkVideo)
-            placesDetailsUiModel?.log()
             _landMarkData.postValue(placesDetailsUiModel)
         }
     }
