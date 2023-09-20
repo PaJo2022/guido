@@ -20,7 +20,8 @@ fun List<Review>.toUiModel() = map {
         authorName = it.author_name,
         authorProfilePic = it.profile_photo_url,
         authorRating = it.rating,
-        reviewedDateInMillis = it.time.toDouble(),
-        reviewText = it.text
+        reviewedDateInMillis = it.time.toLong(),
+        reviewText = it.text,
+        reviewDone = it.relative_time_description
     )
 }

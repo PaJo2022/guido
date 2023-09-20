@@ -16,7 +16,6 @@ import com.guido.app.LocationClient
 import com.guido.app.MyApp
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
-import com.guido.app.model.MarkerData
 import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
@@ -26,11 +25,7 @@ import com.guido.app.model.placesUiModel.addUiType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Arrays
 import javax.inject.Inject
@@ -47,28 +42,33 @@ class HomeViewModel @Inject constructor(
     ViewModel() {
 
 
-    private val _nearByPlacesInGroup: MutableStateFlow<List<PlaceTypeUiModel>> =
-        MutableStateFlow(emptyList())
-    val nearByPlacesInGroup: StateFlow<List<PlaceTypeUiModel>> get() = _nearByPlacesInGroup.asStateFlow()
+    var lastSearchLocationLatLng: LatLng? = null
 
-    private val _nearByPlaces: MutableStateFlow<List<PlaceUiModel>> = MutableStateFlow(emptyList())
-    val nearByPlaces: StateFlow<List<PlaceUiModel>> get() = _nearByPlaces.asStateFlow()
+    private val _nearByPlacesInGroup: MutableLiveData<List<PlaceTypeUiModel>> =
+        MutableLiveData()
+    val nearByPlacesInGroup: LiveData<List<PlaceTypeUiModel>> get() = _nearByPlacesInGroup
 
-
-    private val _moveToLocation: MutableSharedFlow<LatLng> = MutableSharedFlow()
-    val moveToLocation: SharedFlow<LatLng> get() = _moveToLocation
+    private val _nearByPlaces: MutableLiveData<List<PlaceUiModel>> = MutableLiveData()
+    val nearByPlaces: LiveData<List<PlaceUiModel>> get() = _nearByPlaces
 
 
-    private val _currentLatLng: MutableSharedFlow<LatLng> = MutableSharedFlow()
-    val currentLatLng: SharedFlow<LatLng> get() = _currentLatLng
+    private val _nearByPlacesMarkerPoints: MutableStateFlow<List<LatLng?>> = MutableStateFlow(
+        emptyList()
+    )
+    val nearByPlacesMarkerPoints: MutableStateFlow<List<LatLng?>> get() = _nearByPlacesMarkerPoints
+
+    private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
+    val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
+
+    private val _currentLatLng: MutableLiveData<LatLng> = MutableLiveData()
+    val currentLatLng: LiveData<LatLng> get() = _currentLatLng
 
 
     private val _placeUiState: MutableLiveData<PlaceUiState> = MutableLiveData()
     val placeUiState: LiveData<PlaceUiState> get() = _placeUiState
 
 
-
-    val markerDataList = mutableListOf<MarkerData>()
+    private val markerDataList : ArrayList<LatLng?> = ArrayList<LatLng?>()
 
     val predictaedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
 
@@ -115,6 +115,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
+            markerDataList.clear()
 //            placesRepository.getAllSavedPlaceTypePreferences().collect {
 //                if(it.size > 5) return@collect
 //                val job = async {
@@ -148,20 +149,22 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     val attraction = job2.await()
-
+                    val latLangs = attraction.map { it.latLng }
                     val placeTypeUiModel = PlaceTypeUiModel(
                         placeType.displayName,
                         attraction.firstOrNull()?.icon,
                         attraction.addUiType(PlaceUiType.LARGE),
-
                         )
                     nearByPlacesListInGroup.add(placeTypeUiModel)
                     nearByPlacesList.addAll(attraction)
+                    ArrayList(latLangs).let { markerDataList.addAll(it) }
                 }
             }
             job.await()
-            _nearByPlacesInGroup.emit(ArrayList(nearByPlacesListInGroup))
-            _nearByPlaces.emit(ArrayList(nearByPlacesList))
+            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+            _nearByPlacesMarkerPoints.emit(ArrayList(markerDataList))
+
 
         }
     }
@@ -184,7 +187,8 @@ class HomeViewModel @Inject constructor(
             )
             val request = FetchPlaceRequest.builder(placeId, placeFields).build()
             val place = awaitPlaceDetailsConnection(request) ?: return@launch
-            place.latLng?.let { _moveToLocation.emit(it) }
+            lastSearchLocationLatLng = place.latLng
+            place.latLng?.let { _moveToLocation.postValue(Pair(it, true)) }
             fetchPlacesDetailsNearMe(
                 "${place.latLng?.latitude},${place.latLng?.longitude}",
                 appPrefs.prefDistance,
@@ -208,12 +212,24 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun fetchCurrentLocation(){
+    fun fetchCurrentLocation(shouldAnimate: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentLocation = locationClient.getCurrentLocation()
             MyApp.userCurrentLatLng = currentLocation
-            currentLocation?.let {
-                _currentLatLng.emit(it)
+            currentLocation?.let { latLng ->
+                _moveToLocation.postValue(Pair(latLng, shouldAnimate))
+                _currentLatLng.postValue(latLng)
+                fetchPlacesDetailsNearMe(
+                    "${latLng.latitude},${latLng.longitude}",
+                    appPrefs.prefDistance,
+                    "tourist_attraction",
+                    "",
+                    Constants.GCP_API_KEY
+                )
+                fetchCurrentAddressFromGeoCoding(
+                    "${latLng.latitude},${latLng.longitude}",
+                    Constants.GCP_API_KEY
+                )
             }
         }
     }

@@ -1,28 +1,43 @@
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/color_primary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center">
 
+    <ImageView
+        android:id="@+id/iv_place_type_icon"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_place_type"
-        android:layout_marginHorizontal="@dimen/_4sdp"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Centered Text"
         android:fontFamily="@font/font_medium"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:text="Centered Text"
         android:textColor="@color/white"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:gravity="start"
-        android:textSize="18sp" />
+        android:textSize="@dimen/_16ssp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_place_type_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_place_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_place_type_icon" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_places"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_place_type" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

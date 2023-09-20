@@ -34,35 +34,43 @@
         app:layout_constraintStart_toEndOf="@+id/iv_author_image"
         app:layout_constraintTop_toTopOf="@+id/iv_author_image" />
 
-    <TextView
+    <RatingBar
         android:id="@+id/tv_review_star"
+        style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_rating_single_star"
-        android:drawablePadding="@dimen/_4sdp"
-        android:ellipsize="marquee"
-        android:fontFamily="@font/font_semi_bold"
-        android:gravity="center"
-        android:singleLine="true"
-        android:text="4"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_14ssp"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:rating="2.0"
+        android:stepSize="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_author_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_author_name" />
+
+    <TextView
+        android:id="@+id/tv_review_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:fontFamily="@font/font_regular"
+        android:gravity="center"
+        android:text="4"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_review"
+        app:layout_constraintTop_toBottomOf="@+id/tv_review" />
 
     <TextView
         android:id="@+id/tv_review"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
         android:ellipsize="end"
         android:fontFamily="@font/font_regular"
         android:gravity="start"
         android:maxLines="4"
-        android:layout_marginBottom="@dimen/_12sdp"
         android:textColor="@color/white"
         android:textSize="@dimen/_10ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_author_name"
         app:layout_constraintStart_toStartOf="@+id/iv_author_image"
         app:layout_constraintTop_toBottomOf="@+id/iv_author_image" />

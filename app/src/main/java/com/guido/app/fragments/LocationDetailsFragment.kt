@@ -2,6 +2,7 @@ package com.guido.app.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
@@ -14,6 +15,7 @@ import com.guido.app.Constants
 import com.guido.app.adapters.CustomItemDecoration
 import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.adapters.PlaceReviewAdapter
+import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,13 +60,28 @@ class LocationDetailsFragment :
             placeUiModel?.name?.let {
                 fetchAllDataForTheLocation(it)
             }
+            isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
+                binding.pbChatgptApiCalling.isVisible = it
+                if (!it) {
+                    val layoutParams = binding.tvPlaceDescription.layoutParams
+                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    binding.tvPlaceDescription.layoutParams = layoutParams
+                }
+            }
             placeDistance.observe(viewLifecycleOwner) {
                 binding.tvPlaceDistance.text = it
-
             }
             landMarkData.observe(viewLifecycleOwner) {
+                binding.llPlaceVideos.isVisible = !it?.locationVideos.isNullOrEmpty()
+                val webSettings = binding.wvPlaceVideos.settings
+                webSettings.javaScriptEnabled = true
 
+                // Load the YouTube video URL
+                val videoUrl = it?.locationVideos?.firstOrNull()?.videoUrl.toString()
+                binding.wvPlaceVideos.loadUrl(videoUrl)
 
+                // Set a WebViewClient to handle redirects and other events
+                binding.wvPlaceVideos.webViewClient = WebViewClient()
             }
             singlePlaceData.observe(viewLifecycleOwner) {
                 binding.apply {
@@ -77,7 +94,9 @@ class LocationDetailsFragment :
                     tvPlaceAddress.text = it?.address
                     tvPlaceMobile.text = it?.callNumber ?: "No Contact Number"
                     tvPlaceWebsite.text = it?.website ?: "No Website"
-                    llPlaceReviews.isVisible =  !it?.reviews.isNullOrEmpty()
+                    llPlaceReviews.isVisible = !it?.reviews.isNullOrEmpty()
+                    llPlacePhotos.isVisible = !it?.photos.isNullOrEmpty()
+
                 }
                 it?.photos?.let { photos ->
                     adapterPlaceImages.setPlacePhotos(photos)
@@ -88,7 +107,7 @@ class LocationDetailsFragment :
 
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
-
+                binding.tvPlaceDescription.text = it
             }
         }
 

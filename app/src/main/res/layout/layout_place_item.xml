@@ -14,12 +14,10 @@
         android:id="@+id/place_image"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
-        android:contentDescription="Right Image"
-        android:src="@drawable/ic_arrow_right"
+        android:background="@drawable/no_image_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/color_fourth" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_place_name"

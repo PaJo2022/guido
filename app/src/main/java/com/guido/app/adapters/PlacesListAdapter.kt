@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.guido.app.Constants
 import com.guido.app.databinding.LayoutPlaceItemBinding
+import com.guido.app.databinding.LayoutPlaceShimmerItemBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiType
 
@@ -62,10 +63,27 @@ class PlacesListAdapter(
         }
     }
 
+    inner class PlacesListAdapterShimmerViewHolder(private val binding: LayoutPlaceShimmerItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bindItem(placeUiModel: PlaceUiModel) {
+
+        }
+
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         if (viewType == PlaceUiType.LARGE.ordinal) {
             PlacesVerticalListAdapterViewHolder(
                 LayoutPlaceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        } else if (viewType == PlaceUiType.LARGE_SHIMMER.ordinal) {
+            PlacesListAdapterShimmerViewHolder(
+                LayoutPlaceShimmerItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
         } else {
             PlacesListAdapterViewHolder(
@@ -83,6 +101,8 @@ class PlacesListAdapter(
         if (holder is PlacesVerticalListAdapterViewHolder) {
             holder.bindItem(_places[position])
         } else if (holder is PlacesListAdapterViewHolder) {
+            holder.bindItem(_places[position])
+        } else if (holder is PlacesListAdapterShimmerViewHolder) {
             holder.bindItem(_places[position])
         }
     }

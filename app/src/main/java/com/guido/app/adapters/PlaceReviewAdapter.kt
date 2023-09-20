@@ -11,6 +11,7 @@ import com.guido.app.databinding.LayoutPlacesImagesItemBinding
 import com.guido.app.databinding.LayoutPlacesReviewItemBinding
 import com.guido.app.databinding.LayoutPlacesStoryItemBinding
 import com.guido.app.databinding.LayoutPlacesVideoItemBinding
+import com.guido.app.formatMillisToDateString
 import com.guido.app.model.PlaceDetailsUiModel
 import com.guido.app.model.places.Photo
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -37,12 +38,12 @@ class PlaceReviewAdapter(
     inner class PlaceReviewViewHolder(private val binding: LayoutPlacesReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(reviewUiModel: ReviewUiModel) {
-
             Glide.with(appContext).load(reviewUiModel.authorProfilePic).centerCrop().into(binding.ivAuthorImage)
             binding.tvAuthorName.text = reviewUiModel.authorName
-            binding.tvReviewStar.text = reviewUiModel.authorRating.toString()
+            binding.tvReviewStar.rating = reviewUiModel.authorRating.toFloat()
+            binding.tvReviewDate.text = reviewUiModel.reviewDone
             binding.tvReview.apply {
-                isVisible = !reviewUiModel.reviewText.isNullOrEmpty()
+                isVisible = reviewUiModel.reviewText.isNotEmpty()
                 text = reviewUiModel.reviewText
             }
             binding.ivAuthorImage.setOnClickListener {

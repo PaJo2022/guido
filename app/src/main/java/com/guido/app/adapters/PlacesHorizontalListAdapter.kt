@@ -57,6 +57,10 @@ class PlacesHorizontalListAdapter(private val appContext: Context) :
                 tvPlaceName.isSelected = true
                 placeRating.rating = place.rating?.toFloat() ?: 0f
                 placeRatingText.text = "(${place.rating ?: 0.0})"
+
+                root.setOnClickListener {
+                    onItemClickListener?.invoke(place)
+                }
             }
         }
     }

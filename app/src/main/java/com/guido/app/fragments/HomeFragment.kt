@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -38,14 +38,15 @@ import com.guido.app.calculateDistance
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.getScreenHeight
 import com.guido.app.isVisibleAndEnable
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -54,9 +55,8 @@ class HomeFragment :
     OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener, GoogleMap.OnCameraMoveListener {
 
 
-
-    private  val viewModel: HomeViewModel by activityViewModels()
-    private val sharedViewModel : SharedViewModel by activityViewModels()
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var mapView: MapView
@@ -77,7 +77,7 @@ class HomeFragment :
     }
 
 
-    private fun checkLocationPermission(){
+    private fun checkLocationPermission(shouldAnimate: Boolean = false) {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -85,7 +85,7 @@ class HomeFragment :
         ) {
             // Permission is already granted
             // Get the current location
-            viewModel.fetchCurrentLocation()
+            viewModel.fetchCurrentLocation(shouldAnimate)
         } else {
 
             ActivityCompat.requestPermissions(
@@ -112,15 +112,12 @@ class HomeFragment :
         val snapHelper1: SnapHelper = PagerSnapHelper()
 
         binding.apply {
-            llSearchHere.setOnClickListener {
-
-            }
             bottomsheetPlaceList.rvPlaces.apply {
                 adapter = placesAdapter
                 layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
             }
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
-                checkLocationPermission()
+                checkLocationPermission(shouldAnimate = true)
             }
             tvSearchLocations.setOnClickListener {
                 findNavController().navigate(R.id.discover_fragment)
@@ -142,96 +139,136 @@ class HomeFragment :
 // Configure BottomSheet behavior
 
 // Configure BottomSheet behavior
-        val bottomSheetBehavior =
+        bottomSheetBehavior =
             BottomSheetBehavior.from<LinearLayout>(binding.bottomsheetPlaceList.bottomSheet)
 
 
+        val screenHeight = requireContext().getScreenHeight()
+        val peekHeight1 = (screenHeight * 0.65).roundToInt()
+        val peekHeight2 = (screenHeight * 0.30).roundToInt()
 
-        val peekHeight = resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._180sdp)
-        bottomSheetBehavior.peekHeight = peekHeight
-        bottomSheetBehavior.isHideable = false
+        bottomSheetBehavior.peekHeight = peekHeight1
+
+        bottomSheetBehavior.isHideable = true
 
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                // Handle state changes as needed
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
 
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
 
-                    }
-
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-        })
         observeData()
 
 
     }
 
-    private fun observeData() {
-        viewModel.apply {
-            placeUiState.observe(viewLifecycleOwner){
-                binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
-                binding.bottomsheetPlaceList.root.isVisible = it == HomeViewModel.PlaceUiState.VERTICAL
-            }
-            currentLatLng.collectIn(viewLifecycleOwner){
-                fetchPlacesNearMyLocation(it)
-            }
-            nearByPlacesInGroup.collectIn(viewLifecycleOwner){
-                placesAdapter.setNearByPlaces(it)
-            }
-            nearByPlaces.collectIn(viewLifecycleOwner){
-                it.forEach {place->
-                    place.latLng?.let { it1 -> addMarker(it1,place.name.toString()) }
-                }
-                placesHorizontalAdapter.setNearByPlaces(it)
-            }
-            moveToLocation.collectIn(viewLifecycleOwner){latLng->
-                googleMap?.clear()
-                googleMap?.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        latLng,
-                        12f
-                    )
+    fun changeOffsetCenter(latitude: Double, longitude: Double) {
+        val mappoint =
+            googleMap?.projection?.toScreenLocation(LatLng(latitude, longitude))
+        mappoint?.set(
+            mappoint.x,
+            mappoint.y + 1
+        ) // change these values as you need , just hard coded a value if you want you can give it based on a ratio like using DisplayMetrics  as well
+        if (mappoint != null) {
+            googleMap?.projection?.fromScreenLocation(mappoint)?.let {
+                CameraUpdateFactory.newLatLngZoom(
+                    it, 12f
+                )
+            }?.let {
+                googleMap?.animateCamera(
+                    it
                 )
             }
         }
-        sharedViewModel.apply {
-            onLocationSelected.observe(viewLifecycleOwner){
-                viewModel.fetchPlaceDetailsById(it)
+    }
+
+    private fun observeData() {
+        viewModel.apply {
+            placeUiState.observe(viewLifecycleOwner) {
+                binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
+                binding.bottomsheetPlaceList.root.isVisible =
+                    it == HomeViewModel.PlaceUiState.VERTICAL
+            }
+            nearByPlacesInGroup.observe(viewLifecycleOwner) {
+                placesAdapter.setNearByPlaces(it)
+            }
+            nearByPlacesMarkerPoints.collectIn(viewLifecycleOwner) {
+                Log.i("JAPAN", "observeData: ${it.size}")
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                delay(500)
+                    withContext(Dispatchers.Main){
+                        googleMap?.clear()
+                        it.forEach { latLng ->
+                            latLng?.let { it1 ->
+                                addMarker(it1, "place.name".toString())
+                            }
+                        }
+                    }
+                }
+            }
+            nearByPlaces.observe(viewLifecycleOwner) {
+
+                placesHorizontalAdapter.setNearByPlaces(it)
+            }
+            currentLatLng.observe(viewLifecycleOwner) { latLng ->
+                val markerOptions = MarkerOptions()
+                    .position(latLng)
+                googleMap?.addMarker(markerOptions)
+            }
+            moveToLocation.observe(viewLifecycleOwner) { latLngAndShouldAnimateCamera ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    delay(500)
+                    withContext(Dispatchers.Main) {
+                        moveCamera(
+                            latLngAndShouldAnimateCamera.first,
+                            latLngAndShouldAnimateCamera.second
+                        )
+                    }
+                }
             }
         }
+
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
-                putParcelable("LANDMARK_DATA",it)
-                findNavController().navigate(R.id.locationDetailsFragment,this)
+                putParcelable("LANDMARK_DATA", it)
+                findNavController().navigate(R.id.locationDetailsFragment, this)
             }
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
-                putParcelable("LANDMARK_DATA",it)
-                findNavController().navigate(R.id.locationDetailsFragment,this)
+                putParcelable("LANDMARK_DATA", it)
+                findNavController().navigate(R.id.locationDetailsFragment, this)
             }
+        }
+    }
+
+    private fun moveCamera(latLng: LatLng, shouldAnimateTheCamera: Boolean) {
+        googleMap?.clear()
+        googleMap?.setPadding(
+            0,
+            0,
+            0,
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) 0 else (requireContext().getScreenHeight() * 0.50).toInt()
+        )
+        if (shouldAnimateTheCamera) {
+            googleMap?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    latLng,
+                    12f
+                )
+            )
+        } else {
+            googleMap?.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    latLng,
+                    12f
+                )
+            )
         }
     }
 
 
     private fun fetchPlacesNearMyLocation(latLng: LatLng) {
         googleMap?.clear()
-        googleMap?.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                latLng,
-                12f
-            )
-        )
         googleMap?.addMarker(MarkerOptions().position(latLng))
+        viewModel.lastSearchLocationLatLng = latLng
         viewModel.fetchPlacesDetailsNearMe(
             "${latLng.latitude},${latLng.longitude}",
             appPrefs.prefDistance,
@@ -278,19 +315,27 @@ class HomeFragment :
         googleMap?.setOnCameraIdleListener {
             val cameraPosition = googleMap?.cameraPosition?.target ?: return@setOnCameraIdleListener
             MyApp.userCurrentLatLng?.let {
-                val isAtHomePlace = isDistanceUnder50Meters(
+                val isAtHomePlace = isDistanceUnder150Meters(
                     MyApp.userCurrentLatLng!!.latitude,
                     MyApp.userCurrentLatLng!!.longitude,
-                    cameraPosition.latitude ,
+                    cameraPosition.latitude,
+                    cameraPosition.longitude
+                )
+
+                val isAtLastSearchedPlace = isDistanceUnder150Meters(
+                    viewModel.lastSearchLocationLatLng?.latitude ?: 0.0,
+                    viewModel.lastSearchLocationLatLng?.longitude ?: 0.0,
+                    cameraPosition.latitude,
                     cameraPosition.longitude
                 )
 
                 binding.apply {
-                    llSearchHere.isVisible = !isAtHomePlace
+                    llSearchHere.isVisible = !isAtHomePlace && !isAtLastSearchedPlace
                     bottomsheetPlaceList.apply {
                         llLocateMe.root.isVisibleAndEnable(!isAtHomePlace)
                     }
                     llSearchHere.setOnClickListener {
+                        llSearchHere.isVisible = false
                         fetchPlacesNearMyLocation(cameraPosition)
                     }
                 }
@@ -302,10 +347,14 @@ class HomeFragment :
     }
 
 
-
-    fun isDistanceUnder50Meters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
+    private fun isDistanceUnder150Meters(
+        lat1: Double,
+        lon1: Double,
+        lat2: Double,
+        lon2: Double
+    ): Boolean {
         val distance = calculateDistance(lat1, lon1, lat2, lon2)
-        return distance < 50
+        return distance < 150
     }
 
 
@@ -342,10 +391,12 @@ class HomeFragment :
 
 
     private fun addMarker(latLng: LatLng, name: String) {
+
         val markerOptions = MarkerOptions()
             .position(latLng)
             .title(name)
         val marker = googleMap?.addMarker(markerOptions)
+        Log.i("JAPAN", "observeData: ${marker}")
         // Customize marker icon or other properties as needed.
     }
 

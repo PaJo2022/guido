@@ -18,7 +18,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
 
     private lateinit var adapterPlaceAutoComplete : PlacesAutoCompleteAdapter
     private val viewModel : SearchLocationViewModel by viewModels()
-    private val sharedViewModel : SharedViewModel by activityViewModels()
+    private val homeViewModel : HomeViewModel by activityViewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
 
         adapterPlaceAutoComplete.setOnPlaceSelected {
             findNavController().popBackStack()
-            sharedViewModel.onLocationSelected(it)
+            homeViewModel.fetchPlaceDetailsById(it)
 
         }
     }

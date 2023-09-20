@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class MyApp : Application() {
 
     companion object{
+        val isMapFetched: Boolean = false
         var googleMap: GoogleMap? = null
         var userCurrentLatLng: LatLng? = null
         var isCurrentLocationFetched : Boolean = false

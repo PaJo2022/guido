@@ -1,6 +1,5 @@
 package com.guido.app.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,8 +20,12 @@ import com.guido.app.model.videosUiModel.VideoUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class LandMarkDetailsViewModel @Inject constructor(
@@ -46,17 +49,33 @@ class LandMarkDetailsViewModel @Inject constructor(
     private val _placeDistance: MutableLiveData<String> = MutableLiveData()
     val placeDistance: LiveData<String> = _placeDistance
 
+
+    private val _isPlaceDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
+
+
+    private val _isPlaceVideoFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
+
+
+    private val _isPlaceAIDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isPlaceAIDataFetching: SharedFlow<Boolean> = _isPlaceAIDataFetching
+
     init {
         placesDetailsUiModel = PlaceDetailsUiModel()
+
+
     }
+
 
     fun getSinglePlaceDetails(placeUiModel: PlaceUiModel?) {
         val placeId = placeUiModel?.placeId ?: return
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            _isPlaceDataFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
                 placeId = placeId,
                 key = GCP_API_KEY
             )
+            delay(2.seconds)
+            _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
         }
 
@@ -100,14 +119,17 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     fun fetchAllDataForTheLocation(query: String){
         viewModelScope.launch(Dispatchers.IO) {
+            _isPlaceAIDataFetching.emit(true)
             val tourDataJob = async { fetchTourDataForLandMark(query) }
             val tourData = tourDataJob.await()
-            Log.i("KOREA", "fetchAllDataForTheLocation: ${tourData}")
+            _isPlaceAIDataFetching.emit(false)
             setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
         }
         viewModelScope.launch(Dispatchers.IO) {
+            _isPlaceVideoFetching.emit(true)
             val landMarkVideoJob = async { fetchVideosForTheLandMarkName("${query} Tour Guide") }
             val landMarkVideo = landMarkVideoJob.await()
+            _isPlaceVideoFetching.emit(false)
             setPlaceVideoData(landMarkVideo)
             _landMarkData.postValue(placesDetailsUiModel)
         }

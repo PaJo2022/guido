@@ -50,7 +50,7 @@ class BottomSheetPlaceList : BottomSheetDialogFragment() {
             }
         }
         viewModel.apply {
-            nearByPlacesInGroup.collectIn(viewLifecycleOwner){
+            nearByPlacesInGroup.observe(viewLifecycleOwner){
                 placesAdapter.setNearByPlaces(it)
             }
         }

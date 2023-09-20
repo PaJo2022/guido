@@ -1,6 +1,8 @@
 package com.guido.app
 
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -35,4 +37,10 @@ fun formatDouble(doubleValue: Double): String {
     val numberFormat = NumberFormat.getNumberInstance(Locale.US)
     numberFormat.maximumFractionDigits = 2
     return numberFormat.format(doubleValue)
+}
+
+fun formatMillisToDateString(millis: Long, dateFormat: String): String {
+    val date = Date(millis)
+    val sdf = SimpleDateFormat(dateFormat, Locale.US)
+    return sdf.format(date)
 }
