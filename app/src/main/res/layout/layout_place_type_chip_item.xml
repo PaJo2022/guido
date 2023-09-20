@@ -4,47 +4,28 @@
     android:id="@+id/parentLayout"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/transparent"
-    tools:background="@color/transparent"
+    android:background="@color/red"
+    android:layout_margin="@dimen/_8sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
-    <ImageView
-        android:id="@+id/iv_place_type"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/rounded_background_secondary"
-        android:backgroundTint="@color/color_fourth"
-        android:padding="12dp"
-        android:src="@drawable/ic_bike"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
 
 
 
     <TextView
         android:id="@+id/tv_place_type_name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:singleLine="true"
         android:fontFamily="@font/font_regular"
-        android:maxLines="2"
-        android:text="Shop"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="Shops"
         android:gravity="center"
         android:textColor="@color/white"
-        tools:textColor="@color/color_primary"
         android:textSize="@dimen/_8ssp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/iv_place_type"
-        app:layout_constraintStart_toStartOf="@+id/iv_place_type"
-        app:layout_constraintTop_toBottomOf="@+id/iv_place_type"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

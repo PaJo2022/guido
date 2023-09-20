@@ -3,6 +3,8 @@ package com.guido.app.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,7 +31,6 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
 import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
@@ -43,11 +44,15 @@ import com.guido.app.databinding.FragmentLocationSearchBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.getScreenHeight
 import com.guido.app.isVisibleAndEnable
+import com.guido.app.model.MarkerData
+import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.URL
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -194,23 +199,54 @@ class HomeFragment : Fragment(),
 
     }
 
-    fun changeOffsetCenter(latitude: Double, longitude: Double) {
-        val mappoint =
-            googleMap?.projection?.toScreenLocation(LatLng(latitude, longitude))
-        mappoint?.set(
-            mappoint.x,
-            mappoint.y + 1
-        ) // change these values as you need , just hard coded a value if you want you can give it based on a ratio like using DisplayMetrics  as well
-        if (mappoint != null) {
-            googleMap?.projection?.fromScreenLocation(mappoint)?.let {
-                CameraUpdateFactory.newLatLngZoom(
-                    it, 12f
-                )
-            }?.let {
-                googleMap?.animateCamera(
-                    it
-                )
-            }
+    private fun setLocationMarkers(placeUiModel: PlaceUiModel) {
+        val markerUrl = placeUiModel.icon
+        val markerLatLng = placeUiModel.latLng
+        val landMarkName = placeUiModel.name
+
+        if (markerUrl == null || markerLatLng == null || landMarkName == null) return
+        val markerOptions = MarkerOptions()
+            .position(markerLatLng)
+            .title(landMarkName)
+        val marker = googleMap?.addMarker(markerOptions)
+        marker?.let {
+            viewModel.markerDataList.add(MarkerData(it, placeUiModel))
+        }
+//        GlobalScope.launch(Dispatchers.IO) {
+//            val iconBitmap = getBitmapFromURL(markerUrl)  ?: return@launch
+//            withContext(Dispatchers.Main) {
+//                val iconGenerator = IconGenerator(context)
+//                val drawable = requireContext().getDrawable(R.drawable.bg_custom_marker)
+//                val color = Colors.getColorsBasedOnIndex()
+//
+//                // Set the new solid color
+//                drawable?.setTint(color)
+//                iconGenerator.setBackground(null)
+//                val inflatedView = View.inflate(context, R.layout.marker_custom, null)
+//                val iView = inflatedView.findViewById<ImageView>(R.id.iv_marker_log)
+//                iView.setImageBitmap(iconBitmap)
+//                iconGenerator.setContentView(inflatedView)
+//                val markerOptions = MarkerOptions()
+//                    .position(markerLatLng)
+//                    .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+//                    .title(landMarkName)
+//                val marker = googleMap?.addMarker(markerOptions)
+//                marker?.let {
+//                    viewModel.markerDataList.add(MarkerData(it, placeUiModel))
+//                }
+//
+//
+//            }
+//        }
+    }
+
+    private fun getBitmapFromURL(url: String?): Bitmap? {
+        return try {
+            val inputStream = URL(url).openStream()
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -218,28 +254,35 @@ class HomeFragment : Fragment(),
         viewModel.apply {
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
-                binding.bottomsheetPlaceList.root.isVisible =
-                    it == HomeViewModel.PlaceUiState.VERTICAL
+                if (it == HomeViewModel.PlaceUiState.VERTICAL) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                } else {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+
             }
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
                 placesAdapter.setNearByPlaces(it)
             }
             nearByPlacesMarkerPoints.collectIn(viewLifecycleOwner) {
                 Log.i("JAPAN", "observeData: ${it.size}")
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                delay(500)
-                    withContext(Dispatchers.Main){
-                        googleMap?.clear()
-                        it.forEach { latLng ->
-                            latLng?.let { it1 ->
-                                addMarker(it1, "place.name".toString())
-                            }
-                        }
-                    }
-                }
+//                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+//                delay(500)
+//                    withContext(Dispatchers.Main){
+//                        googleMap?.clear()
+//                        it.forEach { latLng ->
+//                            latLng?.let { it1 ->
+//                                addMarker(it1, "place.name".toString())
+//                            }
+//                        }
+//                    }
+//                }
             }
             nearByPlaces.observe(viewLifecycleOwner) {
-
+                googleMap?.clear()
+                it.forEach { place ->
+                    setLocationMarkers(place)
+                }
                 placesHorizontalAdapter.setNearByPlaces(it)
             }
             currentLatLng.observe(viewLifecycleOwner) { latLng ->
@@ -248,6 +291,7 @@ class HomeFragment : Fragment(),
                 googleMap?.addMarker(markerOptions)
             }
             moveToLocation.observe(viewLifecycleOwner) { latLngAndShouldAnimateCamera ->
+                viewModel.showVerticalUi()
                 lifecycleScope.launch(Dispatchers.IO) {
                     delay(500)
                     withContext(Dispatchers.Main) {

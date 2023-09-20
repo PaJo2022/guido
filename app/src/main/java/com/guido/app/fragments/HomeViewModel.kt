@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -16,6 +17,7 @@ import com.guido.app.LocationClient
 import com.guido.app.MyApp
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
+import com.guido.app.model.MarkerData
 import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
@@ -68,7 +70,8 @@ class HomeViewModel @Inject constructor(
     val placeUiState: LiveData<PlaceUiState> get() = _placeUiState
 
 
-    private val markerDataList : ArrayList<LatLng?> = ArrayList<LatLng?>()
+    private val nearByMarkerList : ArrayList<LatLng?> = ArrayList()
+    val markerDataList : ArrayList<MarkerData> = ArrayList()
 
     val predictaedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
 
@@ -119,55 +122,34 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
-            markerDataList.clear()
-//            placesRepository.getAllSavedPlaceTypePreferences().collect {
-//                if(it.size > 5) return@collect
-//                val job = async {
-//                    it.forEach { placeType ->
-//                        val job2 = async {
-//                            placesRepository.fetchPlacesNearMe(
-//                                location, radius, type, placeType.id, key
-//                            )
-//                        }
-//                        val attraction = job2.await()
-//                        val placeTypeUiModel = PlaceTypeUiModel(
-//                            placeType.displayName,
-//                            attraction.firstOrNull()?.icon,
-//                            attraction
-//                        )
-//                        nearByPlacesListInGroup.add(placeTypeUiModel)
-//                        nearByPlacesList.addAll(attraction)
-//                    }
-//                }
-//                job.await()
-//                _nearByPlacesInGroup.emit(ArrayList(nearByPlacesListInGroup))
-//                _nearByPlaces.emit(ArrayList(nearByPlacesList))
-//            }
-            val interestList =
-                arrayListOf<PlaceType>(PlaceType("bar", "bar", "bar"), PlaceType("bank", "bank", "bank"))
-            val job = async {
-                interestList.forEach { placeType ->
-                    val job2 = async {
-                        placesRepository.fetchPlacesNearMe(
-                            location, radius, type, placeType.id, key
+            nearByMarkerList.clear()
+            placesRepository.getAllSavedPlaceTypePreferences().collect {interestList->
+                if(interestList.size > 5) return@collect
+                val job = async {
+                    interestList.forEach { placeType ->
+                        val job2 = async {
+                            placesRepository.fetchPlacesNearMe(
+                                location, radius, type, placeType.id, key
+                            )
+                        }
+                        val attraction = job2.await()
+                        val latLangs = attraction.map { it.latLng }
+                        val placeTypeUiModel = PlaceTypeUiModel(
+                            placeType.displayName,
+                            attraction.firstOrNull()?.icon,
+                            attraction.addUiType(PlaceUiType.LARGE),
                         )
+                        nearByPlacesListInGroup.add(placeTypeUiModel)
+                        nearByPlacesList.addAll(attraction)
+                        ArrayList(latLangs).let { nearByMarkerList.addAll(it) }
                     }
-                    val attraction = job2.await()
-                    val latLangs = attraction.map { it.latLng }
-                    val placeTypeUiModel = PlaceTypeUiModel(
-                        placeType.displayName,
-                        attraction.firstOrNull()?.icon,
-                        attraction.addUiType(PlaceUiType.LARGE),
-                        )
-                    nearByPlacesListInGroup.add(placeTypeUiModel)
-                    nearByPlacesList.addAll(attraction)
-                    ArrayList(latLangs).let { markerDataList.addAll(it) }
                 }
+                job.await()
+                _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+                _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+                _nearByPlacesMarkerPoints.emit(ArrayList(nearByMarkerList))
             }
-            job.await()
-            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
-            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-            _nearByPlacesMarkerPoints.emit(ArrayList(markerDataList))
+
 
 
         }

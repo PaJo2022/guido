@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.guido.app.databinding.LayoutPlaceGroupItemBinding
 import com.guido.app.model.PlaceType
@@ -30,9 +31,8 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         fun bindItem(type: PlaceTypeContainer) {
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
-                tvPlaceType.text = type.type
+                tvPlaceType.text = type.type + "${type.placeTypes.size}"
                 rvPlaces.apply {
-                    addItemDecoration(VerticalPlaceTypeItemDecoration(appContext))
                     layoutManager =
                         GridLayoutManager(appContext, 5, GridLayoutManager.VERTICAL, false)
                     adapter = placeAdapter
@@ -46,7 +46,7 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlaceTypeGroupViewHolder(
-        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context))
+        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
     )
 
     override fun getItemCount() = _types.size

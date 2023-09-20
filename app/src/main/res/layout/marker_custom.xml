@@ -1,0 +1,17 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@android:color/white"
+    tools:ignore="RtlHardcoded">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_marker_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

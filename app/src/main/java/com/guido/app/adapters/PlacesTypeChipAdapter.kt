@@ -34,13 +34,12 @@ class PlacesTypeChipAdapter(private val appContext : Context) : RecyclerView.Ada
                     }
                 }
                 tvPlaceTypeName. text = type.displayName
-
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlaceTypeChipViewHolder(
-        LayoutPlaceTypeChipItemBinding.inflate(LayoutInflater.from(parent.context))
+        LayoutPlaceTypeChipItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
     )
 
     override fun getItemCount() = _types.size

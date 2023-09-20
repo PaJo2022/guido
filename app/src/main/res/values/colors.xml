@@ -4,7 +4,7 @@
 
     <color name="theme_orange">#ff4817</color>
     <color name="transparent">#00000000</color>
-    <color name="color_themeGreeen">#008000</color>
+    <color name="color_themeGreeen">#F0002E03</color>
 
 
     <color name="color_primary">#010713</color>
@@ -20,7 +20,7 @@
 
     <color name="color_light_grey_50">#80D3D3D3</color>
     <color name="color_light_grey_80">#CCD3D3D3</color>
-    <color name="color_light_grey">#D3D3D3</color>
+    <color name="color_light_grey">#1AD3D3D3</color>
 
     <color name="color_pro_yellow">#FFC90A</color>
 
@@ -35,7 +35,35 @@
     <color name="color_sound_compose_selected_color5">#435B66</color>
     <color name="color_sound_compose_selected_color6">#1F6E8C</color>
     <color name="color_sound_compose_selected_color7">#2E8A99</color>
-    <color name="color_sound_compose_selected_color8">#EAB2A0</color>
+    <color name="color_sound_compose_selected_color8">#089BCC</color>
+    <color name="color_sound_compose_selected_color9">#002E94</color>
+    <color name="color_sound_compose_selected_color10">#C70039</color>
+    <color name="color_sound_compose_selected_color11">#952323</color>
+    <color name="color_sound_compose_selected_color12">#016A70</color>
+    <color name="color_sound_compose_selected_color13">#557A46</color>
+    <color name="color_sound_compose_selected_color14">#351F39</color>
+    <color name="color_sound_compose_selected_color15">#5F264A</color>
+    <color name="color_sound_compose_selected_color16">#F94C10</color>
+    <color name="color_sound_compose_selected_color17">#FD8D14</color>
+    <color name="color_sound_compose_selected_color18">#EA4242</color>
+    <color name="color_sound_compose_selected_color19">#E2703A</color>
+    <color name="color_sound_compose_selected_color20">#102C57</color>
+    <color name="color_sound_compose_selected_color21">#03506F</color>
+    <color name="color_sound_compose_selected_color22">#C06014</color>
+    <color name="color_sound_compose_selected_color23">#6E3CBC</color>
+    <color name="color_sound_compose_selected_color24">#884A39</color>
+    <color name="color_sound_compose_selected_color25">#E63E6D</color>
+    <color name="color_sound_compose_selected_color26">#1FA5A2</color>
+    <color name="color_sound_compose_selected_color27">#C93838</color>
+    <color name="color_sound_compose_selected_color28">#D89216</color>
+    <color name="color_sound_compose_selected_color29">#D8BE00</color>
+    <color name="color_sound_compose_selected_color30">#002E94</color>
+    <color name="color_sound_compose_selected_color31">#125D98</color>
+    <color name="color_sound_compose_selected_color32">#DA0037</color>
+    <color name="color_sound_compose_selected_color33">#A50C4E</color>
+    <color name="color_sound_compose_selected_color34">#511281</color>
+    <color name="color_sound_compose_selected_color35">#774360</color>
+    <color name="color_sound_compose_selected_color36">#8B0000</color>
     <color name="red">#FF0000</color>
 
 

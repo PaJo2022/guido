@@ -20,6 +20,7 @@ import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -73,6 +74,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
                 adapter = placesTypeGroupAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+            }
+
+            tvSavePreferences.setOnClickListener {
+                viewModel.savePlaceTypePreferences()
             }
 
         }
