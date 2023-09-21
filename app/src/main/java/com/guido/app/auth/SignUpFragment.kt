@@ -56,8 +56,10 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             }
         }
         adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete->
+            searchViewModel.onPredictionSelected()
             adapterPlaceAutoComplete.setPredications(emptyList())
-            binding.llSignupInformation.etLocation.setText(placeAutocomplete.address)
+            binding.llSignupInformation.etLocation.setText(placeAutocomplete.area)
+            binding.llSignupInformation.etLocation.requestFocus()
         }
         binding.signUpBtn.setOnClickListener {
             appPrefs.isUserLoggedIn = true
@@ -96,7 +98,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
 
         binding.llSignupInformation.etLocation.doOnTextChanged { text, start, before, count ->
-            if (!text.isNullOrEmpty()) {
+            if (!text.isNullOrEmpty() && !searchViewModel.isPredictionSelected) {
                 searchViewModel.getPredictions(text.toString())
             }
         }

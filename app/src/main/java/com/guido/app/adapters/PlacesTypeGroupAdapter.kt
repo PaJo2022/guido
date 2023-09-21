@@ -3,6 +3,7 @@ package com.guido.app.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
                 tvPlaceType.text = type.type
+                ivPlaceTypeIcon.isVisible = false
                 rvPlaces.apply {
                     layoutManager =
                         GridLayoutManager(appContext, 3, GridLayoutManager.VERTICAL, false)

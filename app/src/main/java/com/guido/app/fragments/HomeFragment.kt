@@ -251,6 +251,28 @@ class HomeFragment : Fragment(),
         layoutParams.bottomMargin = margin
         binding.rvPlaceCards.layoutParams = layoutParams
 
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        // BottomSheet is fully expanded
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        binding.bottomsheetPlaceList.rvPlaces.scrollToPosition(0)
+                    }
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        // BottomSheet is hidden
+                    }
+                    // You can handle other states as needed
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // This method is called when the BottomSheet is being dragged or settled
+                // You can perform actions based on the slideOffset if needed
+            }
+        })
+
 
         observeData()
 
@@ -473,7 +495,7 @@ class HomeFragment : Fragment(),
             binding.apply {
                 llSearchHere.isVisible = !isAtHomePlace && !isAtLastSearchedPlace
                 bottomsheetPlaceList.apply {
-                    llLocateMe.root.isVisibleAndEnable(MyApp.userCurrentLatLng == null || (!isAtHomePlace && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED))
+                    llLocateMe.root.isVisibleAndEnable(MyApp.userCurrentLatLng == null || !isAtHomePlace )
                 }
                 llSearchHere.setOnClickListener {
                     llSearchHere.isVisible = false

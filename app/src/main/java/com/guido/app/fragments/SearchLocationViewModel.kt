@@ -17,11 +17,13 @@ import com.guido.app.model.PlaceAutocomplete
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
@@ -29,7 +31,7 @@ class SearchLocationViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-
+    var isPredictionSelected = false
 
     private val _suggestedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
     val suggestedLocations: LiveData<List<PlaceAutocomplete>> = _suggestedLocations
@@ -43,6 +45,14 @@ class SearchLocationViewModel @Inject constructor(
             return android.text.style.StyleSpan(Typeface.NORMAL)
         }
 
+
+    fun onPredictionSelected(){
+        viewModelScope.launch(Dispatchers.IO){
+            isPredictionSelected = true
+            delay(1.seconds)
+            isPredictionSelected = false
+        }
+    }
 
 
     fun getPredictions(constraint: String) {

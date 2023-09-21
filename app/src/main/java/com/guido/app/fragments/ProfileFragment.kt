@@ -89,7 +89,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 binding.apply {
                     tvUserName.text = it?.displayName ?: "Awesome Usr"
                     tvUserLocation.text = it?.location ?: "No Location"
-
+                    tvUserLocation.isSelected = true
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {

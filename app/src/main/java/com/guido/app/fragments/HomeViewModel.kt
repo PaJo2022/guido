@@ -20,6 +20,7 @@ import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
 import com.guido.app.model.PlaceType
+import com.guido.app.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiType
@@ -46,7 +47,7 @@ class HomeViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-
+    var bottomsheetPlaceListLastPosition = 0
     var lastSearchLocationLatLng: LatLng? = null
 
     private val _nearByPlacesInGroup: MutableLiveData<List<PlaceTypeUiModel>> =
@@ -117,6 +118,7 @@ class HomeViewModel @Inject constructor(
 
     fun resetSearchWithNewInterestes(){
         if(lastSearchLocationLatLng == null) return
+
         fetchPlacesDetailsNearMe(
             "${lastSearchLocationLatLng?.latitude},${lastSearchLocationLatLng?.longitude}",
             appPrefs.prefDistance,
@@ -153,9 +155,12 @@ class HomeViewModel @Inject constructor(
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
-           val interestList =  placesRepository.getAllSavedPlaceTypePreferences()
+            _nearByPlacesInGroup.postValue(ArrayList(DUMMY_PLACE_TYPE_UI_MODEL))
+            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+            _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
+            val interestList = placesRepository.getAllSavedPlaceTypePreferences()
 
-            if(interestList.size > 5) return@launch
+            if (interestList.size > 5) return@launch
             val job = async {
                 interestList.forEach { placeType ->
                     val job2 = async {

@@ -17,7 +17,8 @@
            android:id="@+id/iv_profile_picture"
            android:layout_width="match_parent"
            android:layout_height="@dimen/_200sdp"
-           android:background="@drawable/ic_bike"
+           android:src="@drawable/guido_icon"
+           android:background="@color/white"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toTopOf="parent" />
@@ -70,6 +71,7 @@
                    android:layout_marginTop="@dimen/_16sdp"
                    android:fontFamily="@font/font_medium"
                    android:text="Joydip Bose"
+                   android:singleLine="true"
                    android:textColor="@color/white"
                    android:textSize="@dimen/_16ssp"
                    app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +87,8 @@
                    android:text="Kolkata"
                    android:textColor="@color/white"
                    android:textSize="@dimen/_14ssp"
+                   android:singleLine="true"
+                   android:ellipsize="marquee"
                    app:layout_constraintEnd_toEndOf="parent"
                    app:layout_constraintStart_toStartOf="parent"
                    app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
