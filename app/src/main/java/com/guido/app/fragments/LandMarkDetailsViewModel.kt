@@ -108,7 +108,7 @@ class LandMarkDetailsViewModel @Inject constructor(
     }
 
     private suspend fun fetchTourDataForLandMark(landMarkName: String): ChatGptResponse? {
-        val message = "as a Tour guide tell me how can i plan my visit at ${landMarkName}"
+        val message = "As a tour guide tell me about the place ${landMarkName} with all relevant details and interesting and useful facts"
         return tourDataRepository.getTourDataAboutTheLandMark(
            ChatGptRequest(
                listOf(Message(message,"user"))
