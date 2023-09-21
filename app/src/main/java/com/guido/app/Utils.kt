@@ -1,5 +1,10 @@
 package com.guido.app
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.core.content.ContextCompat.startActivity
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -48,4 +53,11 @@ fun formatMillisToDateString(millis: Long, dateFormat: String): String {
 fun isEmailValid(email: String): Boolean {
     val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
     return email.matches(emailPattern.toRegex())
+}
+
+fun Context.openAppSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    val uri = Uri.fromParts("package", packageName, null)
+    intent.data = uri
+    startActivity(intent)
 }

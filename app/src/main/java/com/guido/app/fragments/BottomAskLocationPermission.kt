@@ -6,22 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.guido.app.adapters.PlacesGroupListAdapter
-import com.guido.app.collectIn
-import com.guido.app.databinding.BottomsheetPlaceListBinding
+import com.guido.app.databinding.BottomsheetAskLocationPermissionBinding
+import com.guido.app.openAppSettings
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BottomSheetPlaceList : BottomSheetDialogFragment() {
+class BottomAskLocationPermission : BottomSheetDialogFragment() {
 
-    private val viewModel : HomeViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
 
-    private var _binding: BottomsheetPlaceListBinding? = null
-    private val binding: BottomsheetPlaceListBinding get() = _binding!!
+    private var _binding: BottomsheetAskLocationPermissionBinding? = null
+    private val binding: BottomsheetAskLocationPermissionBinding get() = _binding!!
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,26 +33,26 @@ class BottomSheetPlaceList : BottomSheetDialogFragment() {
                 val behavior = BottomSheetBehavior.from(bottomSheet)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
-        _binding = BottomsheetPlaceListBinding.inflate(inflater)
+        _binding = BottomsheetAskLocationPermissionBinding.inflate(inflater)
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
+        viewModel.shouldGoToSettings = requireArguments().getBoolean("SHOULD_GO_TO_SETTINGS", false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            rvPlaces.apply {
-                adapter = placesAdapter
-                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false)
-            }
-        }
-        viewModel.apply {
-            nearByPlacesInGroup.observe(viewLifecycleOwner){
-                placesAdapter.setNearByPlaces(it)
+
+        binding.textView.text =
+            if (viewModel.shouldGoToSettings) "Please go the you app's settings and enable the location permission" else "We Need Your Location Access To Serve You The Best Tour Experience"
+        binding.btnPermission.setOnClickListener {
+            if (viewModel.shouldGoToSettings) {
+                requireContext().openAppSettings()
+            } else {
+                viewModel.onLocationPermissionClicked()
             }
         }
     }

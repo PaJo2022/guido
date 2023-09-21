@@ -11,8 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.guido.app.Constants.GCP_API_KEY
-import com.guido.app.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.guido.app.MyApp
 import com.guido.app.MyApp.Companion.googleMap
 import com.guido.app.R
@@ -124,27 +123,69 @@ class HomeFragment : Fragment(),
         hasMapConfigured = savedMapViewBundle != null
     }
 
+
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+            val coarseLocationGranted =
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+            if (fineLocationGranted && coarseLocationGranted) {
+                // Both permissions are granted
+                // Get the current location
+                viewModel.fetchCurrentLocation(true)
+            } else {
+                // Handle the denied or permanently denied cases for either permission
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+                ) {
+                    // Permission is permanently denied (user selected "Never ask again")
+                    // You may inform the user or redirect them to app settings
+                    Bundle().apply {
+                        putBoolean("SHOULD_GO_TO_SETTINGS", true)
+                        findNavController().navigate(R.id.bottomSheetAskLocationPermission, this)
+                    }
+                } else {
+                    // Permission is denied (user selected "Deny" but not "Never ask again")
+                    // You can handle this case by showing a rationale
+                    Bundle().apply {
+                        putBoolean("SHOULD_GO_TO_SETTINGS", false)
+                        findNavController().navigate(R.id.bottomSheetAskLocationPermission, this)
+                    }
+                }
+            }
+        }
+
     private fun checkLocationPermission(shouldAnimate: Boolean = false) {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is already granted
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (fineLocationGranted && coarseLocationGranted) {
+            // Both permissions are already granted
             // Get the current location
             viewModel.fetchCurrentLocation(shouldAnimate)
+            googleMap?.isMyLocationEnabled = true
         } else {
+            // Permission(s) is/are not yet granted, request them
+            val permissionsToRequest = mutableListOf<String>()
+            if (!fineLocationGranted) {
+                permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            if (!coarseLocationGranted) {
+                permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
 
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
+            locationPermissionLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -307,9 +348,16 @@ class HomeFragment : Fragment(),
                 binding.tvLastSearchLocation.text = it
             }
         }
-        sharedViewModel.onPreferencesSaved.collectIn(viewLifecycleOwner){
-            viewModel.resetSearchWithNewInterestes()
+        sharedViewModel.apply {
+            onPreferencesSaved.collectIn(viewLifecycleOwner) {
+                viewModel.resetSearchWithNewInterestes()
+            }
+            onLocationPermissionClicked.collectIn(viewLifecycleOwner) {
+                findNavController().popBackStack()
+                checkLocationPermission(true)
+            }
         }
+
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)
@@ -399,7 +447,7 @@ class HomeFragment : Fragment(),
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    12f
+                    15f
                 )
             )
             viewModel.showVerticalUi()
@@ -407,30 +455,29 @@ class HomeFragment : Fragment(),
 
         googleMap?.setOnCameraIdleListener {
             val cameraPosition = googleMap?.cameraPosition?.target ?: return@setOnCameraIdleListener
-            MyApp.userCurrentLatLng?.let {
-                val isAtHomePlace = isDistanceUnder150Meters(
-                    MyApp.userCurrentLatLng!!.latitude,
-                    MyApp.userCurrentLatLng!!.longitude,
-                    cameraPosition.latitude,
-                    cameraPosition.longitude
-                )
 
-                val isAtLastSearchedPlace = isDistanceUnder150Meters(
-                    viewModel.lastSearchLocationLatLng?.latitude ?: 0.0,
-                    viewModel.lastSearchLocationLatLng?.longitude ?: 0.0,
-                    cameraPosition.latitude,
-                    cameraPosition.longitude
-                )
+            val isAtHomePlace = isDistanceUnder150Meters(
+                MyApp.userCurrentLatLng?.latitude ?: 0.0,
+                MyApp.userCurrentLatLng?.longitude ?: 0.0,
+                cameraPosition.latitude,
+                cameraPosition.longitude
+            )
 
-                binding.apply {
-                    llSearchHere.isVisible = !isAtHomePlace && !isAtLastSearchedPlace
-                    bottomsheetPlaceList.apply {
-                        llLocateMe.root.isVisibleAndEnable(!isAtHomePlace && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-                    }
-                    llSearchHere.setOnClickListener {
-                        llSearchHere.isVisible = false
-                        fetchPlacesNearMyLocation(cameraPosition)
-                    }
+            val isAtLastSearchedPlace = isDistanceUnder150Meters(
+                viewModel.lastSearchLocationLatLng?.latitude ?: 0.0,
+                viewModel.lastSearchLocationLatLng?.longitude ?: 0.0,
+                cameraPosition.latitude,
+                cameraPosition.longitude
+            )
+
+            binding.apply {
+                llSearchHere.isVisible = !isAtHomePlace && !isAtLastSearchedPlace
+                bottomsheetPlaceList.apply {
+                    llLocateMe.root.isVisibleAndEnable(MyApp.userCurrentLatLng == null || (!isAtHomePlace && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED))
+                }
+                llSearchHere.setOnClickListener {
+                    llSearchHere.isVisible = false
+                    fetchPlacesNearMyLocation(cameraPosition)
                 }
             }
 
@@ -453,6 +500,7 @@ class HomeFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
+
         binding.mapView.onResume()
     }
 

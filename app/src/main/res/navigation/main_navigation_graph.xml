@@ -22,8 +22,8 @@
         android:name="com.guido.app.fragments.ProfileFragment"
         android:label="ProfileFragment" />
     <dialog
-        android:id="@+id/bottomSheetPlaceList"
-        android:name="com.guido.app.fragments.BottomSheetPlaceList"
+        android:id="@+id/bottomSheetAskLocationPermission"
+        android:name="com.guido.app.fragments.BottomAskLocationPermission"
         android:label="BottomSheetPlaceList" />
     <fragment
         android:id="@+id/locationDetailsFragment"

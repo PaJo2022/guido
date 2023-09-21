@@ -13,9 +13,13 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor() :
     ViewModel() {
 
+    var shouldGoToSettings = false
 
     private val _onPreferencesSaved: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val onPreferencesSaved: MutableSharedFlow<Boolean> = _onPreferencesSaved
+
+    private val _onLocationPermissionClicked: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val onLocationPermissionClicked: MutableSharedFlow<Boolean> = _onLocationPermissionClicked
 
 
     fun onPreferencesSaved() {
@@ -24,6 +28,17 @@ class SharedViewModel @Inject constructor() :
             _onPreferencesSaved.emit(true)
         }
     }
+
+
+
+
+
+    fun onLocationPermissionClicked() {
+        viewModelScope.launch {
+            _onLocationPermissionClicked.emit(true)
+        }
+    }
+
 
 
 
