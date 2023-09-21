@@ -11,6 +11,7 @@ import com.guido.app.MainActivity
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.databinding.FragmentSignUpBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.isEmailValid
 import com.guido.app.showToast
 import com.guido.app.toggleEnableAndAlpha
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,20 +42,35 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             val password = binding.etUserPassword.text.toString()
             val userName = binding.llSignupInformation.etUserName.text.toString()
             val userLocation = binding.llSignupInformation.etLocation.text.toString()
+            binding.tiLayoutUserEmail.error = null
+            binding.tiLayoutUserPassword.error = null
+            binding.llSignupInformation.tiLayoutUserName.error = null
+            binding.llSignupInformation.tiLayoutUserLocation.error = null
+
             if (viewModel.userLoginState.value is UserLoginState.UserCreateAccount) {
-                if (userName.isEmpty() || userLocation.isEmpty()) {
-                    requireActivity().showToast("Please enter all the details")
+
+                if (userName.isEmpty()) {
+                    binding.llSignupInformation.tiLayoutUserName.error = "Please enter your user name"
+                    return@setOnClickListener
+                }
+                if (userLocation.isEmpty()) {
+                    binding.llSignupInformation.tiLayoutUserLocation.error = "Please enter lcoation"
                     return@setOnClickListener
                 }
                 createUser(userName, userLocation)
-            } else {
-                if (email.isEmpty() || password.isEmpty()) {
-                    requireActivity().showToast("Please enter all the details")
+            } else
+
+                if (email.isEmpty() || !isEmailValid(email)) {
+                    binding.tiLayoutUserEmail.error = "Please enter email"
+                    return@setOnClickListener
+                }
+                if (password.isEmpty()) {
+                    binding.tiLayoutUserPassword.error = "Please enter password"
                     return@setOnClickListener
                 }
                 signUpUser(email, password)
             }
-        }
+
 
 
         viewModel.apply {

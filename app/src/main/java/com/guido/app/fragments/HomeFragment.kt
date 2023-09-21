@@ -444,7 +444,7 @@ class HomeFragment : Fragment(),
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView.onDestroy()
+        //binding.mapView.onDestroy()
     }
 
     override fun onDestroyView() {

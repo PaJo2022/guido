@@ -50,6 +50,7 @@ class SignUpViewModel @Inject constructor(
         val user = _tempUser!!
         val newUser = User(
             id = user.id,
+            email = user.email,
             displayName = userName,
             location = location
         )
