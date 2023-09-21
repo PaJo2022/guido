@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -161,7 +162,7 @@ class HomeFragment : Fragment(),
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission(shouldAnimate = true)
             }
-            tvSearchLocations.setOnClickListener {
+            tvSearchLocation.setOnClickListener {
                 findNavController().navigate(R.id.discover_fragment)
             }
 
@@ -194,14 +195,20 @@ class HomeFragment : Fragment(),
 
 
         val screenHeight = requireContext().getScreenHeight()
-        val peekHeight1 = (screenHeight * 0.65).roundToInt()
-        val peekHeight2 = (screenHeight * 0.30).roundToInt()
+        val peekHeight1 = (screenHeight * 0.15).roundToInt()
+        val margin = (screenHeight * 0.10).roundToInt()
+        val maxHeight = (screenHeight * 0.65).roundToInt()
 
         bottomSheetBehavior.peekHeight = peekHeight1
+        bottomSheetBehavior.maxHeight = maxHeight
+        bottomSheetBehavior.maxHeight = maxHeight
 
-        bottomSheetBehavior.isHideable = true
+        bottomSheetBehavior.isHideable = false
 
 
+        val layoutParams = binding.rvPlaceCards.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.bottomMargin = margin
+        binding.rvPlaceCards.layoutParams = layoutParams
 
 
         observeData()
@@ -248,9 +255,9 @@ class HomeFragment : Fragment(),
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
                 if (it == HomeViewModel.PlaceUiState.VERTICAL) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 } else {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
 
             }
@@ -258,10 +265,10 @@ class HomeFragment : Fragment(),
                 placesAdapter.setNearByPlaces(it)
             }
             scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
-                binding.rvPlaceCards.smoothScrollToPosition(it)
+                binding.rvPlaceCards.scrollToPosition(it)
             }
             selectedMarker.collectIn(viewLifecycleOwner) { marker ->
-                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+
 
                 // You can also show an info window
                 marker.showInfoWindow()
@@ -295,6 +302,10 @@ class HomeFragment : Fragment(),
                     }
                 }
             }
+            searchedFormattedAddress.observe(viewLifecycleOwner) {
+                binding.tvLastSearchLocation.isSelected = true
+                binding.tvLastSearchLocation.text = it
+            }
         }
         sharedViewModel.onPreferencesSaved.collectIn(viewLifecycleOwner){
             viewModel.resetSearchWithNewInterestes()
@@ -318,20 +329,20 @@ class HomeFragment : Fragment(),
             0,
             0,
             0,
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) 0 else (requireContext().getScreenHeight() * 0.50).toInt()
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) 0 else (requireContext().getScreenHeight() * 0.50).toInt()
         )
         if (shouldAnimateTheCamera) {
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    12f
+                    15f
                 )
             )
         } else {
             googleMap?.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    12f
+                    15f
                 )
             )
         }
@@ -359,6 +370,14 @@ class HomeFragment : Fragment(),
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.clear()
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            googleMap?.isMyLocationEnabled = true
+        }
+
         googleMap?.uiSettings?.setAllGesturesEnabled(true)
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -406,7 +425,7 @@ class HomeFragment : Fragment(),
                 binding.apply {
                     llSearchHere.isVisible = !isAtHomePlace && !isAtLastSearchedPlace
                     bottomsheetPlaceList.apply {
-                        llLocateMe.root.isVisibleAndEnable(!isAtHomePlace)
+                        llLocateMe.root.isVisibleAndEnable(!isAtHomePlace && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
                     }
                     llSearchHere.setOnClickListener {
                         llSearchHere.isVisible = false
@@ -486,15 +505,15 @@ class HomeFragment : Fragment(),
     }
 
     override fun onInfoWindowClose(p0: Marker) {
-        p0.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-       // viewModel.showVerticalUi()
+
+        // viewModel.showVerticalUi()
     }
 
     override fun onCameraMove() {
         // Get the new center position of the map when the camera stops moving
         val newCenter = googleMap?.cameraPosition?.target
 
-        binding.tvSearchLocations.text = newCenter.toString()
+
     }
 
 

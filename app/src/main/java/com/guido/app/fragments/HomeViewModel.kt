@@ -19,7 +19,6 @@ import com.guido.app.MyApp
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
-import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -84,7 +83,8 @@ class HomeViewModel @Inject constructor(
     private val nearByMarkerList : ArrayList<LatLng?> = ArrayList()
     val markerDataList : ArrayList<MarkerData> = ArrayList()
 
-    val predictaedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
+    private val _searchedFormattedAddress: MutableLiveData<String> = MutableLiveData()
+    val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
 
     private val STYLE_BOLD: CharacterStyle
         get() {
@@ -105,7 +105,7 @@ class HomeViewModel @Inject constructor(
                 key
             )?.results?.firstOrNull()?.formatted_address.toString()
             MyApp.userCurrentFormattedAddress = address
-            //_searchedFormattedAddress.postValue(address)
+            _searchedFormattedAddress.postValue(address)
         }
     }
 
@@ -113,12 +113,7 @@ class HomeViewModel @Inject constructor(
         _moveToLocation.value = Pair(latLng,true)
     }
 
-    private fun fetchSearchedLocationAddressFromGeoCoding(latLng: String, key: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val address = placesRepository.fetchAddressFromLatLng(latLng,key)?.results?.firstOrNull()?.formatted_address.toString()
-           // _searchedFormattedAddress.postValue(address)
-        }
-    }
+
 
     fun resetSearchWithNewInterestes(){
         if(lastSearchLocationLatLng == null) return
@@ -153,7 +148,7 @@ class HomeViewModel @Inject constructor(
         keyword: String,
         key: String,
     ) {
-        fetchSearchedLocationAddressFromGeoCoding(location,key)
+        fetchCurrentAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()

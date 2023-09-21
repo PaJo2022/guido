@@ -37,7 +37,7 @@ class SplashActivity : AppCompatActivity() {
             delay(1.seconds)
             withContext(Dispatchers.Main) {
                 finish()
-                val isUserLoggedIn = appPref.userId != null
+                val isUserLoggedIn = appPref.isUserLoggedIn
                 val naivagtingActivity = if(isUserLoggedIn) MainActivity::class.java else AuthActivity::class.java
                 startActivity(Intent(this@SplashActivity, naivagtingActivity))
             }

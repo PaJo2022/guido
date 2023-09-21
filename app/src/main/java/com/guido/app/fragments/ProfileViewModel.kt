@@ -13,6 +13,8 @@ import com.guido.app.model.PlaceTypeContainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -208,6 +210,10 @@ class ProfileViewModel @Inject constructor(
 
     val userInterestes : MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
 
+    private val _isPlaceInterestesSaved: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isPlaceInterestesSaved: SharedFlow<Boolean> = _isPlaceInterestesSaved
+
+
     init {
         getSavedPlaceTypePreferences()
     }
@@ -244,7 +250,7 @@ class ProfileViewModel @Inject constructor(
                 PlaceTypeContainer(type, placeTypeList)
             }
 
-            Log.i("JAPAN", "onPlaceInterestClicked: ${placeTypeContainers}")
+
             userInterestes.postValue(placeTypeContainers)
         }
     }
@@ -252,7 +258,13 @@ class ProfileViewModel @Inject constructor(
     fun savePlaceTypePreferences() {
         viewModelScope.launch {
             val allSelectedPlaceInterestes = placeTypes.filter { it.isSelected }
-            placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
+            if(allSelectedPlaceInterestes.size > 5 ){
+                _isPlaceInterestesSaved.emit(false)
+            }else{
+                placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
+                _isPlaceInterestesSaved.emit(true)
+            }
+
         }
     }
 

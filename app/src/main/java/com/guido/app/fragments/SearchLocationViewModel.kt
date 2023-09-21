@@ -25,10 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
-    private val placesRepository: PlacesRepository,
     private val placesClient: PlacesClient,
-    private val appPrefs: AppPrefs,
-    private var locationClient: LocationClient
 ) :
     ViewModel() {
 

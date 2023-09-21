@@ -72,3 +72,12 @@ fun View.toggleEnableAndAlpha(isEnable: Boolean) {
         this.alpha = 0.3f
     }
 }
+
+fun View.toggleEnableAndVisibility(isEnable: Boolean) {
+    this.isEnabled = isEnable
+    if (isEnable) {
+        this.visibility = View.VISIBLE
+    } else {
+        this.visibility = View.INVISIBLE
+    }
+}

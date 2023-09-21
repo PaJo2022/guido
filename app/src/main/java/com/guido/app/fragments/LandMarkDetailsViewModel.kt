@@ -50,8 +50,9 @@ class LandMarkDetailsViewModel @Inject constructor(
     val placeDistance: LiveData<String> = _placeDistance
 
 
-    private val _isPlaceDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
 
+    private val _isPlaceDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isPlaceDataFetching: SharedFlow<Boolean> = _isPlaceDataFetching
 
     private val _isPlaceVideoFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
 

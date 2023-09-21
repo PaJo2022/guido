@@ -18,6 +18,8 @@ import com.guido.app.adapters.PlaceReviewAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.toggleEnableAndAlpha
+import com.guido.app.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,6 +61,10 @@ class LocationDetailsFragment :
             getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel)
             placeUiModel?.name?.let {
                 fetchAllDataForTheLocation(it)
+            }
+            isPlaceDataFetching.collectIn(viewLifecycleOwner){
+                binding.llPlaceData.toggleEnableAndVisibility(!it)
+                binding.cbLcoationDataFetching.isVisible = it
             }
             isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
                 binding.pbChatgptApiCalling.isVisible = it

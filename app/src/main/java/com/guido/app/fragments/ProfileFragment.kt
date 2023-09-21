@@ -16,6 +16,7 @@ import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -75,8 +76,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
             tvSavePreferences.setOnClickListener {
                 viewModel.savePlaceTypePreferences()
-                sharedViewModel.onPreferencesSaved()
-                findNavController().popBackStack()
+
             }
 
         }
@@ -87,13 +87,22 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
             getUserData().collectIn(viewLifecycleOwner) {
                 binding.apply {
-                    tvUserName.text = it.displayName
-                    tvUserLocation.text = it.location
+                    tvUserName.text = it?.displayName ?: "Awesome Usr"
+                    tvUserLocation.text = it?.location ?: "No Location"
 
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {
                 placesTypeGroupAdapter.setPlacesType(it)
+            }
+            isPlaceInterestesSaved.collectIn(viewLifecycleOwner){
+                if(it){
+                    sharedViewModel.onPreferencesSaved()
+                    findNavController().popBackStack()
+                    appPrefs.prefDistance = viewModel.distanceProgress
+                }else{
+                    requireActivity().showToast("Maximum 5 Interests Can Be Saved")
+                }
             }
 
         }

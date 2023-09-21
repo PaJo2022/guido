@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.user.UserRepository
+import com.guido.app.db.AppPrefs
 import com.guido.app.model.User
 import com.guido.app.model.toUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authRepository: AuthRepository, private val userRepository: UserRepository
+    private val authRepository: AuthRepository, private val userRepository: UserRepository,private val appPrefs: AppPrefs
 ) : ViewModel() {
 
 
@@ -29,6 +30,7 @@ class SignUpViewModel @Inject constructor(
 
     fun registerUser(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            _userLoginState.postValue(UserLoginState.Loading)
             val firebaseUser = authRepository.signUpWithEmail(email, password)
             if (firebaseUser == null) {
                 _userLoginState.postValue(UserLoginState.Error("Something Went Wrong!"))
@@ -55,12 +57,14 @@ class SignUpViewModel @Inject constructor(
             location = location
         )
         viewModelScope.launch(Dispatchers.IO) {
+            _userLoginState.postValue(UserLoginState.Loading)
             val isUserRegistered = authRepository.onRegister(newUser)
             if (!isUserRegistered) {
                 _userLoginState.postValue(UserLoginState.Error("Something Went Wrong"))
                 return@launch
             }
             userRepository.addUser(newUser)
+            appPrefs.isUserLoggedIn = true
             _userLoginState.postValue(UserLoginState.UserSignedUp(newUser))
         }
     }

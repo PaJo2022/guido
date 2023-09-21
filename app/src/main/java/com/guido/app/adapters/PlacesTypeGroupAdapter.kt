@@ -31,10 +31,10 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         fun bindItem(type: PlaceTypeContainer) {
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
-                tvPlaceType.text = type.type + "${type.placeTypes.size}"
+                tvPlaceType.text = type.type
                 rvPlaces.apply {
                     layoutManager =
-                        GridLayoutManager(appContext, 5, GridLayoutManager.VERTICAL, false)
+                        GridLayoutManager(appContext, 3, GridLayoutManager.VERTICAL, false)
                     adapter = placeAdapter
                 }
                 placeAdapter.setPlacesType(type.placeTypes)

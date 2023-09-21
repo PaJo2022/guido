@@ -4,13 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
 import com.guido.app.MainActivity
+import com.guido.app.adapters.PlacesAutoCompleteAdapter
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.databinding.FragmentSignUpBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.fragments.SearchLocationViewModel
 import com.guido.app.isEmailValid
 import com.guido.app.showToast
 import com.guido.app.toggleEnableAndAlpha
@@ -25,8 +29,16 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
 
     private val viewModel: SignUpViewModel by viewModels()
+    private val searchViewModel: SearchLocationViewModel by viewModels()
+    private lateinit var adapterPlaceAutoComplete: PlacesAutoCompleteAdapter
 
     private val auth by lazy { FirebaseAuth.getInstance() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapterPlaceAutoComplete = PlacesAutoCompleteAdapter(requireContext())
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +47,17 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             btnLogin.setOnClickListener {
                 (requireActivity() as AuthActivity).goToActivity(0)
             }
+            llSignupInformation.rvPlaceSuggestions.apply {
+                adapter = adapterPlaceAutoComplete
+                layoutManager = LinearLayoutManager(
+                    requireContext(),
+                    LinearLayoutManager.VERTICAL, false
+                )
+            }
+        }
+        adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete->
+            adapterPlaceAutoComplete.setPredications(emptyList())
+            binding.llSignupInformation.etLocation.setText(placeAutocomplete.address)
         }
         binding.signUpBtn.setOnClickListener {
             appPrefs.isUserLoggedIn = true
@@ -64,13 +87,19 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
                     binding.tiLayoutUserEmail.error = "Please enter email"
                     return@setOnClickListener
                 }
-                if (password.isEmpty()) {
-                    binding.tiLayoutUserPassword.error = "Please enter password"
-                    return@setOnClickListener
-                }
-                signUpUser(email, password)
+            if (password.isEmpty()) {
+                binding.tiLayoutUserPassword.error = "Please enter password"
+                return@setOnClickListener
             }
+            signUpUser(email, password)
+        }
 
+
+        binding.llSignupInformation.etLocation.doOnTextChanged { text, start, before, count ->
+            if (!text.isNullOrEmpty()) {
+                searchViewModel.getPredictions(text.toString())
+            }
+        }
 
 
         viewModel.apply {
@@ -79,7 +108,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
                     etUserEmail.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
                     etUserPassword.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
                 }
-                binding.llSignupInformation.root.isVisible = it is UserLoginState.UserCreateAccount
+                binding.llSignupInformation.root.isVisible = it is UserLoginState.UserCreateAccount || it is UserLoginState.UserSignedUp
                 binding.swipeRefreshLayout.isRefreshing = it is UserLoginState.Loading
                 binding.signUpBtn.text =
                     if (it is UserLoginState.UserCreateAccount) "Lets Start" else "Sign Up"
@@ -90,6 +119,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
                     is UserLoginState.UserCreateAccount -> {
                         binding.llSignupInformation.etUserName.requestFocus()
                     }
+
                     is UserLoginState.UserSignedUp -> {
                         requireActivity().finish()
                         startActivity(Intent(requireContext(), MainActivity::class.java))
@@ -97,6 +127,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
                     else -> Unit
                 }
+            }
+        }
+
+        searchViewModel.apply {
+            suggestedLocations.observe(viewLifecycleOwner) {
+                adapterPlaceAutoComplete.setPredications(it)
             }
         }
 

@@ -10,26 +10,40 @@
     android:layout_marginBottom="@dimen/_12sdp"
     android:padding="@dimen/_8sdp">
 
-    <ImageView
-        android:id="@+id/place_image"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        android:background="@drawable/no_image_placeholder"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/place_image"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:background="@drawable/no_image_placeholder"
+ />
+
+
+    </androidx.cardview.widget.CardView>
+
 
     <TextView
         android:id="@+id/tv_place_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_4sdp"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:layout_marginStart="@dimen/_8sdp"
+
         android:fontFamily="@font/font_medium"
         android:text="The Food Yard"
         android:textColor="@color/white"
         android:textSize="@dimen/_14ssp"
-        app:layout_constraintStart_toEndOf="@+id/place_image"
-        app:layout_constraintTop_toTopOf="@+id/place_image" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/card_image_view"
+        app:layout_constraintTop_toTopOf="@+id/card_image_view" />
 
     <RatingBar
         android:id="@+id/place_rating"
@@ -90,6 +104,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/font_regular"
         android:text="OPEN"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:layout_marginTop="@dimen/_8sdp"
         android:textColor="@color/white"
         android:textSize="@dimen/_8ssp"

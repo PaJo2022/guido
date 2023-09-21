@@ -22,18 +22,18 @@ class PlacesAutoCompleteAdapter(private val mContext: Context) :
 
 
 
-    fun setOnPlaceSelected(onPlaceSelected : ((placeId : String) -> Any?)){
+    fun setOnPlaceSelected(onPlaceSelected : ((placeAutocomplete: PlaceAutocomplete) -> Any?)){
         _onPlaceSelected = onPlaceSelected
     }
 
-    private var _onPlaceSelected : ((placeId : String) -> Any?)? = null
+    private var _onPlaceSelected : ((placeAutocomplete: PlaceAutocomplete) -> Any?)? = null
 
     inner class PredictionHolder(private val binding: PlaceRecyclerItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(placeAutocomplete: PlaceAutocomplete) {
             binding.address.text = placeAutocomplete.address + " , " + placeAutocomplete.area
             binding.root.setOnClickListener {
-                _onPlaceSelected?.invoke(placeAutocomplete.placeId)
+                _onPlaceSelected?.invoke(placeAutocomplete)
             }
         }
     }

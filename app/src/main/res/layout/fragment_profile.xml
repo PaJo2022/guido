@@ -184,6 +184,7 @@
            android:layout_height="wrap_content"
            android:max="25"
            android:progress="5"
+           android:min="1"
            app:layout_constraintEnd_toStartOf="@+id/iv_man_driving"
            app:layout_constraintStart_toEndOf="@+id/iv_man_walking"
            app:layout_constraintTop_toTopOf="@+id/iv_man_walking" />

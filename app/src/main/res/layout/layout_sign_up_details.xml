@@ -55,13 +55,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_place_suggestions"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
-        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
-        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
 
 
 
@@ -92,6 +85,16 @@
         app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
         app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
         app:layout_constraintTop_toBottomOf="@+id/title_profile_interests" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_place_suggestions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
+        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
+        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
