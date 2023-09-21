@@ -79,8 +79,7 @@ class HomeFragment : Fragment(),
 
 
 
-
-    // private val zoom = 16f
+    private val zoom = 13f
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -211,7 +210,7 @@ class HomeFragment : Fragment(),
                 adapter = placesHorizontalAdapter
                 layoutManager = placeCardHorizontalLayoutManager
             }
-            ivSoundTimer.setOnClickListener {
+            ivUserProfileImage.setOnClickListener {
                 findNavController().navigate(R.id.profileFragment)
             }
             bottomsheetPlaceList.bottomSheet
@@ -237,6 +236,7 @@ class HomeFragment : Fragment(),
 
         val screenHeight = requireContext().getScreenHeight()
         val peekHeight1 = (screenHeight * 0.15).roundToInt()
+
         val margin = (screenHeight * 0.10).roundToInt()
         val maxHeight = (screenHeight * 0.65).roundToInt()
 
@@ -256,8 +256,30 @@ class HomeFragment : Fragment(),
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         // BottomSheet is fully expanded
+                        googleMap?.setPadding(
+                            0,
+                            0,
+                            0,
+                            (requireContext().getScreenHeight() * 0.50).toInt()
+                        )
+                        googleMap?.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                viewModel.lastSearchLocationLatLng!!, zoom
+                            )
+                        )
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        googleMap?.setPadding(
+                            0,
+                            0,
+                            0,
+                            0
+                        )
+                        googleMap?.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                viewModel.lastSearchLocationLatLng!!, zoom
+                            )
+                        )
                         binding.bottomsheetPlaceList.rvPlaces.scrollToPosition(0)
                     }
                     BottomSheetBehavior.STATE_HIDDEN -> {
@@ -325,21 +347,18 @@ class HomeFragment : Fragment(),
 
             }
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
+
+                bottomSheetBehavior.isFitToContents = true
                 placesAdapter.setNearByPlaces(it)
             }
             scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
                 binding.rvPlaceCards.scrollToPosition(it)
             }
             selectedMarker.collectIn(viewLifecycleOwner) { marker ->
-
-
-                // You can also show an info window
                 marker.showInfoWindow()
-
                 moveCamera(marker.position, true)
             }
             nearByPlacesMarkerPoints.collectIn(viewLifecycleOwner) {
-                Log.i("JAPAN", "observeData: ${it.size}")
                 googleMap?.clear()
                 it.forEach { place ->
                     setLocationMarkers(place)
@@ -395,6 +414,13 @@ class HomeFragment : Fragment(),
     }
 
     private fun moveCamera(latLng: LatLng, shouldAnimateTheCamera: Boolean) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            googleMap?.isMyLocationEnabled = true
+        }
         googleMap?.setPadding(
             0,
             0,
@@ -405,14 +431,14 @@ class HomeFragment : Fragment(),
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    15f
+                    zoom
                 )
             )
         } else {
             googleMap?.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    15f
+                    zoom
                 )
             )
         }
@@ -469,7 +495,7 @@ class HomeFragment : Fragment(),
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     latLng,
-                    15f
+                    zoom
                 )
             )
             viewModel.showVerticalUi()

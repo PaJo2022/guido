@@ -2,12 +2,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/color_primary"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center"
-    android:layout_marginBottom="@dimen/_12sdp"
+    android:layout_marginBottom="@dimen/_8sdp"
     android:padding="@dimen/_8sdp">
 
     <androidx.cardview.widget.CardView
@@ -39,7 +39,7 @@
 
         android:fontFamily="@font/font_medium"
         android:text="The Food Yard"
-        android:textColor="@color/white"
+        android:textColor="@color/color_primary"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/card_image_view"
@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/font_regular"
         android:text="3.21 km."
-        android:textColor="@color/white"
+        android:textColor="@color/color_primary"
         android:textSize="@dimen/_8ssp"
         app:layout_constraintBottom_toBottomOf="@+id/place_rating"
         app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +107,7 @@
         android:singleLine="true"
         android:ellipsize="marquee"
         android:layout_marginTop="@dimen/_8sdp"
-        android:textColor="@color/white"
+        android:textColor="@color/color_primary"
         android:textSize="@dimen/_8ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/place_rating"
