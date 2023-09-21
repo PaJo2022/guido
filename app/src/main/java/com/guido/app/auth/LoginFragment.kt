@@ -1,11 +1,13 @@
 package com.guido.app.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
+import com.guido.app.MainActivity
 import com.guido.app.R
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.collectIn
@@ -23,7 +25,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private val viewModel: LoginViewModel by viewModels()
 
-    private val auth by lazy { FirebaseAuth.getInstance() }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,7 +42,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
             }
             tvSignUp.setOnClickListener {
-                findNavController().navigate(R.id.signUpFragment)
+                (requireActivity() as AuthActivity).goToActivity(1)
             }
         }
 
@@ -50,16 +52,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                     is UserLoginState.Error -> requireActivity().showToast("User Is Not Signed Up")
                     is UserLoginState.Loading -> {}
                     is UserLoginState.UserCreateAccount -> {
-                        Bundle().apply {
-                            putBoolean("IS_FROM_AUTH_FLOW", true)
-                            putParcelable("TEMP_USER", it.user)
-                            findNavController().navigate(R.id.userDetailsFragment, this)
-                        }
+
                     }
 
                     is UserLoginState.UserLoggedIn -> {
-                        findNavController().popBackStack()
-                        findNavController().navigate(R.id.home_fragment)
+                        requireActivity().finish()
+                        startActivity(Intent(requireContext(),MainActivity::class.java))
                     }
 
                     else -> Unit
@@ -67,9 +65,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             }
         }
 
-//        if(appPrefs.isUserLoggedIn){
 
-//        }
     }
 
 

@@ -13,6 +13,7 @@ import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
+import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,7 +82,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         }
 
         viewModel.apply {
-            userInterestes.observe(viewLifecycleOwner){
+            getSavedPreferences().collectIn(viewLifecycleOwner){
+                binding.tvUserIntrestes.text = it.size.toString()
+            }
+            getUserData().collectIn(viewLifecycleOwner) {
+                binding.apply {
+                    tvUserName.text = it.displayName
+                    tvUserLocation.text = it.location
+
+                }
+            }
+            userInterestes.observe(viewLifecycleOwner) {
                 placesTypeGroupAdapter.setPlacesType(it)
             }
 

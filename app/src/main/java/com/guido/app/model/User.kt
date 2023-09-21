@@ -10,21 +10,17 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Entity(tableName = "USER_TABLE")
 @Parcelize
-data class User(
+data class User@JvmOverloads constructor(
     @PrimaryKey(autoGenerate = false)
-    val id: String,
-    var firstName: String? = null,
-    var lastName: String? = null,
-    var displayName: String? = null,
-    var location: String? = null,
-    var subscriptions: ArrayList<String>? = null,
-    var profilePicture: String? = null,
-    var isUserPremium: Boolean = false,
-    var email: String? = null
-) : Parcelable {
-    // Default (no-argument) constructor
-    constructor() : this("")
-}
+    val id: String="",
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val displayName: String? = null,
+    val location: String? = null,
+    val profilePicture: String? = null,
+    val isUserPremium: Boolean = false,
+    val email: String? = null
+) : Parcelable
 
 fun FirebaseUser.toUserModel() = User(
     id = uid,

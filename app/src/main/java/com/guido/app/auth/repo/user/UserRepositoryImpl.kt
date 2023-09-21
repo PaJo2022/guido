@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -19,22 +20,28 @@ class UserRepositoryImpl @Inject constructor(
     private val fireStoreCollection: FirebaseFirestore,
     private val db: MyAppDataBase
 ) : UserRepository {
-    override suspend fun getUserDetails(userId : String) = db.userDao().getUser(userId)
+    override suspend fun getUserDetails(userId: String) = db.userDao().getUser(userId)
+    override suspend fun addUser(user: User) {
+        db.withTransaction {
+            db.userDao().apply {
+                deleteUser()
+                insertUser(user)
+            }
+        }
+    }
+
+    override fun getUserDetailsFlow(userId: String) = db.userDao().getUserFlow(userId)
     override suspend fun getUserDetailsFromServer(userId: String): User? {
         return suspendCoroutine { continuation ->
             val locationsRef = fireStoreCollection.collection("users").document(userId)
             locationsRef.addSnapshotListener { value, error ->
                 if (error != null) {
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 } else if (value != null) {
                     val user = value.toObject(User::class.java)
-                    db.userDao().apply {
-                        deleteUser()
-                        insertUser(user)
-                    }
-                    continuation.resume(user)
+                    continuation.safeResume(user)
                 } else {
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 }
 
             }
@@ -74,5 +81,13 @@ class UserRepositoryImpl @Inject constructor(
                 close()
             }
         }
+    }
+}
+
+fun <T> Continuation<T>.safeResume(value: T) {
+    try {
+        this.resume(value)
+    } catch (e: Exception) {
+        null
     }
 }

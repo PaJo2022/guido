@@ -28,5 +28,5 @@ interface PlacesRepository {
 
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
     suspend fun getAllSavedPlaceTypePreferences(): List<PlaceType>
-    suspend fun getAllSavedPlaceTypePreferencesFlow(): Flow<List<PlaceType>>
+    fun getAllSavedPlaceTypePreferencesFlow(): Flow<List<PlaceType>>
 }

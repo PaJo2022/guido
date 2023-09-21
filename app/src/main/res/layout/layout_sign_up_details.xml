@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    tools:context=".auth.LoginFragment">
+
+
+
+    <TextView
+        android:id="@+id/title_profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:fontFamily="@font/font_regular"
+        android:text="User Name"
+        android:textColor="@color/color_primary"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:hint="User Name"
+        android:inputType="text"
+        android:paddingVertical="@dimen/_12sdp"
+        android:textColor="@color/color_primary"
+        android:textColorHint="@color/color_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title_profile_name"
+        app:layout_constraintTop_toBottomOf="@+id/title_profile_name" />
+
+    <TextView
+        android:id="@+id/title_profile_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:fontFamily="@font/font_regular"
+        android:text="Location"
+        android:textColor="@color/color_primary"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_user_name" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:hint="Location"
+        android:inputType="textPassword"
+        android:paddingVertical="@dimen/_12sdp"
+        android:textColor="@color/color_primary"
+        android:textColorHint="@color/color_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title_profile_location"
+        app:layout_constraintTop_toBottomOf="@+id/title_profile_location" />
+
+
+    <TextView
+        android:id="@+id/title_profile_interests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:fontFamily="@font/font_regular"
+        android:text="Choose Interets"
+        android:textColor="@color/color_primary"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_location" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_interetes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_12sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/et_location"
+        app:layout_constraintStart_toStartOf="@+id/et_location"
+        app:layout_constraintTop_toBottomOf="@+id/title_profile_interests" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

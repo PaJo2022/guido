@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.user.UserRepository
+import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.toUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val db: MyAppDataBase
 ) : ViewModel() {
 
 
@@ -46,6 +48,10 @@ class LoginViewModel @Inject constructor(
             if (userData == null) {
                 _userLoginState.emit(UserLoginState.UserCreateAccount(firebaseUser.toUserModel()))
             } else {
+                db.userDao().apply {
+                    deleteUser()
+                    insertUser(userData)
+                }
                 _userLoginState.emit(UserLoginState.UserLoggedIn(userData))
             }
         }

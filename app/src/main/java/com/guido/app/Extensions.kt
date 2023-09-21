@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -57,5 +58,17 @@ fun Any.safeDouble(): Double {
 }
 
 
+fun EditText.setNullText(text: String?) {
+    text?.let {
+        this.setText(it)
+    } ?: this.text.clear()
+}
 
-
+fun View.toggleEnableAndAlpha(isEnable: Boolean) {
+    this.isEnabled = isEnable
+    if (isEnable) {
+        this.alpha = 1f
+    } else {
+        this.alpha = 0.3f
+    }
+}

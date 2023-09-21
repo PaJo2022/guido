@@ -4,26 +4,30 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guido.app.MyApp
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.user.UserRepository
+import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class UserDetailsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val db : MyAppDataBase
 ) :
     ViewModel() {
 
-    private val _user: MutableLiveData<User> = MutableLiveData()
-    val user: LiveData<User> get() = _user
+    private val _user: MutableLiveData<User?> = MutableLiveData()
+    val user: LiveData<User?> get() = _user
 
 
     var isFromSignUpFlow = false
@@ -36,10 +40,9 @@ class UserDetailsViewModel @Inject constructor(
     fun getUserDetailsByUserId(userId: String?) {
         if (userId == null) return
         viewModelScope.launch(Dispatchers.IO) {
-            val user = userRepository.getUserDetails(userId)
-            user?.let {
-                _user.postValue(it)
-            }
+             userRepository.getUserDetailsFlow(userId).collect{
+                 _user.postValue(it)
+             }
         }
     }
 
@@ -51,20 +54,13 @@ class UserDetailsViewModel @Inject constructor(
     }
 
     fun createUser(userName: String, location: String) {
-        if (_tempUser == null) return
-        _tempUser!!.apply {
-            this.location = location
-            this.displayName = userName
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            val isUserRegistered = authRepository.onRegister(_tempUser!!)
-            if (!isUserRegistered) {
-                _userLoginState.emit(UserLoginState.Error("Something Went Wrong"))
-                return@launch
-            }
 
-            _userLoginState.emit(UserLoginState.UserSignedUp(_tempUser!!))
-        }
+    }
+
+    fun signOut() {
+       viewModelScope.launch(Dispatchers.IO) {
+           authRepository.onLogOut()
+       }
     }
 
 }

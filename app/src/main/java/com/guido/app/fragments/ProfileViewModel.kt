@@ -5,19 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
-import com.guido.app.log
+import com.guido.app.db.AppPrefs
 import com.guido.app.model.PlaceType
 import com.guido.app.model.PlaceTypeContainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val placesRepository: PlacesRepository) :
+class ProfileViewModel @Inject constructor(
+    private val placesRepository: PlacesRepository,
+    private val userRepository: UserRepository,
+    private val appPrefs: AppPrefs
+) :
     ViewModel() {
 
     var distanceProgress: Int = 5
@@ -26,7 +30,10 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
 
     fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val address = placesRepository.fetchAddressFromLatLng(latLng,key)?.results?.firstOrNull()?.formatted_address.toString()
+            val address = placesRepository.fetchAddressFromLatLng(
+                latLng,
+                key
+            )?.results?.firstOrNull()?.formatted_address.toString()
             _formattedAddress.postValue(address)
         }
     }
@@ -242,7 +249,7 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
         }
     }
 
-    fun savePlaceTypePreferences(){
+    fun savePlaceTypePreferences() {
         viewModelScope.launch {
             val allSelectedPlaceInterestes = placeTypes.filter { it.isSelected }
             placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
@@ -250,5 +257,7 @@ class ProfileViewModel @Inject constructor(private val placesRepository: PlacesR
     }
 
 
+    fun getUserData() = userRepository.getUserDetailsFlow(appPrefs.userId.toString())
 
+    fun getSavedPreferences() = placesRepository.getAllSavedPlaceTypePreferencesFlow()
 }

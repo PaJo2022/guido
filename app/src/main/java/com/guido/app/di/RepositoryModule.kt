@@ -45,9 +45,11 @@ class RepositoryModule {
     @Singleton
     fun provideAuthRepository(
         fireStore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth
+        firebaseAuth: FirebaseAuth,
+        appPrefs: AppPrefs,
+        db: MyAppDataBase
     ): AuthRepository = AuthRepositoryImpl(
-        fireStoreCollection = fireStore, firebaseAuth = firebaseAuth
+        fireStoreCollection = fireStore, firebaseAuth = firebaseAuth,appPrefs = appPrefs,db=db
     )
 
 

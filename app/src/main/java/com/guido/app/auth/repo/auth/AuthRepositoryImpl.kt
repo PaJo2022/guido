@@ -1,11 +1,12 @@
 package com.guido.app.auth.repo.auth
 
 
-import com.dhandadekho.mobile.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.guido.app.db.AppPrefs
+import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -18,6 +19,8 @@ import kotlin.coroutines.suspendCoroutine
 class AuthRepositoryImpl @Inject constructor(
     private val fireStoreCollection: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
+    private val db : MyAppDataBase,
+    private val appPrefs: AppPrefs
 ) : AuthRepository {
     override suspend fun onRegister(user: User): Boolean {
         return suspendCoroutine {
@@ -36,6 +39,7 @@ class AuthRepositoryImpl @Inject constructor(
         return suspendCoroutine { continuation ->
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
+                    appPrefs.userId = it.user?.uid
                     continuation.resume(it.user)
                 }.addOnFailureListener { e ->
                     continuation.resume(null)
@@ -48,6 +52,7 @@ class AuthRepositoryImpl @Inject constructor(
         return suspendCoroutine { continuation ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
+                    appPrefs.userId = it.user?.uid
                     continuation.resume(it.user)
                 }.addOnFailureListener { e ->
                     continuation.resume(null)
@@ -84,7 +89,8 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun onLogOut() {
-
+        db.userDao().deleteUser()
+        appPrefs.clear()
     }
 
 
