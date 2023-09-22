@@ -47,7 +47,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
            icArrowBack.setOnClickListener {
-               findNavController().popBackStack()
+               parentFragmentManager.popBackStack()
            }
        }
 
@@ -60,7 +60,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
         adapterPlaceAutoComplete.setOnPlaceSelected {
             viewModel.saveSearchPlaceLocationToDb(it)
             homeViewModel.resetData()
-            findNavController().popBackStack()
+            parentFragmentManager.popBackStack()
             homeViewModel.fetchPlaceDetailsById(it.placeId)
 
         }

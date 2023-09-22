@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -186,6 +187,28 @@ class HomeFragment : Fragment(),
         }
     }
 
+    fun OpenNavFragment(
+        f: Fragment?,
+        fm: FragmentManager,
+        FragmentName: String,
+        view: View,
+        args: Bundle? = null
+    ) {
+        val ft = fm.beginTransaction()
+
+        // Pass the bundle as arguments to the fragment, if provided
+        if (args != null) {
+            f?.arguments = args
+        }
+        ft.setCustomAnimations(
+            R.anim.in_from_right,
+            R.anim.out_to_left,
+            R.anim.in_from_left,
+            R.anim.out_to_right
+        )
+        ft.replace(view.id, f!!, FragmentName).addToBackStack(FragmentName).commit()
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -204,7 +227,7 @@ class HomeFragment : Fragment(),
                 checkLocationPermission(shouldAnimate = true)
             }
             tvSearchLocation.setOnClickListener {
-                findNavController().navigate(R.id.discover_fragment)
+                OpenNavFragment(SearchLocationFragment(),childFragmentManager,"SearchLocationFragment",binding.flId)
             }
 
             rvPlaceCards.apply {
@@ -212,7 +235,7 @@ class HomeFragment : Fragment(),
                 layoutManager = placeCardHorizontalLayoutManager
             }
             ivUserProfileImage.setOnClickListener {
-                findNavController().navigate(R.id.profileFragment)
+                OpenNavFragment(ProfileFragment(),childFragmentManager,"ProfileFragment",binding.flId)
             }
             bottomsheetPlaceList.bottomSheet
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
@@ -399,7 +422,7 @@ class HomeFragment : Fragment(),
                 }
             }
             onLocationPermissionClicked.collectIn(viewLifecycleOwner) {
-                findNavController().popBackStack()
+                childFragmentManager.popBackStack()
                 checkLocationPermission(true)
             }
         }
@@ -407,13 +430,13 @@ class HomeFragment : Fragment(),
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)
-                findNavController().navigate(R.id.locationDetailsFragment, this)
+                OpenNavFragment(LocationDetailsFragment(),childFragmentManager,"ProfileFragment",binding.flId,this)
             }
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)
-                findNavController().navigate(R.id.locationDetailsFragment, this)
+                OpenNavFragment(LocationDetailsFragment(),childFragmentManager,"ProfileFragment",binding.flId,this)
             }
         }
     }

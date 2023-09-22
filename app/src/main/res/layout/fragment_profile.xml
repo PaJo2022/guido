@@ -1,245 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".fragments.HomeFragment">
+    android:id="@+id/fl_id">
 
-   <androidx.constraintlayout.widget.ConstraintLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:background="@color/color_primary">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-
-       <ImageView
-           android:id="@+id/iv_profile_picture"
-           android:layout_width="match_parent"
-           android:layout_height="@dimen/_200sdp"
-           android:src="@drawable/guido_icon"
-           android:background="@color/white"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent" />
-
-       <ImageView
-           android:id="@+id/ic_arrow_back"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:padding="@dimen/_12sdp"
-           android:src="@drawable/ic_arrow_left"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_primary">
 
 
+            <ImageView
+                android:id="@+id/iv_profile_picture"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:src="@drawable/guido_icon"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-       <androidx.constraintlayout.widget.Guideline
-           android:id="@+id/guideline_horizontal1"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           app:layout_constraintGuide_percent="0.25" />
-
-       <androidx.constraintlayout.widget.Guideline
-           android:id="@+id/guideline_horizontal2"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           app:layout_constraintGuide_percent="0.75" />
-
-       <androidx.cardview.widget.CardView
-           android:id="@+id/ll_profile_details"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           app:cardBackgroundColor="@color/color_fourth"
-           android:layout_marginTop="-32dp"
-           app:cardCornerRadius="@dimen/_12sdp"
-           app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal2"
-           app:layout_constraintStart_toStartOf="@+id/guideline_horizontal1"
-           app:layout_constraintTop_toBottomOf="@+id/iv_profile_picture">
-
-           <androidx.constraintlayout.widget.ConstraintLayout
-               android:layout_width="match_parent"
-               android:layout_height="match_parent">
-
-
-               <TextView
-                   android:id="@+id/tv_user_name"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="@dimen/_16sdp"
-                   android:fontFamily="@font/font_medium"
-                   android:text="Joydip Bose"
-                   android:singleLine="true"
-                   android:textColor="@color/white"
-                   android:textSize="@dimen/_16ssp"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toTopOf="parent" />
-
-
-               <TextView
-                   android:id="@+id/tv_user_location"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:fontFamily="@font/font_regular"
-                   android:text="Kolkata"
-                   android:textColor="@color/white"
-                   android:textSize="@dimen/_14ssp"
-                   android:singleLine="true"
-                   android:ellipsize="marquee"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
-
-               <View
-                   android:id="@+id/tv_divider"
-                   android:layout_width="0dp"
-                   android:layout_height="1dp"
-                   android:layout_marginVertical="@dimen/_16sdp"
-                   android:layout_marginHorizontal="@dimen/_2sdp"
-                   android:background="@color/color_light_grey"
-                   app:layout_constraintEnd_toEndOf="@+id/textView3"
-                   app:layout_constraintStart_toStartOf="@+id/textView3"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_user_location" />
-
-
-               <TextView
-                   android:id="@+id/tv_user_intrestes"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:fontFamily="@font/font_regular"
-                   android:layout_marginTop="@dimen/_12sdp"
-                   android:text="5"
-                   android:textColor="@color/color_sound_compose_selected_color1"
-                   android:textSize="@dimen/_14ssp"
-                   app:layout_constraintEnd_toEndOf="@+id/textView3"
-                   app:layout_constraintStart_toStartOf="@+id/textView3"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_divider" />
-
-
-               <TextView
-                   android:id="@+id/textView3"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:fontFamily="@font/font_medium"
-                   android:text="Interests"
-                   android:textColor="@color/white"
-                   android:textSize="@dimen/_12ssp"
-                   android:layout_marginBottom="@dimen/_16sdp"
-                   app:layout_constraintBottom_toBottomOf="parent"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_user_intrestes" />
-
-
-           </androidx.constraintlayout.widget.ConstraintLayout>
-
-       </androidx.cardview.widget.CardView>
-
-       <TextView
-           android:id="@+id/tv_edit_profile"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_marginHorizontal="@dimen/_20sdp"
-           android:layout_marginTop="@dimen/_32sdp"
-           android:background="@drawable/rounded_background_primary"
-           android:fontFamily="@font/font_semi_bold"
-           android:gravity="center"
-           android:paddingVertical="@dimen/_6sdp"
-           android:singleLine="true"
-           android:text="Edit Profile"
-           android:textColor="@color/white"
-           android:textSize="@dimen/_12ssp"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/ll_profile_details">
-
-       </TextView>
-
-
-       <TextView
-           android:id="@+id/textView4"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_marginStart="@dimen/_12sdp"
-           android:layout_marginTop="@dimen/_32sdp"
-           android:fontFamily="@font/font_semi_bold"
-           android:text="Radius"
-           android:textColor="@color/white"
-           android:textSize="@dimen/_14ssp"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
-
-       <ImageView
-           android:id="@+id/iv_man_walking"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:src="@drawable/ic_walking"
-           android:layout_marginTop="@dimen/_8sdp"
-           app:layout_constraintStart_toStartOf="@+id/textView4"
-           app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-       <SeekBar
-           android:id="@+id/seekbar_distance"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:max="25"
-           android:progress="5"
-           android:min="1"
-           app:layout_constraintEnd_toStartOf="@+id/iv_man_driving"
-           app:layout_constraintStart_toEndOf="@+id/iv_man_walking"
-           app:layout_constraintTop_toTopOf="@+id/iv_man_walking" />
-
-       <TextView
-           android:id="@+id/tv_distance"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:fontFamily="@font/font_regular"
-           android:text="5Km"
-           android:textColor="@color/white"
-           app:layout_constraintBottom_toBottomOf="@+id/textView4"
-           app:layout_constraintEnd_toEndOf="@+id/iv_man_driving"
-           app:layout_constraintStart_toStartOf="@+id/iv_man_driving"
-           app:layout_constraintTop_toTopOf="@+id/textView4" />
-
-       <ImageView
-           android:id="@+id/iv_man_driving"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="@dimen/_8sdp"
-           android:layout_marginEnd="@dimen/_12sdp"
-           android:src="@drawable/ic_bike"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-
-       <TextView
-           android:id="@+id/tv_interests"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_marginStart="@dimen/_12sdp"
-           android:layout_marginTop="@dimen/_32sdp"
-           android:fontFamily="@font/font_semi_bold"
-           android:text="Interests"
-           android:textColor="@color/white"
-           android:textSize="@dimen/_14ssp"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/seekbar_distance" />
-
-       <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/rv_interests"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginHorizontal="@dimen/_12sdp"
-           android:layout_marginTop="@dimen/_10sdp"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/tv_interests" />
+            <ImageView
+                android:id="@+id/ic_arrow_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/ic_arrow_left"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
 
-   </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_horizontal1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25" />
 
-</androidx.core.widget.NestedScrollView>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_horizontal2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ll_profile_details"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/color_fourth"
+                android:layout_marginTop="-32dp"
+                app:cardCornerRadius="@dimen/_12sdp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal2"
+                app:layout_constraintStart_toStartOf="@+id/guideline_horizontal1"
+                app:layout_constraintTop_toBottomOf="@+id/iv_profile_picture">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/tv_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:fontFamily="@font/font_medium"
+                        android:text="Joydip Bose"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_16ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/tv_user_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_regular"
+                        android:text="Kolkata"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14ssp"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
+
+                    <View
+                        android:id="@+id/tv_divider"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="@dimen/_16sdp"
+                        android:layout_marginHorizontal="@dimen/_2sdp"
+                        android:background="@color/color_light_grey"
+                        app:layout_constraintEnd_toEndOf="@+id/textView3"
+                        app:layout_constraintStart_toStartOf="@+id/textView3"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_user_location" />
+
+
+                    <TextView
+                        android:id="@+id/tv_user_intrestes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_regular"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:text="5"
+                        android:textColor="@color/color_sound_compose_selected_color1"
+                        android:textSize="@dimen/_14ssp"
+                        app:layout_constraintEnd_toEndOf="@+id/textView3"
+                        app:layout_constraintStart_toStartOf="@+id/textView3"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_divider" />
+
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_medium"
+                        android:text="Interests"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_user_intrestes" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tv_edit_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_32sdp"
+                android:background="@drawable/rounded_background_primary"
+                android:fontFamily="@font/font_semi_bold"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_6sdp"
+                android:singleLine="true"
+                android:text="Edit Profile"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_profile_details">
+
+            </TextView>
+
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_32sdp"
+                android:fontFamily="@font/font_semi_bold"
+                android:text="Radius"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
+
+            <ImageView
+                android:id="@+id/iv_man_walking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_walking"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintStart_toStartOf="@+id/textView4"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <SeekBar
+                android:id="@+id/seekbar_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="25"
+                android:progress="5"
+                android:min="1"
+                app:layout_constraintEnd_toStartOf="@+id/iv_man_driving"
+                app:layout_constraintStart_toEndOf="@+id/iv_man_walking"
+                app:layout_constraintTop_toTopOf="@+id/iv_man_walking" />
+
+            <TextView
+                android:id="@+id/tv_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_regular"
+                android:text="5Km"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/textView4"
+                app:layout_constraintEnd_toEndOf="@+id/iv_man_driving"
+                app:layout_constraintStart_toStartOf="@+id/iv_man_driving"
+                app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+            <ImageView
+                android:id="@+id/iv_man_driving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:src="@drawable/ic_bike"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+
+            <TextView
+                android:id="@+id/tv_interests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_32sdp"
+                android:fontFamily="@font/font_semi_bold"
+                android:text="Interests"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seekbar_distance" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_interests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_interests" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView >
+
+
+
+</FrameLayout>

@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -57,7 +58,7 @@ class LocationDetailsFragment :
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
         binding.apply {
-            icArrowBack.setOnClickListener { findNavController().popBackStack() }
+            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack()}
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =

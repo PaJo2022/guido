@@ -9,7 +9,6 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -79,24 +78,7 @@ class UserDetailsFragment :
             binding.ivProfilePicture.setOnClickListener {
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-            userLoginState.collectIn(viewLifecycleOwner) {
-                when (it) {
-                    is UserLoginState.Error -> {
-                        requireActivity().showToast(it.message)
-                    }
 
-                    is UserLoginState.Loading -> {
-
-                    }
-
-                    is UserLoginState.UserSignedUp -> {
-                        findNavController().popBackStack(R.id.loginFragment, true)
-                        findNavController().navigate(R.id.home_fragment)
-                    }
-
-                    else -> Unit
-                }
-            }
             profilePicUrl.observe(viewLifecycleOwner) {
                 Glide.with(requireContext()).load(it).centerCrop().into(binding.ivProfilePicture)
             }
@@ -112,6 +94,9 @@ class UserDetailsFragment :
                 val userName = binding.etProfileName.text.toString()
                 val userLocation = binding.etProfileBaseLocation.text.toString()
 
+            }
+            icArrowBack.setOnClickListener {
+                parentFragmentManager.popBackStack()
             }
             btnLogout.setOnClickListener {
                 auth.signOut()
