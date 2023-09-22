@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -337,6 +338,9 @@ class HomeFragment : Fragment(),
 
     private fun observeData() {
         viewModel.apply {
+            getUserData().collectIn(viewLifecycleOwner){
+                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().into(binding.ivUserProfileImage)
+            }
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
                 if (it == HomeViewModel.PlaceUiState.VERTICAL) {
@@ -575,8 +579,12 @@ class HomeFragment : Fragment(),
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val savedBundle = Bundle()
-        binding.mapView.onSaveInstanceState(savedBundle)
-        outState.putBundle(MAP_VIEW_BUNDLE_KEY, savedBundle)
+       try{
+           binding.mapView.onSaveInstanceState(savedBundle)
+           outState.putBundle(MAP_VIEW_BUNDLE_KEY, savedBundle)
+       }catch (e : Exception){
+
+       }
     }
 
     override fun onLowMemory() {

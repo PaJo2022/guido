@@ -13,6 +13,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.guido.app.Constants
 import com.guido.app.LocationClient
 import com.guido.app.MyApp
+import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
@@ -38,7 +39,8 @@ class HomeViewModel @Inject constructor(
     private val placesRepository: PlacesRepository,
     private val placesClient: PlacesClient,
     private val appPrefs: AppPrefs,
-    private var locationClient: LocationClient
+    private var locationClient: LocationClient,
+    private val userRepository: UserRepository
 ) :
     ViewModel() {
 
@@ -282,6 +284,8 @@ class HomeViewModel @Inject constructor(
             _selectedMarker.emit(markerDataList[pos].marker)
         }
     }
+
+    fun getUserData() = userRepository.getUserDetailsFlow(appPrefs.userId.toString())
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE

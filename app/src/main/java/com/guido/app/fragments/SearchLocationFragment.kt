@@ -2,6 +2,7 @@ package com.guido.app.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -30,17 +31,21 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-       binding.apply {
-           etSearchLocation.doOnTextChanged { text, start, before, count ->
-               if(!text.isNullOrEmpty()){
-                   viewModel.getPredictions(text.toString())
-               }
-           }
-           rvLocationSuggestion.apply {
-               adapter = adapterPlaceAutoComplete
-               layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-           }
+        viewModel.getLastSearchedPlaces()
+        binding.apply {
+            etSearchLocation.doOnTextChanged { text, start, before, count ->
+                binding.recentlySearchedTv.isVisible = text.isNullOrEmpty()
+                if (!text.isNullOrEmpty()) {
+                    viewModel.getPredictions(text.toString())
+                }else{
+                    viewModel.getLastSearchedPlaces()
+                }
+            }
+            rvLocationSuggestion.apply {
+                adapter = adapterPlaceAutoComplete
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
            icArrowBack.setOnClickListener {
                findNavController().popBackStack()
            }
@@ -53,6 +58,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
         }
 
         adapterPlaceAutoComplete.setOnPlaceSelected {
+            viewModel.saveSearchPlaceLocationToDb(it)
             homeViewModel.resetData()
             findNavController().popBackStack()
             homeViewModel.fetchPlaceDetailsById(it.placeId)

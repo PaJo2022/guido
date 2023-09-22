@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.guido.app.DefaultLocationClient
 import com.guido.app.LocationClient
 import dagger.Module
@@ -31,4 +32,9 @@ class FireBaseModule {
     @Provides
     @Singleton
     fun provideFirebaseAuth() : FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFireBaseStorage() = FirebaseStorage.getInstance()
+
 }

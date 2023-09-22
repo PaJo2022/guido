@@ -2,9 +2,13 @@ package com.guido.app
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.content.ContextCompat.startActivity
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,4 +64,26 @@ fun Context.openAppSettings() {
     val uri = Uri.fromParts("package", packageName, null)
     intent.data = uri
     startActivity(intent)
+}
+
+
+fun getImageBytes(imageFile: File): ByteArray {
+    val stream = ByteArrayOutputStream()
+    val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+    return stream.toByteArray()
+}
+
+fun sendEmail(context : Context, emailAddress : String){
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.data = Uri.parse("mailto:$emailAddress")
+//        intent.putExtra(Intent.EXTRA_EMAIL, emailAddress)
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry about Your Business Found Online")
+//        intent.putExtra(Intent.EXTRA_TEXT, emailBody)
+    context.startActivity(intent)
+}
+
+fun callToNumber(context: Context,number : String){
+    val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
+    context.startActivity(intent)
 }

@@ -1,5 +1,6 @@
 package com.guido.app.data.places
 
+import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -29,4 +30,8 @@ interface PlacesRepository {
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
     suspend fun getAllSavedPlaceTypePreferences(): List<PlaceType>
     fun getAllSavedPlaceTypePreferencesFlow(): Flow<List<PlaceType>>
+
+    suspend fun insertNewSearchedLocation(placeAutocomplete: PlaceAutocomplete)
+
+    fun getSearchedLocations(): Flow<List<PlaceAutocomplete>>
 }

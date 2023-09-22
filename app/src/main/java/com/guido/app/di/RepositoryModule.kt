@@ -2,6 +2,7 @@ package com.guido.app.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.guido.app.api.ChatGptApi
 import com.guido.app.api.GuidoApi
 import com.guido.app.api.VideoApi
@@ -9,6 +10,8 @@ import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.auth.AuthRepositoryImpl
 import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.auth.repo.user.UserRepositoryImpl
+import com.guido.app.data.file.FileRepository
+import com.guido.app.data.file.FileRepositoryImpl
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.data.places.PlacesRepositoryImpl
 import com.guido.app.data.tourData.TourDataRepository
@@ -57,5 +60,12 @@ class RepositoryModule {
     @Singleton
     fun provideUserRepository(appPrefs: AppPrefs, fireStore: FirebaseFirestore,db: MyAppDataBase): UserRepository =
         UserRepositoryImpl(appPrefs = appPrefs, fireStoreCollection = fireStore,db = db)
+
+    @Provides
+    @Singleton
+    fun provideFileRepositoryImpl(firebaseStorage: FirebaseStorage): FileRepository =
+        FileRepositoryImpl(firebaseStorage)
+
+
 
 }

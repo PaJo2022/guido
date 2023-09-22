@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeGroupAdapter
@@ -84,6 +85,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     tvUserName.text = it?.displayName ?: "Awesome Usr"
                     tvUserLocation.text = it?.location ?: "No Location"
                     tvUserLocation.isSelected = true
+                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop().into(ivProfilePicture)
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {

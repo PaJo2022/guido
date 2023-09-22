@@ -10,9 +10,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.guido.app.LocationClient
 import com.guido.app.data.places.PlacesRepository
-import com.guido.app.db.AppPrefs
 import com.guido.app.model.PlaceAutocomplete
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val placesClient: PlacesClient,
+    private val placesRepository: PlacesRepository
 ) :
     ViewModel() {
 
@@ -46,11 +45,25 @@ class SearchLocationViewModel @Inject constructor(
         }
 
 
-    fun onPredictionSelected(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun onPredictionSelected() {
+        viewModelScope.launch(Dispatchers.IO) {
             isPredictionSelected = true
             delay(1.seconds)
             isPredictionSelected = false
+        }
+    }
+
+    fun saveSearchPlaceLocationToDb(placeAutocomplete: PlaceAutocomplete) {
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.insertNewSearchedLocation(placeAutocomplete)
+        }
+    }
+
+    fun getLastSearchedPlaces() {
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.getSearchedLocations().collect {
+                _suggestedLocations.postValue(it)
+            }
         }
     }
 
