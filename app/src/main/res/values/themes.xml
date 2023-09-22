@@ -2,10 +2,12 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Guido" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/card_color4</item>
     </style>
 
-    <style name="Theme.Guido" parent="Base.Theme.Guido" />
+    <style name="Theme.Guido" parent="Base.Theme.Guido" >
+        <item name="android:statusBarColor">@color/card_color4</item>
+    </style>
 
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
         <item name="android:textColorHint">@color/color_light_grey_80</item>
