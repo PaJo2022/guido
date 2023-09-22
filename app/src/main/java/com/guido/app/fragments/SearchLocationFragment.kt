@@ -53,6 +53,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
         }
 
         adapterPlaceAutoComplete.setOnPlaceSelected {
+            homeViewModel.resetData()
             findNavController().popBackStack()
             homeViewModel.fetchPlaceDetailsById(it.placeId)
 

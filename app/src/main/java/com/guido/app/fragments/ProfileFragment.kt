@@ -16,7 +16,6 @@ import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +27,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private lateinit var viewModel: ProfileViewModel
     private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -90,17 +90,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 placesTypeGroupAdapter.setPlacesType(it)
             }
             isPlaceInterestesSaved.collectIn(viewLifecycleOwner){
-                if(it){
-                    sharedViewModel.onPreferencesSaved()
-                    appPrefs.prefDistance = viewModel.distanceProgress
-                }else{
-                    requireActivity().showToast("Maximum 5 Interests Can Be Saved")
-                }
+                sharedViewModel.onPreferencesSaved()
             }
 
         }
         placesTypeGroupAdapter.setOnPlaceTypeSelected {
+            homeViewModel.resetData()
             viewModel.onPlaceInterestClicked(it.id)
+
         }
 
     }

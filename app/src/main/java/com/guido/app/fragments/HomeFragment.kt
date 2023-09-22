@@ -347,8 +347,6 @@ class HomeFragment : Fragment(),
 
             }
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
-
-                bottomSheetBehavior.isFitToContents = true
                 placesAdapter.setNearByPlaces(it)
             }
             scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
@@ -358,7 +356,7 @@ class HomeFragment : Fragment(),
                 marker.showInfoWindow()
                 moveCamera(marker.position, true)
             }
-            nearByPlacesMarkerPoints.collectIn(viewLifecycleOwner) {
+            nearByPlacesMarkerPoints.observe(viewLifecycleOwner) {
                 googleMap?.clear()
                 it.forEach { place ->
                     setLocationMarkers(place)

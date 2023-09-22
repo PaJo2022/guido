@@ -29,7 +29,6 @@
            android:layout_height="wrap_content"
            android:padding="@dimen/_12sdp"
            android:src="@drawable/ic_arrow_left"
-           android:backgroundTint="@color/color_primary"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toTopOf="parent" />
 
@@ -168,7 +167,7 @@
            android:layout_marginTop="@dimen/_32sdp"
            android:fontFamily="@font/font_semi_bold"
            android:text="Radius"
-           android:textColor="@color/color_primary"
+           android:textColor="@color/white"
            android:textSize="@dimen/_14ssp"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
@@ -199,7 +198,7 @@
            android:layout_height="wrap_content"
            android:fontFamily="@font/font_regular"
            android:text="5Km"
-           android:textColor="@color/color_primary"
+           android:textColor="@color/white"
            app:layout_constraintBottom_toBottomOf="@+id/textView4"
            app:layout_constraintEnd_toEndOf="@+id/iv_man_driving"
            app:layout_constraintStart_toStartOf="@+id/iv_man_driving"
@@ -211,7 +210,6 @@
            android:layout_height="wrap_content"
            android:layout_marginTop="@dimen/_8sdp"
            android:layout_marginEnd="@dimen/_12sdp"
-           android:backgroundTint="@color/color_primary"
            android:src="@drawable/ic_bike"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -225,7 +223,7 @@
            android:layout_marginTop="@dimen/_32sdp"
            android:fontFamily="@font/font_semi_bold"
            android:text="Interests"
-           android:textColor="@color/color_primary"
+           android:textColor="@color/white"
            android:textSize="@dimen/_14ssp"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/seekbar_distance" />
