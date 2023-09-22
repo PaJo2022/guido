@@ -390,8 +390,11 @@ class HomeFragment : Fragment(),
             }
         }
         sharedViewModel.apply {
-            onPreferencesSaved.collectIn(viewLifecycleOwner) {
-                viewModel.resetSearchWithNewInterestes()
+            onPreferencesSaved.observe(viewLifecycleOwner) {
+                if(it){
+                    viewModel.resetSearchWithNewInterestes()
+                    sharedViewModel.onPreferenceRead()
+                }
             }
             onLocationPermissionClicked.collectIn(viewLifecycleOwner) {
                 findNavController().popBackStack()

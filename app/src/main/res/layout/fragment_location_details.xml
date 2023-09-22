@@ -13,14 +13,27 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/iv_place_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_250sdp"
-            android:background="@drawable/no_image_placeholder"
+            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/vp_place_image_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_place_image"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp" />
 
         <ImageView
             android:id="@+id/ic_arrow_back"
@@ -43,7 +56,7 @@
             app:cardBackgroundColor="@color/color_fourth"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_place_image">
+            app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -196,42 +209,6 @@
 
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/ll_place_photos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_24sdp"
-            app:cardBackgroundColor="@color/color_fourth"
-            app:cardCornerRadius="@dimen/_12sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_place_description">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_regular"
-                    android:text="Photos"
-                    android:padding="@dimen/_12sdp"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_18ssp" />
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_photos"
-                    android:layout_marginBottom="@dimen/_12sdp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/ll_place_videos"
@@ -243,7 +220,7 @@
             app:cardBackgroundColor="@color/color_fourth"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_place_photos">
+            app:layout_constraintTop_toBottomOf="@+id/ll_place_description">
 
             <LinearLayout
                 android:layout_width="match_parent"

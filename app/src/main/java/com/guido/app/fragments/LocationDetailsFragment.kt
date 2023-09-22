@@ -9,16 +9,16 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.guido.app.BaseFragment
-import com.guido.app.Constants
 import com.guido.app.adapters.CustomItemDecoration
+import com.guido.app.adapters.ImageSliderAdapter
 import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.adapters.PlaceReviewAdapter
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
-import com.guido.app.toggleEnableAndAlpha
 import com.guido.app.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +29,7 @@ class LocationDetailsFragment :
     private lateinit var viewModel: LandMarkDetailsViewModel
     private lateinit var adapterPlaceImages: PlaceImageAdapter
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
+    private lateinit var adapterImageSlider: ImageSliderAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,20 +37,27 @@ class LocationDetailsFragment :
         viewModel = ViewModelProvider(this)[LandMarkDetailsViewModel::class.java]
         adapterPlaceImages = PlaceImageAdapter(requireContext())
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
+        adapterImageSlider = ImageSliderAdapter(requireContext())
     }
+
+    private fun setUpViewPager() {
+        binding.ivPlaceImage.adapter = adapterImageSlider
+        binding.ivPlaceImage.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        val currentPageIndex = 1
+        binding.ivPlaceImage.currentItem = currentPageIndex
+        TabLayoutMediator(binding.vpPlaceImageIndicator, binding.ivPlaceImage) { tab, position ->
+
+        }.attach()
+
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
-
+        setUpViewPager()
         binding.apply {
             icArrowBack.setOnClickListener { findNavController().popBackStack() }
-            rvPhotos.apply {
-                addItemDecoration(CustomItemDecoration(requireContext()))
-                adapter = adapterPlaceImages
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            }
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -91,21 +99,17 @@ class LocationDetailsFragment :
             }
             singlePlaceData.observe(viewLifecycleOwner) {
                 binding.apply {
-                    val customObject = it?.photos?.firstOrNull()
-                    val photoUrl =
-                        "https://maps.googleapis.com/maps/api/place/photo?photoreference=${customObject?.photo_reference}&sensor=false&maxheight=${customObject?.height}&maxwidth=${customObject?.width}&key=${Constants.GCP_API_KEY}"
-                    Glide.with(requireContext()).load(photoUrl).centerCrop().into(ivPlaceImage)
+
                     tvPlaceName.text = it?.name
                     tvPlaceName.isSelected = true
                     tvPlaceAddress.text = it?.address
                     tvPlaceMobile.text = it?.callNumber ?: "No Contact Number"
                     tvPlaceWebsite.text = it?.website ?: "No Website"
                     llPlaceReviews.isVisible = !it?.reviews.isNullOrEmpty()
-                    llPlacePhotos.isVisible = !it?.photos.isNullOrEmpty()
-
                 }
                 it?.photos?.let { photos ->
                     adapterPlaceImages.setPlacePhotos(photos)
+                    adapterImageSlider.setPlacePhotos(photos)
                 }
                 it?.reviews?.let {
                     adapterPlaceReview.setPlaceReviews(it)
@@ -118,7 +122,7 @@ class LocationDetailsFragment :
         }
 
         adapterPlaceImages.setOnPhotoClicked {photoUrl->
-            Glide.with(requireContext()).load(photoUrl).centerCrop().into(binding.ivPlaceImage)
+
         }
 
     }

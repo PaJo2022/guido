@@ -73,12 +73,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 adapter = placesTypeGroupAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
             }
-
-            tvSavePreferences.setOnClickListener {
-                viewModel.savePlaceTypePreferences()
-
-            }
-
         }
 
         viewModel.apply {
@@ -98,7 +92,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             isPlaceInterestesSaved.collectIn(viewLifecycleOwner){
                 if(it){
                     sharedViewModel.onPreferencesSaved()
-                    findNavController().popBackStack()
                     appPrefs.prefDistance = viewModel.distanceProgress
                 }else{
                     requireActivity().showToast("Maximum 5 Interests Can Be Saved")

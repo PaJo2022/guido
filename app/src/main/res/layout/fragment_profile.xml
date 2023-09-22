@@ -10,7 +10,7 @@
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:background="@color/white">
+       android:background="@color/color_primary">
 
 
        <ImageView
@@ -239,26 +239,7 @@
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/tv_interests" />
 
-       <TextView
-           android:id="@+id/tv_save_preferences"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:paddingHorizontal="@dimen/_16sdp"
-           android:layout_marginVertical="@dimen/_32sdp"
-           android:background="@drawable/rounded_background_primary"
-           android:fontFamily="@font/font_semi_bold"
-           android:gravity="center"
-           android:paddingVertical="@dimen/_6sdp"
-           android:singleLine="true"
-           android:text="Save"
-           android:textColor="@color/white"
-           android:textSize="@dimen/_12ssp"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/rv_interests">
 
-       </TextView>
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 
