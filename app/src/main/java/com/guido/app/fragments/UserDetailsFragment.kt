@@ -9,7 +9,6 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -18,6 +17,7 @@ import com.canhub.cropper.CropImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
 import com.guido.app.R
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.auth.AuthActivity
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.collectIn
@@ -79,24 +79,7 @@ class UserDetailsFragment :
             binding.ivProfilePicture.setOnClickListener {
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-            userLoginState.collectIn(viewLifecycleOwner) {
-                when (it) {
-                    is UserLoginState.Error -> {
-                        requireActivity().showToast(it.message)
-                    }
 
-                    is UserLoginState.Loading -> {
-
-                    }
-
-                    is UserLoginState.UserSignedUp -> {
-                        findNavController().popBackStack(R.id.loginFragment, true)
-                        findNavController().navigate(R.id.home_fragment)
-                    }
-
-                    else -> Unit
-                }
-            }
             profilePicUrl.observe(viewLifecycleOwner) {
                 Glide.with(requireContext()).load(it).centerCrop().into(binding.ivProfilePicture)
             }
@@ -113,6 +96,9 @@ class UserDetailsFragment :
                 val userLocation = binding.etProfileBaseLocation.text.toString()
 
             }
+            icArrowBack.setOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
             btnLogout.setOnClickListener {
                 auth.signOut()
                 viewModel.signOut()
@@ -121,6 +107,10 @@ class UserDetailsFragment :
             }
         }
 
+
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
+        }
     }
 
 

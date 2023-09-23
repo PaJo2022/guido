@@ -5,15 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
@@ -43,16 +45,44 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun onResume() {
         super.onResume()
+        viewModel.distanceProgress = appPrefs.prefDistance / 1000
         val currentDistanceInPref = appPrefs.prefDistance
         binding.seekbarDistance.progress = currentDistanceInPref / 1000
         binding.tvDistance.text = "${currentDistanceInPref / 1000} Km"
+    }
+
+    fun OpenNavFragment(
+        f: Fragment?,
+        fm: FragmentManager,
+        FragmentName: String,
+        view: View,
+        args: Bundle? = null
+    ) {
+        val ft = fm.beginTransaction()
+
+        // Pass the bundle as arguments to the fragment, if provided
+        if (args != null) {
+            f?.arguments = args
+        }
+        ft.setCustomAnimations(
+            R.anim.in_from_right,
+            R.anim.out_to_left,
+            R.anim.in_from_left,
+            R.anim.out_to_right
+        )
+        ft.replace(view.id, f!!, FragmentName).addToBackStack(FragmentName).commit()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            tvEditProfile.setOnClickListener { findNavController().navigate(R.id.userDetailsFragment) }
+            tvEditProfile.setOnClickListener {
+                OpenNavFragment(
+                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
+                )
+            }
+            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     binding.tvDistance.text = "$p1 Km"
@@ -64,7 +94,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
                 override fun onStopTrackingTouch(p0: SeekBar?) {
                     viewModel.distanceProgress = p0?.progress ?: return
-
+                    viewModel.savePlaceTypePreferences()
                 }
 
             })
@@ -100,6 +130,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             homeViewModel.resetData()
             viewModel.onPlaceInterestClicked(it.id)
 
+        }
+
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
         }
 
     }

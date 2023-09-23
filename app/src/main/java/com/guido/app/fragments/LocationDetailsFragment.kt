@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -16,6 +17,7 @@ import com.guido.app.adapters.CustomItemDecoration
 import com.guido.app.adapters.ImageSliderAdapter
 import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.adapters.PlaceReviewAdapter
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -57,7 +59,7 @@ class LocationDetailsFragment :
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
         binding.apply {
-            icArrowBack.setOnClickListener { findNavController().popBackStack() }
+            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack()}
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -125,6 +127,9 @@ class LocationDetailsFragment :
 
         }
 
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     inner class CustomWebViewClient : WebViewClient() {

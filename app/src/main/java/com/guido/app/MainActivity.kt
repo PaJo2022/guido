@@ -1,64 +1,53 @@
 package com.guido.app
 
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
-import com.guido.app.MyApp.Companion.userCurrentLocation
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import com.guido.app.databinding.ActivityMainBinding
+import com.guido.app.fragments.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
 
-    companion object{
-        val LOCATION_PERMISSION_REQUEST_CODE = 1
-    }
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationClient: LocationClient
+    private var _binding: ActivityMainBinding? = null
+    private val binding: ActivityMainBinding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationClient = DefaultLocationClient(
-            this,
-            LocationServices.getFusedLocationProviderClient(this)
+
+
+        openNavFragment(
+            HomeFragment(),
+            supportFragmentManager,
+            "HomeFragment",
+            findViewById<FrameLayout>(R.id.fl_id)
         )
-        // Check if the location permission is already granted
 
     }
 
-    // Callback method to handle the result of the permission request
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+    fun openNavFragment(
+        fragment: Fragment,
+        fragmentManager: FragmentManager,
+        fragmentName: String,
+        view: View,
+        args: Bundle? = null
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Location permission granted
-                // Get the current location
-                getCurrentLocation()
-            } else {
-                // Location permission denied
-                // Handle the denied permission case
-            }
-        }
-    }
+        val ft = fragmentManager.beginTransaction()
 
-    fun getCurrentLocation() {
-        lifecycleScope.launch {
-            val location = locationClient.getCurrentLocation()
-
+        if (args != null) {
+            fragment.arguments = args
         }
 
+        ft.replace(view.id, fragment, fragmentName).commit()
     }
+
+
+
 }

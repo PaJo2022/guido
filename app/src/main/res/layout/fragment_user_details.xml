@@ -59,6 +59,7 @@
           android:padding="@dimen/_12sdp"
           android:layout_marginTop="@dimen/_14sdp"
           android:src="@drawable/ic_arrow_left"
+          android:backgroundTint="@color/white"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
 

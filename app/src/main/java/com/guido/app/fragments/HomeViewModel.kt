@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -62,8 +61,8 @@ class HomeViewModel @Inject constructor(
     private val _scrollHorizontalPlaceListToPosition: MutableSharedFlow<Int> = MutableSharedFlow()
     val scrollHorizontalPlaceListToPosition: SharedFlow<Int> get() = _scrollHorizontalPlaceListToPosition
 
-    private val _selectedMarker: MutableSharedFlow<Marker> = MutableSharedFlow()
-    val selectedMarker: SharedFlow<Marker> get() = _selectedMarker
+    private val _selectedMarker: MutableSharedFlow<MarkerData> = MutableSharedFlow()
+    val selectedMarker: SharedFlow<MarkerData> get() = _selectedMarker
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -86,6 +85,9 @@ class HomeViewModel @Inject constructor(
 
     private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
+
+    private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
+    val dataState: SharedFlow<DataState> get() = _dataState
 
     fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -141,12 +143,10 @@ class HomeViewModel @Inject constructor(
     ) {
         fetchCurrentAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
+            _dataState.emit(DataState.LOADING)
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
-            _nearByPlacesInGroup.postValue(ArrayList(DUMMY_PLACE_TYPE_UI_MODEL))
-            _nearByPlaces.postValue(emptyList())
-            _nearByPlacesMarkerPoints.postValue(emptyList())
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
 
 
@@ -161,19 +161,21 @@ class HomeViewModel @Inject constructor(
                     val latLangs = attraction.map { it.latLng }
                     val placeTypeUiModel = PlaceTypeUiModel(
                         placeType.displayName,
-                        attraction.firstOrNull()?.icon,
-                        attraction.addUiType(PlaceUiType.LARGE),
+                        placeType.iconDrawable,
+                        attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
                     )
 
                     if (latLangs.isNotEmpty()) {
                         nearByPlacesListInGroup.add(placeTypeUiModel)
-                        nearByPlacesList.addAll(attraction)
+                        nearByPlacesList.addAll(attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE))
                         nearByMarkerList.addAll(latLangs)
                     }
                 }
             }
             job.await()
-
+            if(nearByPlacesListInGroup.isEmpty()){
+                _dataState.emit(DataState.EMPTY_DATA)
+            }
             _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
             _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
@@ -274,14 +276,14 @@ class HomeViewModel @Inject constructor(
             }
             job.await()
             _nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
-
+            _selectedMarker.emit(markerDataList[selectedPosition])
             _scrollHorizontalPlaceListToPosition.emit(selectedPosition)
         }
     }
 
     fun setThePositionForHorizontalPlaceAdapter(pos: Int) {
         viewModelScope.launch {
-            _selectedMarker.emit(markerDataList[pos].marker)
+            _selectedMarker.emit(markerDataList[pos])
         }
     }
 
@@ -289,6 +291,10 @@ class HomeViewModel @Inject constructor(
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE
+    }
+
+    enum class DataState{
+        LOADING,EMPTY_DATA
     }
 
 
