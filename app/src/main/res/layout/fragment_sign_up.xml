@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,13 +18,61 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:background="@drawable/rounded_shape_circle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
+                />
+            <ImageView
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:layout_marginLeft="@dimen/_20sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineOne"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.23" />
+            <TextView
+                android:id="@+id/tv_company_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_medium"
+                android:text="Guido"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_36ssp"
+
+                app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/tv_company_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_medium"
+                android:text="Travel | Food | Explore"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_company_name" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.05" />
+                app:layout_constraintGuide_percent="0.42" />
 
             <TextView
                 android:id="@+id/tv_sign_up_text"
@@ -33,7 +82,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:fontFamily="@font/font_medium"
                 android:text="Sign Up"
-                android:textColor="@color/color_primary"
+                android:textColor="@color/card_color4"
                 android:textSize="@dimen/_24sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline" />
@@ -53,6 +102,7 @@
                     android:id="@+id/et_user_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/_10sdp"
                     android:textColorHint="@color/color_primary"
                     android:textColor="@color/color_primary"
                     android:inputType="textEmailAddress"
@@ -66,7 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_sign_up_text"
                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_email" >
@@ -78,6 +128,7 @@
                     android:layout_height="wrap_content"
                     android:textColorHint="@color/color_primary"
                     android:textColor="@color/color_primary"
+                    android:textSize="@dimen/_10sdp"
                     android:inputType="textPassword"
                     android:hint="@string/label_password" />
 
@@ -99,7 +150,6 @@
                 android:id="@+id/tv_sign_in_use_social_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
@@ -109,7 +159,9 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:enabled="true" />
+                    android:enabled="true"
+                    android:buttonTint="@color/card_color4"
+                    />
 
                 <TextView
                     android:id="@+id/tv_privacy_policy"
@@ -124,13 +176,16 @@
 
             </LinearLayout>
 
-            <Button
+            <TextView
                 android:id="@+id/sign_up_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:background="@color/color_secondary"
+                android:background="@drawable/button_rounded_shape"
                 android:text="Sign Up"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
                 app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_use_social_profile" />
@@ -140,7 +195,7 @@
                 android:id="@+id/ll_sign_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="@+id/sign_up_btn"
@@ -163,9 +218,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/font_semi_bold"
-                    android:padding="@dimen/_12sdp"
-                    android:text="Sign in"
-                    android:textColor="@color/color_primary"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:text="Sign In"
+                    android:textColor="@color/card_color4"
                     android:textSize="@dimen/_10ssp"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_forgot_password"
                     app:layout_constraintEnd_toEndOf="@+id/button"

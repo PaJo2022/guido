@@ -3,10 +3,12 @@
     <style name="Base.Theme.Guido" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/card_color4</item>
         <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
     <style name="Theme.Guido" parent="Base.Theme.Guido" >
+        <item name="android:statusBarColor">@color/card_color4</item>
         <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
@@ -14,6 +16,7 @@
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_background_color</item>
     </style>
+
 
 
 
