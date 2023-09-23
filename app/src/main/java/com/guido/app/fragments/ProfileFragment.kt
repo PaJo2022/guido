@@ -45,7 +45,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun onResume() {
         super.onResume()
-        viewModel.distanceProgress = appPrefs.prefDistance
+        viewModel.distanceProgress = appPrefs.prefDistance / 1000
         val currentDistanceInPref = appPrefs.prefDistance
         binding.seekbarDistance.progress = currentDistanceInPref / 1000
         binding.tvDistance.text = "${currentDistanceInPref / 1000} Km"

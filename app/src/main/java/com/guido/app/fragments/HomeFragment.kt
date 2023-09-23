@@ -365,22 +365,28 @@ class HomeFragment : Fragment(),
 
             }
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
-                binding.bottomsheetPlaceList.apply {
-                    rvPlaces.isVisible = it.isNotEmpty()
-                    animationView.isVisible = it.isEmpty()
-                    tvNoPlacesFound.isVisible = it.isEmpty()
-                }
                 placesAdapter.setNearByPlaces(it)
+            }
+            dataState.collectIn(viewLifecycleOwner){
+                binding.bottomsheetPlaceList.apply {
+                    rvPlaces.isVisible = it != HomeViewModel.DataState.EMPTY_DATA
+                    animationView.isVisible = it == HomeViewModel.DataState.EMPTY_DATA
+                    tvNoPlacesFound.isVisible = it == HomeViewModel.DataState.EMPTY_DATA
+                }
             }
             scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
                 binding.rvPlaceCards.scrollToPosition(it)
             }
             selectedMarker.collectIn(viewLifecycleOwner) { markerData ->
                 val marker = markerData.marker
-                val newIcon =
-                    ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
-                        .toBitmap(150,150)
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
+                try {
+                    val newIcon =
+                        ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
+                            .toBitmap(150,150)
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
+                }catch (e : Exception){
+
+                }
                 marker.showInfoWindow()
                 moveCamera(marker.position, true)
             }
@@ -489,6 +495,7 @@ class HomeFragment : Fragment(),
         googleMap?.addMarker(MarkerOptions().position(latLng))
         viewModel.lastSearchLocationLatLng = latLng
         viewModel.moveToTheLatLng(latLng)
+        viewModel.resetData()
         viewModel.fetchPlacesDetailsNearMe(
             "${latLng.latitude},${latLng.longitude}",
             appPrefs.prefDistance,

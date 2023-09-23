@@ -53,7 +53,7 @@ class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Ad
                 placesAdapter.setOnLandMarkClicked {place->
                     onItemClickListener?.invoke(place)
                 }
-                Glide.with(appContext).load(place.icon).centerCrop().into(ivPlaceTypeIcon)
+             //   Glide.with(appContext).load(place.icon).centerCrop().into(ivPlaceTypeIcon)
             }
         }
     }

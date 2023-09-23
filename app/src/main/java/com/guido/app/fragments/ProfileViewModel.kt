@@ -1,10 +1,10 @@
 package com.guido.app.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guido.app.R
 import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
@@ -41,69 +41,66 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-    val placeTypes = listOf(
-        PlaceType("1", "Airport", "Service"),
-        PlaceType("2", "Amusement Park", "Entertainment"),
+    private val placeTypes = listOf(
+        PlaceType("1", "Airport", "Service", iconDrawable = R.drawable.ic_airport),
+        PlaceType("6", "Bank", "Shop", iconDrawable = R.drawable.ic_bank),
+        PlaceType("7", "Bar", "Shop", iconDrawable = R.drawable.icon_bar),
+        PlaceType("8", "Beauty Salon", "Shop", iconDrawable = R.drawable.ic_beauty_saloon),
+        PlaceType("11", "Cafe", "Shop", iconDrawable = R.drawable.ic_cafe_marker),
+        PlaceType("18", "Clothing Store", "Shop", iconDrawable = R.drawable.icon_clothing_store),
+        PlaceType("28", "Florist", "Shop", iconDrawable = R.drawable.icon_florist),
+        PlaceType("31", "Gym", "Shop", iconDrawable = R.drawable.icon_gym),
+        PlaceType("32", "Hair Care", "Shop", iconDrawable = R.drawable.icon_hair_care),
+        PlaceType("38", "Jewelry Store", "Shop", iconDrawable = R.drawable.icon_jewelry),
+        PlaceType("41", "Liquor Store", "Shop", iconDrawable = R.drawable.icon_liquor_store),
+        PlaceType(
+            "22",
+            "Department Store",
+            "Shop",
+            iconDrawable = R.drawable.icon_department_store
+        ),
+        PlaceType("52", "Pharmacy", "Shop", iconDrawable = R.drawable.icon_pharmacy),
+        PlaceType("57", "Restaurant", "Shop", iconDrawable = R.drawable.icon_restaurant),
+        PlaceType("63", "Spa", "Shop", iconDrawable = R.drawable.ic_spa),
+        PlaceType("67", "Supermarket", "Shop", iconDrawable = R.drawable.ic_super_market),
+        PlaceType("61", "Shoe Store", "Shop", iconDrawable = R.drawable.ic_shoe_store),
+        PlaceType("62", "Shopping Mall", "Shop", iconDrawable = R.drawable.ic_shopping_mall),
 
 
-        PlaceType("6", "Bank", "Shop"),
-        PlaceType("7", "Bar", "Shop"),
-        PlaceType("8", "Beauty Salon", "Shop"),
+        PlaceType("16", "Church", "Service", iconDrawable = R.drawable.icon_church),
+        PlaceType("17", "City Hall", "Service", iconDrawable = R.drawable.icon_city_hall),
+        PlaceType("21", "Dentist", "Service", iconDrawable = R.drawable.icon_dentist),
+        PlaceType("26", "Embassy", "Service", iconDrawable = R.drawable.icon_embassy),
+        PlaceType("27", "Fire Station", "Service", iconDrawable = R.drawable.icon_fire_station),
+        PlaceType("36", "Hospital", "Service", iconDrawable = R.drawable.icon_hospital),
+        PlaceType("51", "Parking", "Service", iconDrawable = R.drawable.icon_parking),
+        PlaceType("56", "Post Office", "Service", iconDrawable = R.drawable.icon_post_ofc),
+        PlaceType(
+            "58",
+            "Roofing Contractor",
+            "Service",
+            iconDrawable = R.drawable.icon_roofing_contractor
+        ),
+        PlaceType("66", "Subway Station", "Service", iconDrawable = R.drawable.ic_subway),
 
+        PlaceType("37", "Hotel", "Lodging", iconDrawable = R.drawable.icon_hotel),
+        PlaceType("42", "Lodging", "Lodging", iconDrawable = R.drawable.icon_hotel),
 
-        PlaceType("11", "Cafe", "Shop"),
-        PlaceType("12", "Campground", "Entertainment"),
-
-
-        PlaceType("16", "Church", "Service"),
-        PlaceType("17", "City Hall", "Service"),
-        PlaceType("18", "Clothing Store", "Shop"),
-
-
-        PlaceType("21", "Dentist", "Service"),
-        PlaceType("22", "Department Store", "Shop"),
-
-
-        PlaceType("26", "Embassy", "Service"),
-        PlaceType("27", "Fire Station", "Service"),
-        PlaceType("28", "Florist", "Shop"),
-
-
-        PlaceType("31", "Gym", "Shop"),
-        PlaceType("32", "Hair Care", "Shop"),
-
-
-        PlaceType("36", "Hospital", "Service"),
-        PlaceType("37", "Hotel", "Lodging"),
-        PlaceType("38", "Jewelry Store", "Shop"),
-
-
-        PlaceType("41", "Liquor Store", "Shop"),
-        PlaceType("42", "Lodging", "Lodging"),
-
-
-        PlaceType("46", "Movie Theater", "Entertainment"),
-        PlaceType("47", "Museum", "Entertainment"),
-        PlaceType("48", "Night Club", "Entertainment"),
-
-        PlaceType("51", "Parking", "Service"),
-        PlaceType("52", "Pharmacy", "Shop"),
-
-
-        PlaceType("56", "Post Office", "Service"),
-        PlaceType("57", "Restaurant", "Shop"),
-        PlaceType("58", "Roofing Contractor", "Service"),
-
-        PlaceType("61", "Shoe Store", "Shop"),
-        PlaceType("62", "Shopping Mall", "Shop"),
-        PlaceType("63", "Spa", "Shop"),
-
-
-        PlaceType("66", "Subway Station", "Service"),
-        PlaceType("67", "Supermarket", "Shop"),
-
-
-
+        PlaceType(
+            "46",
+            "Movie Theater",
+            "Entertainment",
+            iconDrawable = R.drawable.icon_movie_theater
+        ),
+        PlaceType("47", "Museum", "Entertainment", iconDrawable = R.drawable.icon_museum),
+        PlaceType("48", "Night Club", "Entertainment", iconDrawable = R.drawable.icon_night_club),
+        PlaceType("12", "Campground", "Entertainment", iconDrawable = R.drawable.icon_campground),
+        PlaceType(
+            "2",
+            "Amusement Park",
+            "Entertainment",
+            iconDrawable = R.drawable.ic_amusment_park
+        )
     )
 
     val userInterestes : MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()

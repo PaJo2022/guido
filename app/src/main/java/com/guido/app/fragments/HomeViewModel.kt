@@ -86,6 +86,9 @@ class HomeViewModel @Inject constructor(
     private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
 
+    private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
+    val dataState: SharedFlow<DataState> get() = _dataState
+
     fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val address = placesRepository.fetchAddressFromLatLng(
@@ -140,6 +143,7 @@ class HomeViewModel @Inject constructor(
     ) {
         fetchCurrentAddressFromGeoCoding(location,key)
         viewModelScope.launch(Dispatchers.IO) {
+            _dataState.emit(DataState.LOADING)
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
@@ -169,7 +173,9 @@ class HomeViewModel @Inject constructor(
                 }
             }
             job.await()
-
+            if(nearByPlacesListInGroup.isEmpty()){
+                _dataState.emit(DataState.EMPTY_DATA)
+            }
             _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
             _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
@@ -285,6 +291,10 @@ class HomeViewModel @Inject constructor(
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE
+    }
+
+    enum class DataState{
+        LOADING,EMPTY_DATA
     }
 
 
