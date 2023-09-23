@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -62,8 +61,8 @@ class HomeViewModel @Inject constructor(
     private val _scrollHorizontalPlaceListToPosition: MutableSharedFlow<Int> = MutableSharedFlow()
     val scrollHorizontalPlaceListToPosition: SharedFlow<Int> get() = _scrollHorizontalPlaceListToPosition
 
-    private val _selectedMarker: MutableSharedFlow<Marker> = MutableSharedFlow()
-    val selectedMarker: SharedFlow<Marker> get() = _selectedMarker
+    private val _selectedMarker: MutableSharedFlow<MarkerData> = MutableSharedFlow()
+    val selectedMarker: SharedFlow<MarkerData> get() = _selectedMarker
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -144,9 +143,6 @@ class HomeViewModel @Inject constructor(
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
-            _nearByPlacesInGroup.postValue(ArrayList(DUMMY_PLACE_TYPE_UI_MODEL))
-            _nearByPlaces.postValue(emptyList())
-            _nearByPlacesMarkerPoints.postValue(emptyList())
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
 
 
@@ -162,12 +158,12 @@ class HomeViewModel @Inject constructor(
                     val placeTypeUiModel = PlaceTypeUiModel(
                         placeType.displayName,
                         attraction.firstOrNull()?.icon,
-                        attraction.addUiType(PlaceUiType.LARGE),
+                        attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
                     )
 
                     if (latLangs.isNotEmpty()) {
                         nearByPlacesListInGroup.add(placeTypeUiModel)
-                        nearByPlacesList.addAll(attraction)
+                        nearByPlacesList.addAll(attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE))
                         nearByMarkerList.addAll(latLangs)
                     }
                 }
@@ -274,14 +270,14 @@ class HomeViewModel @Inject constructor(
             }
             job.await()
             _nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
-
+            _selectedMarker.emit(markerDataList[selectedPosition])
             _scrollHorizontalPlaceListToPosition.emit(selectedPosition)
         }
     }
 
     fun setThePositionForHorizontalPlaceAdapter(pos: Int) {
         viewModelScope.launch {
-            _selectedMarker.emit(markerDataList[pos].marker)
+            _selectedMarker.emit(markerDataList[pos])
         }
     }
 

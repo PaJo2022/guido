@@ -14,6 +14,7 @@ data class PlaceUiModel(
     val latLng: LatLng? = null,
     val address: String? = null,
     val icon: String? = null,
+    val iconDrawable : Int ?=null,
     @SerializedName("icon_background_color")
     val iconBackGroundColor: String? = null,
     val photos: List<Photo>? = null,
@@ -28,13 +29,14 @@ data class PlaceUiModel(
 ) : Parcelable
 
 
-fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
+fun List<PlaceUiModel>.addUiType(iconDrawable: Int?,placeUiType: PlaceUiType) = map {
     PlaceUiModel(
         it.placeId,
         it.name,
         it.latLng,
         it.address,
         it.icon,
+        iconDrawable,
         it.iconBackGroundColor,
         it.photos,
         it.rating,

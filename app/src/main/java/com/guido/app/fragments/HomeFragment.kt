@@ -3,8 +3,6 @@ package com.guido.app.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +12,7 @@ import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -52,12 +51,9 @@ import com.guido.app.model.MarkerData
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.net.URL
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -187,7 +183,7 @@ class HomeFragment : Fragment(),
         }
     }
 
-    fun OpenNavFragment(
+    private fun openNavFragment(
         f: Fragment?,
         fm: FragmentManager,
         FragmentName: String,
@@ -227,7 +223,12 @@ class HomeFragment : Fragment(),
                 checkLocationPermission(shouldAnimate = true)
             }
             tvSearchLocation.setOnClickListener {
-                OpenNavFragment(SearchLocationFragment(),childFragmentManager,"SearchLocationFragment",binding.flId)
+                openNavFragment(
+                    SearchLocationFragment(),
+                    childFragmentManager,
+                    "SearchLocationFragment",
+                    binding.flId
+                )
             }
 
             rvPlaceCards.apply {
@@ -235,7 +236,12 @@ class HomeFragment : Fragment(),
                 layoutManager = placeCardHorizontalLayoutManager
             }
             ivUserProfileImage.setOnClickListener {
-                OpenNavFragment(ProfileFragment(),childFragmentManager,"ProfileFragment",binding.flId)
+                openNavFragment(
+                    ProfileFragment(),
+                    childFragmentManager,
+                    "ProfileFragment",
+                    binding.flId
+                )
             }
             bottomsheetPlaceList.bottomSheet
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
@@ -330,33 +336,18 @@ class HomeFragment : Fragment(),
         val markerLatLng = placeUiModel.latLng
         val landMarkName = placeUiModel.name
 
-        if (markerUrl == null || markerLatLng == null || landMarkName == null) return
-        GlobalScope.launch(Dispatchers.IO) {
-            val iconBitmap = getBitmapFromURL(markerUrl)  ?: return@launch
-            withContext(Dispatchers.Main) {
-
-                val markerOptions = MarkerOptions()
-                    .position(markerLatLng)
-                    .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
-                    .title(landMarkName)
-                val marker = googleMap?.addMarker(markerOptions)
-                marker?.let {
-                    viewModel.markerDataList.add(MarkerData(it, placeUiModel))
-                }
-
-
-            }
+        if (markerUrl == null || markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
+        val iconBitmap =
+            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable)!!.toBitmap()
+        val markerOptions = MarkerOptions()
+            .position(markerLatLng)
+            .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
+            .title(landMarkName)
+        val marker = googleMap?.addMarker(markerOptions)
+        marker?.let {
+            viewModel.markerDataList.add(MarkerData(it, placeUiModel))
         }
-    }
 
-    private fun getBitmapFromURL(url: String?): Bitmap? {
-        return try {
-            val inputStream = URL(url).openStream()
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
     }
 
     private fun observeData() {
@@ -374,12 +365,22 @@ class HomeFragment : Fragment(),
 
             }
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
+                binding.bottomsheetPlaceList.apply {
+                    rvPlaces.isVisible = it.isNotEmpty()
+                    animationView.isVisible = it.isEmpty()
+                    tvNoPlacesFound.isVisible = it.isEmpty()
+                }
                 placesAdapter.setNearByPlaces(it)
             }
             scrollHorizontalPlaceListToPosition.collectIn(viewLifecycleOwner) {
                 binding.rvPlaceCards.scrollToPosition(it)
             }
-            selectedMarker.collectIn(viewLifecycleOwner) { marker ->
+            selectedMarker.collectIn(viewLifecycleOwner) { markerData ->
+                val marker = markerData.marker
+                val newIcon =
+                    ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
+                        .toBitmap(150,150)
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
                 marker.showInfoWindow()
                 moveCamera(marker.position, true)
             }
@@ -393,9 +394,7 @@ class HomeFragment : Fragment(),
                 placesHorizontalAdapter.setNearByPlaces(it)
             }
             currentLatLng.observe(viewLifecycleOwner) { latLng ->
-                val markerOptions = MarkerOptions()
-                    .position(latLng)
-                googleMap?.addMarker(markerOptions)
+
             }
             moveToLocation.observe(viewLifecycleOwner) { latLngAndShouldAnimateCamera ->
                 viewModel.showVerticalUi()
@@ -430,13 +429,25 @@ class HomeFragment : Fragment(),
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)
-                OpenNavFragment(LocationDetailsFragment(),childFragmentManager,"ProfileFragment",binding.flId,this)
+                openNavFragment(
+                    LocationDetailsFragment(),
+                    childFragmentManager,
+                    "ProfileFragment",
+                    binding.flId,
+                    this
+                )
             }
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putParcelable("LANDMARK_DATA", it)
-                OpenNavFragment(LocationDetailsFragment(),childFragmentManager,"ProfileFragment",binding.flId,this)
+                openNavFragment(
+                    LocationDetailsFragment(),
+                    childFragmentManager,
+                    "ProfileFragment",
+                    binding.flId,
+                    this
+                )
             }
         }
     }
@@ -504,11 +515,9 @@ class HomeFragment : Fragment(),
 
         googleMap?.uiSettings?.setAllGesturesEnabled(true)
         try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            val success = googleMap?.setMapStyle(
+            googleMap?.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
-                    requireContext(), com.guido.app.R.raw.style_json
+                    requireContext(), R.raw.style_json
                 )
             )
 
@@ -587,7 +596,7 @@ class HomeFragment : Fragment(),
 
     override fun onDestroy() {
         super.onDestroy()
-        //binding.mapView.onDestroy()
+        binding.mapView.onDestroy()
     }
 
     override fun onDestroyView() {
@@ -617,24 +626,20 @@ class HomeFragment : Fragment(),
 
 
     override fun onMarkerClick(currentMarker: Marker): Boolean {
+        viewModel.lastSearchLocationLatLng = currentMarker.position
         viewModel.showHorizontalUi()
         viewModel.onMarkerClicked(currentMarker.id)
         return false
     }
 
 
-    private fun addMarker(latLng: LatLng, name: String) {
+    override fun onInfoWindowClose(marker: Marker) {
 
-        val markerOptions = MarkerOptions()
-            .position(latLng)
-            .title(name)
-        val marker = googleMap?.addMarker(markerOptions)
-        // Customize marker icon or other properties as needed.
-    }
-
-    override fun onInfoWindowClose(p0: Marker) {
-
-        // viewModel.showVerticalUi()
+        val markerData = viewModel.markerDataList.find { it.marker.id == marker.id } ?: return
+        val newIcon =
+            ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
+                .toBitmap()
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
     }
 
     override fun onCameraMove() {
