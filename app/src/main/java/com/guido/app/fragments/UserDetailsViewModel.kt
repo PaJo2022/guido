@@ -33,7 +33,8 @@ class UserDetailsViewModel @Inject constructor(
     var isFromSignUpFlow = false
     private var _tempUser: User? = null
 
-    private val _profileEditState: MutableLiveData<ProfileEditingState> = MutableLiveData(ProfileEditingState.IDLE)
+    private val _profileEditState: MutableLiveData<ProfileEditingState> =
+        MutableLiveData(ProfileEditingState.IDLE)
     val profileEditState: MutableLiveData<ProfileEditingState> get() = _profileEditState
 
     private val _isProfilePicUpdating: MutableSharedFlow<Boolean> = MutableSharedFlow()
@@ -42,6 +43,9 @@ class UserDetailsViewModel @Inject constructor(
 
     private val _isProfileUpdating: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val isProfileUpdating: SharedFlow<Boolean> get() = _isProfileUpdating
+
+    private val _error: MutableSharedFlow<String> = MutableSharedFlow()
+    val error: SharedFlow<String> get() = _error
 
 
     private val _profilePicUrl: MutableLiveData<String?> = MutableLiveData()
@@ -52,6 +56,7 @@ class UserDetailsViewModel @Inject constructor(
         if (userId == null) return
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.getUserDetailsFlow(userId).collect {
+                _tempUser = it
                 _user.postValue(it)
             }
         }
@@ -85,25 +90,44 @@ class UserDetailsViewModel @Inject constructor(
 
     private fun updateProfilePicture(picUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            val userId = appPrefs.userId ?: return@launch
             _isProfileUpdating.emit(true)
-            val isProfilePicSet = userRepository.setProfilePicture(picUrl)
+            val updates = mapOf("profilePicture" to picUrl)
+            val isProfilePicSet = userRepository.updateProfileData(userId, updates)
             if (isProfilePicSet is Resource.Success) {
+                _error.emit("Profile Updated")
                 userRepository.updateProfilePicInLocalDb(appPrefs.userId.toString(), picUrl)
                 _profilePicUrl.postValue(picUrl)
             } else {
                 _profilePicUrl.postValue(picUrl)
+                _error.emit("Something Went Wrong")
             }
+            _isProfileUpdating.emit(false)
+        }
+    }
+
+    fun updateUserData(profileData: Map<String, String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val userId = appPrefs.userId ?: return@launch
+            _isProfileUpdating.emit(true)
+            val isUserDataUpdated = userRepository.updateProfileData(userId, profileData)
+            if (isUserDataUpdated is Resource.Success) {
+                _error.emit("Profile Updated")
+            } else {
+                _error.emit("Something Went Wrong")
+            }
+            onProfileEditCanceled()
             _isProfileUpdating.emit(false)
         }
     }
 
 
     fun onProfileEditClicked() {
-        _profileEditState.value = ProfileEditingState.EDITING
+        _profileEditState.postValue(ProfileEditingState.EDITING)
     }
 
     fun onProfileEditCanceled() {
-        _profileEditState.value = ProfileEditingState.IDLE
+        _profileEditState.postValue(ProfileEditingState.IDLE)
     }
 
     enum class ProfileEditingState {

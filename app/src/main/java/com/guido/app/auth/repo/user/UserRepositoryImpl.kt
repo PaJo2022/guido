@@ -32,9 +32,26 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProfilePicInLocalDb(userId: String,profilePic: String) {
-        withContext(Dispatchers.IO){
+    override suspend fun updateProfilePicInLocalDb(userId: String, profilePic: String) {
+        withContext(Dispatchers.IO) {
             db.userDao().updateProfilePic(userId, profilePic)
+        }
+    }
+
+    override suspend fun updateProfileData(
+        userId : String,
+        profileData: Map<String, String>
+    ): Resource<String> {
+        return suspendCoroutine { continuation ->
+            fireStoreCollection.collection("users").document(userId)
+                .update(profileData) // Pass the map of updates here
+                .addOnSuccessListener { documentReference ->
+                    continuation.resume(Resource.Success("Updated"))
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume((Resource.Error(Exception(e.message), null)))
+                }
+
         }
     }
 

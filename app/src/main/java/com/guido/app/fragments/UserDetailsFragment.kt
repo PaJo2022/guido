@@ -2,10 +2,12 @@ package com.guido.app.fragments
 
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -23,9 +25,10 @@ import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentUserDetailsBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.getImageBytes
+import com.guido.app.hideCamera
 import com.guido.app.model.User
 import com.guido.app.setNullText
-import com.guido.app.toggleEnableAndAlpha
+import com.guido.app.showToast
 import com.guido.app.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -86,17 +89,36 @@ class UserDetailsFragment :
             }
 
             profileEditState.observe(viewLifecycleOwner) { editState ->
+                binding.etProfileName.isEnabled = editState == UserDetailsViewModel.ProfileEditingState.EDITING
+                binding.etProfileBaseLocation.isEnabled = editState == UserDetailsViewModel.ProfileEditingState.EDITING
                 binding.titleEditProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
                 binding.btnLogout.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
                 binding.btnDeleteAccount.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
                 binding.titleSaveProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
                 binding.ivCancelEdit.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
+
+                when(editState){
+                    UserDetailsViewModel.ProfileEditingState.IDLE -> {
+                        hideCamera(binding.root)
+                    }
+                    UserDetailsViewModel.ProfileEditingState.EDITING -> {
+                        binding.etProfileName.requestFocus()
+                    }
+                    else -> Unit
+                }
             }
             isProfilePicUpdating.collectIn(viewLifecycleOwner) { isUpdating ->
                 binding.circularProgressProfilePic.isVisible = isUpdating
             }
             isProfileUpdating.collectIn(viewLifecycleOwner) { isUpdating ->
                 binding.circularProgressProfile.isVisible = isUpdating
+                if (isUpdating) {
+                    hideCamera(binding.root)
+                }
+            }
+            error.collectIn(viewLifecycleOwner) {
+                requireActivity().showToast(it)
+
             }
         }
 
@@ -125,7 +147,23 @@ class UserDetailsFragment :
                 viewModel.onProfileEditClicked()
             }
             titleSaveProfile.setOnClickListener {
-
+                val updatedUserName = binding.etProfileName.text.toString()
+                val updatedUserLocation = binding.etProfileBaseLocation.text.toString()
+                binding.tiLayoutUserName.error = null
+                binding.titleProfileBaseLocation.error = null
+                if (updatedUserName.isEmpty()) {
+                    binding.tiLayoutUserName.error = "Please enter user name"
+                    return@setOnClickListener
+                }
+                if (updatedUserLocation.isEmpty()) {
+                    binding.titleProfileBaseLocation.error = "Please enter your location"
+                    return@setOnClickListener
+                }
+                val updatedDataMap = mapOf(
+                    "displayName" to updatedUserName,
+                    "location" to updatedUserLocation,
+                )
+                viewModel.updateUserData(updatedDataMap)
             }
             ivCancelEdit.setOnClickListener {
                 viewModel.onProfileEditCanceled()
