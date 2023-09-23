@@ -19,11 +19,14 @@ import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.addOnBackPressedCallback
 import com.guido.app.auth.AuthActivity
+import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentUserDetailsBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.getImageBytes
 import com.guido.app.model.User
 import com.guido.app.setNullText
+import com.guido.app.toggleEnableAndAlpha
+import com.guido.app.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
@@ -76,20 +79,28 @@ class UserDetailsFragment :
                         .into(circleImageView)
                 }
             }
-            binding.ivEditProfilePicture.setOnClickListener {
-                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-            }
-
             profilePicUrl.observe(viewLifecycleOwner) {
                 val icon = if (it == null) R.drawable.ic_add else R.drawable.ic_edit
                 binding.ivEditProfilePicture.setImageResource(icon)
                 Glide.with(requireContext()).load(it).centerCrop().into(binding.circleImageView)
             }
+
+            profileEditState.observe(viewLifecycleOwner) { editState ->
+                binding.titleEditProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
+                binding.btnLogout.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
+                binding.btnDeleteAccount.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
+                binding.titleSaveProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
+                binding.ivCancelEdit.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
+            }
+            isProfilePicUpdating.collectIn(viewLifecycleOwner) { isUpdating ->
+                binding.circularProgressProfilePic.isVisible = isUpdating
+            }
+            isProfileUpdating.collectIn(viewLifecycleOwner) { isUpdating ->
+                binding.circularProgressProfile.isVisible = isUpdating
+            }
         }
 
         binding.apply {
-            titlePageTitle.text =
-                if (viewModel.isFromSignUpFlow) "Create Account" else "Edit Profile"
             btnCreate.isVisible = viewModel.isFromSignUpFlow
             btnLogout.isVisible = !viewModel.isFromSignUpFlow
             btnDeleteAccount.isVisible = !viewModel.isFromSignUpFlow
@@ -106,6 +117,18 @@ class UserDetailsFragment :
                 viewModel.signOut()
                 requireActivity().finish()
                 startActivity(Intent(requireContext(), AuthActivity::class.java))
+            }
+            ivEditProfilePicture.setOnClickListener {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+            titleEditProfile.setOnClickListener {
+                viewModel.onProfileEditClicked()
+            }
+            titleSaveProfile.setOnClickListener {
+
+            }
+            ivCancelEdit.setOnClickListener {
+                viewModel.onProfileEditCanceled()
             }
         }
 

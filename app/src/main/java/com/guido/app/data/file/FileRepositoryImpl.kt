@@ -9,22 +9,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class FileRepositoryImpl @Inject constructor(private val firebaseStorage: FirebaseStorage) : FileRepository {
 
-    override fun addImagesForBusiness(image: ByteArray): Flow<Resource<String>> {
-        return callbackFlow {
+    override suspend fun addImagesForBusiness(image: ByteArray): Resource<String> {
+        return suspendCoroutine {continuation->
             val imageRef = firebaseStorage.getReference(UUID.randomUUID().toString())
             imageRef.putBytes(image).addOnSuccessListener { taskSnapshot->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
-                    trySend(Resource.Success(imageUrl))
+                    continuation.resume(Resource.Success(imageUrl))
                 }
             }.addOnFailureListener {error->
-                cancel(error.message.toString())
+                continuation.resume(Resource.Error(Exception(error.message.toString())))
             }
 
-            awaitClose{close()}
+
         }
     }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhandadekho.mobile.utils.Resource
-import com.guido.app.auth.model.UserLoginState
 import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.file.FileRepository
@@ -15,8 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,8 +33,16 @@ class UserDetailsViewModel @Inject constructor(
     var isFromSignUpFlow = false
     private var _tempUser: User? = null
 
-    private val _userLoginState: MutableSharedFlow<UserLoginState> = MutableSharedFlow()
-    val userLoginState: SharedFlow<UserLoginState> get() = _userLoginState
+    private val _profileEditState: MutableLiveData<ProfileEditingState> = MutableLiveData(ProfileEditingState.IDLE)
+    val profileEditState: MutableLiveData<ProfileEditingState> get() = _profileEditState
+
+    private val _isProfilePicUpdating: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isProfilePicUpdating: SharedFlow<Boolean> get() = _isProfilePicUpdating
+
+
+    private val _isProfileUpdating: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isProfileUpdating: SharedFlow<Boolean> get() = _isProfileUpdating
+
 
     private val _profilePicUrl: MutableLiveData<String?> = MutableLiveData()
     val profilePicUrl: LiveData<String?> = _profilePicUrl
@@ -67,28 +72,42 @@ class UserDetailsViewModel @Inject constructor(
     }
 
     fun addFile(fileArray: ByteArray) {
-        fileRepository.addImagesForBusiness(fileArray).onEach { state ->
-            when (state) {
-                is Resource.Error -> {
-
-                }
-
-                is Resource.Success -> {
-                    val url = state.data.toString()
-                    val isProfilePicSet = userRepository.setProfilePicture(url)
-                    if (isProfilePicSet is Resource.Success) {
-                        userRepository.updateProfilePicInLocalDb(appPrefs.userId.toString(), url)
-                        _profilePicUrl.postValue(url)
-                    } else {
-                        _profilePicUrl.postValue(url)
-                    }
-
-                }
-
-                else -> Unit
+        viewModelScope.launch(Dispatchers.IO) {
+            _isProfilePicUpdating.emit(true)
+            val state = fileRepository.addImagesForBusiness(fileArray)
+            if (state is Resource.Success) {
+                val url = state.data.toString()
+                updateProfilePicture(url)
             }
+            _isProfilePicUpdating.emit(false)
+        }
+    }
 
-        }.launchIn(viewModelScope)
+    private fun updateProfilePicture(picUrl: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _isProfileUpdating.emit(true)
+            val isProfilePicSet = userRepository.setProfilePicture(picUrl)
+            if (isProfilePicSet is Resource.Success) {
+                userRepository.updateProfilePicInLocalDb(appPrefs.userId.toString(), picUrl)
+                _profilePicUrl.postValue(picUrl)
+            } else {
+                _profilePicUrl.postValue(picUrl)
+            }
+            _isProfileUpdating.emit(false)
+        }
+    }
+
+
+    fun onProfileEditClicked() {
+        _profileEditState.value = ProfileEditingState.EDITING
+    }
+
+    fun onProfileEditCanceled() {
+        _profileEditState.value = ProfileEditingState.IDLE
+    }
+
+    enum class ProfileEditingState {
+        IDLE, EDITING
     }
 
 }
