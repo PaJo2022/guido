@@ -33,8 +33,6 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
                 tvPlaceType.text = type.type
-                ivPlaceTypeIcon.isVisible = false
-
                 placeAdapter.setPlacesType(type.placeTypes)
                 placeAdapter.setOnPlaceTypeSelected {
 

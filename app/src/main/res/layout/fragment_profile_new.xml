@@ -20,76 +20,55 @@
         android:background="@color/white">
        <!-- app:layout_constraintBottom_toTopOf="@+id/guidelineOne"-->
         <LinearLayout
+            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_164sdp"
-            android:orientation="vertical"
             android:background="@drawable/rounded_shape_circle"
-            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            />
         <TextView
             android:id="@+id/tv_company_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
             android:fontFamily="@font/font_medium"
             android:text="Guido"
             android:textColor="@color/white"
-            android:textSize="@dimen/_36ssp"
-           android:layout_marginTop="@dimen/_30sdp"
+            android:textSize="@dimen/_42ssp"
+            app:layout_constraintBottom_toTopOf="@+id/circleImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_company_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/font_medium"
-            android:text="Travel | Food | Explore"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_16ssp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_company_name" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineOne"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.23" />
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_image_view"
-            android:layout_width="@dimen/_80sdp"
-            android:layout_height="@dimen/_80sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            app:cardBackgroundColor="@color/color_light_grey_80"
+
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleImageView"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:src="@drawable/ic_profile_img"
+            app:cardBackgroundColor="@color/transparent"
             app:cardCornerRadius="@dimen/_40sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_company_description" >
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
 
-            <ImageView
-                android:id="@+id/iv_profile_picture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_profile_img"
-                />
-
-        </androidx.cardview.widget.CardView>
         <TextView
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
             android:fontFamily="@font/font_medium"
-            android:text="Joydip Bose"
             android:singleLine="true"
+            android:text="Joydip Bose"
             android:textColor="@color/card_color4"
             android:textSize="@dimen/_18ssp"
-            app:layout_constraintTop_toBottomOf="@+id/card_image_view"
-            app:layout_constraintLeft_toLeftOf="@id/card_image_view"
-            app:layout_constraintRight_toRightOf="@+id/card_image_view" />
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
         <LinearLayout
             android:id="@+id/viewLocation"
             android:layout_width="wrap_content"
@@ -166,16 +145,6 @@
             app:layout_constraintTop_toBottomOf="@+id/interestItem">
 
         </TextView>
-        <ImageView
-            android:id="@+id/iv_profile_picturess"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:src="@drawable/guido_icon"
-            android:background="@color/white"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/ic_arrow_back"
@@ -203,20 +172,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.75" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/ll_profile_details"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/color_fourth"
-            android:layout_marginTop="-32dp"
-            app:cardCornerRadius="@dimen/_12sdp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal2"
-            app:layout_constraintStart_toStartOf="@+id/guideline_horizontal1"
-            app:layout_constraintTop_toBottomOf="@+id/iv_profile_picturess">
-
-
-
-        </androidx.cardview.widget.CardView>
 
 
 

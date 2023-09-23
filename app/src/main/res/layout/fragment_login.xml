@@ -7,20 +7,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:context=".auth.LoginFragment">
+
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
+        android:layout_height="@dimen/_164sdp"
         android:background="@drawable/rounded_shape_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
-        />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineOne"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.23" />
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_company_name"
         android:layout_width="wrap_content"
@@ -29,11 +24,10 @@
         android:text="Guido"
         android:textColor="@color/white"
         android:textSize="@dimen/_36ssp"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_company_description"
@@ -47,25 +41,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_company_name" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.42" />
 
     <TextView
         android:id="@+id/tv_sign_in_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
         android:fontFamily="@font/font_medium"
         android:text="Sign In"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginStart="@dimen/_12sdp"
         android:textColor="@color/card_color4"
         android:textSize="@dimen/_24sdp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <TextView
         android:id="@+id/tv_sign_in_description"

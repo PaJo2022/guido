@@ -39,8 +39,8 @@ class UserDetailsViewModel @Inject constructor(
     private val _userLoginState: MutableSharedFlow<UserLoginState> = MutableSharedFlow()
     val userLoginState: SharedFlow<UserLoginState> get() = _userLoginState
 
-    private val _profilePicUrl: MutableLiveData<String> = MutableLiveData()
-    val profilePicUrl: LiveData<String> = _profilePicUrl
+    private val _profilePicUrl: MutableLiveData<String?> = MutableLiveData()
+    val profilePicUrl: LiveData<String?> = _profilePicUrl
 
 
     fun getUserDetailsByUserId(userId: String?) {

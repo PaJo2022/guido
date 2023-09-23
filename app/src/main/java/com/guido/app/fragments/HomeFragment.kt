@@ -601,10 +601,6 @@ class HomeFragment : Fragment(),
         binding.mapView.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.mapView.onDestroy()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -19,14 +19,11 @@ import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.addOnBackPressedCallback
 import com.guido.app.auth.AuthActivity
-import com.guido.app.auth.model.UserLoginState
-import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentUserDetailsBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.getImageBytes
 import com.guido.app.model.User
 import com.guido.app.setNullText
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
@@ -73,15 +70,20 @@ class UserDetailsFragment :
                     etProfileName.setNullText(it?.displayName)
                     etProfileBaseLocation.setNullText(it?.location)
                     etProfileBaseEmail.setNullText(it?.email)
-                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop().into(ivProfilePicture)
+                    val icon = if (it == null) R.drawable.ic_add else R.drawable.ic_edit
+                    binding.ivEditProfilePicture.setImageResource(icon)
+                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop()
+                        .into(circleImageView)
                 }
             }
-            binding.ivProfilePicture.setOnClickListener {
+            binding.ivEditProfilePicture.setOnClickListener {
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
 
             profilePicUrl.observe(viewLifecycleOwner) {
-                Glide.with(requireContext()).load(it).centerCrop().into(binding.ivProfilePicture)
+                val icon = if (it == null) R.drawable.ic_add else R.drawable.ic_edit
+                binding.ivEditProfilePicture.setImageResource(icon)
+                Glide.with(requireContext()).load(it).centerCrop().into(binding.circleImageView)
             }
         }
 
