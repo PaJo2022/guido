@@ -19,7 +19,6 @@
 
 
 
-
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
         <item name="android:textColorHint">@color/color_light_grey_80</item>
         <item name="android:editTextColor">@color/white</item>
