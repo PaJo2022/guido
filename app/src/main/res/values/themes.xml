@@ -8,6 +8,7 @@
 
     <style name="Theme.Guido" parent="Base.Theme.Guido" >
         <item name="chipStyle">@style/Widget.App.Chip</item>
+        <item name="android:statusBarColor">@color/card_color4</item>
     </style>
 
     <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
