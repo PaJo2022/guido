@@ -17,6 +17,7 @@ import com.canhub.cropper.CropImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
 import com.guido.app.R
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.auth.AuthActivity
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.collectIn
@@ -106,6 +107,10 @@ class UserDetailsFragment :
             }
         }
 
+
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
+        }
     }
 
 

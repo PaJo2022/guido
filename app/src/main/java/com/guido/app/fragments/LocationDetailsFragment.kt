@@ -17,6 +17,7 @@ import com.guido.app.adapters.CustomItemDecoration
 import com.guido.app.adapters.ImageSliderAdapter
 import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.adapters.PlaceReviewAdapter
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -126,6 +127,9 @@ class LocationDetailsFragment :
 
         }
 
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     inner class CustomWebViewClient : WebViewClient() {

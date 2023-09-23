@@ -15,6 +15,7 @@ import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
@@ -128,6 +129,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             homeViewModel.resetData()
             viewModel.onPlaceInterestClicked(it.id)
 
+        }
+
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
         }
 
     }

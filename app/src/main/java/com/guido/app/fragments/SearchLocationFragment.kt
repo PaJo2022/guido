@@ -2,6 +2,7 @@ package com.guido.app.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
@@ -10,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.guido.app.BaseFragment
 import com.guido.app.adapters.PlacesAutoCompleteAdapter
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.databinding.FragmentSearchLocationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -63,6 +65,10 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
             parentFragmentManager.popBackStack()
             homeViewModel.fetchPlaceDetailsById(it.placeId)
 
+        }
+
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
         }
     }
 

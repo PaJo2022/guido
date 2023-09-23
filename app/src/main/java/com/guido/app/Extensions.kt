@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.Flow
@@ -80,4 +82,16 @@ fun View.toggleEnableAndVisibility(isEnable: Boolean) {
     } else {
         this.visibility = View.INVISIBLE
     }
+}
+
+fun Fragment.addOnBackPressedCallback(
+    isEnabled: Boolean = true,
+    onBackPressedAction: () -> Unit
+) {
+    val callback = object : OnBackPressedCallback(isEnabled) {
+        override fun handleOnBackPressed() {
+            onBackPressedAction.invoke()
+        }
+    }
+    requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 }
