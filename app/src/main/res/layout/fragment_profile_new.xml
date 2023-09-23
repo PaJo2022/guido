@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fl_id"
+    >
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fillViewport="true"
     >
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
+       <!-- app:layout_constraintBottom_toTopOf="@+id/guidelineOne"-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/_164sdp"
             android:orientation="vertical"
             android:background="@drawable/rounded_shape_circle"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
+
             />
         <TextView
             android:id="@+id/tv_company_name"
@@ -28,7 +35,7 @@
             android:text="Guido"
             android:textColor="@color/white"
             android:textSize="@dimen/_36ssp"
-            app:layout_constraintBottom_toTopOf="@+id/guidelineTwo"
+           android:layout_marginTop="@dimen/_30sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -51,12 +58,6 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.23" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineTwo"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.15" />
         <androidx.cardview.widget.CardView
             android:id="@+id/card_image_view"
             android:layout_width="@dimen/_80sdp"
@@ -66,7 +67,7 @@
             app:cardCornerRadius="@dimen/_40sdp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/guidelineTwo" >
+            app:layout_constraintTop_toBottomOf="@+id/tv_company_description" >
 
             <ImageView
                 android:id="@+id/iv_profile_picture"
@@ -183,7 +184,8 @@
             android:padding="@dimen/_12sdp"
             android:src="@drawable/ic_arrow_left"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
 
 
 
@@ -248,7 +250,7 @@
             android:layout_height="wrap_content"
             android:max="25"
             android:progress="5"
-            android:min="3"
+            android:min="1"
             app:layout_constraintEnd_toStartOf="@+id/iv_man_driving"
             app:layout_constraintStart_toEndOf="@+id/iv_man_walking"
             app:layout_constraintTop_toTopOf="@+id/iv_man_walking" />
@@ -294,7 +296,6 @@
             android:id="@+id/rv_interests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -304,5 +305,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>
+</FrameLayout>

@@ -237,7 +237,7 @@ class HomeFragment : Fragment(),
             }
             ivUserProfileImage.setOnClickListener {
                 openNavFragment(
-                    ProfileFragment(),
+                    ProfileNewFragment(),
                     childFragmentManager,
                     "ProfileFragment",
                     binding.flId
