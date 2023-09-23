@@ -157,7 +157,7 @@ class HomeViewModel @Inject constructor(
                     val latLangs = attraction.map { it.latLng }
                     val placeTypeUiModel = PlaceTypeUiModel(
                         placeType.displayName,
-                        attraction.firstOrNull()?.icon,
+                        placeType.iconDrawable,
                         attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
                     )
 

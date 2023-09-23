@@ -69,7 +69,7 @@ enum class PlaceUiType {
 @Parcelize
 data class PlaceTypeUiModel(
     val type: String? = null,
-    val icon: String? = null,
+    val icon: Int? = null,
     val places: List<PlaceUiModel>? = null,
     var dataType: DataType = DataType.SHIMMER
 ) : Parcelable

@@ -143,12 +143,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun savePlaceTypePreferences() {
+   fun savePlaceTypePreferences() {
         viewModelScope.launch {
             val allSelectedPlaceInterestes = placeTypes.filter { it.isSelected }
             placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
-            _isPlaceInterestesSaved.emit(Unit)
             appPrefs.prefDistance = distanceProgress
+            _isPlaceInterestesSaved.emit(Unit)
         }
     }
 
