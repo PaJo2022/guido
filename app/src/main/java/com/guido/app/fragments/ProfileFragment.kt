@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.guido.app.BaseFragment
 import com.guido.app.R
 import com.guido.app.adapters.PlacesTypeGroupAdapter
@@ -16,7 +17,6 @@ import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.db.AppPrefs
-import com.guido.app.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +28,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private lateinit var viewModel: ProfileViewModel
     private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -73,12 +74,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 adapter = placesTypeGroupAdapter
                 layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
             }
-
-            tvSavePreferences.setOnClickListener {
-                viewModel.savePlaceTypePreferences()
-
-            }
-
         }
 
         viewModel.apply {
@@ -90,24 +85,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     tvUserName.text = it?.displayName ?: "Awesome Usr"
                     tvUserLocation.text = it?.location ?: "No Location"
                     tvUserLocation.isSelected = true
+                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop().into(ivProfilePicture)
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {
                 placesTypeGroupAdapter.setPlacesType(it)
             }
             isPlaceInterestesSaved.collectIn(viewLifecycleOwner){
-                if(it){
-                    sharedViewModel.onPreferencesSaved()
-                    findNavController().popBackStack()
-                    appPrefs.prefDistance = viewModel.distanceProgress
-                }else{
-                    requireActivity().showToast("Maximum 5 Interests Can Be Saved")
-                }
+                sharedViewModel.onPreferencesSaved()
             }
 
         }
         placesTypeGroupAdapter.setOnPlaceTypeSelected {
+            homeViewModel.resetData()
             viewModel.onPlaceInterestClicked(it.id)
+
         }
 
     }

@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,8 +14,8 @@ class SharedViewModel @Inject constructor() :
 
     var shouldGoToSettings = false
 
-    private val _onPreferencesSaved: MutableSharedFlow<Boolean> = MutableSharedFlow()
-    val onPreferencesSaved: MutableSharedFlow<Boolean> = _onPreferencesSaved
+    private val _onPreferencesSaved: MutableLiveData<Boolean> = MutableLiveData()
+    val onPreferencesSaved: MutableLiveData<Boolean> = _onPreferencesSaved
 
     private val _onLocationPermissionClicked: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val onLocationPermissionClicked: MutableSharedFlow<Boolean> = _onLocationPermissionClicked
@@ -24,13 +23,13 @@ class SharedViewModel @Inject constructor() :
 
     fun onPreferencesSaved() {
         viewModelScope.launch {
-            delay(500)
-            _onPreferencesSaved.emit(true)
+            _onPreferencesSaved.postValue(true)
         }
     }
 
-
-
+    fun onPreferenceRead(){
+        _onPreferencesSaved.value = false
+    }
 
 
     fun onLocationPermissionClicked() {

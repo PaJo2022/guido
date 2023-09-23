@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.room.withTransaction
 import com.guido.app.api.GuidoApi
 import com.guido.app.db.MyAppDataBase
+import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
 import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
 import com.guido.app.model.places.toPlaceUiModel
@@ -79,8 +80,15 @@ class PlacesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllSavedPlaceTypePreferences()  = db.placeTypeDao().getAllPlaceTypes()
-    override fun getAllSavedPlaceTypePreferencesFlow()  = db.placeTypeDao().getAllPlaceTypesFlow()
+    override suspend fun getAllSavedPlaceTypePreferences() = db.placeTypeDao().getAllPlaceTypes()
+    override fun getAllSavedPlaceTypePreferencesFlow() = db.placeTypeDao().getAllPlaceTypesFlow()
+    override suspend fun insertNewSearchedLocation(placeAutocomplete: PlaceAutocomplete) {
+        withContext(Dispatchers.IO) {
+            db.locationSearchDao().insertSearchedLocation(placeAutocomplete)
+        }
+    }
+
+    override fun getSearchedLocations() = db.locationSearchDao().getRecentSearchLocations()
 
 
 }

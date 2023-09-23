@@ -1,9 +1,6 @@
 package com.guido.app.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
-import android.text.style.CharacterStyle
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +13,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.guido.app.Constants
 import com.guido.app.LocationClient
 import com.guido.app.MyApp
+import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.model.MarkerData
@@ -29,9 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Arrays
 import javax.inject.Inject
@@ -43,7 +39,8 @@ class HomeViewModel @Inject constructor(
     private val placesRepository: PlacesRepository,
     private val placesClient: PlacesClient,
     private val appPrefs: AppPrefs,
-    private var locationClient: LocationClient
+    private var locationClient: LocationClient,
+    private val userRepository: UserRepository
 ) :
     ViewModel() {
 
@@ -58,10 +55,8 @@ class HomeViewModel @Inject constructor(
     val nearByPlaces: LiveData<List<PlaceUiModel>> get() = _nearByPlaces
 
 
-    private val _nearByPlacesMarkerPoints: MutableStateFlow<List<PlaceUiModel>> = MutableStateFlow(
-        emptyList()
-    )
-    val nearByPlacesMarkerPoints: StateFlow<List<PlaceUiModel>> get() = _nearByPlacesMarkerPoints
+    private val _nearByPlacesMarkerPoints: MutableLiveData<List<PlaceUiModel>> = MutableLiveData()
+    val nearByPlacesMarkerPoints: MutableLiveData<List<PlaceUiModel>> get() = _nearByPlacesMarkerPoints
 
 
     private val _scrollHorizontalPlaceListToPosition: MutableSharedFlow<Int> = MutableSharedFlow()
@@ -87,14 +82,7 @@ class HomeViewModel @Inject constructor(
     private val _searchedFormattedAddress: MutableLiveData<String> = MutableLiveData()
     val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
 
-    private val STYLE_BOLD: CharacterStyle
-        get() {
-            return android.text.style.StyleSpan(Typeface.BOLD)
-        }
-    private val STYLE_NORMAL: CharacterStyle
-        get() {
-            return android.text.style.StyleSpan(Typeface.NORMAL)
-        }
+
 
     private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
@@ -110,15 +98,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun moveToTheLatLng(latLng: LatLng){
-        _moveToLocation.value = Pair(latLng,true)
+    fun moveToTheLatLng(latLng: LatLng) {
+        _moveToLocation.value = Pair(latLng, true)
     }
 
 
+    fun resetData() {
+        nearByPlacesListInGroup.clear()
+        nearByPlacesList.clear()
+        nearByMarkerList.clear()
+        _nearByPlacesInGroup.value = DUMMY_PLACE_TYPE_UI_MODEL
+        _nearByPlaces.value = emptyList()
+        _nearByPlacesMarkerPoints.value = emptyList()
+    }
 
-    fun resetSearchWithNewInterestes(){
-        if(lastSearchLocationLatLng == null) return
-
+    fun resetSearchWithNewInterestes() {
+        if (lastSearchLocationLatLng == null) return
         fetchPlacesDetailsNearMe(
             "${lastSearchLocationLatLng?.latitude},${lastSearchLocationLatLng?.longitude}",
             appPrefs.prefDistance,
@@ -128,17 +123,11 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun formatInterestString(input: String): String {
-        // Convert the input string to lowercase
+    private fun formatInterestString(input: String): String {
         val lowercaseInput = input.lowercase()
-
-        // Split the lowercase string into words based on space
         val words = lowercaseInput.split(" ")
-
-        // Join the words with underscores to create the final formatted string
         val formattedString = words.joinToString("_")
-
-        return if(words.size == 1) lowercaseInput else formattedString
+        return if (words.size == 1) lowercaseInput else formattedString
     }
 
 
@@ -156,11 +145,11 @@ class HomeViewModel @Inject constructor(
             nearByPlacesList.clear()
             nearByMarkerList.clear()
             _nearByPlacesInGroup.postValue(ArrayList(DUMMY_PLACE_TYPE_UI_MODEL))
-            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-            _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
+            _nearByPlaces.postValue(emptyList())
+            _nearByPlacesMarkerPoints.postValue(emptyList())
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
 
-            if (interestList.size > 5) return@launch
+
             val job = async {
                 interestList.forEach { placeType ->
                     val job2 = async {
@@ -169,23 +158,25 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     val attraction = job2.await()
-                    Log.i("JAPAN", "nearByPlacesList:${formatInterestString(placeType.displayName)} ${attraction}")
                     val latLangs = attraction.map { it.latLng }
                     val placeTypeUiModel = PlaceTypeUiModel(
                         placeType.displayName,
                         attraction.firstOrNull()?.icon,
                         attraction.addUiType(PlaceUiType.LARGE),
                     )
-                    nearByPlacesListInGroup.add(placeTypeUiModel)
-                    nearByPlacesList.addAll(attraction)
-                    ArrayList(latLangs).let { nearByMarkerList.addAll(it) }
+
+                    if (latLangs.isNotEmpty()) {
+                        nearByPlacesListInGroup.add(placeTypeUiModel)
+                        nearByPlacesList.addAll(attraction)
+                        nearByMarkerList.addAll(latLangs)
+                    }
                 }
             }
             job.await()
 
             _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-            _nearByPlacesMarkerPoints.emit(ArrayList(nearByPlacesList))
+            _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
 
         }
     }
@@ -293,6 +284,8 @@ class HomeViewModel @Inject constructor(
             _selectedMarker.emit(markerDataList[pos].marker)
         }
     }
+
+    fun getUserData() = userRepository.getUserDetailsFlow(appPrefs.userId.toString())
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE

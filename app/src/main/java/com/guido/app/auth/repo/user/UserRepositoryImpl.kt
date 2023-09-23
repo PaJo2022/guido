@@ -7,9 +7,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.guido.app.db.AppPrefs
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -27,6 +29,12 @@ class UserRepositoryImpl @Inject constructor(
                 deleteUser()
                 insertUser(user)
             }
+        }
+    }
+
+    override suspend fun updateProfilePicInLocalDb(userId: String,profilePic: String) {
+        withContext(Dispatchers.IO){
+            db.userDao().updateProfilePic(userId, profilePic)
         }
     }
 
@@ -49,19 +57,17 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun setProfilePicture(pictureUrl: String): Flow<Resource<String>> {
-        return callbackFlow {
+    override suspend fun setProfilePicture(pictureUrl: String): Resource<String> {
+        return suspendCoroutine {continuation->
             fireStoreCollection.collection("users").document(appPrefs.userId.toString())
-                .update("user_profile_picture", pictureUrl)
+                .update("profilePicture", pictureUrl)
                 .addOnSuccessListener { documentReference ->
-                    trySend(Resource.Success("Success"))
+                    continuation.resume(Resource.Success("Success"))
                 }
                 .addOnFailureListener { e ->
-                    trySend(Resource.Error(Exception(e.message), null))
+                    continuation.resume(Resource.Error(Exception(e.message), null))
                 }
-            awaitClose {
-                close()
-            }
+
         }
     }
 

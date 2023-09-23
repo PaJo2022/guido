@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.guido.app.databinding.LayoutPlaceGroupItemBinding
 import com.guido.app.model.PlaceType
 import com.guido.app.model.PlaceTypeContainer
@@ -34,21 +34,48 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
             binding.apply {
                 tvPlaceType.text = type.type
                 ivPlaceTypeIcon.isVisible = false
-                rvPlaces.apply {
-                    layoutManager =
-                        GridLayoutManager(appContext, 3, GridLayoutManager.VERTICAL, false)
-                    adapter = placeAdapter
-                }
+
                 placeAdapter.setPlacesType(type.placeTypes)
                 placeAdapter.setOnPlaceTypeSelected {
-                    onItemClickListener?.invoke(it)
+
+                }
+
+
+                type.placeTypes.forEachIndexed {index,it->
+                    addChips(binding.chipGroupPlaces, it,index) { type ->
+
+                        onItemClickListener?.invoke(type)
+                    }
                 }
             }
         }
     }
 
+    private fun addChips(
+        chipGroup: ChipGroup,
+        type: PlaceType,
+        index : Int,
+        onChipClickListener: (type: PlaceType) -> Unit
+    ) {
+
+        Chip(appContext).apply {
+            text = type.displayName
+            isCloseIconVisible = false
+            setOnClickListener {
+                onChipClickListener(type)
+            }
+            chipGroup.addView(this)
+        }
+        chipGroup.applyCheckedOnSelectedChip(index,type.isSelected)
+    }
+    private fun ChipGroup.applyCheckedOnSelectedChip(index : Int,isSelected : Boolean){
+        val chip:Chip = this.getChildAt(index) as Chip
+        chip.isChecked = isSelected
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlaceTypeGroupViewHolder(
-        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun getItemCount() = _types.size

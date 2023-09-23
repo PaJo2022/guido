@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.Glide
 import com.guido.app.databinding.LayoutPlaceGroupItemBinding
 import com.guido.app.databinding.LayoutPlaceItemBinding
+import com.guido.app.databinding.LayoutPlaceListItemBinding
 import com.guido.app.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.guido.app.model.placesUiModel.PlaceTypeUiModel
 import com.guido.app.model.placesUiModel.PlaceUiModel
@@ -26,13 +27,18 @@ class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Ad
         notifyDataSetChanged()
     }
 
+    fun clear(){
+        _placeGroupItem = DUMMY_PLACE_TYPE_UI_MODEL
+        notifyDataSetChanged()
+    }
+
     private var onItemClickListener : ((PlaceUiModel) -> Any?)? =null
 
     fun setOnLandMarkClicked(onItemClickListener : ((PlaceUiModel) -> Any?)){
         this.onItemClickListener = onItemClickListener
     }
 
-    inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceGroupItemBinding) :
+    inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(place: PlaceTypeUiModel) {
             val placesAdapter = PlacesListAdapter(appContext)
@@ -53,7 +59,7 @@ class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Ad
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlacesListAdapterViewHolder(
-        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        LayoutPlaceListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun getItemCount() = _placeGroupItem.size

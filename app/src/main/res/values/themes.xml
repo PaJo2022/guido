@@ -2,12 +2,20 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Guido" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="android:statusBarColor">@color/card_color4</item>
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
     <style name="Theme.Guido" parent="Base.Theme.Guido" >
-        <item name="android:statusBarColor">@color/card_color4</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
+
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_background_color</item>
+    </style>
+
+
 
     <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
         <item name="android:textColorHint">@color/color_light_grey_80</item>

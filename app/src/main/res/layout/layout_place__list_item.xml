@@ -31,8 +31,8 @@
         app:layout_constraintStart_toEndOf="@+id/iv_place_type_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_places"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_places"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12sdp"

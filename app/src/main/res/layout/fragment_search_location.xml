@@ -55,7 +55,7 @@
         android:paddingHorizontal="@dimen/_8sdp"
         android:paddingVertical="@dimen/_12sdp"
         android:singleLine="true"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/color_light_grey_80"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,6 +63,19 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <TextView
+      android:id="@+id/recently_searched_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/_12sdp"
+      android:fontFamily="@font/font_medium"
+      android:text="Recently Search Locations"
+      android:textColor="@color/color_primary"
+      android:textSize="@dimen/_16ssp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/rv_location_suggestion"
@@ -73,7 +86,7 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+      app:layout_constraintTop_toBottomOf="@+id/recently_searched_tv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
