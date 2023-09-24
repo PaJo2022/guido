@@ -81,6 +81,7 @@
         android:id="@+id/rv_interetes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
         android:layout_marginVertical="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"

@@ -89,7 +89,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun onLogOut() {
-        db.userDao().deleteUser()
+        db.clearAllTables()
         appPrefs.clear()
     }
 

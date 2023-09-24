@@ -29,10 +29,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            linearLayout.setOnClickListener {
-                appPrefs.isUserLoggedIn = true
-
-            }
             button.setOnClickListener {
                 val email = binding.etUserEmail.text.toString()
                 val password = binding.etUserPassword.text.toString()

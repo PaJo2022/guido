@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
 import com.guido.app.MainActivity
 import com.guido.app.adapters.PlacesAutoCompleteAdapter
+import com.guido.app.adapters.PlacesTypeGroupAdapter
+import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.databinding.FragmentSignUpBinding
 import com.guido.app.db.AppPrefs
@@ -31,12 +33,13 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
     private val viewModel: SignUpViewModel by viewModels()
     private val searchViewModel: SearchLocationViewModel by viewModels()
     private lateinit var adapterPlaceAutoComplete: PlacesAutoCompleteAdapter
-
+    private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapterPlaceAutoComplete = PlacesAutoCompleteAdapter(requireContext())
+        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext())
     }
 
 
@@ -54,6 +57,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
                     LinearLayoutManager.VERTICAL, false
                 )
             }
+            llSignupInformation.rvInteretes.apply {
+                addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
+                adapter = placesTypeGroupAdapter
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
         }
         adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete->
             searchViewModel.onPredictionSelected()
@@ -62,7 +71,6 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             binding.llSignupInformation.etLocation.requestFocus()
         }
         binding.signUpBtn.setOnClickListener {
-            appPrefs.isUserLoggedIn = true
             val email = binding.etUserEmail.text.toString()
             val password = binding.etUserPassword.text.toString()
             val userName = binding.llSignupInformation.etUserName.text.toString()
@@ -72,10 +80,11 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             binding.llSignupInformation.tiLayoutUserName.error = null
             binding.llSignupInformation.tiLayoutUserLocation.error = null
 
-            if (viewModel.userLoginState.value is UserLoginState.UserCreateAccount) {
+            if (viewModel.isUserRegistered) {
 
                 if (userName.isEmpty()) {
-                    binding.llSignupInformation.tiLayoutUserName.error = "Please enter your user name"
+                    binding.llSignupInformation.tiLayoutUserName.error =
+                        "Please enter your user name"
                     return@setOnClickListener
                 }
                 if (userLocation.isEmpty()) {
@@ -83,17 +92,18 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
                     return@setOnClickListener
                 }
                 createUser(userName, userLocation)
-            } else
-
+            } else {
                 if (email.isEmpty() || !isEmailValid(email)) {
                     binding.tiLayoutUserEmail.error = "Please enter email"
                     return@setOnClickListener
                 }
-            if (password.isEmpty()) {
-                binding.tiLayoutUserPassword.error = "Please enter password"
-                return@setOnClickListener
+                if (password.isEmpty()) {
+                    binding.tiLayoutUserPassword.error = "Please enter password"
+                    return@setOnClickListener
+                }
+                signUpUser(email, password)
             }
-            signUpUser(email, password)
+
         }
 
 
@@ -105,19 +115,29 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
 
         viewModel.apply {
+            userInterestes.observe(viewLifecycleOwner) {
+                placesTypeGroupAdapter.setPlacesType(it)
+            }
             userLoginState.observe(viewLifecycleOwner) {
                 binding.apply {
                     etUserEmail.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
                     etUserPassword.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
                 }
-                binding.llSignupInformation.root.isVisible = it is UserLoginState.UserCreateAccount || it is UserLoginState.UserSignedUp
-                binding.swipeRefreshLayout.isRefreshing = it is UserLoginState.Loading
+                binding.llSignupInformation.root.isVisible =
+                    it is UserLoginState.UserCreateAccount || it is UserLoginState.UserSignedUp || it is UserLoginState.ProfileNotComplete || it is UserLoginState.AccountCreateLoading
+                binding.swipeRefreshLayout.isRefreshing =
+                    it is UserLoginState.Loading || it is UserLoginState.AccountCreateLoading
                 binding.signUpBtn.text =
                     if (it is UserLoginState.UserCreateAccount) "Lets Start" else "Sign Up"
                 when (it) {
                     is UserLoginState.Error -> {
                         requireActivity().showToast(it.message)
                     }
+
+                    is UserLoginState.ProfileNotComplete -> {
+                        requireActivity().showToast(it.message)
+                    }
+
                     is UserLoginState.UserCreateAccount -> {
                         binding.llSignupInformation.etUserName.requestFocus()
                     }
@@ -138,6 +158,9 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             }
         }
 
+        placesTypeGroupAdapter.setOnPlaceTypeSelected {
+            viewModel.onPlaceInterestClicked(it.id)
+        }
     }
 
     private fun signUpUser(email: String, password: String) {
