@@ -222,7 +222,7 @@ class HomeFragment : Fragment(),
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission(shouldAnimate = true)
             }
-            tvSearchLocation.setOnClickListener {
+            tvLastSearchLocation.setOnClickListener {
                 openNavFragment(
                     SearchLocationFragment(),
                     childFragmentManager,
@@ -353,7 +353,7 @@ class HomeFragment : Fragment(),
     private fun observeData() {
         viewModel.apply {
             getUserData().collectIn(viewLifecycleOwner){
-                Glide.with(requireContext()).load("asa").centerCrop().placeholder(R.drawable.user_icon).into(binding.ivUserProfileImage)
+                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().placeholder(R.drawable.user_icon).into(binding.ivUserProfileImage)
             }
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
