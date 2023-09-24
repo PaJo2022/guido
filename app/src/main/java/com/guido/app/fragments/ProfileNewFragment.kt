@@ -9,6 +9,7 @@ import android.widget.SeekBar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -22,6 +23,10 @@ import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.databinding.FragmentProfileNewBinding
 import com.guido.app.db.AppPrefs
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -131,6 +136,14 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
             homeViewModel.resetData()
             viewModel.onPlaceInterestClicked(it.id)
 
+        }
+        placesTypeGroupAdapter.setOnInterestSectionOpen{
+           viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+               delay(100)
+               withContext(Dispatchers.Main){
+                   binding.nestedScrollView.fullScroll(View.FOCUS_DOWN)
+               }
+           }
         }
 
         addOnBackPressedCallback {

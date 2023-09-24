@@ -27,21 +27,38 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         this.onItemClickListener = onItemClickListener
     }
 
+    private var onIntrestSectionOpened: (() -> Any?)? = null
+
+    fun setOnInterestSectionOpen(onIntrestSectionOpened: (() -> Any?)) {
+        this.onIntrestSectionOpened = onIntrestSectionOpened
+    }
+
     inner class PlaceTypeGroupViewHolder(private val binding: LayoutPlaceGroupItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(type: PlaceTypeContainer) {
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
-                tvPlaceType.text = type.type
+                tvPlaceType.text = type.type  + "(+${type.placeTypes.size})"
                 placeAdapter.setPlacesType(type.placeTypes)
                 placeAdapter.setOnPlaceTypeSelected {
 
+                }
+                tvPlaceArrow.setOnClickListener {
+                    type.isOpened = !type.isOpened
+                    if(type.isOpened){
+                        motionLayout.transitionToEnd()
+                    }else{
+                        motionLayout.transitionToStart()
+                    }
+                    if(type.isOpened){
+                        onIntrestSectionOpened?.invoke()
+                    }
+                    tvPlaceType.text = type.type + if(type.isOpened) "" else "(+${type.placeTypes.size})"
                 }
 
 
                 type.placeTypes.forEachIndexed {index,it->
                     addChips(binding.chipGroupPlaces, it,index) { type ->
-
                         onItemClickListener?.invoke(type)
                     }
                 }

@@ -1,38 +1,50 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/transparent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
-
+    android:id="@+id/motion_layout"
+    android:layout_marginBottom="@dimen/_10sdp"
+    app:layoutDescription="@xml/layout_place_group_item_scene">
 
 
     <TextView
         android:id="@+id/tv_place_type"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_4sdp"
-        android:layout_marginTop="@dimen/_12sdp"
         android:fontFamily="@font/font_regular"
         android:text="Centered Text"
         android:textColor="@color/color_primary"
-        android:textSize="@dimen/_16ssp"
-        app:layout_goneMarginStart="@dimen/_12sdp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/tv_place_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/tv_place_arrow"
+        app:layout_goneMarginStart="@dimen/_12sdp" />
+
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/tv_place_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:rotation="-90"
+        android:src="@drawable/ic_arrow"
+        android:text="Centered Text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_place_type"
+        app:layout_goneMarginStart="@dimen/_12sdp" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group_places"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12sdp"
-        app:singleSelection="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_place_type" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_place_type"
+        app:singleSelection="false" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>
