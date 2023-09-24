@@ -4,12 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".auth.LoginFragment">
 
 
-
+    <TextView
+        android:id="@+id/tv_sign_up_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/font_medium"
+        android:text="More About You"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:textColor="@color/card_color4"
+        android:textSize="@dimen/_24sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -20,7 +31,7 @@
         android:layout_marginHorizontal="@dimen/_12sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_up_text">
 
 
         <com.google.android.material.textfield.TextInputEditText
@@ -69,8 +80,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_12sdp"
-        android:fontFamily="@font/font_regular"
-        android:text="Choose Interets"
+        android:fontFamily="@font/font_bold"
+        android:text="What Are You Looking For?"
         android:textColor="@color/color_primary"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,23 +91,38 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_interetes"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
+        android:layout_height="match_parent"
         android:layout_marginVertical="@dimen/_12sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
-        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
+        android:nestedScrollingEnabled="false"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_profile_interests" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_place_suggestions"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/white"
+        android:nestedScrollingEnabled="false"
         app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
         app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
         app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
 
 
+    <TextView
+        android:id="@+id/create_account_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_rounded_shape"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:text="Lets Start"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintEnd_toEndOf="@+id/rv_place_suggestions"
+        app:layout_constraintStart_toStartOf="@+id/rv_place_suggestions"
+        app:layout_constraintTop_toBottomOf="@+id/rv_interetes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

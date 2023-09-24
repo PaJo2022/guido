@@ -53,8 +53,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         viewModel.apply {
             userLoginState.collectIn(viewLifecycleOwner) {
                 when (it) {
-                    is UserLoginState.Error -> requireActivity().showToast("User Is Not Signed Up")
-                    is UserLoginState.Loading -> {}
                     is UserLoginState.UserCreateAccount -> {
 
                     }

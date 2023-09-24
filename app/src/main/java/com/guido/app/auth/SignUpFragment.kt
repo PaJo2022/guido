@@ -14,12 +14,12 @@ import com.guido.app.adapters.PlacesAutoCompleteAdapter
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.auth.model.UserLoginState
+import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentSignUpBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.fragments.SearchLocationViewModel
 import com.guido.app.isEmailValid
 import com.guido.app.showToast
-import com.guido.app.toggleEnableAndAlpha
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -47,71 +47,33 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            btnLogin.setOnClickListener {
+            llSignUp.btnLogin.setOnClickListener {
                 (requireActivity() as AuthActivity).goToActivity(0)
             }
-            llSignupInformation.rvPlaceSuggestions.apply {
+            llCreateAccount.rvPlaceSuggestions.apply {
                 adapter = adapterPlaceAutoComplete
                 layoutManager = LinearLayoutManager(
                     requireContext(),
                     LinearLayoutManager.VERTICAL, false
                 )
             }
-            llSignupInformation.rvInteretes.apply {
+            llCreateAccount.rvInteretes.apply {
                 addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
                 adapter = placesTypeGroupAdapter
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
-        adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete->
+        adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete ->
             searchViewModel.onPredictionSelected()
             adapterPlaceAutoComplete.setPredications(emptyList())
-            binding.llSignupInformation.etLocation.setText(placeAutocomplete.area)
-            binding.llSignupInformation.etLocation.requestFocus()
-        }
-        binding.signUpBtn.setOnClickListener {
-            val email = binding.etUserEmail.text.toString()
-            val password = binding.etUserPassword.text.toString()
-            val userName = binding.llSignupInformation.etUserName.text.toString()
-            val userLocation = binding.llSignupInformation.etLocation.text.toString()
-            binding.tiLayoutUserEmail.error = null
-            binding.tiLayoutUserPassword.error = null
-            binding.llSignupInformation.tiLayoutUserName.error = null
-            binding.llSignupInformation.tiLayoutUserLocation.error = null
-
-            if (viewModel.isUserRegistered) {
-
-                if (userName.isEmpty()) {
-                    binding.llSignupInformation.tiLayoutUserName.error =
-                        "Please enter your user name"
-                    return@setOnClickListener
-                }
-                if (userLocation.isEmpty()) {
-                    binding.llSignupInformation.tiLayoutUserLocation.error = "Please enter lcoation"
-                    return@setOnClickListener
-                }
-                createUser(userName, userLocation)
-            } else {
-                if (email.isEmpty() || !isEmailValid(email)) {
-                    binding.tiLayoutUserEmail.error = "Please enter email"
-                    return@setOnClickListener
-                }
-                if (password.isEmpty()) {
-                    binding.tiLayoutUserPassword.error = "Please enter password"
-                    return@setOnClickListener
-                }
-                signUpUser(email, password)
-            }
-
+            binding.llCreateAccount.etLocation.setText(placeAutocomplete.area)
+            binding.llCreateAccount.etLocation.requestFocus()
         }
 
 
-        binding.llSignupInformation.etLocation.doOnTextChanged { text, start, before, count ->
-            if (!text.isNullOrEmpty() && !searchViewModel.isPredictionSelected) {
-                searchViewModel.getPredictions(text.toString())
-            }
-        }
+        registerUserMethods()
+        createAccountMethods()
 
 
         viewModel.apply {
@@ -120,35 +82,19 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
             }
             userLoginState.observe(viewLifecycleOwner) {
                 binding.apply {
-                    etUserEmail.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
-                    etUserPassword.toggleEnableAndAlpha(it !is UserLoginState.UserCreateAccount)
+                    llSignUp.root.isVisible = it is UserLoginState.UserRegisterAccount
+                    llCreateAccount.root.isVisible = it is UserLoginState.UserCreateAccount
                 }
-                binding.llSignupInformation.root.isVisible =
-                    it is UserLoginState.UserCreateAccount || it is UserLoginState.UserSignedUp || it is UserLoginState.ProfileNotComplete || it is UserLoginState.AccountCreateLoading
-                binding.swipeRefreshLayout.isRefreshing =
-                    it is UserLoginState.Loading || it is UserLoginState.AccountCreateLoading
-                binding.signUpBtn.text =
-                    if (it is UserLoginState.UserCreateAccount) "Lets Start" else "Sign Up"
-                when (it) {
-                    is UserLoginState.Error -> {
-                        requireActivity().showToast(it.message)
-                    }
-
-                    is UserLoginState.ProfileNotComplete -> {
-                        requireActivity().showToast(it.message)
-                    }
-
-                    is UserLoginState.UserCreateAccount -> {
-                        binding.llSignupInformation.etUserName.requestFocus()
-                    }
-
-                    is UserLoginState.UserSignedUp -> {
-                        requireActivity().finish()
-                        startActivity(Intent(requireContext(), MainActivity::class.java))
-                    }
-
-                    else -> Unit
+                if (it is UserLoginState.UserSignedUp) {
+                    requireActivity().finish()
+                    startActivity(Intent(requireContext(), MainActivity::class.java))
                 }
+            }
+            isLoading.collectIn(viewLifecycleOwner) {
+                binding.swipeRefreshLayout.isRefreshing = it
+            }
+            error.collectIn(viewLifecycleOwner) {
+                requireActivity().showToast(it)
             }
         }
 
@@ -160,6 +106,55 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
         placesTypeGroupAdapter.setOnPlaceTypeSelected {
             viewModel.onPlaceInterestClicked(it.id)
+        }
+    }
+
+    private fun registerUserMethods() {
+        binding.llSignUp.signUpBtn.setOnClickListener {
+            val email = binding.llSignUp.etUserEmail.text.toString()
+            val password = binding.llSignUp.etUserPassword.text.toString()
+            binding.llSignUp.tiLayoutUserEmail.error = null
+            binding.llSignUp.tiLayoutUserPassword.error = null
+
+            if (email.isEmpty() || !isEmailValid(email)) {
+                binding.llSignUp.tiLayoutUserEmail.error = "Please enter email"
+                return@setOnClickListener
+            }
+            if (password.isEmpty()) {
+                binding.llSignUp.tiLayoutUserPassword.error = "Please enter password"
+                return@setOnClickListener
+            }
+            signUpUser(email, password)
+
+        }
+    }
+
+    private fun createAccountMethods() {
+        binding.llCreateAccount.apply {
+            etLocation.doOnTextChanged { text, start, before, count ->
+                if (!text.isNullOrEmpty() && !searchViewModel.isPredictionSelected) {
+                    searchViewModel.getPredictions(text.toString())
+                }else{
+                    searchViewModel.removePredictions()
+                }
+            }
+
+            createAccountBtn.setOnClickListener {
+                val userName = etUserName.text.toString()
+                val userLocation = etLocation.text.toString()
+                tiLayoutUserName.error = null
+                tiLayoutUserLocation.error = null
+
+                if (userName.isEmpty()) {
+                    tiLayoutUserName.error = "Please enter your user name"
+                    return@setOnClickListener
+                }
+                if (userLocation.isEmpty()) {
+                    tiLayoutUserLocation.error = "Please select your location"
+                    return@setOnClickListener
+                }
+                viewModel.createUser(userName, userLocation)
+            }
         }
     }
 

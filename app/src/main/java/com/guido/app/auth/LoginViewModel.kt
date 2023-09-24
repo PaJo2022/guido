@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val firebaseUser = authRepository.loginWithEmail(email, password)
             if (firebaseUser == null) {
-                _userLoginState.emit(UserLoginState.Error("This Email Is Not Signed Up"))
+
                 return@launch
             }
             val userId = firebaseUser.uid

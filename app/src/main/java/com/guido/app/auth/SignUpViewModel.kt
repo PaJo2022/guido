@@ -17,7 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,9 +32,14 @@ class SignUpViewModel @Inject constructor(
     private val _userLoginState: MutableLiveData<UserLoginState> = MutableLiveData()
     val userLoginState: MutableLiveData<UserLoginState> get() = _userLoginState
 
+    private val _error: MutableSharedFlow<String> = MutableSharedFlow()
+    val error: MutableSharedFlow<String> get() = _error
+
+    private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isLoading: MutableSharedFlow<Boolean> get() = _isLoading
+
     private var _tempUser: User? = null
 
-    var isUserRegistered : Boolean = false
 
     private val placeTypes = listOf(
         PlaceType("1", "Airport", "Service", iconDrawable = R.drawable.ic_airport),
@@ -109,45 +113,51 @@ class SignUpViewModel @Inject constructor(
 
     fun registerUser(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _userLoginState.postValue(UserLoginState.Loading)
+            _isLoading.emit(true)
             val firebaseUser = authRepository.signUpWithEmail(email, password)
             if (firebaseUser == null) {
-                _userLoginState.postValue(UserLoginState.Error("Not Able To Sign You Up!"))
+                _isLoading.emit(false)
+                _error.emit("Not Able To Sign You Up!")
                 return@launch
             }
             val isUserAllReadySignedUp =
                 userRepository.getUserDetailsFromServer(firebaseUser.uid) != null
             if (isUserAllReadySignedUp) {
-                _userLoginState.postValue(UserLoginState.Error("This Email Is Allready Registered!"))
+                _isLoading.emit(false)
+                _error.emit("This Email Is Allready Registered!")
                 return@launch
             }
+            _isLoading.emit(false)
             _tempUser = firebaseUser.toUserModel()
-            isUserRegistered = true
             _userLoginState.postValue(UserLoginState.UserCreateAccount(firebaseUser.toUserModel()))
         }
     }
 
     fun createUser(userName: String, location: String) {
-        val allSelectedPlaceInterestes = placeTypes.find { it.isSelected }
-        if(allSelectedPlaceInterestes == null){
-            _userLoginState.value = UserLoginState.ProfileNotComplete("Please select Atleast 1 Interest")
-            return
-        }
         if (_tempUser == null) return
         val user = _tempUser!!
-        val newUser = User(
-            id = user.id,
-            email = user.email,
-            displayName = userName,
-            location = location
-        )
+
         viewModelScope.launch(Dispatchers.IO) {
-            _userLoginState.postValue(UserLoginState.AccountCreateLoading)
-            val isUserRegistered = authRepository.onRegister(newUser)
-            if (!isUserRegistered) {
-                _userLoginState.postValue(UserLoginState.Error("Something Went Wrong While Registering You"))
+            _isLoading.emit(true)
+            val allSelectedPlaceInterestes = placeTypes.filter { it.isSelected }
+            if (allSelectedPlaceInterestes.isEmpty()) {
+                _isLoading.emit(false)
+                _error.emit("Please select Atleast 1 Interest!")
                 return@launch
             }
+            val newUser = User(
+                id = user.id,
+                email = user.email,
+                displayName = userName,
+                location = location
+            )
+            val isUserRegistered = authRepository.onRegister(newUser)
+            if (!isUserRegistered) {
+                _isLoading.emit(false)
+                _error.emit("Something Went Wrong While Registering You!")
+                return@launch
+            }
+            _isLoading.emit(false)
             userRepository.addUser(newUser)
             appPrefs.isUserLoggedIn = true
             savePlaceTypePreferences()

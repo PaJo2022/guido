@@ -122,7 +122,9 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-
+    fun removePredictions() {
+        _suggestedLocations.value = emptyList()
+    }
 
 
 }
