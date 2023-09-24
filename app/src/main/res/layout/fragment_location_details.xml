@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_primary"
+    android:background="#FAFAFA"
     android:fillViewport="true"
     tools:context=".fragments.HomeFragment">
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
-            app:cardBackgroundColor="@color/color_fourth"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator">
@@ -83,7 +83,7 @@
                         android:fontFamily="@font/font_semi_bold"
                         android:singleLine="true"
                         android:text="Kolkata"
-                        android:textColor="@color/white"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_16ssp" />
 
                     <TextView
@@ -94,7 +94,8 @@
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="3,875.3 Km"
-                        android:textColor="@color/white"
+                        android:drawableTint="@color/quantum_grey"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
@@ -106,7 +107,8 @@
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="Kolkata,West Bengal,India,700131"
-                        android:textColor="@color/white"
+                        android:drawableTint="@color/quantum_grey"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
@@ -118,7 +120,8 @@
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="91-7845124578"
-                        android:textColor="@color/white"
+                        android:drawableTint="@color/quantum_grey"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
@@ -130,7 +133,8 @@
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="www.test.com"
-                        android:textColor="@color/white"
+                        android:drawableTint="@color/quantum_grey"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_12ssp" />
 
                 </LinearLayout>
@@ -139,6 +143,7 @@
                     android:id="@+id/cb_lcoation_data_fetching"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:progressTint="@color/card_color4"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
-            app:cardBackgroundColor="@color/color_fourth"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
@@ -171,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/font_regular"
                     android:text="Description"
-                    android:textColor="@color/white"
+                    android:textColor="@color/card_color4"
                     android:textSize="@dimen/_18ssp" />
 
 
@@ -185,7 +190,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_150sdp"
                         android:fontFamily="@font/font_regular"
-                        android:textColor="@color/white"
+                        android:textColor="@color/quantum_grey"
                         android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -217,7 +222,7 @@
             android:visibility="visible"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
-            app:cardBackgroundColor="@color/color_fourth"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_place_description">
@@ -234,7 +239,7 @@
                     android:fontFamily="@font/font_regular"
                     android:text="Videos"
                     android:padding="@dimen/_12sdp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/card_color4"
                     android:textSize="@dimen/_18ssp" />
 
 
@@ -258,7 +263,7 @@
             android:layout_marginTop="@dimen/_24sdp"
             android:layout_marginHorizontal="@dimen/_12sdp"
 
-            app:cardBackgroundColor="@color/color_fourth"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_place_videos">
@@ -276,7 +281,7 @@
                     android:fontFamily="@font/font_regular"
                     android:text="Reviews"
                     android:padding="@dimen/_12sdp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/card_color4"
                     android:textSize="@dimen/_18ssp" />
 
 
@@ -299,7 +304,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginVertical="@dimen/_24sdp"
             android:layout_marginBottom="1dp"
-            app:cardBackgroundColor="@color/color_fourth"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -317,7 +322,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/font_regular"
                     android:text="Map"
-                    android:textColor="@color/white"
+                    android:textColor="@color/quantum_black_100"
                     android:textSize="@dimen/_18ssp" />
 
 
