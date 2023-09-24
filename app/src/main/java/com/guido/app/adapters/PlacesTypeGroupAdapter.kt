@@ -38,7 +38,7 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         fun bindItem(type: PlaceTypeContainer) {
             val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
-                tvPlaceType.text = type.type  + "(+${type.placeTypes.size})"
+                tvPlaceType.text = type.type  + " (+${type.placeTypes.size})"
                 placeAdapter.setPlacesType(type.placeTypes)
                 placeAdapter.setOnPlaceTypeSelected {
 
@@ -53,7 +53,7 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
                     if(type.isOpened){
                         onIntrestSectionOpened?.invoke()
                     }
-                    tvPlaceType.text = type.type + if(type.isOpened) "" else "(+${type.placeTypes.size})"
+                    tvPlaceType.text = type.type + if(type.isOpened) "" else " (+${type.placeTypes.size})"
                 }
 
 

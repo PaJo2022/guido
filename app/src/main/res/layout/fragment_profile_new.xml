@@ -21,6 +21,7 @@
 
 
            <androidx.constraintlayout.widget.ConstraintLayout
+               android:id="@+id/constraintLayout"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:background="@color/white">
@@ -143,13 +144,12 @@
                    android:layout_marginHorizontal="@dimen/_20sdp"
                    android:layout_marginTop="@dimen/_32sdp"
                    android:background="@drawable/button_backgroud_corner"
-                   android:fontFamily="@font/font_semi_bold"
                    android:gravity="center"
-                   android:padding="@dimen/_6sdp"
+                   android:padding="@dimen/_12sdp"
                    android:singleLine="true"
                    android:text="Edit Profile"
                    android:textColor="@color/white"
-                   android:textSize="@dimen/_12ssp"
+                   android:textSize="@dimen/_14sdp"
                    app:layout_constraintTop_toBottomOf="@+id/interestItem">
 
                </TextView>
