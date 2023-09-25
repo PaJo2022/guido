@@ -297,47 +297,47 @@
 
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/ll_place_direction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginVertical="@dimen/_24sdp"
-            android:layout_marginBottom="1dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_place_reviews">
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/ll_place_direction"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="@dimen/_12sdp"-->
+<!--            android:layout_marginVertical="@dimen/_24sdp"-->
+<!--            android:layout_marginBottom="1dp"-->
+<!--            app:cardBackgroundColor="@color/white"-->
+<!--            app:cardCornerRadius="@dimen/_12sdp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/ll_place_reviews">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="@dimen/_12sdp">
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_regular"
-                    android:text="Map"
-                    android:textColor="@color/quantum_black_100"
-                    android:textSize="@dimen/_18ssp" />
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="@dimen/_12sdp">-->
 
 
-                <!--                <TextView-->
-                <!--                    android:id="@+id/tv_place_description"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:fontFamily="@font/font_regular"-->
-                <!--                    android:text="Photos"-->
-                <!--                    android:textColor="@color/white"-->
-                <!--                    android:textSize="@dimen/_18ssp" />-->
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/font_regular"-->
+<!--                    android:text="Map"-->
+<!--                    android:textColor="@color/quantum_black_100"-->
+<!--                    android:textSize="@dimen/_18ssp" />-->
 
-            </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+<!--                &lt;!&ndash;                <TextView&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:id="@+id/tv_place_description"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:fontFamily="@font/font_regular"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:text="Photos"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:textColor="@color/white"&ndash;&gt;-->
+<!--                &lt;!&ndash;                    android:textSize="@dimen/_18ssp" />&ndash;&gt;-->
+
+<!--            </LinearLayout>-->
+
+<!--        </androidx.cardview.widget.CardView>-->
 
 
 

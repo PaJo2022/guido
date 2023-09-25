@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             HomeFragment(),
             supportFragmentManager,
             "HomeFragment",
-            findViewById<FrameLayout>(R.id.fl_id)
+            findViewById<FrameLayout>(R.id.main_fl_id)
         )
 
     }
