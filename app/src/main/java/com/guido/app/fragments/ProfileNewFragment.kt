@@ -122,7 +122,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                     tvUserName.text = it?.displayName ?: "Awesome Usr"
                     tvUserLocation.text = it?.location ?: "No Location"
                     tvUserLocation.isSelected = true
-                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop().into(circleImageView)
+                    Glide.with(requireContext()).load(it?.profilePicture).placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).centerCrop().into(circleImageView)
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {

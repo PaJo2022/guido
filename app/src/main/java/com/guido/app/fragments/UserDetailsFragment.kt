@@ -78,7 +78,7 @@ class UserDetailsFragment :
                     etProfileBaseEmail.setNullText(it?.email)
                     val icon = if (it == null) R.drawable.ic_add else R.drawable.ic_edit
                     binding.ivEditProfilePicture.setImageResource(icon)
-                    Glide.with(requireContext()).load(it?.profilePicture).centerCrop()
+                    Glide.with(requireContext()).load(it?.profilePicture).placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).centerCrop()
                         .into(circleImageView)
                 }
             }

@@ -38,7 +38,7 @@
           android:id="@+id/circleImageView"
           android:layout_width="@dimen/_120sdp"
           android:layout_height="@dimen/_120sdp"
-          android:src="@drawable/ic_profile_img"
+          android:src="@drawable/ic_profile_img_placeholder"
           app:cardBackgroundColor="@color/transparent"
           app:cardCornerRadius="@dimen/_40sdp"
           app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"

@@ -353,7 +353,7 @@ class HomeFragment : Fragment(),
     private fun observeData() {
         viewModel.apply {
             getUserData().collectIn(viewLifecycleOwner){
-                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().placeholder(R.drawable.user_icon).into(binding.ivUserProfileImage)
+                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).into(binding.ivUserProfileImage)
             }
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
