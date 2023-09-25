@@ -63,6 +63,18 @@ object Constants {
     )
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     val placeTypes = listOf(
         PlaceType("accounting", "Accounting", "Finance", iconDrawable = R.drawable.ic_account_firm),
         PlaceType("atm", "ATM", "Finance", iconDrawable = R.drawable.ic_atm),
@@ -106,7 +118,77 @@ object Constants {
         PlaceType("shopping_mall", "Shopping Mall", "Shopping", iconDrawable = R.drawable.ic_shopping_mall),
         PlaceType("hardware_store", "Hardware Store", "Shopping", iconDrawable = R.drawable.ic_hardware_store),
         PlaceType("home_goods_store", "Home Goods Store", "Shopping", iconDrawable = R.drawable.ic_home_goods_store),
-        PlaceType("pet_store", "Pet Store", "Shopping", iconDrawable = R.drawable.ic_pet_store)
+        PlaceType("pet_store", "Pet Store", "Shopping", iconDrawable = R.drawable.ic_pet_store),
+
+
+        PlaceType("airport", "Airport", "Travel"),
+        PlaceType("bus_station", "Bus Station", "Travel"),
+        PlaceType("taxi_stand", "Taxi Stand", "Travel"),
+        PlaceType("travel_agency", "Travel Agency", "Travel"),
+        PlaceType("subway_station", "Subway Station", "Travel"),
+        PlaceType("train_station", "Train Station", "Travel"),
+        PlaceType("transit_station", "Transit Station", "Travel"),
+        PlaceType("light_rail_station", "Light Rail Station", "Travel"),
+        PlaceType("gas_station", "Gas Station", "Travel"),
+        PlaceType("parking", "Parking", "Travel"),
+        PlaceType("lodging", "Lodging", "Travel"),
+
+        PlaceType("amusement_park", "Amusement Park", "Entertainment"),
+        PlaceType("aquarium", "Aquarium", "Entertainment"),
+        PlaceType("art_gallery", "Art Gallery", "Entertainment"),
+        PlaceType("casino", "Casino", "Entertainment"),
+        PlaceType("bowling_alley", "Bowling Alley", "Entertainment"),
+        PlaceType("movie_rental", "Movie Rental", "Entertainment"),
+        PlaceType("movie_theater", "Movie Theater", "Entertainment"),
+        PlaceType("moving_company", "Moving Company", "Entertainment"),
+        PlaceType("night_club", "Night Club", "Entertainment"),
+
+        PlaceType("bakery", "Bakery", "Food & Beverages"),
+        PlaceType("bar", "Bar", "Food & Beverages"),
+        PlaceType("cafe", "Cafe", "Food & Beverages"),
+        PlaceType("liquor_store", "Liquor Store", "Food & Beverages"),
+        PlaceType("meal_delivery", "Meal Delivery", "Food & Beverages"),
+        PlaceType("meal_takeaway", "Meal Takeaway", "Food & Beverages"),
+        PlaceType("restaurant", "Restaurant", "Food & Beverages"),
+
+
+        PlaceType("beauty_salon", "Beauty Salon", "Style & Grooming"),
+        PlaceType("hair_care", "Hair Care", "Style & Grooming"),
+        PlaceType("spa", "Spa", "Style & Grooming"),
+
+
+        PlaceType("church", "Church", "Religious"),
+        PlaceType("cemetery", "Cemetery", "Religious"),
+        PlaceType("funeral_home", "Funeral Home", "Religious"),
+        PlaceType("mosque", "Mosque", "Religious"),
+        PlaceType("synagogue", "Synagogue", "Religious"),
+        PlaceType("hindu_temple", "Hindu Temple", "Religious"),
+
+        PlaceType("zoo", "Zoo", "Tourist Spots"),
+        PlaceType("campground", "Campground", "Tourist Spots"),
+        PlaceType("tourist_attraction", "Tourist Attraction", "Tourist Spots"),
+        PlaceType("city_hall", "City Hall", "Tourist Spots"),
+        PlaceType("museum", "Museum", "Tourist Spots"),
+        PlaceType("stadium", "Stadium", "Tourist Spots"),
+        PlaceType("park", "Park", "Tourist Spots"),
+        PlaceType("rv_park", "RV Park", "Tourist Spots"),
+
+        PlaceType("pharmacy", "Pharmacy", "Medical"),
+        PlaceType("physiotherapist", "Physiotherapist", "Medical"),
+        PlaceType("hospital", "Hospital", "Medical"),
+        PlaceType("dentist", "Dentist", "Medical"),
+        PlaceType("doctor", "Doctor", "Medical"),
+        PlaceType("veterinary_care", "Veterinary Care", "Medical"),
+        PlaceType("drugstore", "Drugstore", "Medical"),
+
+
+        PlaceType("library", "Library", "Education"),
+        PlaceType("university", "University", "Education"),
+        PlaceType("school", "School", "Education"),
+        PlaceType("primary_school", "Primary School", "Education"),
+        PlaceType("secondary_school", "Secondary School", "Education")
+
     )
+
 
 }
