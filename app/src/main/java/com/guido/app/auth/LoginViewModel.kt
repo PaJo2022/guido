@@ -4,17 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guido.app.Constants
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.auth.repo.auth.AuthRepository
 import com.guido.app.auth.repo.user.UserRepository
+import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
 import com.guido.app.db.MyAppDataBase
+import com.guido.app.model.PlaceTypeContainer
 import com.guido.app.model.User
 import com.guido.app.model.toUserModel
 import com.guido.app.sign_in.SignInResult
 import com.guido.app.sign_in.toUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +27,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val placesRepository: PlacesRepository,
     private val appPrefs: AppPrefs,
     private val db: MyAppDataBase
 ) : ViewModel() {
@@ -36,6 +41,15 @@ class LoginViewModel @Inject constructor(
 
     private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val isLoading: MutableSharedFlow<Boolean> get() = _isLoading
+
+
+    val userInterestes : MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
+
+    private var _tempUser : User ?= null
+
+    init {
+        getSavedPlaceTypePreferences()
+    }
 
 
     fun searchUserElseAddUser(email: String, password: String) {
@@ -63,37 +77,91 @@ class LoginViewModel @Inject constructor(
 
     fun onSignInResult(result: SignInResult) {
         viewModelScope.launch(Dispatchers.IO) {
-            val userData = result.data?.toUserModel() ?: return@launch
-            getUserData(userData)
+            _tempUser = result.data?.toUserModel() ?: return@launch
+            checkIfNewUserOrElseLogin(_tempUser!!)
         }
     }
 
-    private fun getUserData(user: User) {
+    private fun checkIfNewUserOrElseLogin(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             val userId = user.id ?: return@launch
             val userData = authRepository.onLogin(userId)
             if (userData != null) {
                 _isLoading.emit(false)
-                userRepository.addUser(user)
+                userRepository.addUser(userData)
                 _userLoginState.postValue(UserLoginState.UserLoggedIn(user))
                 return@launch
             }
-            createUser(user)
+            _userLoginState.postValue(UserLoginState.UserCreateAccount(user))
+
         }
     }
 
-    private fun createUser(user: User) {
+    fun createUser(userName: String, location: String) {
+        if (_tempUser == null) return
+        val user = _tempUser!!
+
         viewModelScope.launch(Dispatchers.IO) {
-            val isUserRegistered = authRepository.onRegister(user)
+            _isLoading.emit(true)
+            val allSelectedPlaceInterestes = Constants.placeTypes.filter { it.isSelected }
+            if (allSelectedPlaceInterestes.isEmpty()) {
+                _isLoading.emit(false)
+                _error.emit("Please select Atleast 1 Interest!")
+                return@launch
+            }
+            val newUser = User(
+                id = user.id,
+                email = user.email,
+                displayName = userName,
+                location = location
+            )
+            val isUserRegistered = authRepository.onRegister(newUser)
             if (!isUserRegistered) {
                 _isLoading.emit(false)
                 _error.emit("Something Went Wrong While Registering You!")
                 return@launch
             }
             _isLoading.emit(false)
-            userRepository.addUser(user)
+            userRepository.addUser(newUser)
             appPrefs.isUserLoggedIn = true
-            _userLoginState.postValue(UserLoginState.UserSignedUp(user))
+            savePlaceTypePreferences()
+            _userLoginState.postValue(UserLoginState.UserSignedUp(newUser))
+        }
+    }
+
+
+    private fun getSavedPlaceTypePreferences(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val preferences = placesRepository.getAllSavedPlaceTypePreferences()
+            val job = async {
+                Constants.placeTypes.forEach { placetype->
+                    placetype.isSelected = preferences.find { it.id == placetype.id} != null
+                }
+            }
+            job.await()
+            val groupedPlaceTypes = Constants.placeTypes.groupBy { it.type }
+
+            // Map the grouped results into PlaceTypeContainer objects
+            val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
+                PlaceTypeContainer(type, placeTypeList)
+            }
+            userInterestes.postValue(placeTypeContainers)
+        }
+    }
+
+    fun onPlaceInterestClicked(id : String){
+        viewModelScope.launch {
+            val isSelected = Constants.placeTypes.find { it.id == id }?.isSelected ?: false
+            Constants.placeTypes.find { it.id == id }?.isSelected = !isSelected
+            savePlaceTypePreferences()
+        }
+    }
+
+    private fun savePlaceTypePreferences() {
+        viewModelScope.launch {
+            val allSelectedPlaceInterestes = Constants.placeTypes.filter { it.isSelected }
+            placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
+            appPrefs.prefDistance = 5
         }
     }
 

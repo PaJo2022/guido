@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.guido.app.auth.repo.user.safeResume
 import com.guido.app.db.AppPrefs
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
@@ -27,10 +28,10 @@ class AuthRepositoryImpl @Inject constructor(
             fireStoreCollection.collection("users").document(user.id)
                 .set(user)
                 .addOnSuccessListener { documentReference ->
-                    it.resume(true)
+                    it.safeResume(true)
                 }
                 .addOnFailureListener { e ->
-                    it.resume(false)
+                    it.safeResume(false)
                 }
         }
     }
@@ -40,9 +41,9 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     appPrefs.userId = it.user?.uid
-                    continuation.resume(it.user)
+                    continuation.safeResume(it.user)
                 }.addOnFailureListener { e ->
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 }
 
         }
@@ -53,9 +54,9 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     appPrefs.userId = it.user?.uid
-                    continuation.resume(it.user)
+                    continuation.safeResume(it.user)
                 }.addOnFailureListener { e ->
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 }
 
         }
@@ -66,12 +67,12 @@ class AuthRepositoryImpl @Inject constructor(
             fireStoreCollection.collection("users").document(fbUserId)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
-                        continuation.resume(null)
+                        continuation.safeResume(null)
                     }else if (value != null && value.exists()) {
                         val user = value.toObject<User>()
-                        continuation.resume(user)
+                        continuation.safeResume(user)
                     } else {
-                        continuation.resume(null)
+                        continuation.safeResume(null)
                     }
                 }
         }

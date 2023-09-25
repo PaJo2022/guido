@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <TextView
+        android:id="@+id/tv_sign_in_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/font_medium"
+        android:text="Sign In"
+        android:textColor="@color/card_color4"
+        android:textSize="@dimen/_24sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_sign_in_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/font_regular"
+        android:text="Hi! There Nice To See You Again"
+        android:textColor="#808080"
+        android:textSize="@dimen/_11ssp"
+        android:layout_marginTop="@dimen/_2sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_text" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_layout_user_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:errorEnabled="true"
+        app:errorTextColor="@color/red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_sign_in_description"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_description" >
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_user_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_10sdp"
+            android:textColorHint="@color/color_primary"
+            android:textColor="@color/color_primary"
+            android:inputType="textEmailAddress"
+            android:hint="@string/label_email" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_layout_user_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_sign_in_description"
+        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_email">
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_user_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/color_primary"
+            android:textColor="@color/color_primary"
+            android:inputType="textPassword"
+            android:textSize="@dimen/_10sdp"
+            android:hint="@string/label_password" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <TextView
+        android:id="@+id/btn_sign_it"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/button_rounded_shape"
+        android:text="Sign In"
+        android:textSize="@dimen/_14sdp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:padding="@dimen/_12sdp"
+        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
+        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
+        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_password" />
+
+    <LinearLayout
+        android:id="@+id/tv_sign_in_use_social_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_it"
+        android:layout_marginTop="@dimen/_14sdp"
+        >
+        <View
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_1sdp"
+            android:background="#808080"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_regular"
+            android:text="OR"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:textColor="#808080"
+            android:textSize="@dimen/_10ssp"
+            />
+        <View
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_1sdp"
+            android:background="#808080"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_google_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/_15sdp"
+        android:paddingVertical="@dimen/_5sdp"
+        android:background="@drawable/shape_border_color"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_use_social_profile"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/iv_fb_login"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:src="@drawable/ic_google" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:text="Google"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_google_login"
+        app:layout_constraintLeft_toLeftOf="@+id/ll_google_login"
+        app:layout_constraintRight_toRightOf="@+id/ll_google_login"
+        >
+        <TextView
+            android:id="@+id/tv_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_regular"
+            android:text="Don't have an account?"
+            android:textColor="#808080"
+            android:textSize="@dimen/_10ssp"
+
+            />
+
+
+        <TextView
+            android:id="@+id/tv_sign_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_semi_bold"
+            android:padding="@dimen/_12sdp"
+            android:text="Sign Up"
+            android:textColor="@color/card_color4"
+            android:textSize="@dimen/_10ssp"
+            />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
