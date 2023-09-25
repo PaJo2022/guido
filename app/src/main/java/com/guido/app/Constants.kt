@@ -62,4 +62,51 @@ object Constants {
         PlaceType("pet_store", "Pet Store", "Shopping")
     )
 
+
+    val placeTypes = listOf(
+        PlaceType("accounting", "Accounting", "Finance", iconDrawable = R.drawable.ic_account_firm),
+        PlaceType("atm", "ATM", "Finance", iconDrawable = R.drawable.ic_atm),
+        PlaceType("bank", "Bank", "Finance", iconDrawable = R.drawable.ic_bank),
+        PlaceType("insurance_agency", "Insurance Agency", "Finance", iconDrawable = R.drawable.ic_insurance_agency),
+
+        PlaceType("car_dealer", "Car Dealer", "Services", iconDrawable = R.drawable.ic_car_dealer),
+        PlaceType("car_rental", "Car Rental", "Services", iconDrawable = R.drawable.car_rental),
+        PlaceType("car_repair", "Car Repair", "Services", iconDrawable = R.drawable.ic_car_repair),
+        PlaceType("car_wash", "Car Wash", "Services", iconDrawable = R.drawable.ic_car_wash),
+        PlaceType("florist", "Florist", "Services", iconDrawable = R.drawable.ic_florist),
+        PlaceType("laundry", "Laundry", "Services", iconDrawable = R.drawable.ic_laundry),
+        PlaceType("plumber", "Plumber", "Services", iconDrawable = R.drawable.ic_plumber),
+        PlaceType("storage", "Storage", "Services", iconDrawable = R.drawable.ic_storage),
+        PlaceType("courthouse", "Courthouse", "Services", iconDrawable = R.drawable.ic_courthouse),
+        PlaceType("post_office", "Post Office", "Services", iconDrawable = R.drawable.ic_post_office),
+        PlaceType("locksmith", "Locksmith", "Services", iconDrawable = R.drawable.ic_locksmith),
+        PlaceType("painter", "Painter", "Services", iconDrawable = R.drawable.ic_painter),
+        PlaceType("electrician", "Electrician", "Services", iconDrawable = R.drawable.ic_electrician),
+        PlaceType("lawyer", "Lawyer", "Services", iconDrawable = R.drawable.ic_lawyer),
+        PlaceType("local_government_office", "Local Government Office", "Services", iconDrawable = R.drawable.ic_local_government_office),
+        PlaceType("embassy", "Embassy", "Services", iconDrawable = R.drawable.ic_embassy),
+        PlaceType("gym", "Gym", "Services", iconDrawable = R.drawable.icon_gym),
+        PlaceType("roofing_contractor", "Roofing Contractor", "Services", iconDrawable = R.drawable.icon_roofing_contractor),
+        PlaceType("real_estate_agency", "Real Estate Agency", "Services", iconDrawable = R.drawable.ic_real_estate_agency),
+
+        PlaceType("fire_station", "Fire Station", "Emergency", iconDrawable = R.drawable.fire_station_marker),
+        PlaceType("police", "Police", "Emergency", iconDrawable = R.drawable.ic_police_station),
+
+        PlaceType("clothing_store", "Clothing Store", "Shopping", iconDrawable = R.drawable.icon_clothing_store),
+        PlaceType("convenience_store", "Convenience Store", "Shopping", iconDrawable = R.drawable.ic_convenience_store),
+        PlaceType("bicycle_store", "Bicycle Store", "Shopping", iconDrawable = R.drawable.ic_bicycle_store),
+        PlaceType("book_store", "Book Store", "Shopping", iconDrawable = R.drawable.ic_book_store),
+        PlaceType("store", "Store", "Shopping", iconDrawable = R.drawable.ic_store),
+        PlaceType("department_store", "Department Store", "Shopping", iconDrawable = R.drawable.icon_department_store),
+        PlaceType("supermarket", "Supermarket", "Shopping", iconDrawable = R.drawable.ic_super_market),
+        PlaceType("electronics_store", "Electronics Store", "Shopping", iconDrawable = R.drawable.ic_electronics_store),
+        PlaceType("jewelry_store", "Jewelry Store", "Shopping", iconDrawable = R.drawable.ic_jewelry_store),
+        PlaceType("furniture_store", "Furniture Store", "Shopping", iconDrawable = R.drawable.ic_furniture_store),
+        PlaceType("shoe_store", "Shoe Store", "Shopping", iconDrawable = R.drawable.ic_shoe_store),
+        PlaceType("shopping_mall", "Shopping Mall", "Shopping", iconDrawable = R.drawable.ic_shopping_mall),
+        PlaceType("hardware_store", "Hardware Store", "Shopping", iconDrawable = R.drawable.ic_hardware_store),
+        PlaceType("home_goods_store", "Home Goods Store", "Shopping", iconDrawable = R.drawable.ic_home_goods_store),
+        PlaceType("pet_store", "Pet Store", "Shopping", iconDrawable = R.drawable.ic_pet_store)
+    )
+
 }

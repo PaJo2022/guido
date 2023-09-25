@@ -61,30 +61,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun onLogin(fbUserId: String): Flow<User?> {
-        return callbackFlow {
+    override suspend fun onLogin(fbUserId: String): User? {
+        return suspendCoroutine {continuation->
             fireStoreCollection.collection("users").document(fbUserId)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
-                        trySend(null)
-                        cancel()
-                    }
-
-                    if (value != null && value.exists()) {
+                        continuation.resume(null)
+                    }else if (value != null && value.exists()) {
                         val user = value.toObject<User>()
-                        user?.let {
-                            trySend(it)
-                        } ?: kotlin.run {
-                            trySend(null)
-                        }
+                        continuation.resume(user)
                     } else {
-                        trySend(null)
+                        continuation.resume(null)
                     }
-                    close()
                 }
-            awaitClose {
-                close()
-            }
         }
     }
 

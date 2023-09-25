@@ -163,7 +163,7 @@
 </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/ll_google_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_14sdp"
@@ -198,9 +198,9 @@
         android:gravity="center"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_5sdp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
-        app:layout_constraintRight_toRightOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/ll_google_login"
+        app:layout_constraintLeft_toLeftOf="@+id/ll_google_login"
+        app:layout_constraintRight_toRightOf="@+id/ll_google_login"
         >
         <TextView
             android:id="@+id/tv_forgot_password"
