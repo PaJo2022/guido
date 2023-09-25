@@ -26,8 +26,13 @@ class ProfileViewModel @Inject constructor(
     ViewModel() {
 
     var distanceProgress: Int = 5
+
+    private var savedPlaceInterestsId = emptyList<String>()
     private val _formattedAddress: MutableLiveData<String> = MutableLiveData()
     val formattedAddress: LiveData<String> get() = _formattedAddress
+
+    private val _newInterestsSelected: MutableLiveData<Boolean> = MutableLiveData()
+    val newInterestsSelected: LiveData<Boolean> get() = _newInterestsSelected
 
     fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -38,6 +43,7 @@ class ProfileViewModel @Inject constructor(
             _formattedAddress.postValue(address)
         }
     }
+
 
 
     private val placeTypes = listOf(
@@ -99,6 +105,7 @@ class ProfileViewModel @Inject constructor(
         private fun getSavedPlaceTypePreferences(){
             viewModelScope.launch(Dispatchers.IO) {
                 val preferences = placesRepository.getAllSavedPlaceTypePreferences()
+                savedPlaceInterestsId = preferences.map { it.id }
                 val job = async {
                     placeTypes.forEach { placetype->
                         placetype.isSelected = preferences.find { it.id == placetype.id} != null
@@ -107,19 +114,26 @@ class ProfileViewModel @Inject constructor(
                 job.await()
                 val groupedPlaceTypes = placeTypes.groupBy { it.type }
 
-                // Map the grouped results into PlaceTypeContainer objects
                 val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
-                    PlaceTypeContainer(type, placeTypeList)
+                    PlaceTypeContainer(
+                        type,
+                        placeTypeList,
+                        placeTypeList.find { it.isSelected } != null)
                 }
                 userInterestes.postValue(placeTypeContainers)
             }
         }
 
     fun onPlaceInterestClicked(id : String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val isSelected = placeTypes.find { it.id == id }?.isSelected ?: false
             placeTypes.find { it.id == id }?.isSelected = !isSelected
-            savePlaceTypePreferences()
+            val selectedInterestsId = placeTypes.filter { it.isSelected }.map { it.id }
+            val set1 = selectedInterestsId.toSet()
+            val set2 = savedPlaceInterestsId.toSet()
+            val isNewPlaceInterestesSelected =
+                set1.subtract(set2).isNotEmpty() || set2.subtract(set1).isNotEmpty()
+            _newInterestsSelected.postValue((isNewPlaceInterestesSelected))
         }
     }
 

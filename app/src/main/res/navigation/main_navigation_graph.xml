@@ -16,7 +16,7 @@
         android:id="@+id/home_fragment"
         android:name="com.guido.app.fragments.HomeFragment"
         android:label="fragment_location_search"
-        tools:layout="@layout/fragment_location_search" />
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.guido.app.fragments.ProfileFragment"

@@ -43,6 +43,11 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
                 placeAdapter.setOnPlaceTypeSelected {
 
                 }
+                if(type.isOpened){
+                    motionLayout.transitionToEnd()
+                }else{
+                    motionLayout.transitionToStart()
+                }
                 tvPlaceArrow.setOnClickListener {
                     type.isOpened = !type.isOpened
                     if(type.isOpened){

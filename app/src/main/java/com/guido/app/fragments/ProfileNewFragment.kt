@@ -1,12 +1,11 @@
 package com.guido.app.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.SeekBar
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +19,6 @@ import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
 import com.guido.app.addOnBackPressedCallback
 import com.guido.app.collectIn
-import com.guido.app.databinding.FragmentProfileBinding
 import com.guido.app.databinding.FragmentProfileNewBinding
 import com.guido.app.db.AppPrefs
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,7 +107,11 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
             rvInterests.apply {
                 addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
                 adapter = placesTypeGroupAdapter
-                layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
+            btnSaveChanges.setOnClickListener {
+                viewModel.savePlaceTypePreferences()
             }
         }
 
@@ -122,14 +124,21 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                     tvUserName.text = it?.displayName ?: "Awesome Usr"
                     tvUserLocation.text = it?.location ?: "No Location"
                     tvUserLocation.isSelected = true
-                    Glide.with(requireContext()).load(it?.profilePicture).placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).centerCrop().into(circleImageView)
+                    Glide.with(requireContext()).load(it?.profilePicture)
+                        .placeholder(R.drawable.ic_profile_img_placeholder)
+                        .error(R.drawable.ic_profile_img_placeholder).centerCrop()
+                        .into(circleImageView)
                 }
             }
             userInterestes.observe(viewLifecycleOwner) {
                 placesTypeGroupAdapter.setPlacesType(it)
             }
-            isPlaceInterestesSaved.collectIn(viewLifecycleOwner){
+            isPlaceInterestesSaved.collectIn(viewLifecycleOwner) {
                 sharedViewModel.onPreferencesSaved()
+                parentFragmentManager.popBackStack()
+            }
+            newInterestsSelected.observe(viewLifecycleOwner) {
+                binding.btnSaveChanges.isVisible = it
             }
 
         }
