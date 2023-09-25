@@ -57,7 +57,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val firebaseUser = authRepository.loginWithEmail(email, password)
             if (firebaseUser == null) {
-
+                _error.emit("Something Went Wrong")
                 return@launch
             }
             val userId = firebaseUser.uid
@@ -162,6 +162,12 @@ class LoginViewModel @Inject constructor(
             val allSelectedPlaceInterestes = Constants.placeTypes.filter { it.isSelected }
             placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
             appPrefs.prefDistance = 5
+        }
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        viewModelScope.launch {
+            _isLoading.emit(isLoading)
         }
     }
 

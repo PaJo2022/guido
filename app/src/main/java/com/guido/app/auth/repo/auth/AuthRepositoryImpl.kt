@@ -63,6 +63,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun onLogin(fbUserId: String): User? {
+        appPrefs.userId = fbUserId
         return suspendCoroutine {continuation->
             fireStoreCollection.collection("users").document(fbUserId)
                 .addSnapshotListener { value, error ->

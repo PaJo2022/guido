@@ -78,13 +78,41 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <LinearLayout
+        android:id="@+id/tv_sign_up_privacy_policy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
+        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
+        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_password">
+
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/card_color4"
+            android:enabled="true" />
+
+        <TextView
+            android:id="@+id/tv_privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_regular"
+            android:text="Enable Privacy Policy and Terms And Conditions"
+            android:textColor="@color/color_primary"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    </LinearLayout>
 
 
     <TextView
-        android:id="@+id/btn_sign_it"
+        android:id="@+id/btn_sign_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
         android:background="@drawable/button_rounded_shape"
         android:text="Sign In"
         android:textSize="@dimen/_14sdp"
@@ -93,7 +121,7 @@
         android:padding="@dimen/_12sdp"
         app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
         app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
-        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_password" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_up_privacy_policy" />
 
     <LinearLayout
         android:id="@+id/tv_sign_in_use_social_profile"
@@ -103,7 +131,7 @@
         android:gravity="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_sign_it"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_in"
         android:layout_marginTop="@dimen/_14sdp"
         >
         <View

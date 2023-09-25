@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.guido.app.BaseFragment
@@ -13,6 +14,7 @@ import com.guido.app.MainActivity
 import com.guido.app.adapters.PlacesAutoCompleteAdapter
 import com.guido.app.adapters.PlacesTypeGroupAdapter
 import com.guido.app.adapters.VerticalGridCustomItemDecoration
+import com.guido.app.addOnBackPressedCallback
 import com.guido.app.auth.model.UserLoginState
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentSignUpBinding
@@ -45,8 +47,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        addOnBackPressedCallback {
+            (requireActivity() as AuthActivity).goToActivity(0)
+        }
         binding.apply {
+            ivBack.setOnClickListener { (requireActivity() as AuthActivity).goToActivity(0) }
+            swipeRefreshLayout.isEnabled = false
             llSignUp.btnLogin.setOnClickListener {
                 (requireActivity() as AuthActivity).goToActivity(0)
             }
@@ -110,7 +116,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding
     }
 
     private fun registerUserMethods() {
-        binding.llSignUp.signUpBtn.setOnClickListener {
+        binding.llSignUp.btnSignUp.setOnClickListener {
             val email = binding.llSignUp.etUserEmail.text.toString()
             val password = binding.llSignUp.etUserPassword.text.toString()
             binding.llSignUp.tiLayoutUserEmail.error = null

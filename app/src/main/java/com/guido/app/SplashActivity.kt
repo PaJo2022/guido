@@ -2,11 +2,13 @@ package com.guido.app
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.guido.app.auth.AuthActivity
 import com.guido.app.databinding.ActivitySplashBinding
 import com.guido.app.db.AppPrefs
+import com.guido.app.fragments.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -25,6 +27,8 @@ class SplashActivity : AppCompatActivity() {
     private var _binding: ActivitySplashBinding? = null
     private val binding: ActivitySplashBinding get() = _binding!!
 
+    private val viewModel : ProfileViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         _binding = ActivitySplashBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -35,9 +39,9 @@ class SplashActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             delay(1.seconds)
-            withContext(Dispatchers.Main) {
+            viewModel.getUserData().collectIn(this@SplashActivity){
                 finish()
-                val isUserLoggedIn = appPref.isUserLoggedIn
+                val isUserLoggedIn = it != null
                 val naivagtingActivity = if(isUserLoggedIn) MainActivity::class.java else AuthActivity::class.java
                 startActivity(Intent(this@SplashActivity, naivagtingActivity))
             }

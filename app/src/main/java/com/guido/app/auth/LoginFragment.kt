@@ -61,7 +61,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         )
                         viewModel.onSignInResult(signInResult)
                     } else {
-                       // viewModel.setLoading(false)
+                        viewModel.setLoading(false)
                     }
                 }
             }
@@ -81,19 +81,22 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         signInMethods()
         createAccountMethods()
 
-        binding.llCreateAccount.apply {
-            rvPlaceSuggestions.apply {
-                adapter = adapterPlaceAutoComplete
-                layoutManager = LinearLayoutManager(
-                    requireContext(),
-                    LinearLayoutManager.VERTICAL, false
-                )
-            }
-            rvInteretes.apply {
-                addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
-                adapter = placesTypeGroupAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.apply {
+            swipeRefreshLayout.isEnabled = false
+            llCreateAccount.apply {
+                rvPlaceSuggestions.apply {
+                    adapter = adapterPlaceAutoComplete
+                    layoutManager = LinearLayoutManager(
+                        requireContext(),
+                        LinearLayoutManager.VERTICAL, false
+                    )
+                }
+                rvInteretes.apply {
+                    addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
+                    adapter = placesTypeGroupAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                }
             }
         }
         viewModel.apply {
@@ -137,7 +140,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun signInMethods() {
         binding.apply {
-            llSignIn.btnSignIt.setOnClickListener {
+            llSignIn.btnSignIn.setOnClickListener {
                 val email = llSignIn.etUserEmail.text.toString()
                 val password = llSignIn.etUserPassword.text.toString()
                 llSignIn.tiLayoutUserEmail.error = null
@@ -157,6 +160,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 (requireActivity() as AuthActivity).goToActivity(1)
             }
             llSignIn.llGoogleLogin.setOnClickListener {
+                viewModel.setLoading(true)
                 lifecycleScope.launch {
                     val signInIntentSender = googleAuthUiClient.signIn()
                     launcher.launch(

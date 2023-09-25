@@ -93,6 +93,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginVertical="@dimen/_12sdp"
+        android:layout_marginHorizontal="@dimen/_12sdp"
         android:nestedScrollingEnabled="false"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"

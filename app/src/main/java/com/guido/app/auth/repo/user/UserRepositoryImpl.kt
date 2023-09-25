@@ -24,12 +24,7 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun getUserDetails(userId: String) = db.userDao().getUser(userId)
     override suspend fun addUser(user: User) {
-        db.withTransaction {
-            db.userDao().apply {
-                deleteUser()
-                insertUser(user)
-            }
-        }
+        db.userDao().insertUser(user)
     }
 
     override suspend fun updateProfilePicInLocalDb(userId: String, profilePic: String) {

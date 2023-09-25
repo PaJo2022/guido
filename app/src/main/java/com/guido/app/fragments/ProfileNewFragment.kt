@@ -50,7 +50,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
     override fun onResume() {
         super.onResume()
-        viewModel.distanceProgress = appPrefs.prefDistance / 1000
         val currentDistanceInPref = appPrefs.prefDistance
         binding.seekbarDistance.progress = currentDistanceInPref / 1000
         binding.tvDistance.text = "${currentDistanceInPref / 1000} Km"
@@ -98,14 +97,12 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                 }
 
                 override fun onStopTrackingTouch(p0: SeekBar?) {
-                    viewModel.distanceProgress = p0?.progress ?: return
-                    viewModel.savePlaceTypePreferences()
+                   viewModel.onDistanceChanged(p0?.progress ?: return)
                 }
 
             })
 
             rvInterests.apply {
-                addItemDecoration(VerticalGridCustomItemDecoration(requireContext()))
                 adapter = placesTypeGroupAdapter
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

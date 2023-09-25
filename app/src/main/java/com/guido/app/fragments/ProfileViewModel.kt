@@ -27,7 +27,7 @@ class ProfileViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    var distanceProgress: Int = 5
+    private var distanceProgress: Int = 5
 
     private var savedPlaceInterestsId = emptyList<String>()
     private val _formattedAddress: MutableLiveData<String> = MutableLiveData()
@@ -36,14 +36,13 @@ class ProfileViewModel @Inject constructor(
     private val _newInterestsSelected: MutableLiveData<Boolean> = MutableLiveData()
     val newInterestsSelected: LiveData<Boolean> get() = _newInterestsSelected
 
-    fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val address = placesRepository.fetchAddressFromLatLng(
-                latLng,
-                key
-            )?.results?.firstOrNull()?.formatted_address.toString()
-            _formattedAddress.postValue(address)
-        }
+    private var isDistanceChange = false
+    private var isPreferenceChanged = false
+
+    fun onDistanceChanged(distance : Int){
+        _newInterestsSelected.value = appPrefs.prefDistance != distance * 1000 || isPreferenceChanged
+        isDistanceChange = appPrefs.prefDistance != distance * 1000
+        distanceProgress = distance
     }
 
 
@@ -91,7 +90,8 @@ class ProfileViewModel @Inject constructor(
             val set2 = savedPlaceInterestsId.toSet()
             val isNewPlaceInterestesSelected =
                 set1.subtract(set2).isNotEmpty() || set2.subtract(set1).isNotEmpty()
-            _newInterestsSelected.postValue((isNewPlaceInterestesSelected))
+            isPreferenceChanged = isNewPlaceInterestesSelected
+            _newInterestsSelected.postValue((isNewPlaceInterestesSelected || isDistanceChange))
         }
     }
 

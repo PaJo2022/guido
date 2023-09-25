@@ -6,7 +6,7 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="200">
+        motion:duration="500">
        <KeyFrameSet>
        </KeyFrameSet>
     </Transition>
@@ -17,28 +17,12 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/tv_place_type"
+            motion:layout_constraintTop_toBottomOf="@+id/ll_place_type"
             motion:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:visibility="gone" />
-        <Constraint
-            android:id="@+id/tv_place_arrow"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_12sdp"
-            motion:layout_goneMarginStart="@dimen/_12sdp"
-            android:rotation="90"
-            motion:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="@dimen/_12sdp" />
-        <Constraint
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toTopOf="@+id/tv_place_arrow"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="wrap_content"
-            motion:layout_goneMarginStart="@dimen/_12sdp"
-            motion:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/tv_place_type" />
+
+
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -47,20 +31,10 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/tv_place_type"
+            motion:layout_constraintTop_toBottomOf="@+id/ll_place_type"
             motion:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:visibility="visible" />
 
-        <Constraint
-            android:id="@+id/tv_place_arrow"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_12sdp"
-            motion:layout_goneMarginStart="@dimen/_12sdp"
-            android:rotation="-90"
-            motion:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="@dimen/_12sdp" />
     </ConstraintSet>
 </MotionScene>
