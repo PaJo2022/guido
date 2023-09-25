@@ -11,7 +11,7 @@
           android:pathData="M19.031,2.371C17.746,1.852 16.395,1.59 15,1.59C13.605,1.59 12.254,1.852 10.969,2.371C9.641,2.91 8.445,3.703 7.426,4.723C5.434,6.719 4.32,9.375 4.293,12.191C4.262,15.008 5.32,17.68 7.27,19.711L7.266,19.715L15,27.449L22.691,19.758L22.688,19.754C24.656,17.723 25.727,15.051 25.707,12.223C25.691,9.387 24.574,6.73 22.574,4.723C21.551,3.703 20.359,2.91 19.031,2.371ZM19.031,2.371"/>
       <path
           android:pathData="M4.293,1.59L25.707,1.59L25.707,27.445L4.293,27.445ZM4.293,1.59"
-          android:fillColor="@color/color_primary"
+          android:fillColor="@color/color_marker"
           android:fillType="nonZero"/>
     </group>
   </group>
@@ -23,7 +23,7 @@
           android:pathData="M14.996,2.59C9.648,2.59 5.316,6.922 5.316,12.27C5.316,17.613 9.648,21.949 14.996,21.949C20.34,21.949 24.676,17.613 24.676,12.27C24.676,6.922 20.34,2.59 14.996,2.59ZM14.996,2.59"/>
       <path
           android:pathData="M4.293,1.59L25.707,1.59L25.707,27.445L4.293,27.445ZM4.293,1.59"
-          android:fillColor="@color/color_sound_compose_selected_color14"
+          android:fillColor="@color/color_marker"
           android:fillType="nonZero"/>
     </group>
   </group>

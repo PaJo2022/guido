@@ -157,7 +157,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         view: View,
         args: Bundle? = null
     ) {
-        val ft = parentFragmentManager.beginTransaction()
+        val ft = fm.beginTransaction()
 
         // Pass the bundle as arguments to the fragment, if provided
         if (args != null) {

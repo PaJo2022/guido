@@ -190,7 +190,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_150sdp"
                         android:fontFamily="@font/font_regular"
-                        android:textColor="@color/quantum_grey"
+                        android:textColor="@color/quantum_black_100"
                         android:textSize="@dimen/_11ssp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
