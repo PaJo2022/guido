@@ -37,6 +37,8 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private var placesDetailsUiModel: PlaceDetailsUiModel? = null
 
+    var callNumber : String ?= null
+
     private val _singlePlaceData: MutableLiveData<PlaceUiModel?> = MutableLiveData()
     val singlePlaceData: LiveData<PlaceUiModel?> = _singlePlaceData
 
@@ -75,7 +77,7 @@ class LandMarkDetailsViewModel @Inject constructor(
                 placeId = placeId,
                 key = GCP_API_KEY
             )
-            delay(2.seconds)
+            callNumber = placeData?.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
         }

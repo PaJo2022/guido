@@ -6,7 +6,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.Settings
-import androidx.core.content.ContextCompat.startActivity
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ClickableSpan
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import com.google.android.gms.maps.model.LatLng
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.NumberFormat
@@ -74,7 +80,7 @@ fun getImageBytes(imageFile: File): ByteArray {
     return stream.toByteArray()
 }
 
-fun sendEmail(context : Context, emailAddress : String){
+fun sendEmail(context: Context, emailAddress: String) {
     val intent = Intent(Intent.ACTION_SENDTO)
     intent.data = Uri.parse("mailto:$emailAddress")
 //        intent.putExtra(Intent.EXTRA_EMAIL, emailAddress)
@@ -83,7 +89,71 @@ fun sendEmail(context : Context, emailAddress : String){
     context.startActivity(intent)
 }
 
-fun callToNumber(context: Context,number : String){
-    val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
-    context.startActivity(intent)
+fun callToNumber(context: Context, number: String) {
+    val intent = Intent(Intent.ACTION_CALL);
+    intent.data = Uri.parse("tel:${number}")
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "Can Not Call On The Number", Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun TextView.makeTextViewClickableLink(webUrlOrMobileNumber: String?,errorMessage : String, onClicked: () -> Unit) {
+    if (webUrlOrMobileNumber.isNullOrEmpty()) {
+        // If websiteUrl is null or empty, display the TextView as normal text
+        text = errorMessage
+        setOnClickListener(null) // Remove any click listener
+    } else {
+        // Create a ClickableSpan to handle website clicks
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                // Handle website click here
+                onClicked()
+            }
+        }
+
+        // Create a SpannableString with the ClickableSpan
+        val spannableString = SpannableString(webUrlOrMobileNumber)
+        spannableString.setSpan(
+            clickableSpan,
+            0,
+            webUrlOrMobileNumber.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // Set the SpannableString to the TextView
+        text = spannableString
+
+        // Enable the TextView to handle link clicks
+        movementMethod = android.text.method.LinkMovementMethod.getInstance()
+    }
+
+}
+
+fun openWebsite(context: Context, url: String) {
+    var webUrl = url
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        webUrl = "http://$url"
+    }
+
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUrl))
+    try {
+        context.startActivity(browserIntent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "Can Not Open The Website", Toast.LENGTH_SHORT).show()
+    }
+
+}
+
+fun openDirection(context: Context, placeName: String?, latLng: LatLng?) {
+    val geoUri =
+        "http://maps.google.com/maps?q=loc:${latLng?.latitude},${latLng?.longitude}($placeName)"
+
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(geoUri))
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "Can Not Open The Maps", Toast.LENGTH_SHORT).show()
+    }
 }

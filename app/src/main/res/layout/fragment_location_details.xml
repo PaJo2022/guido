@@ -90,52 +90,56 @@
                         android:id="@+id/tv_place_distance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_nearme"
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="3,875.3 Km"
-                        android:drawableTint="@color/quantum_grey"
                         android:textColor="@color/quantum_black_100"
-                        android:textSize="@dimen/_12ssp" />
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableTint="@color/quantum_grey"
+                        app:drawableStartCompat="@drawable/ic_nearme" />
 
                     <TextView
                         android:id="@+id/tv_place_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:drawableStart="@drawable/ic_direction"
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="Kolkata,West Bengal,India,700131"
-                        android:drawableTint="@color/quantum_grey"
                         android:textColor="@color/quantum_black_100"
-                        android:textSize="@dimen/_12ssp" />
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableTint="@color/quantum_grey"
+                        app:drawableStartCompat="@drawable/ic_direction" />
 
                     <TextView
                         android:id="@+id/tv_place_mobile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:drawableStart="@drawable/ic_call"
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="91-7845124578"
-                        android:drawableTint="@color/quantum_grey"
+                        android:linksClickable="true"
+                        android:autoLink="phone"
                         android:textColor="@color/quantum_black_100"
-                        android:textSize="@dimen/_12ssp" />
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableTint="@color/quantum_grey"
+                        app:drawableStartCompat="@drawable/ic_call" />
 
                     <TextView
                         android:id="@+id/tv_place_website"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:drawableStart="@drawable/ic_website"
                         android:drawablePadding="@dimen/_8sdp"
                         android:fontFamily="@font/font_regular"
                         android:text="www.test.com"
-                        android:drawableTint="@color/quantum_grey"
+                        android:linksClickable="true"
+                        android:autoLink="web"
                         android:textColor="@color/quantum_black_100"
-                        android:textSize="@dimen/_12ssp" />
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableTint="@color/quantum_grey"
+                        app:drawableStartCompat="@drawable/ic_website" />
 
                 </LinearLayout>
 
@@ -243,8 +247,8 @@
                     android:textSize="@dimen/_18ssp" />
 
 
-                <WebView
-                    android:id="@+id/wv_place_videos"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_place_videos"
                     android:layout_marginBottom="@dimen/_12sdp"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_width="match_parent"
