@@ -1,33 +1,42 @@
 package com.guido.app.api
 
+import com.guido.app.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.guido.app.model.places.PlacesApiDTO
-import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
+import com.guido.app.model.places.geoCoding.ReverseGeoCodingDTO
+import com.guido.app.model.places_backend_dto.PlaceDTO
 import com.guido.app.model.singlePlaceDetails.SinglePlaceDetailsDTO
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface GuidoApi {
 
-    @GET("place/nearbysearch/json")
+
+    @POST("nearByPlaces")
     suspend fun fetchPlacesNearMe(
-        @Query("location", encoded = true) location : String,
-        @Query("radius") radius : Int,
-        @Query("types", encoded = true) keyword : String,
-        @Query("key") key : String
-    ) : Response<PlacesApiDTO>
+        @Query("latitude", encoded = true) latitude : Double,
+        @Query("longitude", encoded = true) longitude : Double,
+        @Query("distance") radius : Int,
+        @Body types : List<String>
+    ) : Response<List<PlaceDTO>>
 
 
-    @GET("place/details/json")
+    @GET("place")
     suspend fun fetchPlacesDetails(
-        @Query("place_id", encoded = true) placeId : String,
-        @Query("key") key : String
-    ) : Response<SinglePlaceDetailsDTO>
+        @Query("placeId", encoded = true) placeId : String
+    ) : Response<PlaceDTO>
 
 
-    @GET("geocode/json")
+    @GET("reverse-geo-coding")
     suspend fun fetchAddressFromLatLng(
-        @Query("latlng") latlng : String,
-        @Query("key") key : String
-    ) : Response<ReverseGeoCodingResponse>
+        @Query("latitude", encoded = true) latitude : Double,
+        @Query("longitude", encoded = true) longitude : Double,
+    ) : Response<ReverseGeoCodingDTO?>
+
+    @GET("auto-complete")
+    suspend fun fetchPlaceAutoCompleteSuggestion(
+        @Query("query", encoded = true) query : String
+    ) : Response<List<PlaceAutoCompleteDTO>>
 }

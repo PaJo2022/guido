@@ -10,6 +10,6 @@ interface AuthRepository {
     suspend fun onRegister(user: User) : Boolean
     suspend fun signUpWithEmail(email : String,password : String) : FirebaseUser?
     suspend fun loginWithEmail(email : String,password : String) : FirebaseUser?
-    fun onLogin(fbUserId : String): Flow<User?>
+    suspend fun onLogin(fbUserId : String): User?
     suspend fun onLogOut()
 }

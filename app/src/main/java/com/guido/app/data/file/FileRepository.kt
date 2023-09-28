@@ -4,5 +4,5 @@ import com.dhandadekho.mobile.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface FileRepository {
-    fun addImagesForBusiness(image : ByteArray) : Flow<Resource<String>>
+    suspend fun addImagesForBusiness(image : ByteArray) : Resource<String>
 }

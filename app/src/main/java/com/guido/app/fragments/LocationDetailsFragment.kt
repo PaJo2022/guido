@@ -1,28 +1,36 @@
 package com.guido.app.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.guido.app.BaseFragment
-import com.guido.app.adapters.CustomItemDecoration
 import com.guido.app.adapters.ImageSliderAdapter
 import com.guido.app.adapters.PlaceImageAdapter
 import com.guido.app.adapters.PlaceReviewAdapter
+import com.guido.app.adapters.PlaceVideoAdapter
 import com.guido.app.addOnBackPressedCallback
+import com.guido.app.callToNumber
 import com.guido.app.collectIn
 import com.guido.app.databinding.FragmentLocationDetailsBinding
+import com.guido.app.makeTextViewClickableLink
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.openAppSettings
+import com.guido.app.openDirection
+import com.guido.app.openWebsite
 import com.guido.app.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class LocationDetailsFragment :
@@ -32,6 +40,7 @@ class LocationDetailsFragment :
     private lateinit var adapterPlaceImages: PlaceImageAdapter
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
     private lateinit var adapterImageSlider: ImageSliderAdapter
+    private lateinit var adapterPlaceVideos: PlaceVideoAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +49,7 @@ class LocationDetailsFragment :
         adapterPlaceImages = PlaceImageAdapter(requireContext())
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
+        adapterPlaceVideos = PlaceVideoAdapter()
     }
 
     private fun setUpViewPager() {
@@ -58,18 +68,25 @@ class LocationDetailsFragment :
         super.onViewCreated(view, savedInstanceState)
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
+        val snapHelper: SnapHelper = PagerSnapHelper()
         binding.apply {
-            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack()}
+            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
+            rvPlaceVideos.apply {
+                adapter = adapterPlaceVideos
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                snapHelper.attachToRecyclerView(this)
+            }
         }
         viewModel.apply {
             getSinglePlaceDetails(placeUiModel)
             getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel)
-            placeUiModel?.name?.let {
+            placeUiModel?.let {
                 fetchAllDataForTheLocation(it)
             }
             isPlaceDataFetching.collectIn(viewLifecycleOwner){
@@ -89,24 +106,33 @@ class LocationDetailsFragment :
             }
             landMarkData.observe(viewLifecycleOwner) {
                 binding.llPlaceVideos.isVisible = !it?.locationVideos.isNullOrEmpty()
-                val webSettings = binding.wvPlaceVideos.settings
-                webSettings.javaScriptEnabled = true
-
-                // Load the YouTube video URL
-                val videoUrl = it?.locationVideos?.firstOrNull()?.videoUrl.toString()
-                binding.wvPlaceVideos.loadUrl(videoUrl)
-
-                // Set a WebViewClient to handle redirects and other events
-                binding.wvPlaceVideos.webViewClient = WebViewClient()
+                val videoUrls = it?.locationVideos?.map { videoUiModel ->
+                    videoUiModel.videoUrl
+                }
+                adapterPlaceVideos.setPlaceVideos(videoUrls)
             }
             singlePlaceData.observe(viewLifecycleOwner) {
                 binding.apply {
 
                     tvPlaceName.text = it?.name
                     tvPlaceName.isSelected = true
-                    tvPlaceAddress.text = it?.address
-                    tvPlaceMobile.text = it?.callNumber ?: "No Contact Number"
-                    tvPlaceWebsite.text = it?.website ?: "No Website"
+                    tvPlaceAddress.makeTextViewClickableLink(
+                        it?.address,
+                        errorMessage = "No Address Found"
+                    ) {
+                        openDirection(requireContext(), it?.name, it?.latLng)
+                    }
+                    tvPlaceMobile.makeTextViewClickableLink(
+                        it?.callNumber, errorMessage = "No Phone Number Found"
+                    ) {
+                        requestCallPermissionAndMakeCall()
+                    }
+                    tvPlaceWebsite.makeTextViewClickableLink(
+                        it?.website,
+                        errorMessage = "No website found"
+                    ) {
+                        openWebsite(requireContext(), it?.website.toString())
+                    }
                     llPlaceReviews.isVisible = !it?.reviews.isNullOrEmpty()
                 }
                 it?.photos?.let { photos ->
@@ -123,7 +149,7 @@ class LocationDetailsFragment :
             }
         }
 
-        adapterPlaceImages.setOnPhotoClicked {photoUrl->
+        adapterPlaceImages.setOnPhotoClicked { photoUrl ->
 
         }
 
@@ -132,18 +158,47 @@ class LocationDetailsFragment :
         }
     }
 
-    inner class CustomWebViewClient : WebViewClient() {
-        override fun onPageFinished(view: WebView?, url: String?) {
-            super.onPageFinished(view, url)
-            // Set visibility to VISIBLE once the page is completely loaded
-            view?.visibility = View.VISIBLE
+
+    private val requestCallPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Permission is granted, you can make a phone call here
+                viewModel.callNumber?.let {
+                    callToNumber(
+                        requireContext(),
+                        it
+                    )
+                }
+            } else {
+                // Permission is denied, handle it as needed (e.g., show a message)
+                // You may want to inform the user that the permission is required to make calls.
+                requireContext().openAppSettings()
+            }
+        }
+
+
+    // ...
+
+    // When you want to make a call, call this function
+    private fun requestCallPermissionAndMakeCall() {
+        val permission = Manifest.permission.CALL_PHONE
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is already granted, make the call
+            viewModel.callNumber?.let {
+                callToNumber(
+                    requireContext(),
+                    it
+                )
+            }
+        } else {
+            // Permission is not granted, request it
+            requestCallPermissionLauncher.launch(permission)
         }
     }
 
-    companion object {
-        const val TOUR_GUIDE =
-            """To plan your visit to Nicco Park Kolkata and plot all the data as HTML code, you can follow these steps:\n\n1. Gather all the necessary information about Nicco Park Kolkata, including its address, timings, entry fees, attractions, rides, and facilities.\n\n2. Open a text editor or an HTML editor to write the HTML code.\n\n3. Start by creating the basic structure of the HTML document:\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Nicco Park Kolkata - Tour Guide</title>\n</head>\n<body>\n  <h1>Nicco Park Kolkata</h1>\n</body>\n</html>\n```\n\n4. Add the relevant information within the `<body>` section. This can include a description of the park, its location, and other details you wish to provide:\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Nicco Park Kolkata - Tour Guide</title>\n</head>\n<body>\n  <h1>Nicco Park Kolkata</h1>\n\n  <h2>About Nicco Park Kolkata</h2>\n  <p>Nicco Park is an amusement park located in Kolkata, West Bengal. It is one of the most popular amusement parks in the city, offering a wide range of attractions and rides for visitors of all ages.</p>\n\n  <h2>Location</h2>\n  <p>Address: [Insert address here]</p>\n  \n  <h2>Timings and Entry Fees</h2>\n  <p>Timings: [Insert timings here]</p>\n  <p>Entry Fees: [Insert entry fees here]</p>\n\n  <h2>Attractions and Rides</h2>\n  <ul>\n    <li>Attraction 1</li>\n    <li>Attraction 2</li>\n    <li>Attraction 3</li>\n    <!-- Add more attractions and rides as necessary -->\n  </ul>\n\n  <h2>Facilities</h2>\n  <ul>\n    <li>Facility 1</li>\n    <li>Facility 2</li>\n    <li>Facility 3</li>\n    <!-- Add more facilities as necessary -->\n  </ul>\n</body>\n</html>\n```\n\n5. Replace the placeholders with the actual data for address, timings, entry fees, attractions, and facilities.\n\n6. Save the file with an appropriate name, such as \"nicco-park-kolkata-tour-guide.html\".\n\n7. Now you can open the HTML file in a web browser to see how it appears with all the data inserted.\n\nRemember to properly format and style the HTML code using CSS if desired, to enhance the visual aesthetics of the tour guide."""
-
-    }
 
 }

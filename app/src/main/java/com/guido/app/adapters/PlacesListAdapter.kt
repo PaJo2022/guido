@@ -55,10 +55,8 @@ class PlacesListAdapter(
                 }
 
                 val customObject = place.photos?.firstOrNull()
-                val photoUrl =
-                    "https://maps.googleapis.com/maps/api/place/photo?photoreference=${customObject?.photo_reference}&sensor=false&maxheight=${customObject?.height}&maxwidth=${customObject?.width}&key=${Constants.GCP_API_KEY}"
 
-                Glide.with(appContext).load(photoUrl).centerCrop().into(placeImage)
+                Glide.with(appContext).load(customObject).centerCrop().into(placeImage)
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
                 tvPlaceIsOpen.apply {

@@ -12,11 +12,18 @@
       android:id="@+id/constraintLayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/color_fourth"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
 
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_164sdp"
+        android:background="@drawable/rounded_shape_circle"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/ic_arrow_back"
@@ -25,42 +32,52 @@
         android:padding="@dimen/_12sdp"
         android:src="@drawable/ic_arrow_left"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_30sdp"
         android:fontFamily="@font/font_medium"
         android:text="Guido"
         android:textColor="@color/white"
-        android:textSize="@dimen/_24ssp"
+        android:textSize="@dimen/_42ssp"
         app:layout_constraintBottom_toBottomOf="@+id/ic_arrow_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ic_arrow_back" />
 
-    <EditText
-        android:id="@+id/et_search_location"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/ll_search_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
-        android:background="@color/color_primary"
-        android:drawableStart="@drawable/ic_nearme"
-        android:drawablePadding="@dimen/_4sdp"
-        android:fontFamily="@font/font_regular"
-        android:hint="Nearby"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:paddingVertical="@dimen/_12sdp"
-        android:singleLine="true"
-        android:textColorHint="@color/color_light_grey_80"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:cardCornerRadius="@dimen/_12sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/ic_arrow_back"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+      <EditText
+          android:id="@+id/et_search_location"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/white"
+          android:drawableStart="@drawable/ic_nearme"
+          android:drawablePadding="@dimen/_4sdp"
+          android:fontFamily="@font/font_regular"
+          android:hint="Nearby"
+          android:paddingHorizontal="@dimen/_8sdp"
+          android:paddingVertical="@dimen/_10sdp"
+          android:singleLine="true"
+          android:textColor="@color/color_primary"
+          android:textColorHint="@color/color_primary" />
+
+    </androidx.cardview.widget.CardView>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

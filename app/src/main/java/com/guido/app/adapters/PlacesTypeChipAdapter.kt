@@ -33,7 +33,7 @@ class PlacesTypeChipAdapter(private val appContext : Context) : RecyclerView.Ada
                         onItemClickListener?.invoke(type)
                     }
                 }
-                tvPlaceTypeName. text = type.displayName
+                tvPlaceTypeName.text = type.displayName
             }
         }
     }

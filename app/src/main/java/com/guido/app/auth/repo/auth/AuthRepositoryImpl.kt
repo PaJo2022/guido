@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.guido.app.auth.repo.user.safeResume
 import com.guido.app.db.AppPrefs
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
@@ -27,10 +28,10 @@ class AuthRepositoryImpl @Inject constructor(
             fireStoreCollection.collection("users").document(user.id)
                 .set(user)
                 .addOnSuccessListener { documentReference ->
-                    it.resume(true)
+                    it.safeResume(true)
                 }
                 .addOnFailureListener { e ->
-                    it.resume(false)
+                    it.safeResume(false)
                 }
         }
     }
@@ -40,9 +41,9 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     appPrefs.userId = it.user?.uid
-                    continuation.resume(it.user)
+                    continuation.safeResume(it.user)
                 }.addOnFailureListener { e ->
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 }
 
         }
@@ -53,43 +54,33 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     appPrefs.userId = it.user?.uid
-                    continuation.resume(it.user)
+                    continuation.safeResume(it.user)
                 }.addOnFailureListener { e ->
-                    continuation.resume(null)
+                    continuation.safeResume(null)
                 }
 
         }
     }
 
-    override fun onLogin(fbUserId: String): Flow<User?> {
-        return callbackFlow {
+    override suspend fun onLogin(fbUserId: String): User? {
+        appPrefs.userId = fbUserId
+        return suspendCoroutine {continuation->
             fireStoreCollection.collection("users").document(fbUserId)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
-                        trySend(null)
-                        cancel()
-                    }
-
-                    if (value != null && value.exists()) {
+                        continuation.safeResume(null)
+                    }else if (value != null && value.exists()) {
                         val user = value.toObject<User>()
-                        user?.let {
-                            trySend(it)
-                        } ?: kotlin.run {
-                            trySend(null)
-                        }
+                        continuation.safeResume(user)
                     } else {
-                        trySend(null)
+                        continuation.safeResume(null)
                     }
-                    close()
                 }
-            awaitClose {
-                close()
-            }
         }
     }
 
     override suspend fun onLogOut() {
-        db.userDao().deleteUser()
+        db.clearAllTables()
         appPrefs.clear()
     }
 

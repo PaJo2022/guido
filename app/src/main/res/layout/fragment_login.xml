@@ -1,244 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
+    android:id="@+id/swipe_refresh_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".auth.LoginFragment">
-    <LinearLayout
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:background="@drawable/rounded_shape_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
-        />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineOne"
-        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.23" />
-    <TextView
-        android:id="@+id/tv_company_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/font_medium"
-        android:text="Guido"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_36ssp"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tv_company_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/font_medium"
-        android:text="Travel | Food | Explore"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_16ssp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_company_name" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.42" />
-
-    <TextView
-        android:id="@+id/tv_sign_in_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/font_medium"
-        android:text="Sign In"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:textColor="@color/card_color4"
-        android:textSize="@dimen/_24sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <TextView
-        android:id="@+id/tv_sign_in_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:fontFamily="@font/font_regular"
-        android:text="Hi! There Nice To See You Again"
-        android:textColor="#808080"
-        android:textSize="@dimen/_11ssp"
-        android:layout_marginTop="@dimen/_2sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_text" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ti_layout_user_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        app:errorEnabled="true"
-        app:errorTextColor="@color/red"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_sign_in_description"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sign_in_description" >
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_user_email"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/_10sdp"
-            android:textColorHint="@color/color_primary"
-            android:textColor="@color/color_primary"
-            android:inputType="textEmailAddress"
-            android:hint="@string/label_email" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/_12sdp">
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ti_layout_user_password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_12sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_sign_in_description"
-        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_email">
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_164sdp"
+                android:background="@drawable/rounded_shape_circle"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_user_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/color_primary"
-            android:textColor="@color/color_primary"
-            android:inputType="textPassword"
-            android:textSize="@dimen/_10sdp"
-            android:hint="@string/label_password" />
+            <TextView
+                android:id="@+id/tv_company_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_medium"
+                android:text="Guido"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_36ssp"
 
-    </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-
-
-    <TextView
-        android:id="@+id/button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:background="@drawable/button_rounded_shape"
-        android:text="Sign In"
-        android:textSize="@dimen/_14sdp"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:padding="@dimen/_12sdp"
-        app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_password"
-        app:layout_constraintStart_toStartOf="@+id/ti_layout_user_password"
-        app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_password" />
-
-<LinearLayout
-    android:id="@+id/tv_sign_in_use_social_profile"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center"
-    app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/button"
-    >
-    <View
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_1sdp"
-        android:background="#808080"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/font_regular"
-        android:text="OR"
-       android:layout_marginHorizontal="@dimen/_5sdp"
-        android:textColor="#808080"
-        android:textSize="@dimen/_10ssp"
-        />
-    <View
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_1sdp"
-        android:background="#808080"/>
-</LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/_15sdp"
-        android:paddingVertical="@dimen/_5sdp"
-        android:background="@drawable/shape_border_color"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/layoutSignUp"
-      >
-
-        <ImageView
-            android:id="@+id/iv_fb_login"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
-            android:src="@drawable/ic_google" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:text="Google"/>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/layoutSignUp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_5sdp"
-        app:layout_constraintLeft_toLeftOf="@+id/linearLayout"
-        app:layout_constraintRight_toRightOf="@+id/linearLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
-        <TextView
-            android:id="@+id/tv_forgot_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/font_regular"
-            android:text="Don't have an account?"
-            android:textColor="#808080"
-            android:textSize="@dimen/_10ssp"
-
-            />
+            <TextView
+                android:id="@+id/tv_company_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_medium"
+                android:text="Travel | Food | Explore"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_company_name" />
 
 
-        <TextView
-            android:id="@+id/tv_sign_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/font_semi_bold"
-            android:padding="@dimen/_12sdp"
-            android:text="Sign Up"
-            android:textColor="@color/card_color4"
-            android:textSize="@dimen/_10ssp"
-             />
-    </LinearLayout>
+            <include
+                android:id="@+id/ll_sign_in"
+                layout="@layout/layout_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+            <include
+                android:id="@+id/ll_create_account"
+                layout="@layout/layout_sign_up_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -29,7 +29,7 @@ class NetworkModule {
     @Singleton
     fun provideGuidoApi(okHttpClient: OkHttpClient) : GuidoApi {
 
-        return Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/").addConverterFactory(
+        return Retrofit.Builder().baseUrl("http://64.227.157.189:7000/").addConverterFactory(
             GsonConverterFactory.create()
         ).client(okHttpClient).build().create(GuidoApi::class.java)
     }

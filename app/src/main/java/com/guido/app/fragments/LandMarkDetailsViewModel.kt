@@ -37,6 +37,8 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private var placesDetailsUiModel: PlaceDetailsUiModel? = null
 
+    var callNumber : String ?= null
+
     private val _singlePlaceData: MutableLiveData<PlaceUiModel?> = MutableLiveData()
     val singlePlaceData: LiveData<PlaceUiModel?> = _singlePlaceData
 
@@ -72,10 +74,9 @@ class LandMarkDetailsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceDataFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
-                placeId = placeId,
-                key = GCP_API_KEY
+                placeId = placeId
             )
-            delay(2.seconds)
+            callNumber = placeData?.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
         }
@@ -100,15 +101,19 @@ class LandMarkDetailsViewModel @Inject constructor(
     }
 
 
-    private suspend fun fetchVideosForTheLandMarkName(query: String): List<VideoUiModel> {
+    private suspend fun fetchVideosForTheLandMarkName(placeUiModel: PlaceUiModel): List<VideoUiModel> {
+        val placeName = placeUiModel.name
+        val location = placeUiModel.address
         return videoRepository.fetchPlacesVideos(
-            query = query,
+            query = "${placeName},${location}",
             apiKey = GCP_API_KEY
         )
     }
 
-    private suspend fun fetchTourDataForLandMark(landMarkName: String): ChatGptResponse? {
-        val message = "As a tour guide tell me about the place ${landMarkName} with all relevant details and interesting and useful facts"
+    private suspend fun fetchTourDataForLandMark(placeUiModel: PlaceUiModel): ChatGptResponse? {
+        val placeName = placeUiModel.name
+        val location = placeUiModel.address
+        val message = "As a tour guide tell me about the place ${placeName} at ${location} with all relevant details and interesting and useful facts"
         return tourDataRepository.getTourDataAboutTheLandMark(
            ChatGptRequest(
                listOf(Message(message,"user"))
@@ -118,17 +123,17 @@ class LandMarkDetailsViewModel @Inject constructor(
 
 
 
-    fun fetchAllDataForTheLocation(query: String){
+    fun fetchAllDataForTheLocation(placeUiModel: PlaceUiModel){
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceAIDataFetching.emit(true)
-            val tourDataJob = async { fetchTourDataForLandMark(query) }
+            val tourDataJob = async { fetchTourDataForLandMark(placeUiModel) }
             val tourData = tourDataJob.await()
             _isPlaceAIDataFetching.emit(false)
             setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
         }
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceVideoFetching.emit(true)
-            val landMarkVideoJob = async { fetchVideosForTheLandMarkName("${query} Tour Guide") }
+            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
             val landMarkVideo = landMarkVideoJob.await()
             _isPlaceVideoFetching.emit(false)
             setPlaceVideoData(landMarkVideo)

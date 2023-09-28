@@ -2,7 +2,7 @@
     <string name="app_name">Guido</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="web_client_id">949397645222-k9odl8vgdsakelu6arknd38i08b7gcuc.apps.googleusercontent.com</string>
+    <string name="web_client_id">143666551913-uotcpi2fnc5lj1jdsdcha1o7is2eumjb.apps.googleusercontent.com</string>
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>
     <string name="label_user_name">User Name</string>

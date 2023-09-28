@@ -9,6 +9,7 @@ import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
@@ -24,17 +25,29 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun getUserDetails(userId: String) = db.userDao().getUser(userId)
     override suspend fun addUser(user: User) {
-        db.withTransaction {
-            db.userDao().apply {
-                deleteUser()
-                insertUser(user)
-            }
+        db.userDao().insertUser(user)
+    }
+
+    override suspend fun updateProfilePicInLocalDb(userId: String, profilePic: String) {
+        withContext(Dispatchers.IO) {
+            db.userDao().updateProfilePic(userId, profilePic)
         }
     }
 
-    override suspend fun updateProfilePicInLocalDb(userId: String,profilePic: String) {
-        withContext(Dispatchers.IO){
-            db.userDao().updateProfilePic(userId, profilePic)
+    override suspend fun updateProfileData(
+        userId : String,
+        profileData: Map<String, String>
+    ): Resource<String> {
+        return suspendCoroutine { continuation ->
+            fireStoreCollection.collection("users").document(userId)
+                .update(profileData) // Pass the map of updates here
+                .addOnSuccessListener { documentReference ->
+                    continuation.resume(Resource.Success("Updated"))
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume((Resource.Error(Exception(e.message), null)))
+                }
+
         }
     }
 

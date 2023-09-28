@@ -2,7 +2,10 @@ package com.guido.app.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
@@ -27,28 +30,51 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         this.onItemClickListener = onItemClickListener
     }
 
+    private var onIntrestSectionOpened: (() -> Any?)? = null
+
+    fun setOnInterestSectionOpen(onIntrestSectionOpened: (() -> Any?)) {
+        this.onIntrestSectionOpened = onIntrestSectionOpened
+    }
+
     inner class PlaceTypeGroupViewHolder(private val binding: LayoutPlaceGroupItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(type: PlaceTypeContainer) {
-            val placeAdapter = PlacesTypeChipAdapter(appContext)
             binding.apply {
-                tvPlaceType.text = type.type
-                ivPlaceTypeIcon.isVisible = false
-
-                placeAdapter.setPlacesType(type.placeTypes)
-                placeAdapter.setOnPlaceTypeSelected {
-
+                tvPlaceType.text = type.type  + " (+${type.placeTypes.size})"
+                if(type.isOpened){
+                    rotateViewBy(ivPlaceArrow,270f)
+                    motionLayout.transitionToEnd()
+                }else{
+                    rotateViewBy(ivPlaceArrow,90f)
+                    motionLayout.transitionToStart()
+                }
+                llPlaceType.setOnClickListener {
+                    type.isOpened = !type.isOpened
+                    if(type.isOpened){
+                        rotateViewBy(ivPlaceArrow,270f)
+                        motionLayout.transitionToEnd()
+                    }else{
+                        rotateViewBy(ivPlaceArrow,90f)
+                        motionLayout.transitionToStart()
+                    }
+                    if(type.isOpened){
+                        onIntrestSectionOpened?.invoke()
+                    }
+                    tvPlaceType.text = type.type + if(type.isOpened) "" else " (+${type.placeTypes.size})"
                 }
 
 
                 type.placeTypes.forEachIndexed {index,it->
                     addChips(binding.chipGroupPlaces, it,index) { type ->
-
                         onItemClickListener?.invoke(type)
                     }
                 }
             }
         }
+    }
+
+    fun rotateViewBy(view : View,toDegree : Float){
+        view.rotation = toDegree
     }
 
     private fun addChips(

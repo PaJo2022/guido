@@ -18,9 +18,9 @@ class PlaceImageAdapter(
 ) : RecyclerView.Adapter<PlaceImageAdapter.PlaceImageViewHolder>() {
 
 
-    private var _placesPhotos: List<Photo> = ArrayList()
+    private var _placesPhotos: List<String> = ArrayList()
 
-    fun setPlacePhotos(placesPhotos: List<Photo>) {
+    fun setPlacePhotos(placesPhotos: List<String>) {
         _placesPhotos = placesPhotos
         notifyDataSetChanged()
     }
@@ -33,13 +33,11 @@ class PlaceImageAdapter(
 
     inner class PlaceImageViewHolder(private val binding: LayoutPlacesImagesItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(photo: Photo) {
-            val photoUrl =
-                "https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo.photo_reference}&sensor=false&maxheight=${photo.height}&maxwidth=${photo.width}&key=${Constants.GCP_API_KEY}"
+        fun bindItem(photo: String) {
 
-            Glide.with(appContext).load(photoUrl).centerCrop().into(binding.ivPlaceImage)
+            Glide.with(appContext).load(photo).centerCrop().into(binding.ivPlaceImage)
             binding.ivPlaceImage.setOnClickListener {
-                _onItemClickListener?.invoke(photoUrl)
+                _onItemClickListener?.invoke(photo)
             }
         }
     }

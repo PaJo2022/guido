@@ -18,7 +18,8 @@ import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.videosUiModel.VideoUiModel
 import java.util.Locale
 
-class PlacesGroupListAdapter(private val appContext : Context) : RecyclerView.Adapter<PlacesGroupListAdapter.PlacesListAdapterViewHolder>() {
+class PlacesGroupListAdapter(private val appContext : Context) :
+    RecyclerView.Adapter<PlacesGroupListAdapter.PlacesListAdapterViewHolder>() {
 
     private var _placeGroupItem: List<PlaceTypeUiModel> = DUMMY_PLACE_TYPE_UI_MODEL
 

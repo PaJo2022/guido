@@ -15,9 +15,9 @@ import com.guido.app.model.places.Photo
 class ImageSliderAdapter(private val appContext : Context) :
     RecyclerView.Adapter<ImageSliderAdapter.ViewPagerViewHolder>() {
 
-    private var _photoList: List<Photo> = emptyList()
+    private var _photoList: List<String> = emptyList()
 
-    fun setPlacePhotos(photoList: List<Photo>) {
+    fun setPlacePhotos(photoList: List<String>) {
         _photoList = photoList
         notifyDataSetChanged()
     }
@@ -25,12 +25,10 @@ class ImageSliderAdapter(private val appContext : Context) :
     inner class ViewPagerViewHolder(val binding: LayoutPlacesImagesSliderItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun setData(photo: Photo) {
-            val imageUrl =
-                "https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo.photo_reference}&sensor=false&maxheight=${photo.height}&maxwidth=${photo.width}&key=${Constants.GCP_API_KEY}"
+        fun setData(photo: String) {
 
             Glide.with(appContext)
-                .load(imageUrl)
+                .load(photo)
                 .centerCrop()
                 .placeholder(R.drawable.no_image_placeholder)
                 .into(binding.ivPlaceImage)

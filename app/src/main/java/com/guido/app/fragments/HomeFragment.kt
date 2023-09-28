@@ -5,9 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +25,6 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -35,6 +32,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.guido.app.BaseFragment
 import com.guido.app.Constants.GCP_API_KEY
 import com.guido.app.MyApp
 import com.guido.app.MyApp.Companion.googleMap
@@ -43,7 +41,7 @@ import com.guido.app.adapters.PlacesGroupListAdapter
 import com.guido.app.adapters.PlacesHorizontalListAdapter
 import com.guido.app.calculateDistance
 import com.guido.app.collectIn
-import com.guido.app.databinding.FragmentLocationSearchBinding
+import com.guido.app.databinding.FragmentHomeBinding
 import com.guido.app.db.AppPrefs
 import com.guido.app.getScreenHeight
 import com.guido.app.isVisibleAndEnable
@@ -59,15 +57,14 @@ import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(),
-    OnMapReadyCallback, OnMarkerClickListener , GoogleMap.OnInfoWindowCloseListener, GoogleMap.OnCameraMoveListener {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
+    OnMapReadyCallback, OnMarkerClickListener, GoogleMap.OnInfoWindowCloseListener,
+    GoogleMap.OnCameraMoveListener {
 
     companion object {
         private const val MAP_VIEW_BUNDLE_KEY = "mapview_bundle_key"
     }
 
-    private var _binding: FragmentLocationSearchBinding? = null
-    private val binding: FragmentLocationSearchBinding get() = _binding!!
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val viewModel: HomeViewModel by activityViewModels()
@@ -88,36 +85,6 @@ class HomeFragment : Fragment(),
         placesAdapter = PlacesGroupListAdapter(requireContext())
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
         checkLocationPermission()
-    }
-
-
-    private var hasMapConfigured: Boolean = false
-
-    private val viewPersistedMapBundle = Bundle()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentLocationSearchBinding.inflate(layoutInflater, container, false)
-        val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
-        initMapViewState(binding.mapView, mapViewBundle)
-        binding.mapView.getMapAsync(this)
-        return binding.root
-    }
-
-
-    private fun initMapViewState(mapView: MapView, savedMapViewBundle: Bundle?) {
-        // The state persisted across Fragment transaction.
-        if (!viewPersistedMapBundle.isEmpty) {
-            mapView.onCreate(viewPersistedMapBundle)
-            hasMapConfigured = true
-            return
-        }
-        // The state persisted across Fragment recreation.
-        mapView.onCreate(savedMapViewBundle)
-        hasMapConfigured = savedMapViewBundle != null
     }
 
 
@@ -213,6 +180,9 @@ class HomeFragment : Fragment(),
         val snapHelper1: SnapHelper = PagerSnapHelper()
         val placeCardHorizontalLayoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        binding.mapView.onCreate(savedInstanceState)
+        binding.mapView.getMapAsync(this)
         binding.apply {
             bottomsheetPlaceList.rvPlaces.apply {
                 adapter = placesAdapter
@@ -222,7 +192,7 @@ class HomeFragment : Fragment(),
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission(shouldAnimate = true)
             }
-            tvSearchLocation.setOnClickListener {
+            tvLastSearchLocation.setOnClickListener {
                 openNavFragment(
                     SearchLocationFragment(),
                     childFragmentManager,
@@ -237,7 +207,7 @@ class HomeFragment : Fragment(),
             }
             ivUserProfileImage.setOnClickListener {
                 openNavFragment(
-                    ProfileFragment(),
+                    ProfileNewFragment(),
                     childFragmentManager,
                     "ProfileFragment",
                     binding.flId
@@ -336,11 +306,11 @@ class HomeFragment : Fragment(),
         val markerLatLng = placeUiModel.latLng
         val landMarkName = placeUiModel.name
 
-        if (markerUrl == null || markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
+       // if (markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
         val iconBitmap =
-            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable)!!.toBitmap()
+            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable!!)!!.toBitmap()
         val markerOptions = MarkerOptions()
-            .position(markerLatLng)
+            .position(markerLatLng!!)
             .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
             .title(landMarkName)
         val marker = googleMap?.addMarker(markerOptions)
@@ -353,7 +323,7 @@ class HomeFragment : Fragment(),
     private fun observeData() {
         viewModel.apply {
             getUserData().collectIn(viewLifecycleOwner){
-                Glide.with(requireContext()).load("asa").centerCrop().placeholder(R.drawable.user_icon).into(binding.ivUserProfileImage)
+                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).into(binding.ivUserProfileImage)
             }
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
@@ -496,17 +466,8 @@ class HomeFragment : Fragment(),
         viewModel.lastSearchLocationLatLng = latLng
         viewModel.moveToTheLatLng(latLng)
         viewModel.resetData()
-        viewModel.fetchPlacesDetailsNearMe(
-            "${latLng.latitude},${latLng.longitude}",
-            appPrefs.prefDistance,
-            "tourist_attraction",
-            "",
-            GCP_API_KEY
-        )
-        viewModel.fetchCurrentAddressFromGeoCoding(
-            "${latLng.latitude},${latLng.longitude}",
-            GCP_API_KEY
-        )
+        viewModel.fetchPlacesDetailsNearMe(latLng.latitude,latLng.longitude)
+        viewModel.moveToTheLatLng(latLng)
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -601,16 +562,10 @@ class HomeFragment : Fragment(),
         binding.mapView.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.mapView.onDestroy()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.mapView.onSaveInstanceState(viewPersistedMapBundle)
         binding.mapView.onDestroy()
-        _binding = null
     }
 
 

@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class User@JvmOverloads constructor(
     @PrimaryKey(autoGenerate = false)
-    val id: String="",
+    val id: String = "",
     val firstName: String? = null,
     val lastName: String? = null,
     val displayName: String? = null,
