@@ -6,6 +6,7 @@ import com.guido.app.api.GuidoApi
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
+import com.guido.app.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.guido.app.model.places.geoCoding.ReverseGeoCodingDTO
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.places_backend_dto.toPlaceUiModel
@@ -59,6 +60,19 @@ class BackendPlacesRepositoryImpl @Inject constructor(
             response.body()
         } catch (e: Exception) {
             null
+        }
+    }
+
+    override suspend fun fetchPlaceAutoCompleteSuggestion(query: String): List<PlaceAutoCompleteDTO> {
+        return try {
+            val response = api.fetchPlaceAutoCompleteSuggestion(query)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 

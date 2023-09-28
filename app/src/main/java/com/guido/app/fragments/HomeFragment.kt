@@ -466,10 +466,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel.lastSearchLocationLatLng = latLng
         viewModel.moveToTheLatLng(latLng)
         viewModel.resetData()
-        viewModel.fetchPlacesDetailsNearMe(
-            latLng.latitude,latLng.longitude,
-            appPrefs.prefDistance
-        )
+        viewModel.fetchPlacesDetailsNearMe(latLng.latitude,latLng.longitude)
+        viewModel.moveToTheLatLng(latLng)
     }
 
     override fun onMapReady(map: GoogleMap) {

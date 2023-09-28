@@ -8,5 +8,7 @@ data class PlaceAutocomplete(
     @PrimaryKey(autoGenerate = false)
     val placeId: String,
     val area: String,
-    val address: String
+    val address: String,
+    val latitude : Double,
+    val longitude : Double
 )

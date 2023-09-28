@@ -6,26 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Tasks
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.model.PlaceAutocomplete
+import com.guido.app.model.place_autocomplete.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
-    private val placesClient: PlacesClient,
     private val placesRepository: PlacesRepository
 ) :
     ViewModel() {
@@ -67,60 +59,68 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-
-    fun getPredictions(constraint: String) {
+    fun getPredictions(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val resultJob = async {
-                val resultList = ArrayList<PlaceAutocomplete>()
-
-                // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
-                // and once again when the user makes a selection (for example when calling fetchPlace()).
-                val token = AutocompleteSessionToken.newInstance()
-
-                //https://gist.github.com/graydon/11198540
-                // Use the builder to create a FindAutocompletePredictionsRequest.
-                val request =
-                    FindAutocompletePredictionsRequest.builder() // Call either setLocationBias() OR setLocationRestriction().
-                        //.setLocationBias(bounds)
-                        //.setCountry("BD")
-                        //.setTypeFilter(TypeFilter.ADDRESS)
-                        .setSessionToken(token)
-                        .setQuery(constraint.toString())
-                        .build()
-                val autocompletePredictions = placesClient.findAutocompletePredictions(request)
-
-                // This method should have been called off the main UI thread. Block and wait for at most
-                // 60s for a result from the API.
-                try {
-                    Tasks.await(autocompletePredictions, 60, TimeUnit.SECONDS)
-                } catch (e: ExecutionException) {
-                    e.printStackTrace()
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                } catch (e: TimeoutException) {
-                    e.printStackTrace()
-                }
-
-                if (autocompletePredictions.isSuccessful) {
-                    val findAutocompletePredictionsResponse = autocompletePredictions.result
-                    val result =
-                        findAutocompletePredictionsResponse.autocompletePredictions.map { prediction ->
-                            PlaceAutocomplete(
-                                prediction.placeId,
-                                prediction.getPrimaryText(STYLE_BOLD).toString(),
-                                prediction.getFullText(STYLE_NORMAL).toString()
-                            )
-                        }
-
-                    result
-                } else {
-                    emptyList()
-                }
-            }
-            val result = resultJob.await()
-            _suggestedLocations.postValue(result)
+            delay(500)
+            val places = placesRepository.fetchPlaceAutoCompleteSuggestion(query)
+            _suggestedLocations.postValue(places.toUiModel())
         }
     }
+
+
+//    fun getPredictions(constraint: String) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val resultJob = async {
+//                val resultList = ArrayList<PlaceAutocomplete>()
+//
+//                // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+//                // and once again when the user makes a selection (for example when calling fetchPlace()).
+//                val token = AutocompleteSessionToken.newInstance()
+//
+//                //https://gist.github.com/graydon/11198540
+//                // Use the builder to create a FindAutocompletePredictionsRequest.
+//                val request =
+//                    FindAutocompletePredictionsRequest.builder() // Call either setLocationBias() OR setLocationRestriction().
+//                        //.setLocationBias(bounds)
+//                        //.setCountry("BD")
+//                        //.setTypeFilter(TypeFilter.ADDRESS)
+//                        .setSessionToken(token)
+//                        .setQuery(constraint.toString())
+//                        .build()
+//                val autocompletePredictions = placesClient.findAutocompletePredictions(request)
+//
+//                // This method should have been called off the main UI thread. Block and wait for at most
+//                // 60s for a result from the API.
+//                try {
+//                    Tasks.await(autocompletePredictions, 60, TimeUnit.SECONDS)
+//                } catch (e: ExecutionException) {
+//                    e.printStackTrace()
+//                } catch (e: InterruptedException) {
+//                    e.printStackTrace()
+//                } catch (e: TimeoutException) {
+//                    e.printStackTrace()
+//                }
+//
+//                if (autocompletePredictions.isSuccessful) {
+//                    val findAutocompletePredictionsResponse = autocompletePredictions.result
+//                    val result =
+//                        findAutocompletePredictionsResponse.autocompletePredictions.map { prediction ->
+//                            PlaceAutocomplete(
+//                                prediction.placeId,
+//                                prediction.getPrimaryText(STYLE_BOLD).toString(),
+//                                prediction.getFullText(STYLE_NORMAL).toString()
+//                            )
+//                        }
+//
+//                    result
+//                } else {
+//                    emptyList()
+//                }
+//            }
+//            val result = resultJob.await()
+//            _suggestedLocations.postValue(result)
+//        }
+//    }
 
     fun removePredictions() {
         _suggestedLocations.value = emptyList()

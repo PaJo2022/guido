@@ -2,6 +2,7 @@ package com.guido.app.data.places
 
 import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
+import com.guido.app.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.guido.app.model.places.geoCoding.ReverseGeoCodingDTO
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +26,10 @@ interface PlacesRepository {
         latitude: Double,
         longitude: Double,
     ): ReverseGeoCodingDTO?
+
+    suspend fun fetchPlaceAutoCompleteSuggestion(
+       query : String
+    ): List<PlaceAutoCompleteDTO>
 
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
     suspend fun getAllSavedPlaceTypePreferences(): List<PlaceType>

@@ -120,8 +120,7 @@ class HomeViewModel @Inject constructor(
         if (lastSearchLocationLatLng == null) return
         fetchPlacesDetailsNearMe(
             lastSearchLocationLatLng!!.latitude,
-            lastSearchLocationLatLng!!.longitude,
-            appPrefs.prefDistance
+            lastSearchLocationLatLng!!.longitude
         )
     }
 
@@ -136,9 +135,9 @@ class HomeViewModel @Inject constructor(
     @SuppressLint("MissingPermission")
     fun fetchPlacesDetailsNearMe(
         latitude: Double,
-        longitude: Double,
-        radius: Int
+        longitude: Double
     ) {
+        val radius = appPrefs.prefDistance
         fetchCurrentAddressFromGeoCoding(latitude, longitude)
         viewModelScope.launch(Dispatchers.IO) {
             _dataState.emit(DataState.LOADING)
@@ -207,8 +206,7 @@ class HomeViewModel @Inject constructor(
             place.latLng?.let {
                 _moveToLocation.postValue(Pair(it, true))
                 fetchPlacesDetailsNearMe(
-                    it.latitude, it.longitude,
-                    appPrefs.prefDistance
+                    it.latitude, it.longitude
                 )
             }
 
@@ -237,8 +235,7 @@ class HomeViewModel @Inject constructor(
                 _moveToLocation.postValue(Pair(latLng, shouldAnimate))
                 _currentLatLng.postValue(latLng)
                 fetchPlacesDetailsNearMe(
-                    latLng.latitude, latLng.longitude,
-                    appPrefs.prefDistance
+                    latLng.latitude, latLng.longitude
                 )
                 fetchCurrentAddressFromGeoCoding(
                     latLng.latitude, latLng.longitude

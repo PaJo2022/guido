@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.maps.model.LatLng
 import com.guido.app.BaseFragment
 import com.guido.app.adapters.PlacesAutoCompleteAdapter
 import com.guido.app.addOnBackPressedCallback
@@ -63,7 +64,8 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
             viewModel.saveSearchPlaceLocationToDb(it)
             homeViewModel.resetData()
             parentFragmentManager.popBackStack()
-            homeViewModel.fetchPlaceDetailsById(it.placeId)
+            homeViewModel.fetchPlacesDetailsNearMe(it.latitude,it.longitude)
+            homeViewModel.moveToTheLatLng(LatLng(it.latitude,it.longitude))
 
         }
 
