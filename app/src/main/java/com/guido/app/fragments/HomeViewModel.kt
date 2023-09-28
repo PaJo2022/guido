@@ -10,12 +10,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.guido.app.Constants.getPlaceTypeIcon
 import com.guido.app.LocationClient
 import com.guido.app.MyApp
-import com.guido.app.R
 import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
+import com.guido.app.model.DataType
 import com.guido.app.model.MarkerData
 import com.guido.app.model.PlaceType
 import com.guido.app.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
@@ -152,37 +153,53 @@ class HomeViewModel @Inject constructor(
             }
             val attraction = job2.await()
             val latLangs = attraction.map { it.latLng }
-            val placeTypeUiModel = attraction.map { placeType ->
-                PlaceTypeUiModel(
-                    "FIX ME HERE",
-                    placeType.iconDrawable,
-                    attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
-                )
+
+            val placesInGroupData = async { mapPlacesByType(interestList,attraction) }.await()
+            placesInGroupData.forEach {placeTypeUiModel->
+                nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
             }
 
-            attraction.forEach {
-                it.placeUiType
-            }
-
-            if (latLangs.isNotEmpty()) {
-                nearByPlacesListInGroup.addAll(placeTypeUiModel)
-                nearByPlacesList.addAll(
-                    attraction.addUiType(
-                        R.drawable.icon_department_store,
-                        PlaceUiType.LARGE
-                    )
-                )
-            }
             nearByMarkerList.addAll(latLangs)
-            if (nearByPlacesListInGroup.isEmpty()) {
+            if (placesInGroupData.isEmpty()) {
                 _dataState.emit(DataState.EMPTY_DATA)
             }
-            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+            _nearByPlacesInGroup.postValue(ArrayList(placesInGroupData))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
             _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
 
         }
     }
+
+    private suspend fun mapPlacesByType(
+        placeTypes: List<PlaceType>,
+        places: List<PlaceUiModel>
+    ): MutableList<PlaceTypeUiModel> {
+        // Create a map to store places by type
+        val placeUiTypeUiModel = mutableListOf<PlaceTypeUiModel>()
+        val placesGroupedByType = places.groupBy { it.type }
+        placeUiTypeUiModel.clear()
+        // Iterate through the place types
+        placesGroupedByType.entries.forEach {mapData->
+
+
+                // Store the list in the map
+            placeUiTypeUiModel.add(
+                PlaceTypeUiModel(
+                    mapData.key,
+                    getPlaceTypeIcon(mapData.key.toString()),
+                    places = mapData.value.addUiType( getPlaceTypeIcon(mapData.key.toString()), PlaceUiType.LARGE),
+                    dataType =  DataType.DATA
+                )
+            )
+
+
+        }
+
+        return placeUiTypeUiModel
+    }
+
+
+
 
 
     private fun concatenatePlaceTypeIds(placeTypes: List<PlaceType>): String {

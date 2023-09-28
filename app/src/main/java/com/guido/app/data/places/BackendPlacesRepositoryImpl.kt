@@ -28,6 +28,9 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     ): List<PlaceUiModel> {
         val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
         return if (response.isSuccessful) {
+//            Log.i("JAPAN", "TYPE: ${ response.body()?.firstOrNull()}")
+//            Log.i("JAPAN", "\n")
+//            Log.i("JAPAN", "TYPE: ${response.body()?.toPlaceUiModel()?.firstOrNull()}")
             response.body()?.toPlaceUiModel() ?: emptyList()
         } else {
             emptyList()

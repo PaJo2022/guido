@@ -12,6 +12,7 @@ import com.guido.app.databinding.LayoutPlacesVideoItemBinding
 import com.guido.app.model.PlaceDetailsUiModel
 import com.guido.app.model.places.Photo
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.updateApiKey
 
 class PlaceImageAdapter(
     private val appContext: Context
@@ -35,7 +36,7 @@ class PlaceImageAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(photo: String) {
 
-            Glide.with(appContext).load(photo).centerCrop().into(binding.ivPlaceImage)
+            Glide.with(appContext).load(updateApiKey(photo)).centerCrop().into(binding.ivPlaceImage)
             binding.ivPlaceImage.setOnClickListener {
                 _onItemClickListener?.invoke(photo)
             }

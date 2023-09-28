@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.guido.app.model.DataType
+import com.guido.app.model.PlaceType
 import com.guido.app.model.places.Photo
 import kotlinx.parcelize.Parcelize
 
@@ -15,6 +16,8 @@ data class PlaceUiModel(
     val address: String? = null,
     val icon: String? = null,
     val iconDrawable : Int ?=null,
+    val type : String ?=null,
+    val placeType: PlaceType?=null,
     @SerializedName("icon_background_color")
     val iconBackGroundColor: String? = null,
     val photos: List<String>? = null,
@@ -37,6 +40,8 @@ fun List<PlaceUiModel>.addUiType(iconDrawable: Int?,placeUiType: PlaceUiType) = 
         it.address,
         it.icon,
         iconDrawable,
+        it.type,
+        it.placeType,
         it.iconBackGroundColor,
         it.photos,
         it.rating,

@@ -15,6 +15,7 @@ import com.guido.app.databinding.LayoutPlaceShimmerItemBinding
 import com.guido.app.formatDouble
 import com.guido.app.model.placesUiModel.PlaceUiModel
 import com.guido.app.model.placesUiModel.PlaceUiType
+import com.guido.app.updateApiKey
 
 class PlacesListAdapter(
     private val appContext: Context
@@ -56,7 +57,7 @@ class PlacesListAdapter(
 
                 val customObject = place.photos?.firstOrNull()
 
-                Glide.with(appContext).load(customObject).centerCrop().into(placeImage)
+                Glide.with(appContext).load(updateApiKey(customObject)).centerCrop().into(placeImage)
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
                 tvPlaceIsOpen.apply {

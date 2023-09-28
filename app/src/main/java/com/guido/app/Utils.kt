@@ -157,3 +157,15 @@ fun openDirection(context: Context, placeName: String?, latLng: LatLng?) {
         Toast.makeText(context, "Can Not Open The Maps", Toast.LENGTH_SHORT).show()
     }
 }
+
+fun updateApiKey(originalString: String?): String {
+    // Check if the originalString contains "GCP_KEY"
+    if (originalString?.contains("GCP_API_KEY") == true) {
+        // Replace "GCP_KEY" with the actual API key
+        val replacedString = originalString.replace("GCP_API_KEY", "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY")
+        return replacedString
+    } else {
+        // If "GCP_KEY" is not found, return the original string as is
+        return originalString.toString()
+    }
+}

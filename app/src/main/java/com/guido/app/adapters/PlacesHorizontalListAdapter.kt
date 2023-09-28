@@ -15,6 +15,7 @@ import com.guido.app.formatDouble
 import com.guido.app.getScreenHeight
 import com.guido.app.getScreenWidth
 import com.guido.app.model.placesUiModel.PlaceUiModel
+import com.guido.app.updateApiKey
 
 class PlacesHorizontalListAdapter(private val appContext: Context) :
     RecyclerView.Adapter<PlacesHorizontalListAdapter.PlacesHorizontalListAdapterViewHolder>() {
@@ -55,7 +56,7 @@ class PlacesHorizontalListAdapter(private val appContext: Context) :
 
                 val customObject = place.photos?.firstOrNull()
 
-                Glide.with(appContext).load(customObject).centerCrop().into(ivPlace)
+                Glide.with(appContext).load(updateApiKey(customObject)).centerCrop().into(ivPlace)
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
                 tvPlaceIsOpen.apply {

@@ -63,14 +63,25 @@ object Constants {
     )
 
 
+    fun getPlaceTypeIcon(type: String): Int {
+        for (placeType in placeTypes) {
+            if (placeType.type.equals(type,true)) {
+                return placeType.iconDrawable
+            }
+        }
+        return R.drawable.airport
+    }
 
 
 
-
-
-
-
-
+    fun getTypesOfPlaces(id: String): String {
+        for (placeType in placeTypes) {
+            if (placeType.id.equals(id,true)) {
+                return placeType.type
+            }
+        }
+        return "airport"
+    }
 
 
 
@@ -79,7 +90,12 @@ object Constants {
         PlaceType("accounting", "Accounting", "Finance", iconDrawable = R.drawable.ic_account_firm),
         PlaceType("atm", "ATM", "Finance", iconDrawable = R.drawable.ic_atm),
         PlaceType("bank", "Bank", "Finance", iconDrawable = R.drawable.ic_bank),
-        PlaceType("insurance_agency", "Insurance Agency", "Finance", iconDrawable = R.drawable.ic_insurance_agency),
+        PlaceType(
+            "insurance_agency",
+            "Insurance Agency",
+            "Finance",
+            iconDrawable = R.drawable.ic_insurance_agency
+        ),
 
         PlaceType("car_dealer", "Car Dealer", "Services", iconDrawable = R.drawable.ic_car_dealer),
         PlaceType("car_rental", "Car Rental", "Services", iconDrawable = R.drawable.ic_car_rental),

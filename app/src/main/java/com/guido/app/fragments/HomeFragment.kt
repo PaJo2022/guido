@@ -306,11 +306,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val markerLatLng = placeUiModel.latLng
         val landMarkName = placeUiModel.name
 
-       // if (markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
+        if (markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
         val iconBitmap =
-            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable!!)!!.toBitmap()
+            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable)!!.toBitmap()
         val markerOptions = MarkerOptions()
-            .position(markerLatLng!!)
+            .position(markerLatLng)
             .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
             .title(landMarkName)
         val marker = googleMap?.addMarker(markerOptions)
