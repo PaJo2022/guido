@@ -34,17 +34,17 @@ data class SinglePlaceResult(
 )
 
 
-fun SinglePlaceResult.toPlaceUiModel() =  PlaceUiModel(
-    placeId = place_id,
-    name = name,
-    latLng = LatLng(geometry?.location?.lat ?: 0.0,geometry?.location?.lng ?: 0.0),
-    address = formatted_address,
-    icon = icon,
-    iconBackGroundColor = icon_background_color,
-    photos = photos,
-    rating = rating,
-    callNumber = international_phone_number,
-    website = website,
-    isOpenNow = current_opening_hours?.open_now == true,
-    reviews = reviews?.toUiModel()
-)
+//fun SinglePlaceResult.toPlaceUiModel() =  PlaceUiModel(
+//    placeId = place_id,
+//    name = name,
+//    latLng = LatLng(geometry?.location?.lat ?: 0.0,geometry?.location?.lng ?: 0.0),
+//    address = formatted_address,
+//    icon = icon,
+//    iconBackGroundColor = icon_background_color,
+//    photos = photos,
+//    rating = rating,
+//    callNumber = international_phone_number,
+//    website = website,
+//    isOpenNow = current_opening_hours?.open_now == true,
+//    reviews = reviews?.toUiModel()
+//)

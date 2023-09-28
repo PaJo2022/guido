@@ -306,11 +306,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val markerLatLng = placeUiModel.latLng
         val landMarkName = placeUiModel.name
 
-        if (markerUrl == null || markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
+       // if (markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
         val iconBitmap =
-            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable)!!.toBitmap()
+            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable!!)!!.toBitmap()
         val markerOptions = MarkerOptions()
-            .position(markerLatLng)
+            .position(markerLatLng!!)
             .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
             .title(landMarkName)
         val marker = googleMap?.addMarker(markerOptions)
@@ -467,15 +467,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel.moveToTheLatLng(latLng)
         viewModel.resetData()
         viewModel.fetchPlacesDetailsNearMe(
-            "${latLng.latitude},${latLng.longitude}",
-            appPrefs.prefDistance,
-            "tourist_attraction",
-            "",
-            GCP_API_KEY
-        )
-        viewModel.fetchCurrentAddressFromGeoCoding(
-            "${latLng.latitude},${latLng.longitude}",
-            GCP_API_KEY
+            latLng.latitude,latLng.longitude,
+            appPrefs.prefDistance
         )
     }
 

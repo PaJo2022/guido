@@ -74,8 +74,7 @@ class LandMarkDetailsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceDataFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
-                placeId = placeId,
-                key = GCP_API_KEY
+                placeId = placeId
             )
             callNumber = placeData?.callNumber
             _isPlaceDataFetching.emit(false)

@@ -1,6 +1,7 @@
 package com.guido.app.fragments
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,9 +10,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.guido.app.Constants
 import com.guido.app.LocationClient
 import com.guido.app.MyApp
+import com.guido.app.R
 import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.data.places.PlacesRepository
 import com.guido.app.db.AppPrefs
@@ -82,19 +83,20 @@ class HomeViewModel @Inject constructor(
     val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
 
 
-
     private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
 
     private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
     val dataState: SharedFlow<DataState> get() = _dataState
 
-    fun fetchCurrentAddressFromGeoCoding(latLng: String, key: String) {
+    fun fetchCurrentAddressFromGeoCoding(
+        latitude: Double,
+        longitude: Double,
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             val address = placesRepository.fetchAddressFromLatLng(
-                latLng,
-                key
-            )?.results?.firstOrNull()?.formatted_address.toString()
+                latitude, longitude
+            )?.display_name.toString()
             MyApp.userCurrentFormattedAddress = address
             _searchedFormattedAddress.postValue(address)
         }
@@ -117,11 +119,9 @@ class HomeViewModel @Inject constructor(
     fun resetSearchWithNewInterestes() {
         if (lastSearchLocationLatLng == null) return
         fetchPlacesDetailsNearMe(
-            "${lastSearchLocationLatLng?.latitude},${lastSearchLocationLatLng?.longitude}",
-            appPrefs.prefDistance,
-            "tourist_attraction",
-            "",
-            Constants.GCP_API_KEY
+            lastSearchLocationLatLng!!.latitude,
+            lastSearchLocationLatLng!!.longitude,
+            appPrefs.prefDistance
         )
     }
 
@@ -135,45 +135,47 @@ class HomeViewModel @Inject constructor(
 
     @SuppressLint("MissingPermission")
     fun fetchPlacesDetailsNearMe(
-        location: String,
-        radius: Int,
-        type: String,
-        keyword: String,
-        key: String,
+        latitude: Double,
+        longitude: Double,
+        radius: Int
     ) {
-        fetchCurrentAddressFromGeoCoding(location,key)
+        fetchCurrentAddressFromGeoCoding(latitude, longitude)
         viewModelScope.launch(Dispatchers.IO) {
             _dataState.emit(DataState.LOADING)
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
-
-
-            val job = async {
-                interestList.forEach { placeType ->
-                    val job2 = async {
-                        placesRepository.fetchPlacesNearMe(
-                            location, radius, type, formatInterestString(placeType.displayName), key
-                        )
-                    }
-                    val attraction = job2.await()
-                    val latLangs = attraction.map { it.latLng }
-                    val placeTypeUiModel = PlaceTypeUiModel(
-                        placeType.displayName,
-                        placeType.iconDrawable,
-                        attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
-                    )
-
-                    if (latLangs.isNotEmpty()) {
-                        nearByPlacesListInGroup.add(placeTypeUiModel)
-                        nearByPlacesList.addAll(attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE))
-                        nearByMarkerList.addAll(latLangs)
-                    }
-                }
+            val job2 = async {
+                placesRepository.fetchPlacesNearMe(
+                    latitude, longitude, radius, interestList.map { it.id }
+                )
             }
-            job.await()
-            if(nearByPlacesListInGroup.isEmpty()){
+            val attraction = job2.await()
+            val latLangs = attraction.map { it.latLng }
+            val placeTypeUiModel = attraction.map { placeType ->
+                PlaceTypeUiModel(
+                    "FIX ME HERE",
+                    placeType.iconDrawable,
+                    attraction.addUiType(placeType.iconDrawable, PlaceUiType.LARGE),
+                )
+            }
+
+            attraction.forEach {
+                it.placeUiType
+            }
+
+            if (latLangs.isNotEmpty()) {
+                nearByPlacesListInGroup.addAll(placeTypeUiModel)
+                nearByPlacesList.addAll(
+                    attraction.addUiType(
+                        R.drawable.icon_department_store,
+                        PlaceUiType.LARGE
+                    )
+                )
+            }
+            nearByMarkerList.addAll(latLangs)
+            if (nearByPlacesListInGroup.isEmpty()) {
                 _dataState.emit(DataState.EMPTY_DATA)
             }
             _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
@@ -202,14 +204,14 @@ class HomeViewModel @Inject constructor(
             val request = FetchPlaceRequest.builder(placeId, placeFields).build()
             val place = awaitPlaceDetailsConnection(request) ?: return@launch
             lastSearchLocationLatLng = place.latLng
-            place.latLng?.let { _moveToLocation.postValue(Pair(it, true)) }
-            fetchPlacesDetailsNearMe(
-                "${place.latLng?.latitude},${place.latLng?.longitude}",
-                appPrefs.prefDistance,
-                "tourist_attraction",
-                "",
-                Constants.GCP_API_KEY
-            )
+            place.latLng?.let {
+                _moveToLocation.postValue(Pair(it, true))
+                fetchPlacesDetailsNearMe(
+                    it.latitude, it.longitude,
+                    appPrefs.prefDistance
+                )
+            }
+
         }
     }
 
@@ -235,15 +237,11 @@ class HomeViewModel @Inject constructor(
                 _moveToLocation.postValue(Pair(latLng, shouldAnimate))
                 _currentLatLng.postValue(latLng)
                 fetchPlacesDetailsNearMe(
-                    "${latLng.latitude},${latLng.longitude}",
-                    appPrefs.prefDistance,
-                    "tourist_attraction",
-                    "",
-                    Constants.GCP_API_KEY
+                    latLng.latitude, latLng.longitude,
+                    appPrefs.prefDistance
                 )
                 fetchCurrentAddressFromGeoCoding(
-                    "${latLng.latitude},${latLng.longitude}",
-                    Constants.GCP_API_KEY
+                    latLng.latitude, latLng.longitude
                 )
             }
         }

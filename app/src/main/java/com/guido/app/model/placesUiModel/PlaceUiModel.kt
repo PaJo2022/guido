@@ -17,7 +17,7 @@ data class PlaceUiModel(
     val iconDrawable : Int ?=null,
     @SerializedName("icon_background_color")
     val iconBackGroundColor: String? = null,
-    val photos: List<Photo>? = null,
+    val photos: List<String>? = null,
     val rating: Double? = null,
     val callNumber: String? = null,
     val website: String? = null,

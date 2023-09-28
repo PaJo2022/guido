@@ -12,8 +12,8 @@ import com.guido.app.auth.repo.user.UserRepository
 import com.guido.app.auth.repo.user.UserRepositoryImpl
 import com.guido.app.data.file.FileRepository
 import com.guido.app.data.file.FileRepositoryImpl
+import com.guido.app.data.places.BackendPlacesRepositoryImpl
 import com.guido.app.data.places.PlacesRepository
-import com.guido.app.data.places.PlacesRepositoryImpl
 import com.guido.app.data.tourData.TourDataRepository
 import com.guido.app.data.tourData.TourDataRepositoryImpl
 import com.guido.app.data.videos.VideoRepository
@@ -33,7 +33,7 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun providePlacesRepository(api: GuidoApi, db: MyAppDataBase): PlacesRepository =
-        PlacesRepositoryImpl(api, db)
+        BackendPlacesRepositoryImpl(api, db)
 
     @Provides
     @Singleton

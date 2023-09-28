@@ -6,46 +6,41 @@ import com.guido.app.api.GuidoApi
 import com.guido.app.db.MyAppDataBase
 import com.guido.app.model.PlaceAutocomplete
 import com.guido.app.model.PlaceType
-import com.guido.app.model.places.geoCoding.ReverseGeoCodingResponse
-import com.guido.app.model.places.toPlaceUiModel
+import com.guido.app.model.places.geoCoding.ReverseGeoCodingDTO
 import com.guido.app.model.placesUiModel.PlaceUiModel
-import com.guido.app.model.singlePlaceDetails.toPlaceUiModel
+import com.guido.app.model.places_backend_dto.toPlaceUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class PlacesRepositoryImpl @Inject constructor(
+class BackendPlacesRepositoryImpl @Inject constructor(
     private val api: GuidoApi,
-    private val db : MyAppDataBase
+    private val db: MyAppDataBase
 ) : PlacesRepository {
+
+
     override suspend fun fetchPlacesNearMe(
-        location: String,
+        latitude: Double,
+        longitude: Double,
         radius: Int,
-        type: String,
-        keyword: String,
-        key: String
+        types: List<String>
     ): List<PlaceUiModel> {
-        return try {
-            val response = api.fetchPlacesNearMe(location, radius, keyword, key)
-            if (response.isSuccessful) {
-                response.body()?.results?.toPlaceUiModel() ?: emptyList()
-            } else {
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.i("JAPAN", "DATA $e")
+        val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
+        return if (response.isSuccessful) {
+            response.body()?.toPlaceUiModel() ?: emptyList()
+        } else {
             emptyList()
         }
     }
 
+
     override suspend fun fetchSinglePlacesDetails(
-        placeId: String,
-        key: String
+        placeId: String
     ): PlaceUiModel? {
         return try {
-            val response = api.fetchPlacesDetails(placeId, key)
+            val response = api.fetchPlacesDetails(placeId)
             if (response.isSuccessful) {
-                response.body()?.result?.toPlaceUiModel()
+                response.body()?.toPlaceUiModel()
             } else {
                 null
             }
@@ -56,11 +51,11 @@ class PlacesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchAddressFromLatLng(
-        latLng: String,
-        key: String
-    ): ReverseGeoCodingResponse? {
+        latitude: Double,
+        longitude: Double,
+    ): ReverseGeoCodingDTO? {
         return try {
-            val response = api.fetchAddressFromLatLng(latLng, key)
+            val response = api.fetchAddressFromLatLng(latitude, longitude)
             response.body()
         } catch (e: Exception) {
             null
