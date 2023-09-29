@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
+import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.CHIPS_VIEW
 import com.innoappsai.guido.adapters.VerticalGridCustomItemDecoration
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.collectIn
@@ -38,7 +39,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
-        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext())
+        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext(), CHIPS_VIEW)
         thumbView = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_seekbar_thumb, null, false)
     }

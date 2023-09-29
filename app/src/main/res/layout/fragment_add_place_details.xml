@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".auth.LoginFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+           <androidx.appcompat.widget.Toolbar
+               android:id="@+id/toolbar"
+               android:layout_width="match_parent"
+               android:layout_height="?attr/actionBarSize"
+               android:background="@color/card_color8"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent">
+
+              <!-- Left ImageView -->
+              <ImageView
+                  android:id="@+id/toolbar_left_image"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="start"
+                  android:src="@drawable/ic_cross" />
+
+              <!-- Center TextView -->
+              <TextView
+                  android:id="@+id/toolbar_title"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:fontFamily="@font/font_bold"
+                  android:text="Add New Place"
+                  android:textColor="#ffffff"
+                  android:textSize="@dimen/_16ssp" />
+
+              <!-- Right ImageView -->
+              <TextView
+                  android:id="@+id/tv_next"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="end"
+                  android:layout_marginEnd="@dimen/_12sdp"
+                  android:fontFamily="@font/font_regular"
+                  android:text="Next"
+                  android:textColor="#ffffff"
+                  android:textSize="@dimen/_16ssp" />
+
+           </androidx.appcompat.widget.Toolbar>
+
+           <TextView
+               android:id="@+id/tv_title"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginHorizontal="@dimen/_12sdp"
+               android:layout_marginTop="@dimen/_12sdp"
+               android:fontFamily="@font/font_semi_bold"
+               android:text="Business/Place Details"
+               android:textSize="@dimen/_16ssp"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/ti_layout_place_name"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_8sdp"
+               android:hint="Ie: My Shop"
+               app:endIconMode="clear_text"
+               app:errorEnabled="true"
+               app:errorTextColor="@color/red"
+               app:hintAnimationEnabled="false"
+               app:layout_constraintEnd_toEndOf="@+id/tv_title"
+               app:layout_constraintStart_toStartOf="@+id/tv_title"
+               app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+
+              <com.google.android.material.textfield.TextInputEditText
+                  android:id="@+id/et_place_name"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:textColor="@color/color_primary"
+                  android:textColorHint="@color/color_primary"
+                  android:textSize="@dimen/_10sdp" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <TextView
+               android:id="@+id/tv_where_it_is_located"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="@font/font_semi_bold"
+               android:text="Where is it located?"
+               android:textSize="@dimen/_16ssp"
+               android:layout_marginTop="@dimen/_16sdp"
+               app:layout_constraintStart_toStartOf="@+id/ti_layout_place_name"
+               app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_name" />
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/ti_layout_place_street_address"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_8sdp"
+               android:hint="Street Address"
+               app:endIconMode="clear_text"
+               app:errorEnabled="true"
+               app:errorTextColor="@color/red"
+               app:helperText="Ie: 123,Eden Street"
+               app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_name"
+               app:layout_constraintStart_toStartOf="@+id/ti_layout_place_name"
+               app:layout_constraintTop_toBottomOf="@+id/tv_where_it_is_located">
+
+
+              <com.google.android.material.textfield.TextInputEditText
+                  android:id="@+id/et_place_street_address"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:textColor="@color/color_primary"
+                  android:textColorHint="@color/color_primary"
+                  android:textSize="@dimen/_10sdp" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/ti_layout_place_city"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_8sdp"
+               android:hint="City"
+               app:endIconMode="clear_text"
+               app:errorEnabled="true"
+               app:errorTextColor="@color/red"
+               app:helperText="Kolkata"
+               app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_street_address"
+               app:layout_constraintStart_toStartOf="@+id/ti_layout_place_street_address"
+               app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_street_address">
+
+
+              <com.google.android.material.textfield.TextInputEditText
+                  android:id="@+id/et_place_place_city"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:textColor="@color/color_primary"
+                  android:textColorHint="@color/color_primary"
+                  android:textSize="@dimen/_10sdp" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/ti_layout_place_state"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_8sdp"
+               android:hint="State"
+               app:endIconMode="clear_text"
+               app:errorEnabled="true"
+               app:errorTextColor="@color/red"
+               app:helperText="West Bengal"
+               app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_city"
+               app:layout_constraintStart_toStartOf="@+id/ti_layout_place_city"
+               app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_city">
+
+
+              <com.google.android.material.textfield.TextInputEditText
+                  android:id="@+id/et_place_place_state"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:textColor="@color/color_primary"
+                  android:textColorHint="@color/color_primary"
+                  android:textSize="@dimen/_10sdp" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/ti_layout_place_pincode"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_8sdp"
+               android:hint="Pincode (Optional)"
+               app:endIconMode="clear_text"
+               app:errorEnabled="true"
+               app:errorTextColor="@color/red"
+               app:helperText="700131"
+               app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_state"
+               app:layout_constraintStart_toStartOf="@+id/ti_layout_place_state"
+               app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_state">
+
+
+              <com.google.android.material.textfield.TextInputEditText
+                  android:id="@+id/et_place_place_pincode"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:textColor="@color/color_primary"
+                  android:textColorHint="@color/color_primary"
+                  android:textSize="@dimen/_10sdp" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/fl_id"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".fragments.HomeFragment">
+
+
+   <androidx.appcompat.widget.Toolbar
+       android:id="@+id/toolbar"
+       android:layout_width="match_parent"
+       android:layout_height="?attr/actionBarSize"
+       android:background="@color/card_color8"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent">
+
+      <!-- Left ImageView -->
+      <ImageView
+          android:id="@+id/toolbar_left_image"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="start"
+          android:src="@drawable/ic_cross" />
+
+      <!-- Center TextView -->
+      <TextView
+          android:id="@+id/toolbar_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:fontFamily="@font/font_bold"
+          android:text="Add New Place"
+          android:textColor="#ffffff"
+          android:textSize="@dimen/_16ssp" />
+
+      <!-- Right ImageView -->
+      <TextView
+          android:id="@+id/tv_next"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="end"
+          android:layout_marginEnd="@dimen/_12sdp"
+          android:fontFamily="@font/font_regular"
+          android:text="Next"
+          android:textColor="#ffffff"
+          android:textSize="@dimen/_16ssp" />
+
+   </androidx.appcompat.widget.Toolbar>
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/rv_place_types"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
+
+
+
+
+
+</LinearLayout>

@@ -4,15 +4,26 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.innoappsai.guido.databinding.LayoutPlaceGroupItemBinding
+import com.innoappsai.guido.databinding.LayoutPlaceGroupItemVerticalBinding
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
 
-class PlacesTypeGroupAdapter(private val appContext: Context) :
-    RecyclerView.Adapter<PlacesTypeGroupAdapter.PlaceTypeGroupViewHolder>() {
+class PlacesTypeGroupAdapter(
+    private val appContext: Context,
+    private val placeTypeView: PlaceViewType
+) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+        enum class PlaceViewType {
+            CHIPS_VIEW, VERTICAL_VIEW
+        }
+    }
 
     private var _types: List<PlaceTypeContainer> = ArrayList()
 
@@ -33,16 +44,16 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         this.onIntrestSectionOpened = onIntrestSectionOpened
     }
 
-    inner class PlaceTypeGroupViewHolder(private val binding: LayoutPlaceGroupItemBinding) :
+    inner class PlaceTypeChipGroupViewHolder(private val binding: LayoutPlaceGroupItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(type: PlaceTypeContainer) {
             binding.apply {
-                tvPlaceType.text = type.type  + " (+${type.placeTypes.size})"
-                if(type.isOpened){
-                    rotateViewBy(ivPlaceArrow,270f)
+                tvPlaceType.text = type.type + " (+${type.placeTypes.size})"
+                if (type.isOpened) {
+                    rotateViewBy(ivPlaceArrow, 270f)
                     motionLayout.transitionToEnd()
-                }else{
-                    rotateViewBy(ivPlaceArrow,90f)
+                } else {
+                    rotateViewBy(ivPlaceArrow, 90f)
                     motionLayout.transitionToStart()
                 }
                 llPlaceType.setOnClickListener {
@@ -61,8 +72,8 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
                 }
 
 
-                type.placeTypes.forEachIndexed {index,it->
-                    addChips(binding.chipGroupPlaces, it,index) { type ->
+                type.placeTypes.forEachIndexed { index, it ->
+                    addChips(binding.chipGroupPlaces, it, index) { type ->
                         onItemClickListener?.invoke(type)
                     }
                 }
@@ -70,14 +81,33 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
         }
     }
 
-    fun rotateViewBy(view : View,toDegree : Float){
+    inner class PlaceTypeVerticalGroupViewHolder(private val binding: LayoutPlaceGroupItemVerticalBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bindItem(type: PlaceTypeContainer) {
+            val placeTypeAdapter = PlacesTypeAdapter(appContext)
+            binding.apply {
+                tvPlaceType.text = type.type + " (+${type.placeTypes.size})"
+                rvPlaceTypes.apply {
+                    adapter = placeTypeAdapter
+                    layoutManager =
+                        LinearLayoutManager(appContext, LinearLayoutManager.VERTICAL, false)
+                }
+                placeTypeAdapter.setPlacesType(types = type.placeTypes)
+                placeTypeAdapter.setOnPlaceTypeSelected {type->
+                    onItemClickListener?.invoke(type)
+                }
+            }
+        }
+    }
+
+    fun rotateViewBy(view: View, toDegree: Float) {
         view.rotation = toDegree
     }
 
     private fun addChips(
         chipGroup: ChipGroup,
         type: PlaceType,
-        index : Int,
+        index: Int,
         onChipClickListener: (type: PlaceType) -> Unit
     ) {
 
@@ -89,21 +119,59 @@ class PlacesTypeGroupAdapter(private val appContext: Context) :
             }
             chipGroup.addView(this)
         }
-        chipGroup.applyCheckedOnSelectedChip(index,type.isSelected)
+        chipGroup.applyCheckedOnSelectedChip(index, type.isSelected)
     }
-    private fun ChipGroup.applyCheckedOnSelectedChip(index : Int,isSelected : Boolean){
-        val chip:Chip = this.getChildAt(index) as Chip
+
+    private fun ChipGroup.applyCheckedOnSelectedChip(index: Int, isSelected: Boolean) {
+        val chip: Chip = this.getChildAt(index) as Chip
         chip.isChecked = isSelected
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlaceTypeGroupViewHolder(
-        LayoutPlaceGroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        return when (viewType) {
+            PlaceViewType.CHIPS_VIEW.ordinal -> {
+                PlaceTypeChipGroupViewHolder(
+                    LayoutPlaceGroupItemBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            PlaceViewType.VERTICAL_VIEW.ordinal -> {
+                PlaceTypeVerticalGroupViewHolder(
+                    LayoutPlaceGroupItemVerticalBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> PlaceTypeChipGroupViewHolder(
+                LayoutPlaceGroupItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        }
+    }
 
     override fun getItemCount() = _types.size
 
-    override fun onBindViewHolder(holder: PlaceTypeGroupViewHolder, position: Int) {
-        holder.bindItem(_types[position])
+    override fun getItemViewType(position: Int): Int {
+        return placeTypeView.ordinal
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is PlaceTypeChipGroupViewHolder) {
+            holder.bindItem(_types[position])
+        } else if (holder is PlaceTypeVerticalGroupViewHolder) {
+            holder.bindItem(_types[position])
+        }
     }
 }

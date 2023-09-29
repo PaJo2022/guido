@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_navigation_graph.xml"
+    app:startDestination="@id/fragmentChoosePlaceType">
+
+
+    <fragment
+        android:id="@+id/fragmentChoosePlaceType"
+        android:name="com.innoappsai.guido.addplace.FragmentChoosePlaceType"
+        android:label="FragmentChoosePlaceType" />
+    <fragment
+        android:id="@+id/fragmentAddPlaceDetails"
+        android:name="com.innoappsai.guido.addplace.FragmentAddPlaceDetails"
+        android:label="FragmentAddPlaceDetails" />
+</navigation>

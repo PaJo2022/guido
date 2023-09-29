@@ -18,6 +18,7 @@ import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.adapters.PlacesAutoCompleteAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
+import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.CHIPS_VIEW
 import com.innoappsai.guido.adapters.VerticalGridCustomItemDecoration
 import com.innoappsai.guido.auth.model.UserLoginState
 import com.innoappsai.guido.collectIn
@@ -71,7 +72,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapterPlaceAutoComplete = PlacesAutoCompleteAdapter(requireContext())
-        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext())
+        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext(), CHIPS_VIEW)
     }
 
 

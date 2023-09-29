@@ -38,6 +38,7 @@ import com.innoappsai.guido.MyApp.Companion.googleMap
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
 import com.innoappsai.guido.adapters.PlacesHorizontalListAdapter
+import com.innoappsai.guido.addplace.AddPlaceActivity
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentHomeBinding
@@ -183,6 +184,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
         binding.apply {
+            bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
+                AddPlaceActivity.startAddPlaceActivity(requireContext())
+            }
             bottomsheetPlaceList.rvPlaces.apply {
                 adapter = placesAdapter
                 layoutManager =
