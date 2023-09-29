@@ -88,6 +88,7 @@ class LoginViewModel @Inject constructor(
             val userData = authRepository.onLogin(userId)
             if (userData != null) {
                 _isLoading.emit(false)
+                appPrefs.userId = userId
                 userRepository.addUser(userData)
                 _userLoginState.postValue(UserLoginState.UserLoggedIn(user))
                 return@launch
@@ -115,7 +116,7 @@ class LoginViewModel @Inject constructor(
                 displayName = userName,
                 location = location
             )
-            val isUserRegistered = authRepository.onRegister(newUser)
+            val isUserRegistered = authRepository.onRegister(newUser) != null
             if (!isUserRegistered) {
                 _isLoading.emit(false)
                 _error.emit("Something Went Wrong While Registering You!")

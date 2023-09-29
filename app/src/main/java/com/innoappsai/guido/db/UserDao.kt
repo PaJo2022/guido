@@ -16,12 +16,12 @@ interface UserDao {
     @Query("SELECT * FROM user_table WHERE id =:userId")
     suspend fun getUser(userId : String) : User
 
-    @Query("UPDATE user_table SET profilePicture = :profilePic WHERE id = :userId")
-    suspend fun updateProfilePic(userId: String,profilePic: String)
+    @Query("UPDATE user_table SET profilePicture = :profilePic")
+    suspend fun updateProfilePic(profilePic: String)
 
 
-    @Query("SELECT * FROM user_table WHERE id =:userId")
-    fun getUserFlow(userId : String) : Flow<User?>
+    @Query("SELECT * FROM user_table")
+    fun getUserFlow() : Flow<User?>
 
 
     @Query("DELETE FROM user_table")

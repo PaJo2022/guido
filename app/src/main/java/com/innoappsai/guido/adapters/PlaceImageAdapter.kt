@@ -32,7 +32,6 @@ class PlaceImageAdapter(
     inner class PlaceImageViewHolder(private val binding: LayoutPlacesImagesItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(photo: String) {
-
             Glide.with(appContext).load(updateApiKey(photo)).centerCrop().into(binding.ivPlaceImage)
             binding.ivPlaceImage.setOnClickListener {
                 _onItemClickListener?.invoke(photo)
@@ -40,26 +39,10 @@ class PlaceImageAdapter(
         }
     }
 
-    inner class LocationStoryViewHolder(private val binding: LayoutPlacesStoryItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(place: PlaceDetailsUiModel) {
-            binding.apply {
-
-            }
-        }
-    }
-
-    inner class LocationVideosViewHolder(private val binding: LayoutPlacesVideoItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(place: PlaceDetailsUiModel) {
-            binding.apply {
-            }
-        }
-    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = PlaceImageViewHolder(
-        LayoutPlacesImagesItemBinding.inflate(LayoutInflater.from(parent.context))
+        LayoutPlacesImagesItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
     )
 
 

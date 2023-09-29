@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhandadekho.mobile.utils.Resource
+import com.innoappsai.guido.Constants.USER_FILE_FOLDER
 import com.innoappsai.guido.auth.repo.auth.AuthRepository
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.file.FileRepository
@@ -52,10 +53,9 @@ class UserDetailsViewModel @Inject constructor(
     val profilePicUrl: LiveData<String?> = _profilePicUrl
 
 
-    fun getUserDetailsByUserId(userId: String?) {
-        if (userId == null) return
+    fun getUserDetails() {
         viewModelScope.launch(Dispatchers.IO) {
-            userRepository.getUserDetailsFlow(userId).collect {
+            userRepository.getUserDetailsFlow().collect {
                 _tempUser = it
                 _user.postValue(it)
             }
@@ -79,7 +79,7 @@ class UserDetailsViewModel @Inject constructor(
     fun addFile(fileArray: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
             _isProfilePicUpdating.emit(true)
-            val state = fileRepository.addImagesForBusiness(fileArray)
+            val state = fileRepository.storeImageToServer(fileArray,USER_FILE_FOLDER)
             if (state is Resource.Success) {
                 val url = state.data.toString()
                 updateProfilePicture(url)
@@ -92,11 +92,10 @@ class UserDetailsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val userId = appPrefs.userId ?: return@launch
             _isProfileUpdating.emit(true)
-            val updates = mapOf("profilePicture" to picUrl)
-            val isProfilePicSet = userRepository.updateProfileData(userId, updates)
-            if (isProfilePicSet is Resource.Success) {
+            val updatedUserData = userRepository.setProfilePicture(userId, picUrl)
+            if (updatedUserData != null) {
                 _error.emit("Profile Updated")
-                userRepository.updateProfilePicInLocalDb(appPrefs.userId.toString(), picUrl)
+                userRepository.addUser(updatedUserData)
                 _profilePicUrl.postValue(picUrl)
             } else {
                 _profilePicUrl.postValue(picUrl)
@@ -106,12 +105,24 @@ class UserDetailsViewModel @Inject constructor(
         }
     }
 
-    fun updateUserData(profileData: Map<String, String>) {
+    fun updateUserData(updatedUserName: String, updatedUserLocation: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val userId = appPrefs.userId ?: return@launch
+            val updatedUser = _tempUser?.let {
+                User(
+                    id = it.id,
+                    email = it.email,
+                    displayName = updatedUserName,
+                    location = updatedUserLocation
+                )
+            } ?: kotlin.run {
+                _error.emit("Something Went Wrong")
+                return@launch
+            }
+
             _isProfileUpdating.emit(true)
-            val isUserDataUpdated = userRepository.updateProfileData(userId, profileData)
-            if (isUserDataUpdated is Resource.Success) {
+            val updatedUserData = userRepository.updateProfileData(updatedUser)
+            if (updatedUserData != null) {
+                userRepository.addUser(updatedUser)
                 _error.emit("Profile Updated")
             } else {
                 _error.emit("Something Went Wrong")

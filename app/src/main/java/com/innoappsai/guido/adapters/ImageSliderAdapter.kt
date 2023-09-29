@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.LayoutPlacesImagesSliderItemBinding
+import com.innoappsai.guido.updateApiKey
 
 class ImageSliderAdapter(private val appContext : Context) :
     RecyclerView.Adapter<ImageSliderAdapter.ViewPagerViewHolder>() {
@@ -25,7 +26,7 @@ class ImageSliderAdapter(private val appContext : Context) :
         fun setData(photo: String) {
 
             Glide.with(appContext)
-                .load(photo)
+                .load(updateApiKey(photo))
                 .centerCrop()
                 .placeholder(R.drawable.no_image_placeholder)
                 .into(binding.ivPlaceImage)

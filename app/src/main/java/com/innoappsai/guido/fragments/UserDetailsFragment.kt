@@ -66,9 +66,7 @@ class UserDetailsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.apply {
-            if (!viewModel.isFromSignUpFlow) {
-                getUserDetailsByUserId(appPrefs.userId)
-            }
+            getUserDetails()
             user.observe(viewLifecycleOwner) {
                 binding.apply {
                     etProfileName.setNullText(it?.displayName)
@@ -124,11 +122,7 @@ class UserDetailsFragment :
             btnCreate.isVisible = viewModel.isFromSignUpFlow
             btnLogout.isVisible = !viewModel.isFromSignUpFlow
             btnDeleteAccount.isVisible = !viewModel.isFromSignUpFlow
-            btnCreate.setOnClickListener {
-                val userName = binding.etProfileName.text.toString()
-                val userLocation = binding.etProfileBaseLocation.text.toString()
 
-            }
             icArrowBack.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
@@ -157,11 +151,8 @@ class UserDetailsFragment :
                     binding.titleProfileBaseLocation.error = "Please enter your location"
                     return@setOnClickListener
                 }
-                val updatedDataMap = mapOf(
-                    "displayName" to updatedUserName,
-                    "location" to updatedUserLocation,
-                )
-                viewModel.updateUserData(updatedDataMap)
+
+                viewModel.updateUserData(updatedUserName,updatedUserLocation)
             }
             ivCancelEdit.setOnClickListener {
                 viewModel.onProfileEditCanceled()

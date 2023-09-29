@@ -10,9 +10,10 @@ import kotlin.coroutines.suspendCoroutine
 
 class FileRepositoryImpl @Inject constructor(private val firebaseStorage: FirebaseStorage) : FileRepository {
 
-    override suspend fun addImagesForBusiness(image: ByteArray): Resource<String> {
+    override suspend fun storeImageToServer(image: ByteArray,folderPath:String): Resource<String> {
+
         return suspendCoroutine {continuation->
-            val imageRef = firebaseStorage.getReference(UUID.randomUUID().toString())
+            val imageRef = firebaseStorage.getReference(folderPath).child(UUID.randomUUID().toString())
             imageRef.putBytes(image).addOnSuccessListener { taskSnapshot->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()

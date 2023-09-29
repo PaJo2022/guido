@@ -10,10 +10,10 @@ interface UserRepository {
 
     suspend fun addUser(user: User)
 
-    suspend fun updateProfilePicInLocalDb(userId: String, profilePic: String)
-    suspend fun updateProfileData(userId: String,profileData: Map<String, String>): Resource<String>
-    fun getUserDetailsFlow(userId: String): Flow<User?>
+
+    suspend fun updateProfileData(user: User): User?
+    fun getUserDetailsFlow(): Flow<User?>
     suspend fun getUserDetailsFromServer(userId: String): User?
-    suspend fun setProfilePicture(pictureUrl: String): Resource<String>
-    fun addNewBusiness(businessId: String): Flow<Resource<String>>
+    suspend fun setProfilePicture(userId: String,pictureUrl: String): User?
+
 }

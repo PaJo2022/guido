@@ -1,6 +1,7 @@
 package com.innoappsai.guido.di
 
 
+import com.innoappsai.guido.api.UserApi
 import com.innoappsai.guido.api.ChatGptApi
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.api.VideoApi
@@ -58,6 +59,23 @@ class NetworkModule {
             .build()
 
         return retrofit.create(ChatGptApi::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(okHttpClient: OkHttpClient) : UserApi {
+
+        val baseUrl = "http://64.227.157.189:7000/"
+
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient.newBuilder().build())
+            .build()
+
+        return retrofit.create(UserApi::class.java)
     }
 
     class AuthInterceptor(private val token: String) : Interceptor {

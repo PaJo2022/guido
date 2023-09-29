@@ -298,7 +298,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getUserData() = userRepository.getUserDetailsFlow(appPrefs.userId.toString())
+    fun getUserData() = userRepository.getUserDetailsFlow()
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE

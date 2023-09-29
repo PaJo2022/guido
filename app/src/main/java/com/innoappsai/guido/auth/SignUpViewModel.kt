@@ -90,7 +90,7 @@ class SignUpViewModel @Inject constructor(
                 displayName = userName,
                 location = location
             )
-            val isUserRegistered = authRepository.onRegister(newUser)
+            val isUserRegistered = authRepository.onRegister(newUser) != null
             if (!isUserRegistered) {
                 _isLoading.emit(false)
                 _error.emit("Something Went Wrong While Registering You!")

@@ -207,4 +207,8 @@ object Constants {
     )
 
 
+    //Folder Paths
+    const val USER_FILE_FOLDER = "user"
+
+
 }

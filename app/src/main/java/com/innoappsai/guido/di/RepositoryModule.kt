@@ -3,11 +3,12 @@ package com.innoappsai.guido.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.innoappsai.guido.api.UserApi
 import com.innoappsai.guido.api.ChatGptApi
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.api.VideoApi
 import com.innoappsai.guido.auth.repo.auth.AuthRepository
-import com.innoappsai.guido.auth.repo.auth.AuthRepositoryImpl
+import com.innoappsai.guido.auth.repo.auth.BackendAuthRepositoryImpl
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.auth.repo.user.UserRepositoryImpl
 import com.innoappsai.guido.data.file.FileRepository
@@ -47,19 +48,19 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        fireStore: FirebaseFirestore,
+        userApi: UserApi,
         firebaseAuth: FirebaseAuth,
         appPrefs: AppPrefs,
         db: MyAppDataBase
-    ): AuthRepository = AuthRepositoryImpl(
-        fireStoreCollection = fireStore, firebaseAuth = firebaseAuth,appPrefs = appPrefs,db=db
+    ): AuthRepository = BackendAuthRepositoryImpl(
+        userApi = userApi, firebaseAuth = firebaseAuth, appPrefs = appPrefs, db = db
     )
 
 
     @Provides
     @Singleton
-    fun provideUserRepository(appPrefs: AppPrefs, fireStore: FirebaseFirestore,db: MyAppDataBase): UserRepository =
-        UserRepositoryImpl(appPrefs = appPrefs, fireStoreCollection = fireStore,db = db)
+    fun provideUserRepository(appPrefs: AppPrefs, userApi: UserApi,db: MyAppDataBase): UserRepository =
+        UserRepositoryImpl(appPrefs = appPrefs, userApi=userApi,db = db)
 
     @Provides
     @Singleton
