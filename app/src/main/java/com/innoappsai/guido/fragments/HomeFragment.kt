@@ -372,9 +372,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             nearByPlaces.observe(viewLifecycleOwner) {
                 placesHorizontalAdapter.setNearByPlaces(it)
             }
-            currentLatLng.observe(viewLifecycleOwner) { latLng ->
-
-            }
             moveToLocation.observe(viewLifecycleOwner) { latLngAndShouldAnimateCamera ->
                 viewModel.showVerticalUi()
                 lifecycleScope.launch(Dispatchers.IO) {

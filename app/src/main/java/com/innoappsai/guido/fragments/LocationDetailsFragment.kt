@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.adapters.ImageSliderAdapter
-import com.innoappsai.guido.adapters.PlaceImageAdapter
+import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.PlaceReviewAdapter
 import com.innoappsai.guido.adapters.PlaceVideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
@@ -37,7 +37,7 @@ class LocationDetailsFragment :
     BaseFragment<FragmentLocationDetailsBinding>(FragmentLocationDetailsBinding::inflate) {
 
     private lateinit var viewModel: LandMarkDetailsViewModel
-    private lateinit var adapterPlaceImages: PlaceImageAdapter
+    private lateinit var adapterPlaceImages: ImageAdapter
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
     private lateinit var adapterImageSlider: ImageSliderAdapter
     private lateinit var adapterPlaceVideos: PlaceVideoAdapter
@@ -46,7 +46,7 @@ class LocationDetailsFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[LandMarkDetailsViewModel::class.java]
-        adapterPlaceImages = PlaceImageAdapter(requireContext())
+        adapterPlaceImages = ImageAdapter(requireContext())
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
         adapterPlaceVideos = PlaceVideoAdapter()
@@ -136,7 +136,6 @@ class LocationDetailsFragment :
                     llPlaceReviews.isVisible = !it?.reviews.isNullOrEmpty()
                 }
                 it?.photos?.let { photos ->
-                    adapterPlaceImages.setPlacePhotos(photos)
                     adapterImageSlider.setPlacePhotos(photos)
                 }
                 it?.reviews?.let {

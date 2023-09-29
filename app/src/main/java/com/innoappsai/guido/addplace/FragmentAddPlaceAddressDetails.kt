@@ -65,7 +65,7 @@ class FragmentAddPlaceAddressDetails :
                     return@setOnClickListener
                 }
 
-                viewModel.setPlaceDetails(
+                viewModel.setPlaceAddressDetails(
                     placeName,
                     placeStreetAddress,
                     placeCityName,

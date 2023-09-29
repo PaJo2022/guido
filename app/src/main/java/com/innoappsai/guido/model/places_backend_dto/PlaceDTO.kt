@@ -1,26 +1,28 @@
 package com.innoappsai.guido.model.places_backend_dto
 
+import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.innoappsai.guido.Constants.getTypesOfPlaces
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class PlaceDTO(
     @SerializedName("_id")
-    val id: String,
-    val contactNumber: String?,
-    val createdAt: String?,
+    val id: String?=null,
+    val contactNumber: String?=null,
+    val createdBy: String?=null,
     @SerializedName("geoLocation")
-    val location: Location?,
-    val photos: List<String>?,
-    val placeAddress: String?,
-    val placeId: String?,
-    val placeName: String?,
-    val rating: Double?,
-    val reviews: Any?,
-    val types: List<String>?,
-    val website: String?
-)
+    val location: Location?=null,
+    var photos: List<String>?=null,
+    val placeAddress: String?=null,
+    val placeId: String?=null,
+    val placeName: String?=null,
+    val rating: Double?=null,
+    val types: List<String>?=null,
+    val website: String?=null
+) : Parcelable
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
     PlaceUiModel(
