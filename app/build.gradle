@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace 'com.guido.app'
+    namespace 'com.innoappsai.guido'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.guido.app"
+        applicationId "com.innoappsai.guido"
         minSdk 24
         targetSdk 34
         versionCode 1

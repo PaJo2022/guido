@@ -8,12 +8,12 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.guido.app.auth.LoginFragment"
+        android:name="com.innoappsai.guido.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.guido.app.auth.SignUpFragment"
+        android:name="com.innoappsai.guido.auth.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up" />
 
