@@ -45,7 +45,7 @@ class FragmentChoosePlaceType :
                 adapterPlaceTypes.setPlacesType(it)
             }
             currentScreenName.collectIn(viewLifecycleOwner) {
-                findNavController().navigate(R.id.fragmentAddPlaceDetails)
+                findNavController().navigate(R.id.fragmentAddPlaceAddressDetails)
             }
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)

@@ -8,6 +8,7 @@ import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.VERTICAL_VIEW
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
+import com.innoappsai.guido.databinding.FragmentAddPlaceAddressDetailsBinding
 import com.innoappsai.guido.databinding.FragmentAddPlaceDetailsBinding
 import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,49 +29,7 @@ class FragmentAddPlaceDetails :
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            tvNext.setOnClickListener {
-                val placeName = binding.etPlaceName.text.toString()
-                val placeStreetAddress = binding.etPlaceStreetAddress.text.toString()
-                val placeCityName = binding.etPlacePlaceCity.text.toString()
-                val placeStateName = binding.etPlacePlaceState.text.toString()
-                val placePinCode = binding.etPlacePlacePincode.text.toString()
 
-
-                tiLayoutPlaceName.error = null
-                tiLayoutPlaceStreetAddress.error = null
-                tiLayoutPlaceCity.error = null
-                tiLayoutPlaceState.error = null
-
-                if (placeName.isNullOrEmpty()) {
-                    tiLayoutPlaceName.error = "Please Select Your Place Name"
-                    return@setOnClickListener
-                }
-
-                if (placeStreetAddress.isNullOrEmpty()) {
-                    tiLayoutPlaceStreetAddress.error = "Please Select Your Place Street Address"
-                    return@setOnClickListener
-                }
-
-
-                if (placeCityName.isNullOrEmpty()) {
-                    tiLayoutPlaceCity.error = "Please Select Your Place City"
-                    return@setOnClickListener
-                }
-
-
-                if (placeStateName.isNullOrEmpty()) {
-                    tiLayoutPlaceState.error = "Please Select Your Place State Name"
-                    return@setOnClickListener
-                }
-
-                viewModel.setPlaceDetails(
-                    placeName,
-                    placeStreetAddress,
-                    placeCityName,
-                    placeStateName,
-                    placePinCode
-                )
-            }
         }
 
         viewModel.apply {
