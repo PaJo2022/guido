@@ -68,8 +68,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:fontFamily="@font/font_semi_bold"
                 android:text="Describe About Your Place"
-                android:textSize="@dimen/_16ssp"
                 android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -101,8 +101,7 @@
                     android:paddingVertical="@dimen/_20sdp"
                     android:text=""
                     android:textColor="@color/color_primary"
-                    android:textColorHint="@color/color_primary"
-                    />
+                    android:textColorHint="@color/color_primary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,8 +114,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:fontFamily="@font/font_semi_bold"
                 android:text="Contact Number"
-                android:textSize="@dimen/_16ssp"
                 android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_description" />
@@ -131,14 +130,14 @@
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
-                app:prefixText="+91"
-                app:prefixTextColor="@color/color_primary"
                 app:helperText="+91-1234567890"
                 app:hintAnimationEnabled="false"
-                app:startIconDrawable="@drawable/ic_call"
                 app:layout_constraintEnd_toEndOf="@+id/tv_title_contact_number"
                 app:layout_constraintStart_toStartOf="@+id/tv_title_contact_number"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_contact_number">
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_contact_number"
+                app:prefixText="+91"
+                app:prefixTextColor="@color/color_primary"
+                app:startIconDrawable="@drawable/ic_call">
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -150,8 +149,7 @@
                     android:maxLength="10"
                     android:text=""
                     android:textColor="@color/color_primary"
-                    android:textColorHint="@color/color_primary"
-                   />
+                    android:textColorHint="@color/color_primary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,8 +162,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:fontFamily="@font/font_semi_bold"
                 android:text="Website (Optional)"
-                android:textSize="@dimen/_16ssp"
                 android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_contact_number" />
@@ -180,10 +178,10 @@
                 app:errorTextColor="@color/red"
                 app:helperText="www.website.com"
                 app:hintAnimationEnabled="false"
-                app:startIconDrawable="@drawable/ic_website"
                 app:layout_constraintEnd_toEndOf="@+id/tv_title_website"
                 app:layout_constraintStart_toStartOf="@+id/tv_title_website"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_website">
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_website"
+                app:startIconDrawable="@drawable/ic_website">
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -194,8 +192,7 @@
                     android:inputType="text"
                     android:text=""
                     android:textColor="@color/color_primary"
-                    android:textColorHint="@color/color_primary"
-                     />
+                    android:textColorHint="@color/color_primary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -206,8 +203,8 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:fontFamily="@font/font_semi_bold"
                 android:text="Price Range?"
-                android:textSize="@dimen/_16ssp"
                 android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_website"
                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_website" />
 
@@ -239,9 +236,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_weight="1"
-                    android:checked="true"
                     android:background="@drawable/radio_button_background"
                     android:button="@null"
+                    android:checked="true"
                     android:gravity="center"
                     android:text="Moderate"
                     android:textColor="@color/color_primary" />
@@ -264,32 +261,99 @@
                 android:id="@+id/tv_place_images"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:fontFamily="@font/font_semi_bold"
                 android:text="Place Images"
-                android:layout_marginTop="@dimen/_16sdp"
                 android:textColor="@color/color_primary"
                 android:textSize="@dimen/_16ssp"
-                app:layout_constraintStart_toStartOf="@+id/ti_layout_place_name"
+                app:layout_constraintStart_toStartOf="@+id/price_range_btn_group"
                 app:layout_constraintTop_toBottomOf="@+id/price_range_btn_group" />
 
-            <include
-                android:id="@+id/ll_add_image"
-                layout="@layout/layout_add_image_item"
+            <TextView
+                android:id="@+id/tv_pick_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
-                app:layout_constraintStart_toStartOf="@+id/tv_place_images"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:drawableEnd="@drawable/ic_upload"
+                android:fontFamily="@font/font_medium"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Pick Image"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_take_image"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_place_images" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <TextView
+                android:id="@+id/tv_take_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/color_primary"
+                android:fontFamily="@font/font_medium"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Take Image"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_pick_image"
+                app:layout_constraintTop_toTopOf="@+id/tv_pick_image" />
+
+            <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/rv_place_images"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="@dimen/_4sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/ll_add_image"
+                android:layout_height="@dimen/_250sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/no_image_placeholder"
                 app:layout_constraintEnd_toEndOf="@+id/price_range_btn_group"
-                app:layout_constraintStart_toEndOf="@+id/ll_add_image"
-                app:layout_constraintTop_toTopOf="@+id/ll_add_image" />
+                app:layout_constraintStart_toStartOf="@+id/price_range_btn_group"
+                app:layout_constraintTop_toBottomOf="@+id/tv_pick_image" />
+
+
+            <TextView
+                android:id="@+id/tv_place_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:fontFamily="@font/font_semi_bold"
+                android:text="Place Videos"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintStart_toStartOf="@+id/rv_place_images"
+                app:layout_constraintTop_toBottomOf="@+id/rv_place_images" />
+
+            <TextView
+                android:id="@+id/tv_pick_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:drawableEnd="@drawable/ic_upload"
+                android:fontFamily="@font/font_medium"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Pick Videos"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="@+id/rv_place_images"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/rv_place_images"
+                app:layout_constraintTop_toBottomOf="@+id/tv_place_videos" />
+
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/rv_place_videos"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_250sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/no_image_placeholder"
+                app:layout_constraintEnd_toEndOf="@+id/price_range_btn_group"
+                app:layout_constraintStart_toStartOf="@+id/price_range_btn_group"
+                app:layout_constraintTop_toBottomOf="@+id/tv_pick_videos" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

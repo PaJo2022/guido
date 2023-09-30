@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
@@ -16,6 +17,7 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.adapters.ImageAdapter
@@ -48,19 +50,17 @@ class FragmentAddPlaceDetails :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setUpViewPager()
         binding.apply {
-            rvPlaceImages.apply {
-                adapter = adapterImage
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+//            rvPlaceImages.apply {
+//                adapter = adapterImage
+//                layoutManager =
+//                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+//            }
+            tvTakeImage.setOnClickListener {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-            llAddImage.apply {
-                root.setOnClickListener {
-                    requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                }
-                ivAddIcon.isVisible = true
-            }
+
             tvNext.setOnClickListener {
                 val placeDescription = etPlaceDescription.text.toString()
                 val placeContactNumber = etPlaceContactNumber.text.toString()
@@ -95,7 +95,6 @@ class FragmentAddPlaceDetails :
 
             }
         }
-
         viewModel.apply {
             currentScreenName.collectIn(viewLifecycleOwner) {
                 if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
@@ -116,6 +115,17 @@ class FragmentAddPlaceDetails :
 
     }
 
+
+    private fun setUpViewPager() {
+        binding.rvPlaceImages.adapter = adapterImage
+        binding.rvPlaceImages.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        val currentPageIndex = 1
+        binding.rvPlaceImages.currentItem = currentPageIndex
+//        TabLayoutMediator(binding.vpPlaceImageIndicator, binding.ivPlaceImage) { tab, position ->
+//
+//        }.attach()
+
+    }
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
