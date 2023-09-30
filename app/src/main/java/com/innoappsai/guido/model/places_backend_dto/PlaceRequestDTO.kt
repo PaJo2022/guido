@@ -7,6 +7,7 @@ data class PlaceRequestDTO(
     var photos: List<String>?,
     val placeAddress: String?,
     val placeId: String?,
+    val rating : Double?,
     val placeName: String?,
     val types: List<String>?,
     val website: String?
@@ -16,3 +17,4 @@ data class PlaceRequestLocation(
     val type: String = "Point",
     val coordinates: List<Double>?
 )
+

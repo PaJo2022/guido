@@ -19,7 +19,6 @@ class MyApp : Application(), Configuration.Provider {
 
     companion object{
         val isMapFetched: Boolean = false
-        var googleMap: GoogleMap? = null
         var userCurrentLatLng: LatLng? = null
         var isCurrentLocationFetched: Boolean = false
         var userCurrentLocation: MutableSharedFlow<Pair<Double, Double>> = MutableSharedFlow()

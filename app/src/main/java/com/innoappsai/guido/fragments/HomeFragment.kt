@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.MyApp
-import com.innoappsai.guido.MyApp.Companion.googleMap
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
 import com.innoappsai.guido.adapters.PlacesHorizontalListAdapter
@@ -71,6 +70,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
+    private var googleMap : GoogleMap ?= null
 
 
 

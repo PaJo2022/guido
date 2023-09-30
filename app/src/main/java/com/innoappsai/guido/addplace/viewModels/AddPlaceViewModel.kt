@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.Constants
+import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
+import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
-import com.innoappsai.guido.model.places_backend_dto.Location
-import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddPlaceViewModel @Inject constructor(
-    private val appPrefs: AppPrefs
+    private val appPrefs: AppPrefs,
+    private val locationClient: LocationClient,
+    private val placesRepository: PlacesRepository
 ) : ViewModel() {
 
     private val _placeTypes: MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
@@ -37,10 +40,19 @@ class AddPlaceViewModel @Inject constructor(
     private val _error: MutableSharedFlow<String> = MutableSharedFlow()
     val error: SharedFlow<String> = _error.asSharedFlow()
 
+    private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isLoading: SharedFlow<Boolean> = _isLoading.asSharedFlow()
+
     private val imageFileArrayList: ArrayList<ByteArray> = ArrayList()
 
     private val _placeImages: MutableLiveData<ArrayList<ByteArray>> = MutableLiveData()
     val placeImages: LiveData<ArrayList<ByteArray>> = _placeImages
+
+    private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
+    val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
+
+    private val _searchedFormattedAddress: MutableLiveData<String> = MutableLiveData()
+    val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
 
     //Place DTO Data
     private var globalPlaceName: String = ""
@@ -53,6 +65,8 @@ class AddPlaceViewModel @Inject constructor(
     private var globalPlaceWebsite: String = ""
     private var globalPlacePriceRange: String = ""
     private var globalPlaceType: String = ""
+    private var globalPlaceLatitude: Double? = null
+    private var globalPlaceLongitude: Double? = null
 
     private var placeRequestDTO: PlaceRequestDTO? = null
 
@@ -169,10 +183,16 @@ class AddPlaceViewModel @Inject constructor(
                     contactNumber = globalPlaceContactNumber,
                     website = globalPlaceWebsite,
                     createdBy = appPrefs.userId,
-                    location = PlaceRequestLocation(coordinates = listOf(MyApp.userCurrentLatLng?.longitude?: 0.0,MyApp.userCurrentLatLng?.latitude ?: 0.0)),
+                    location = PlaceRequestLocation(
+                        coordinates = listOf(
+                            globalPlaceLongitude ?: 0.0,
+                            globalPlaceLatitude ?: 0.0
+                        )
+                    ),
                     placeAddress = globalPlaceStreetAddress,
                     placeName = globalPlaceName,
                     placeId = UUID.randomUUID().toString(),
+                    rating = 0.0,
                     photos = null,
                     types = listOf(globalPlaceType)
                 )
@@ -182,6 +202,39 @@ class AddPlaceViewModel @Inject constructor(
             }
         }
     }
+
+    fun fetchCurrentLocation(shouldAnimate: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentLocation = locationClient.getCurrentLocation()
+            MyApp.userCurrentLatLng = currentLocation
+            currentLocation?.let { latLng ->
+                _moveToLocation.postValue(Pair(latLng, true))
+                fetchCurrentAddressFromGeoCoding(
+                    latLng.latitude, latLng.longitude
+                )
+            }
+        }
+    }
+
+    fun fetchCurrentAddressFromGeoCoding(
+        latitude: Double,
+        longitude: Double,
+    ) {
+        globalPlaceLatitude = latitude
+        globalPlaceLongitude = longitude
+        viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.emit(true)
+            val address = placesRepository.fetchAddressFromLatLng(
+                latitude, longitude
+            )?.display_name.toString()
+            globalPlaceStreetAddress = address
+            MyApp.userCurrentFormattedAddress = address
+            _searchedFormattedAddress.postValue(address)
+            _isLoading.emit(false)
+        }
+    }
+
+    fun getStreetAddress() = globalPlaceStreetAddress
 
 
     sealed class PlaceAddScreenName {

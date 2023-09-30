@@ -103,6 +103,8 @@ class FragmentAddPlaceDetails :
                 if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
                     MyApp.placeRequestDTO = it.placeRequestDTO
                     startFetchingFeedData()
+                    requireActivity().showToast("You Place Is Adding")
+                    requireActivity().finish()
                 }
             }
             error.collectIn(viewLifecycleOwner) {

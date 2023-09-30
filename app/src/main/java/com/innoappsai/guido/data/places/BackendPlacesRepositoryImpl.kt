@@ -9,6 +9,7 @@ import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,12 +29,18 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     ): List<PlaceUiModel> {
         val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
         return if (response.isSuccessful) {
-//            Log.i("JAPAN", "TYPE: ${ response.body()?.firstOrNull()}")
-//            Log.i("JAPAN", "\n")
-//            Log.i("JAPAN", "TYPE: ${response.body()?.toPlaceUiModel()?.firstOrNull()}")
             response.body()?.toPlaceUiModel() ?: emptyList()
         } else {
             emptyList()
+        }
+    }
+
+    override suspend fun addPlace(placeRequestDTO: PlaceRequestDTO): PlaceUiModel? {
+        val response = api.addPlace(placeRequestDTO)
+        return if (response.isSuccessful) {
+            response.body()?.toPlaceUiModel()
+        } else {
+           null
         }
     }
 

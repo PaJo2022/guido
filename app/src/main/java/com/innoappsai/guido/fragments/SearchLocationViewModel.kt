@@ -27,15 +27,6 @@ class SearchLocationViewModel @Inject constructor(
     private val _suggestedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
     val suggestedLocations: LiveData<List<PlaceAutocomplete>> = _suggestedLocations
 
-    private val STYLE_BOLD: CharacterStyle
-        get() {
-            return android.text.style.StyleSpan(Typeface.BOLD)
-        }
-    private val STYLE_NORMAL: CharacterStyle
-        get() {
-            return android.text.style.StyleSpan(Typeface.NORMAL)
-        }
-
 
     fun onPredictionSelected() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -61,7 +52,6 @@ class SearchLocationViewModel @Inject constructor(
 
     fun getPredictions(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(500)
             val places = placesRepository.fetchPlaceAutoCompleteSuggestion(query)
             _suggestedLocations.postValue(places.toUiModel())
         }

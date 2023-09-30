@@ -5,6 +5,7 @@ import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import kotlinx.coroutines.flow.Flow
 
 interface PlacesRepository {
@@ -16,6 +17,11 @@ interface PlacesRepository {
         radius: Int,
         types: List<String>
     ): List<PlaceUiModel>
+
+    suspend fun addPlace(
+        placeRequestDTO: PlaceRequestDTO
+    ): PlaceUiModel?
+
 
     suspend fun fetchSinglePlacesDetails(
         placeId: String

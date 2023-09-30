@@ -3,13 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/auth_navigation_graph.xml"
-    app:startDestination="@id/fragmentChoosePlaceType">
+    app:startDestination="@id/pick_place">
 
 
     <fragment
         android:id="@+id/fragmentChoosePlaceType"
         android:name="com.innoappsai.guido.addplace.FragmentChoosePlaceType"
         android:label="FragmentChoosePlaceType" />
+    <fragment
+        android:id="@+id/pick_place"
+        android:name="com.innoappsai.guido.addplace.FragmentAddPlacePickLocation"
+        android:label="fragment_add_place_pick_location"
+        tools:layout="@layout/fragment_add_place_pick_location" />
     <fragment
         android:id="@+id/fragmentAddPlaceAddressDetails"
         android:name="com.innoappsai.guido.addplace.FragmentAddPlaceAddressDetails"
@@ -18,4 +23,5 @@
         android:id="@+id/fragmentAddPlaceDetails"
         android:name="com.innoappsai.guido.addplace.FragmentAddPlaceDetails"
         android:label="FragmentAddPlaceDetails" />
+
 </navigation>
