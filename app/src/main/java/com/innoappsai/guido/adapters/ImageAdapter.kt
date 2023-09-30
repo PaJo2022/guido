@@ -1,6 +1,7 @@
 package com.innoappsai.guido.adapters
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +14,9 @@ class ImageAdapter(
 ) : RecyclerView.Adapter<ImageAdapter.PlaceImageFromFileViewHolder>() {
 
 
-    private var _placesPhotos: List<ByteArray> = ArrayList()
+    private var _placesPhotos: List<Uri> = ArrayList()
 
-    fun setPlacePhotos(placesPhotos: List<ByteArray>) {
+    fun setPlacePhotos(placesPhotos: List<Uri>) {
         _placesPhotos = placesPhotos
         notifyDataSetChanged()
     }
@@ -28,7 +29,7 @@ class ImageAdapter(
 
     inner class PlaceImageFromFileViewHolder(private val binding: LayoutAddImageItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(photo: ByteArray) {
+        fun bindItem(photo: Uri) {
             Glide.with(appContext).load(photo).centerCrop().into(binding.ivImage)
         }
     }

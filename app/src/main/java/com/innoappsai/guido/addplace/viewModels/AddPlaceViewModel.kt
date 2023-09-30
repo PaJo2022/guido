@@ -1,5 +1,6 @@
 package com.innoappsai.guido.addplace.viewModels
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,10 +44,10 @@ class AddPlaceViewModel @Inject constructor(
     private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val isLoading: SharedFlow<Boolean> = _isLoading.asSharedFlow()
 
-    private val imageFileArrayList: ArrayList<ByteArray> = ArrayList()
+    private val imageFileArrayList: ArrayList<Pair<Uri,String>> = ArrayList()
 
-    private val _placeImages: MutableLiveData<ArrayList<ByteArray>> = MutableLiveData()
-    val placeImages: LiveData<ArrayList<ByteArray>> = _placeImages
+    private val _placeImages: MutableLiveData<ArrayList<Pair<Uri,String>>> = MutableLiveData()
+    val placeImages: LiveData<ArrayList<Pair<Uri,String>>> = _placeImages
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -151,10 +152,10 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun addImageFilesToList(fileArray: ByteArray) {
+    fun addImageFilesToList(fileUri : Pair<Uri,String>) {
         viewModelScope.launch {
             if (imageFileArrayList.size <= 10) {
-                imageFileArrayList.add(fileArray)
+                imageFileArrayList.add(fileUri)
                 _placeImages.postValue(imageFileArrayList)
             } else {
                 _error.emit("Max 10 Images Can Be Uploaded")
@@ -177,7 +178,7 @@ class AddPlaceViewModel @Inject constructor(
                     globalPlaceDescription,
                     globalPlaceContactNumber,
                     globalPlacePriceRange
-                ).any { it.isNullOrEmpty() }
+                ).any { it.isEmpty() }
             ) {
                 placeRequestDTO = PlaceRequestDTO(
                     contactNumber = globalPlaceContactNumber,
@@ -189,11 +190,14 @@ class AddPlaceViewModel @Inject constructor(
                             globalPlaceLatitude ?: 0.0
                         )
                     ),
+                    placeDescription = globalPlaceDescription,
                     placeAddress = globalPlaceStreetAddress,
                     placeName = globalPlaceName,
                     placeId = UUID.randomUUID().toString(),
                     rating = 0.0,
                     photos = null,
+                    pricingType = globalPlacePriceRange,
+                    videos = emptyList(),
                     types = listOf(globalPlaceType)
                 )
                 _currentScreenName.emit(PlaceAddScreenName.COMPLETE(placeRequestDTO!!))
@@ -235,6 +239,11 @@ class AddPlaceViewModel @Inject constructor(
     }
 
     fun getStreetAddress() = globalPlaceStreetAddress
+    fun onGoogleMapMoving() {
+        viewModelScope.launch {
+            _isLoading.emit(true)
+        }
+    }
 
 
     sealed class PlaceAddScreenName {

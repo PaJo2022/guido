@@ -76,7 +76,7 @@ fun Context.openAppSettings() {
 fun getImageBytes(imageFile: File): ByteArray {
     val stream = ByteArrayOutputStream()
     val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream)
     return stream.toByteArray()
 }
 

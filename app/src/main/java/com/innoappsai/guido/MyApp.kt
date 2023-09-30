@@ -1,6 +1,7 @@
 package com.innoappsai.guido
 
 import android.app.Application
+import android.net.Uri
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Configuration
@@ -25,7 +26,7 @@ class MyApp : Application(), Configuration.Provider {
         var userCurrentFormattedAddress: String? = null
         var isPrefUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
-        var imageFileArray: ArrayList<ByteArray>? = null
+        var imageFileArray: ArrayList<Pair<Uri,String>>? = null
         var placeRequestDTO : PlaceRequestDTO?= null
     }
     override fun onCreate() {

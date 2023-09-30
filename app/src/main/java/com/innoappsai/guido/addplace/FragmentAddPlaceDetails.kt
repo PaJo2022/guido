@@ -2,13 +2,13 @@ package com.innoappsai.guido.addplace
 
 import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
@@ -24,12 +24,10 @@ import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewT
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceDetailsBinding
-import com.innoappsai.guido.getImageBytes
 import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.AddPlaceWorker
 import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 
 @AndroidEntryPoint
 class FragmentAddPlaceDetails :
@@ -70,7 +68,7 @@ class FragmentAddPlaceDetails :
                 val selectedRadioButtonId = priceRangeBtnGroup.checkedRadioButtonId
                 val selectedRadioButton =
                     priceRangeBtnGroup.findViewById<RadioButton>(selectedRadioButtonId)
-                val placePriceRange = "Moderate"
+                val placePriceRange = selectedRadioButton?.text.toString()
 
                 tiLayoutPlaceDescription.error = null
                 tiLayoutPlaceContactNumber.error = null
@@ -112,7 +110,7 @@ class FragmentAddPlaceDetails :
             }
             placeImages.observe(viewLifecycleOwner) {
                 MyApp.imageFileArray = it
-                adapterImage.setPlacePhotos(it)
+                adapterImage.setPlacePhotos(it.map { it.first })
             }
         }
 
@@ -124,11 +122,8 @@ class FragmentAddPlaceDetails :
             // Use the returned uri.
             val uriContent = result.uriContent
             val uriFilePath = result.getUriFilePath(requireContext())
-            uriContent?.let { uri ->
-                val file = File(uriFilePath)
-                val fileArray = getImageBytes(file)
-                viewModel.addImageFilesToList(fileArray)
-            }
+            if (uriContent == null || uriFilePath == null) return@registerForActivityResult
+            viewModel.addImageFilesToList(Pair(uriContent, uriFilePath))
         } else {
             // An error occurred.
             val exception = result.error
@@ -185,9 +180,12 @@ class FragmentAddPlaceDetails :
 
 
     private fun startFetchingFeedData() {
-
+        val inputData = Data.Builder()
+            .putString(UploadWorker.FOLDER_NAME, "places")
+            .build()
         val uploadFileWorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            OneTimeWorkRequestBuilder<UploadWorker>().setInputData(inputData)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
         val addPlaceWorkRequest =
             OneTimeWorkRequestBuilder<AddPlaceWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

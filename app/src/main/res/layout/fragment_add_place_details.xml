@@ -218,8 +218,8 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_name"
-                app:layout_constraintStart_toStartOf="@+id/ti_layout_place_name"
+                app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_website"
+                app:layout_constraintStart_toStartOf="@+id/ti_layout_place_website"
                 app:layout_constraintTop_toBottomOf="@+id/tv_where_it_is_located">
 
                 <RadioButton
@@ -227,11 +227,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@null"
                     android:background="@drawable/radio_button_background"
+                    android:button="@null"
                     android:gravity="center"
-                    android:textColor="@color/color_primary"
-                    android:text="Inexpensive" />
+                    android:text="Inexpensive"
+                    android:textColor="@color/color_primary" />
 
                 <RadioButton
                     android:id="@+id/rb_moderate"
@@ -239,22 +239,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_weight="1"
-                    android:button="@null"
+                    android:checked="true"
                     android:background="@drawable/radio_button_background"
+                    android:button="@null"
                     android:gravity="center"
-                    android:textColor="@color/color_primary"
-                    android:text="Moderate" />
+                    android:text="Moderate"
+                    android:textColor="@color/color_primary" />
 
                 <RadioButton
                     android:id="@+id/rb_expensive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:button="@null"
                     android:background="@drawable/radio_button_background"
+                    android:button="@null"
                     android:gravity="center"
-                    android:textColor="@color/color_primary"
-                    android:text="Expensive" />
+                    android:text="Expensive"
+                    android:textColor="@color/color_primary" />
 
             </RadioGroup>
 

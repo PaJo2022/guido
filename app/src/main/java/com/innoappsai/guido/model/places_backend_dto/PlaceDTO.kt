@@ -16,9 +16,11 @@ data class PlaceDTO(
     @SerializedName("geoLocation")
     val location: Location?=null,
     var photos: List<String>?=null,
+    var videos: List<String>?=null,
     val placeAddress: String?=null,
     val placeId: String?=null,
     val placeName: String?=null,
+    val pricingType: String?,
     val rating: Double?=null,
     val types: List<String>?=null,
     val website: String?=null
