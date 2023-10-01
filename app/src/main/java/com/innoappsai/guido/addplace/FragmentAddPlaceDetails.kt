@@ -57,9 +57,13 @@ class FragmentAddPlaceDetails :
 //                layoutManager =
 //                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 //            }
+            tvPickImage.setOnClickListener {
+                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
             tvTakeImage.setOnClickListener {
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
+
 
             tvNext.setOnClickListener {
                 val placeDescription = etPlaceDescription.text.toString()
@@ -109,7 +113,7 @@ class FragmentAddPlaceDetails :
             }
             placeImages.observe(viewLifecycleOwner) {
                 MyApp.imageFileArray = it
-                adapterImage.setPlacePhotos(it.map { it.first })
+                adapterImage.setPlacePhotos(it)
             }
         }
 
@@ -121,19 +125,15 @@ class FragmentAddPlaceDetails :
         binding.rvPlaceImages.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         val currentPageIndex = 1
         binding.rvPlaceImages.currentItem = currentPageIndex
-//        TabLayoutMediator(binding.vpPlaceImageIndicator, binding.ivPlaceImage) { tab, position ->
-//
-//        }.attach()
+
 
     }
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
             // Use the returned uri.
-            val uriContent = result.uriContent
-            val uriFilePath = result.getUriFilePath(requireContext())
-            if (uriContent == null || uriFilePath == null) return@registerForActivityResult
-            viewModel.addImageFilesToList(Pair(uriContent, uriFilePath))
+            val uriContent = result.uriContent ?: return@registerForActivityResult
+            viewModel.addImageFilesToList(uriContent)
         } else {
             // An error occurred.
             val exception = result.error

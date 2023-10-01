@@ -44,10 +44,10 @@ class AddPlaceViewModel @Inject constructor(
     private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val isLoading: SharedFlow<Boolean> = _isLoading.asSharedFlow()
 
-    private val imageFileArrayList: ArrayList<Pair<Uri,String>> = ArrayList()
+    private val imageFileArrayList: ArrayList<Uri> = ArrayList()
 
-    private val _placeImages: MutableLiveData<ArrayList<Pair<Uri,String>>> = MutableLiveData()
-    val placeImages: LiveData<ArrayList<Pair<Uri,String>>> = _placeImages
+    private val _placeImages: MutableLiveData<ArrayList<Uri>> = MutableLiveData()
+    val placeImages: LiveData<ArrayList<Uri>> = _placeImages
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -152,7 +152,7 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun addImageFilesToList(fileUri : Pair<Uri,String>) {
+    fun addImageFilesToList(fileUri : Uri) {
         viewModelScope.launch {
             if (imageFileArrayList.size <= 10) {
                 imageFileArrayList.add(fileUri)

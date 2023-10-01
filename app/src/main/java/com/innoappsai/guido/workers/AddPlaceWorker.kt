@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -29,10 +30,10 @@ class AddPlaceWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
-        private const val NOTIFICATION_CHANNEL_ID = "PaJo App"
-        private const val PUSH_NOTIFICATION_ID = 1
-        private const val NOTIFICATION_ID = 2
-        private const val NOTIFICATION_CHANNEL_NAME = "App Background Work"
+        private const val NOTIFICATION_CHANNEL_ID = "ADD_PLACE_WORKER"
+        private const val PUSH_NOTIFICATION_ID = 3
+        private const val NOTIFICATION_ID = 4
+        private const val NOTIFICATION_CHANNEL_NAME = "PLACE ADD WORKER"
     }
 
 
@@ -43,10 +44,10 @@ class AddPlaceWorker @AssistedInject constructor(
             val placeDTO = MyApp.placeRequestDTO ?: return Result.failure()
 
             placeDTO.photos = uploadedImageUrls?.toList()
-            setForeground(createForegroundInfo())
+            setForeground(createForegroundInfo(placeDTO.placeName.toString()))
             val isPlaceAdded = placesRepository.addPlace(placeDTO)
             if (isPlaceAdded != null) {
-                sendPushNotifications(placeDTO.placeName.toString())
+                sendPushNotificationOnSuccessFullPlaceAdd(placeDTO.placeName.toString(),placeDTO.placeId.toString())
             }
             MyApp.imageFileArray = null
             MyApp.placeRequestDTO = null
@@ -57,9 +58,12 @@ class AddPlaceWorker @AssistedInject constructor(
         }
     }
 
-    private fun sendPushNotifications(placeName: String) {
+    private fun sendPushNotificationOnSuccessFullPlaceAdd(placeName: String,placeId : String) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+
+
 
         // Create a notification channel (required for Android 8.0 and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -67,7 +71,7 @@ class AddPlaceWorker @AssistedInject constructor(
         }
 
         // Build the notification
-        val notificationBuilder = NotificationCompat.Builder(context, "alarm_channel")
+        val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_website)
             .setContentTitle("Adding Place")
             .setContentText("${placeName} is Added")
@@ -78,13 +82,9 @@ class AddPlaceWorker @AssistedInject constructor(
         notificationManager.notify(PUSH_NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    private fun createForegroundInfo(): ForegroundInfo {
 
-        val title = "TEST"
-        val cancel = "TEST"
-        // This PendingIntent can be used to cancel the worker
-        val intent = WorkManager.getInstance(applicationContext)
-            .createCancelPendingIntent(id)
+
+    private fun createForegroundInfo(placeName : String): ForegroundInfo {
 
         // Create a Notification channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -94,14 +94,11 @@ class AddPlaceWorker @AssistedInject constructor(
         val notification = NotificationCompat.Builder(applicationContext,
             NOTIFICATION_CHANNEL_ID
         )
-            .setContentTitle(title)
-            .setTicker(title)
-            .setContentText("Uploading")
+            .setContentTitle("${placeName} is adding")
+            .setTicker("${placeName} is adding")
+            .setContentText("Adding")
             .setSmallIcon(R.drawable.ic_website)
             .setOngoing(true)
-            // Add the cancel action to the notification which can
-            // be used to cancel the worker
-            .addAction(android.R.drawable.ic_delete, cancel, intent)
             .build()
 
         return ForegroundInfo(NOTIFICATION_ID, notification)
@@ -115,7 +112,7 @@ class AddPlaceWorker @AssistedInject constructor(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME, importance)
         // Customize channel settings if needed
-        channel.description = "Your Channel Description" // Optional: Provide a description
+        channel.description = NOTIFICATION_CHANNEL_NAME // Optional: Provide a description
         // Configure additional channel properties as needed
         channel.enableLights(true) // Enable notification LED
         channel.lightColor = Color.RED // Set LED color
