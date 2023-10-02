@@ -19,7 +19,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.innoappsai.guido.fragments.ProfileFragment"
+        android:name="com.innoappsai.guido.fragments.MyPlacesFragment"
         android:label="ProfileFragment" />
     <dialog
         android:id="@+id/bottomSheetAskLocationPermission"

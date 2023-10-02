@@ -44,4 +44,10 @@ interface GuidoApi {
     suspend fun fetchPlaceAutoCompleteSuggestion(
         @Query("query", encoded = true) query : String
     ) : Response<List<PlaceAutoCompleteDTO>>
+
+    @GET("places-by-user-id")
+    suspend fun fetchPlacesByUserId(
+        @Query("userId", encoded = true) userId : String
+    ): Response<List<PlaceDTO>>
+
 }

@@ -140,7 +140,7 @@
                        android:textSize="@dimen/_12ssp" />
                </LinearLayout>
 
-               <TextView
+               <androidx.appcompat.widget.AppCompatButton
                    android:id="@+id/tv_edit_profile"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
@@ -148,14 +148,11 @@
                    android:layout_marginTop="@dimen/_32sdp"
                    android:background="@drawable/button_backgroud_corner"
                    android:gravity="center"
-                   android:padding="@dimen/_12sdp"
                    android:singleLine="true"
                    android:text="Edit Profile"
                    android:textColor="@color/white"
                    android:textSize="@dimen/_14sdp"
-                   app:layout_constraintTop_toBottomOf="@+id/interestItem">
-
-               </TextView>
+                   app:layout_constraintTop_toBottomOf="@+id/interestItem"/>
 
                <ImageView
                    android:id="@+id/ic_arrow_back"
@@ -182,6 +179,21 @@
                    android:orientation="vertical"
                    app:layout_constraintGuide_percent="0.75" />
 
+               <TextView
+                   android:id="@+id/tv_my_places"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginHorizontal="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_32sdp"
+                   android:fontFamily="@font/font_semi_bold"
+                   android:text="My Places"
+                   android:textColor="@color/quantum_black_100"
+                   android:textSize="@dimen/_16ssp"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile"
+                   app:drawableEndCompat="@drawable/ic_arrow_right"
+                   android:drawableTint="@color/color_primary"/>
+
 
                <TextView
                    android:id="@+id/textView4"
@@ -194,7 +206,9 @@
                    android:textColor="@color/quantum_black_100"
                    android:textSize="@dimen/_16ssp"
                    app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
+                   app:layout_constraintTop_toBottomOf="@+id/tv_my_places" />
+
+
 
                <ImageView
                    android:id="@+id/iv_man_walking"

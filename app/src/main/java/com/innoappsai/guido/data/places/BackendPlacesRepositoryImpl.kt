@@ -1,6 +1,5 @@
 package com.innoappsai.guido.data.places
 
-import android.util.Log
 import androidx.room.withTransaction
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.db.MyAppDataBase
@@ -35,12 +34,21 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchPlacesUsingUserId(userId: String): List<PlaceUiModel> {
+        val response = api.fetchPlacesByUserId(userId)
+        return if (response.isSuccessful) {
+            response.body()?.toPlaceUiModel() ?: emptyList()
+        } else {
+            emptyList()
+        }
+    }
+
     override suspend fun addPlace(placeRequestDTO: PlaceRequestDTO): PlaceUiModel? {
         val response = api.addPlace(placeRequestDTO)
         return if (response.isSuccessful) {
             response.body()?.toPlaceUiModel()
         } else {
-           null
+            null
         }
     }
 
@@ -56,7 +64,6 @@ class BackendPlacesRepositoryImpl @Inject constructor(
                 null
             }
         } catch (e: Exception) {
-            Log.i("JAPAN", "DATA $e")
             null
         }
     }

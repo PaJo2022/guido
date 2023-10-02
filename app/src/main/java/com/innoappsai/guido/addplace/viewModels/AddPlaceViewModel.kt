@@ -13,6 +13,7 @@ import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
+import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +38,9 @@ class AddPlaceViewModel @Inject constructor(
 
     private val _currentScreenName: MutableSharedFlow<PlaceAddScreenName> = MutableSharedFlow()
     val currentScreenName: SharedFlow<PlaceAddScreenName> = _currentScreenName.asSharedFlow()
+
+    private val _startAddingPlace: MutableSharedFlow<Pair<Array<String>,Array<String>>> = MutableSharedFlow()
+    val startAddingPlace: SharedFlow<Pair<Array<String>,Array<String>>> = _startAddingPlace.asSharedFlow()
 
     private val _error: MutableSharedFlow<String> = MutableSharedFlow()
     val error: SharedFlow<String> = _error.asSharedFlow()
@@ -206,6 +210,8 @@ class AddPlaceViewModel @Inject constructor(
                 )
                 val imageUriArray = imageFileArrayList.map { it.toString() }.toTypedArray()
                 val videoUriArray = videoFileArrayList.map { it.toString() }.toTypedArray()
+                MyApp.placeRequestDTO = placeRequestDTO
+                _startAddingPlace.emit(Pair(imageUriArray,videoUriArray))
                 _currentScreenName.emit(PlaceAddScreenName.COMPLETE(placeRequestDTO!!,imageUriArray,videoUriArray))
             } else {
                 _error.emit("Please Enter All The Details")

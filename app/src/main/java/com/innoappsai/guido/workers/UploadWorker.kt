@@ -1,9 +1,11 @@
 package com.innoappsai.guido.workers
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -31,7 +33,7 @@ class UploadWorker @AssistedInject constructor(
     companion object {
         private const val NOTIFICATION_CHANNEL_ID = "UPLOAD WORKER"
         private const val NOTIFICATION_ID = 1
-        private const val PUSH_NOTIFICATION_ID = 1
+        private const val PUSH_NOTIFICATION_ID = 2
         private const val NOTIFICATION_CHANNEL_NAME = "FILE UPLOAD WORKER"
         const val FILE_URI = "FILE_URI"
         const val FOLDER_NAME = "FOLDER_NAME"
@@ -45,7 +47,7 @@ class UploadWorker @AssistedInject constructor(
             val fileListAsArray = inputData.getStringArray(FILE_URI)
             val outFileName = inputData.getString(OUTPUT_NAME) ?: return Result.failure()
             val folderName = inputData.getString("FOLDER_NAME") ?: "DEFAULT_FOLDER"
-            setForeground(createForegroundInfo())
+            setForeground(getForegroundInfo(applicationContext))
             if (fileListAsArray.isNullOrEmpty()) {
                 val outputData = Data.Builder()
                     .putStringArray("uploadedUrls", emptyArray())
@@ -111,36 +113,41 @@ class UploadWorker @AssistedInject constructor(
     }
 
 
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return getForegroundInfo(applicationContext)
+    }
 
+    private fun getForegroundInfo(context: Context) : ForegroundInfo{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                createNotification(context,"Uploading","Files Are Uploading"),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                createNotification(context,"Uploading","Files Are Uploading")
+            )
+        }
+    }
 
-    @SuppressLint("RemoteViewLayout")
-    private fun createForegroundInfo(): ForegroundInfo {
-
-        val title = "Files Are Uploading"
-        // Create a Notification channel if necessary
+    private fun createNotification(context: Context,title : String,description : String): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
         }
-        // This PendingIntent can be used to cancel the worker
-        val intent = WorkManager.getInstance(applicationContext)
-            .createCancelPendingIntent(id)
-
-
-
-        val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+       return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setContentTitle(title)
             .setTicker(title)
-            .setContentText("Uploading")
+            .setContentText("Udescription")
             .setSmallIcon(R.drawable.ic_website)
             .setOngoing(true)
             .build()
-
-        return ForegroundInfo(NOTIFICATION_ID, notification)
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannel() {
+    private fun createChannel() {NOTIFICATION_CHANNEL_ID
         val importance = NotificationManager.IMPORTANCE_HIGH // Set the importance level
         val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, importance)
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -18,6 +18,10 @@ interface PlacesRepository {
         types: List<String>
     ): List<PlaceUiModel>
 
+    suspend fun fetchPlacesUsingUserId(
+        userId: String
+    ): List<PlaceUiModel>
+
     suspend fun addPlace(
         placeRequestDTO: PlaceRequestDTO
     ): PlaceUiModel?

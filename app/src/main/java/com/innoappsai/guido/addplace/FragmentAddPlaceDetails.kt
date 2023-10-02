@@ -1,16 +1,22 @@
 package com.innoappsai.guido.addplace
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -29,6 +35,7 @@ import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.AddPlaceWorker
 import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 
 @AndroidEntryPoint
 class FragmentAddPlaceDetails :
@@ -52,6 +59,7 @@ class FragmentAddPlaceDetails :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewPager()
+
         binding.apply {
             tvPickImage.setOnClickListener {
                 requestGalleryPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -98,12 +106,14 @@ class FragmentAddPlaceDetails :
             }
         }
         viewModel.apply {
+            startAddingPlace.collectIn(viewLifecycleOwner) {
+                startFetchingFeedData(it.first, it.second)
+                requireActivity().showToast("Your Place Is Adding")
+           //     requireActivity().finish()
+            }
             currentScreenName.collectIn(viewLifecycleOwner) {
                 if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
                     MyApp.placeRequestDTO = it.placeRequestDTO
-                    startFetchingFeedData(it.imageUri, it.videoUri)
-                    requireActivity().showToast("You Place Is Adding")
-                    requireActivity().finish()
                 }
             }
             error.collectIn(viewLifecycleOwner) {
@@ -219,6 +229,53 @@ class FragmentAddPlaceDetails :
             .then(addPlaceWorkRequest)
             .enqueue()
 
+
+        // Observe the states of your work requests
+        val uploadImageWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(uploadImageFileWorkRequest.id)
+        val uploadVideoWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(uploadVideoFileWorkRequest.id)
+        val addPlaceWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(addPlaceWorkRequest.id)
+
+// Create observers for each work request
+        val uploadImageObserver = createWorkInfoObserver("UploadImageWorker", uploadImageFileWorkRequest.id)
+//        val uploadVideoObserver = createWorkInfoObserver("UploadVideoWorker", uploadVideoFileWorkRequest.id)
+        val addPlaceObserver = createWorkInfoObserver("AddPlaceWorker", addPlaceWorkRequest.id)
+
+// Observe the work request states
+        uploadImageWorkInfoLiveData.observe(viewLifecycleOwner, uploadImageObserver)
+        addPlaceWorkInfoLiveData.observe(viewLifecycleOwner, addPlaceObserver)
+
+
+    }
+
+    private fun createWorkInfoObserver(workerName: String, requestId: UUID): Observer<WorkInfo> {
+        return Observer { workInfo ->
+            Log.i("JAPAN", "createWorkInfoObserver: ${workerName} is ${workInfo.state}")
+            when (workInfo.state) {
+                WorkInfo.State.ENQUEUED -> {
+                    // Work request is enqueued
+                    // You can perform actions when the work request is enqueued
+                }
+
+                WorkInfo.State.RUNNING -> {
+                    // Work request is running
+                    // You can perform actions when the work request is running
+                }
+
+                WorkInfo.State.SUCCEEDED -> {
+                    // Work request completed successfully
+                    // You can perform actions when the work request is completed successfully
+                }
+
+                WorkInfo.State.FAILED -> {
+                    // Work request failed
+                    // You can perform actions when the work request fails
+                }
+
+                else -> {
+                    // Handle other states if needed
+                }
+            }
+        }
     }
 
     private fun pickVideosFromGallery() {

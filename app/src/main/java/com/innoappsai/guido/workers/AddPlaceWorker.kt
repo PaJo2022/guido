@@ -1,10 +1,12 @@
 package com.innoappsai.guido.workers
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -43,10 +45,10 @@ class AddPlaceWorker @AssistedInject constructor(
             val uploadedImageUrls = inputData.getStringArray("IMAGE_FILES")
             val uploadedVideoUrls = inputData.getStringArray("VIDEO_FILES")
             val placeDTO = MyApp.placeRequestDTO ?: return Result.failure()
-
+            setForeground(getForegroundInfo(applicationContext))
             placeDTO.photos = uploadedImageUrls?.toList()
             placeDTO.videos = uploadedVideoUrls?.toList()
-            setForeground(createForegroundInfo(placeDTO.placeName.toString()))
+
             val isPlaceAdded = placesRepository.addPlace(placeDTO)
             if (isPlaceAdded != null) {
                 sendPushNotificationOnSuccessFullPlaceAdd(placeDTO.placeName.toString(),placeDTO.placeId.toString())
@@ -62,8 +64,18 @@ class AddPlaceWorker @AssistedInject constructor(
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        val deepLinkIntent = Intent(context, MainActivity::class.java)
+        deepLinkIntent.putExtra("placeId", placeId)
+        deepLinkIntent.putExtra("placeName", placeName)
 
-
+        val requestCode = 0 // You can change this value if needed
+        val flags = PendingIntent.FLAG_IMMUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            requestCode,
+            deepLinkIntent,
+            flags
+        )
 
         // Create a notification channel (required for Android 8.0 and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -73,10 +85,11 @@ class AddPlaceWorker @AssistedInject constructor(
         // Build the notification
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_website)
-            .setContentTitle("Adding Place")
+            .setContentTitle("Place Is Added")
             .setContentText("${placeName} is Added")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(false)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
 
         // Show the notification
         notificationManager.notify(PUSH_NOTIFICATION_ID, notificationBuilder.build())
@@ -84,24 +97,36 @@ class AddPlaceWorker @AssistedInject constructor(
 
 
 
-    private fun createForegroundInfo(placeName : String): ForegroundInfo {
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return getForegroundInfo(applicationContext)
+    }
 
-        // Create a Notification channel if necessary
+    private fun getForegroundInfo(context: Context) : ForegroundInfo{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                createNotification(context,"Adding","Your Place Is Adding"),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                createNotification(context,"Adding","Your Place Is Adding"),
+            )
+        }
+    }
+
+    private fun createNotification(context: Context,title : String,description : String): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
         }
-
-        val notification = NotificationCompat.Builder(applicationContext,
-            NOTIFICATION_CHANNEL_ID
-        )
-            .setContentTitle("${placeName} is adding")
-            .setTicker("${placeName} is adding")
-            .setContentText("Adding")
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(title)
+            .setTicker(title)
+            .setContentText(description)
             .setSmallIcon(R.drawable.ic_website)
             .setOngoing(true)
             .build()
-
-        return ForegroundInfo(NOTIFICATION_ID, notification)
     }
 
 

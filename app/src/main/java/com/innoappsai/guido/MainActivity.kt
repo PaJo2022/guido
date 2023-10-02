@@ -1,6 +1,8 @@
 package com.innoappsai.guido
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -17,12 +19,17 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.i("JAPAN", "onNewIntent: ${intent?.getStringExtra("placeId")}")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
-
+        Log.i("JAPAN", "onNewIntent: ${intent?.data}")
         openNavFragment(
             HomeFragment(),
             supportFragmentManager,

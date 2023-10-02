@@ -3,6 +3,7 @@ package com.innoappsai.guido.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -86,6 +87,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
         checkLocationPermission()
     }
+
+    private fun askForNotificationPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Check if the permission is already granted
+            val permission = Manifest.permission.POST_NOTIFICATIONS
+            if (ContextCompat.checkSelfPermission(requireContext(), permission)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                AddPlaceActivity.startAddPlaceActivity(requireContext())
+            } else {
+
+                requestPermissionLauncher.launch(permission)
+            }
+        } else {
+            AddPlaceActivity.startAddPlaceActivity(requireContext())
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                AddPlaceActivity.startAddPlaceActivity(requireContext())
+            } else {
+                Bundle().apply {
+                    putBoolean("SHOULD_GO_TO_SETTINGS", true)
+                    findNavController().navigate(R.id.bottomSheetAskLocationPermission, this)
+                }
+            }
+        }
 
 
     private val locationPermissionLauncher =
@@ -185,7 +215,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.getMapAsync(this)
         binding.apply {
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
-                AddPlaceActivity.startAddPlaceActivity(requireContext())
+                askForNotificationPermission()
             }
             bottomsheetPlaceList.rvPlaces.apply {
                 adapter = placesAdapter
