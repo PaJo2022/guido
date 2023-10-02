@@ -40,17 +40,17 @@ class AddPlaceWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             // Retrieve the list of byte arrays from input data
-            val uploadedImageUrls = inputData.getStringArray("uploadedUrls")
+            val uploadedImageUrls = inputData.getStringArray("IMAGE_FILES")
+            val uploadedVideoUrls = inputData.getStringArray("VIDEO_FILES")
             val placeDTO = MyApp.placeRequestDTO ?: return Result.failure()
 
             placeDTO.photos = uploadedImageUrls?.toList()
+            placeDTO.videos = uploadedVideoUrls?.toList()
             setForeground(createForegroundInfo(placeDTO.placeName.toString()))
             val isPlaceAdded = placesRepository.addPlace(placeDTO)
             if (isPlaceAdded != null) {
                 sendPushNotificationOnSuccessFullPlaceAdd(placeDTO.placeName.toString(),placeDTO.placeId.toString())
             }
-            MyApp.imageFileArray = null
-            MyApp.placeRequestDTO = null
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -111,14 +111,6 @@ class AddPlaceWorker @AssistedInject constructor(
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME, importance)
-        // Customize channel settings if needed
-        channel.description = NOTIFICATION_CHANNEL_NAME // Optional: Provide a description
-        // Configure additional channel properties as needed
-        channel.enableLights(true) // Enable notification LED
-        channel.lightColor = Color.RED // Set LED color
-        channel.enableVibration(true) // Enable vibration
-        channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500) // Vibration pattern
-
         // Register the notification channel with the system
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)

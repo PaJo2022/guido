@@ -129,14 +129,14 @@ class LandMarkDetailsViewModel @Inject constructor(
             _isPlaceAIDataFetching.emit(false)
             setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            _isPlaceVideoFetching.emit(true)
-            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
-            val landMarkVideo = landMarkVideoJob.await()
-            _isPlaceVideoFetching.emit(false)
-            setPlaceVideoData(landMarkVideo)
-            _landMarkData.postValue(placesDetailsUiModel)
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _isPlaceVideoFetching.emit(true)
+//            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
+//            val landMarkVideo = landMarkVideoJob.await()
+//            _isPlaceVideoFetching.emit(false)
+//            setPlaceVideoData(landMarkVideo)
+//            _landMarkData.postValue(placesDetailsUiModel)
+//        }
     }
 
 }

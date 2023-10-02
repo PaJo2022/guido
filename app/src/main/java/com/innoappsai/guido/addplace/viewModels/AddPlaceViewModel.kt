@@ -45,9 +45,13 @@ class AddPlaceViewModel @Inject constructor(
     val isLoading: SharedFlow<Boolean> = _isLoading.asSharedFlow()
 
     private val imageFileArrayList: ArrayList<Uri> = ArrayList()
+    private val videoFileArrayList: ArrayList<Uri> = ArrayList()
 
     private val _placeImages: MutableLiveData<ArrayList<Uri>> = MutableLiveData()
     val placeImages: LiveData<ArrayList<Uri>> = _placeImages
+
+    private val _placeVideos: MutableLiveData<ArrayList<Uri>> = MutableLiveData()
+    val placeVideos: LiveData<ArrayList<Uri>> = _placeVideos
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -200,7 +204,9 @@ class AddPlaceViewModel @Inject constructor(
                     videos = emptyList(),
                     types = listOf(globalPlaceType)
                 )
-                _currentScreenName.emit(PlaceAddScreenName.COMPLETE(placeRequestDTO!!))
+                val imageUriArray = imageFileArrayList.map { it.toString() }.toTypedArray()
+                val videoUriArray = videoFileArrayList.map { it.toString() }.toTypedArray()
+                _currentScreenName.emit(PlaceAddScreenName.COMPLETE(placeRequestDTO!!,imageUriArray,videoUriArray))
             } else {
                 _error.emit("Please Enter All The Details")
             }
@@ -245,12 +251,23 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
+    fun addVideoUris(fileUri: List<Uri>) {
+        viewModelScope.launch {
+            if (videoFileArrayList.size <= 10) {
+                videoFileArrayList.addAll(fileUri)
+                _placeVideos.postValue(videoFileArrayList)
+            } else {
+                _error.emit("Max 3 Videos Can Be Uploaded")
+            }
+        }
+    }
+
 
     sealed class PlaceAddScreenName {
         object ADD_TYPES : PlaceAddScreenName()
         object ADD_ADDRESS : PlaceAddScreenName()
         object ADD_DETAILS : PlaceAddScreenName()
-        data class COMPLETE(val placeRequestDTO: PlaceRequestDTO) : PlaceAddScreenName()
+        data class COMPLETE(val placeRequestDTO: PlaceRequestDTO,val imageUri : Array<String>,val videoUri :Array<String>) : PlaceAddScreenName()
 
     }
 

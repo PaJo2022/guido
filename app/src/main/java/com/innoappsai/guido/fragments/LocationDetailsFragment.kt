@@ -2,6 +2,7 @@ package com.innoappsai.guido.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +16,16 @@ import androidx.recyclerview.widget.SnapHelper
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
-import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.adapters.ImageAdapter
+import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.adapters.PlaceReviewAdapter
 import com.innoappsai.guido.adapters.PlaceVideoAdapter
+import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.callToNumber
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentLocationDetailsBinding
+import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.openAppSettings
@@ -30,6 +33,7 @@ import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.openWebsite
 import com.innoappsai.guido.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -41,6 +45,9 @@ class LocationDetailsFragment :
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
     private lateinit var adapterImageSlider: ImageSliderAdapter
     private lateinit var adapterPlaceVideos: PlaceVideoAdapter
+    private lateinit var adapterVideos: VideoAdapter
+    @Inject
+    lateinit var appPrefs: AppPrefs
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +57,7 @@ class LocationDetailsFragment :
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
         adapterPlaceVideos = PlaceVideoAdapter()
+        adapterVideos = VideoAdapter(requireContext())
     }
 
     private fun setUpViewPager() {
@@ -61,6 +69,9 @@ class LocationDetailsFragment :
 
         }.attach()
 
+        binding.rvPlaceVideos.adapter = adapterVideos
+        binding.rvPlaceVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
     }
 
 
@@ -68,19 +79,12 @@ class LocationDetailsFragment :
         super.onViewCreated(view, savedInstanceState)
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
-        val snapHelper: SnapHelper = PagerSnapHelper()
         binding.apply {
             icArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            }
-            rvPlaceVideos.apply {
-                adapter = adapterPlaceVideos
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                snapHelper.attachToRecyclerView(this)
             }
         }
         viewModel.apply {
@@ -96,9 +100,9 @@ class LocationDetailsFragment :
             isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
                 binding.pbChatgptApiCalling.isVisible = it
                 if (!it) {
-                    val layoutParams = binding.tvPlaceDescription.layoutParams
+                    val layoutParams = binding.tvAboutThePlace.layoutParams
                     layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                    binding.tvPlaceDescription.layoutParams = layoutParams
+                    binding.tvAboutThePlace.layoutParams = layoutParams
                 }
             }
             placeDistance.observe(viewLifecycleOwner) {
@@ -113,7 +117,6 @@ class LocationDetailsFragment :
             }
             singlePlaceData.observe(viewLifecycleOwner) {
                 binding.apply {
-
                     tvPlaceName.text = it?.name
                     tvPlaceName.isSelected = true
                     tvPlaceAddress.makeTextViewClickableLink(
@@ -138,13 +141,22 @@ class LocationDetailsFragment :
                 it?.photos?.let { photos ->
                     adapterImageSlider.setPlacePhotos(photos)
                 }
+                it?.placeDescription?.let {
+                    binding.llAboutThePlace.isVisible = true
+                    binding.tvPlaceDescription.text = it
+                }
+                it?.videos?.let { videos ->
+                    adapterVideos.setVideos(
+                        ArrayList(videos.map { video -> Uri.parse(video) })
+                    )
+                }
                 it?.reviews?.let {
                     adapterPlaceReview.setPlaceReviews(it)
                 }
 
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
-                binding.tvPlaceDescription.text = it
+                binding.tvAboutThePlace.text = it
             }
         }
 
@@ -176,9 +188,7 @@ class LocationDetailsFragment :
         }
 
 
-    // ...
 
-    // When you want to make a call, call this function
     private fun requestCallPermissionAndMakeCall() {
         val permission = Manifest.permission.CALL_PHONE
         if (ContextCompat.checkSelfPermission(
@@ -199,5 +209,9 @@ class LocationDetailsFragment :
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        adapterVideos.releasePlayers()
+    }
 
 }

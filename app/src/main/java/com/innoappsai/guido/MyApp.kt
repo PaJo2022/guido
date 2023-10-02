@@ -26,7 +26,7 @@ class MyApp : Application(), Configuration.Provider {
         var userCurrentFormattedAddress: String? = null
         var isPrefUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
-        var imageFileArray: ArrayList<Uri>? = null
+
         var placeRequestDTO : PlaceRequestDTO?= null
     }
     override fun onCreate() {
