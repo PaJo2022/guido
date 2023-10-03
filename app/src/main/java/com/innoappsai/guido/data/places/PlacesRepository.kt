@@ -1,5 +1,6 @@
 package com.innoappsai.guido.data.places
 
+import com.innoappsai.guido.model.FullPlaceData
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
@@ -40,7 +41,7 @@ interface PlacesRepository {
     suspend fun fetchAddressFromLatLng(
         latitude: Double,
         longitude: Double,
-    ): ReverseGeoCodingDTO?
+    ): FullPlaceData?
 
     suspend fun fetchPlaceAutoCompleteSuggestion(
        query : String

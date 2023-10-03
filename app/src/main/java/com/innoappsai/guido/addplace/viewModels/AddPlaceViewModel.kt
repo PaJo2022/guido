@@ -13,7 +13,6 @@ import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
-import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,6 +67,7 @@ class AddPlaceViewModel @Inject constructor(
     private var globalPlaceStreetAddress: String = ""
     private var globalPlaceCityName: String = ""
     private var globalPlaceStateName: String = ""
+    private var globalPlaceCountryName: String = ""
     private var globalPlacePinCode: String = ""
     private var globalPlaceDescription: String = ""
     private var globalPlaceContactNumber: String = ""
@@ -211,6 +211,9 @@ class AddPlaceViewModel @Inject constructor(
                     ),
                     placeDescription = globalPlaceDescription,
                     placeAddress = globalPlaceStreetAddress,
+                    placeCity = globalPlaceCityName,
+                    placeState = globalPlaceStateName,
+                    placeCountry = globalPlaceCountryName,
                     placeName = globalPlaceName,
                     placeId = UUID.randomUUID().toString(),
                     rating = 0.0,
@@ -251,17 +254,25 @@ class AddPlaceViewModel @Inject constructor(
         globalPlaceLongitude = longitude
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
-            val address = placesRepository.fetchAddressFromLatLng(
-                latitude, longitude
-            )?.display_name.toString()
-            globalPlaceStreetAddress = address
-            MyApp.userCurrentFormattedAddress = address
-            _searchedFormattedAddress.postValue(address)
+            val job = async {
+                placesRepository.fetchAddressFromLatLng(
+                    latitude, longitude
+                )
+            }
+            val fullPlaceData = job.await()
+            globalPlaceStreetAddress = fullPlaceData?.address.toString()
+            globalPlaceCityName = fullPlaceData?.cityOrVillage.toString()
+            globalPlaceStateName = fullPlaceData?.state.toString()
+            globalPlaceCountryName = fullPlaceData?.country.toString()
+            MyApp.userCurrentFormattedAddress = fullPlaceData?.address.toString()
+            _searchedFormattedAddress.postValue(fullPlaceData?.address.toString())
             _isLoading.emit(false)
         }
     }
 
     fun getStreetAddress() = globalPlaceStreetAddress
+    fun getCityName() = globalPlaceCityName
+    fun getStateName() = globalPlaceStateName
     fun onGoogleMapMoving() {
         viewModelScope.launch {
             _isLoading.emit(true)

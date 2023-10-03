@@ -10,21 +10,24 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class PlaceDTO(
     @SerializedName("_id")
-    val id: String?=null,
-    val contactNumber: String?=null,
-    val createdBy: String?=null,
+    val id: String? = null,
+    val contactNumber: String? = null,
+    val createdBy: String? = null,
     @SerializedName("geoLocation")
-    val location: Location?=null,
-    var photos: List<String>?=null,
-    var videos: List<String>?=null,
-    val placeAddress: String?=null,
-    val placeDescription: String?=null,
-    val placeId: String?=null,
-    val placeName: String?=null,
+    val location: Location? = null,
+    var photos: List<String>? = null,
+    var videos: List<String>? = null,
+    val placeAddress: String? = null,
+    val placeCity: String? = null,
+    val placeState: String? = null,
+    val placeCountry: String? = null,
+    val placeDescription: String? = null,
+    val placeId: String? = null,
+    val placeName: String? = null,
     val pricingType: String?,
-    val rating: Double?=null,
-    val types: List<String>?=null,
-    val website: String?=null
+    val rating: Double? = null,
+    val types: List<String>? = null,
+    val website: String? = null
 ) : Parcelable
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
@@ -34,6 +37,9 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
         createdBy = it.createdBy,
         latLng = LatLng(it.location?.latitude ?: 0.0, it.location?.longitude ?: 0.0),
         address = it.placeAddress,
+        city = it.placeCity,
+        state = it.placeState,
+        country = it.placeCountry,
         placeDescription = it.placeDescription,
         icon = null,
         iconBackGroundColor = null,
@@ -52,6 +58,9 @@ fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
     createdBy = createdBy,
     latLng = LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0),
     address = placeAddress,
+    city = placeCity,
+    state = placeState,
+    country = placeCountry,
     placeDescription =placeDescription ,
     icon = null,
     iconBackGroundColor = null,

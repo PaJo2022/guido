@@ -96,7 +96,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val address = placesRepository.fetchAddressFromLatLng(
                 latitude, longitude
-            )?.display_name.toString()
+            )?.address.toString()
             MyApp.userCurrentFormattedAddress = address
             _searchedFormattedAddress.postValue(address)
         }

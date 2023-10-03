@@ -31,6 +31,8 @@ class FragmentAddPlaceAddressDetails :
 
         binding.apply {
             etPlaceStreetAddress.setText(viewModel.getStreetAddress())
+            etPlacePlaceCity.setText(viewModel.getCityName())
+            etPlacePlaceState.setText(viewModel.getStateName())
             tvNext.setOnClickListener {
                 val placeName = binding.etPlaceName.text.toString()
                 val placeStreetAddress = binding.etPlaceStreetAddress.text.toString()

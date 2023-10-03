@@ -3,13 +3,14 @@ package com.innoappsai.guido.data.places
 import androidx.room.withTransaction
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.db.MyAppDataBase
+import com.innoappsai.guido.model.FullPlaceData
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
-import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
+import com.innoappsai.guido.model.toUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -76,10 +77,10 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     override suspend fun fetchAddressFromLatLng(
         latitude: Double,
         longitude: Double,
-    ): ReverseGeoCodingDTO? {
+    ): FullPlaceData? {
         return try {
             val response = api.fetchAddressFromLatLng(latitude, longitude)
-            response.body()
+            response.body()?.toUiModel()
         } catch (e: Exception) {
             null
         }

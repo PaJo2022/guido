@@ -73,7 +73,8 @@ class LandMarkDetailsViewModel @Inject constructor(
             _isPlaceDataFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
                 placeId = placeId
-            )
+            ) ?: return@launch
+            fetchAllDataForTheLocation(placeData)
             callNumber = placeData?.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
@@ -101,9 +102,10 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private suspend fun fetchVideosForTheLandMarkName(placeUiModel: PlaceUiModel): List<VideoUiModel> {
         val placeName = placeUiModel.name
-        val location = placeUiModel.address
+        val city = placeUiModel.city
+        val country = placeUiModel.country
         return videoRepository.fetchPlacesVideos(
-            query = "${placeName},${location}",
+            query = "${placeName},${city},${country}",
             apiKey = GCP_API_KEY
         )
     }
@@ -129,14 +131,14 @@ class LandMarkDetailsViewModel @Inject constructor(
             _isPlaceAIDataFetching.emit(false)
             setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
         }
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _isPlaceVideoFetching.emit(true)
-//            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
-//            val landMarkVideo = landMarkVideoJob.await()
-//            _isPlaceVideoFetching.emit(false)
-//            setPlaceVideoData(landMarkVideo)
-//            _landMarkData.postValue(placesDetailsUiModel)
-//        }
+        viewModelScope.launch(Dispatchers.IO) {
+            _isPlaceVideoFetching.emit(true)
+            val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
+            val landMarkVideo = landMarkVideoJob.await()
+            _isPlaceVideoFetching.emit(false)
+            setPlaceVideoData(landMarkVideo)
+            _landMarkData.postValue(placesDetailsUiModel)
+        }
     }
 
 }

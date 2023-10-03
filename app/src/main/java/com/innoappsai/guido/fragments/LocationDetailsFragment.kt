@@ -92,9 +92,6 @@ class LocationDetailsFragment :
         viewModel.apply {
             getSinglePlaceDetails(placeUiModel)
             getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel)
-            placeUiModel?.let {
-                fetchAllDataForTheLocation(it)
-            }
             isPlaceDataFetching.collectIn(viewLifecycleOwner){
                 binding.llPlaceData.toggleEnableAndVisibility(!it)
                 binding.cbLcoationDataFetching.isVisible = it
