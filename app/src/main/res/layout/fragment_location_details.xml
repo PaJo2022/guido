@@ -249,6 +249,7 @@
             android:id="@+id/ll_about_the_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
             app:cardBackgroundColor="@color/white"
@@ -311,7 +312,7 @@
             android:id="@+id/ll_place_videos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
             app:cardBackgroundColor="@color/white"
@@ -347,6 +348,46 @@
         </androidx.cardview.widget.CardView>
 
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ll_place_youtube_videos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_24sdp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_place_videos">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_regular"
+                    android:text="Youtube Videos"
+                    android:padding="@dimen/_12sdp"
+                    android:textColor="@color/card_color4"
+                    android:textSize="@dimen/_18ssp" />
+
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/rv_place_youtube_videos"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_250sdp"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/ll_place_reviews"
@@ -358,7 +399,7 @@
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_place_videos">
+            app:layout_constraintTop_toBottomOf="@+id/ll_place_youtube_videos">
 
             <LinearLayout
                 android:layout_width="match_parent"

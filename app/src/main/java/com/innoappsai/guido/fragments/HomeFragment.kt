@@ -442,7 +442,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
-                putParcelable("LANDMARK_DATA", it)
+                putString("PLACE_ID", it.placeId)
                 openNavFragment(
                     LocationDetailsFragment(),
                     childFragmentManager,
@@ -454,7 +454,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
-                putParcelable("LANDMARK_DATA", it)
+                putString("PLACE_ID", it.placeId)
                 openNavFragment(
                     LocationDetailsFragment(),
                     childFragmentManager,

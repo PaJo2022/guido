@@ -1,6 +1,7 @@
 package com.innoappsai.guido.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -25,7 +26,6 @@ import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentLocationDetailsBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.makeTextViewClickableLink
-import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.openWebsite
@@ -70,6 +70,9 @@ class LocationDetailsFragment :
         binding.rvPlaceVideos.adapter = adapterVideos
         binding.rvPlaceVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
+
+        binding.rvPlaceYoutubeVideos.adapter = adapterPlaceVideos
+        binding.rvPlaceYoutubeVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
     }
 
 
@@ -79,7 +82,7 @@ class LocationDetailsFragment :
         bottomSheetFragment.setOnSuccessFullPlaceDeleted {
             parentFragmentManager.popBackStack()
         }
-        val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
+        val palceId = arguments?.getString("PLACE_ID")
         setUpViewPager()
         binding.apply {
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
@@ -90,8 +93,7 @@ class LocationDetailsFragment :
             }
         }
         viewModel.apply {
-            getSinglePlaceDetails(placeUiModel)
-            getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel)
+            getSinglePlaceDetails(palceId)
             isPlaceDataFetching.collectIn(viewLifecycleOwner){
                 binding.llPlaceData.toggleEnableAndVisibility(!it)
                 binding.cbLcoationDataFetching.isVisible = it
@@ -108,7 +110,7 @@ class LocationDetailsFragment :
                 binding.tvPlaceDistance.text = it
             }
             landMarkData.observe(viewLifecycleOwner) {
-                binding.llPlaceVideos.isVisible = !it?.locationVideos.isNullOrEmpty()
+                binding.llPlaceYoutubeVideos.isVisible = !it?.locationVideos.isNullOrEmpty()
                 val videoUrls = it?.locationVideos?.map { videoUiModel ->
                     videoUiModel.videoUrl
                 }
@@ -119,7 +121,6 @@ class LocationDetailsFragment :
                     ivPlaceOptions.apply {
                         isVisible = placeUiModel?.createdBy == appPrefs.userId
                         setOnClickListener {
-
                             val bundle = Bundle()
                             bundle.putParcelable("PLACE_DATA", placeUiModel)
                             bottomSheetFragment.arguments = bundle
@@ -155,6 +156,7 @@ class LocationDetailsFragment :
                     binding.tvPlaceDescription.text = it
                 }
                 placeUiModel?.videos?.let { videos ->
+                    binding.llPlaceVideos.isVisible = videos.isNotEmpty()
                     adapterVideos.setVideos(
                         ArrayList(videos.map { video -> Uri.parse(video) })
                     )
@@ -172,6 +174,22 @@ class LocationDetailsFragment :
 
         addOnBackPressedCallback {
             parentFragmentManager.popBackStack()
+        }
+
+        adapterPlaceVideos.setOnFullScreenClickListener{videoUrl->
+
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+            intent.setPackage("com.google.android.youtube")
+
+            // Verify that the YouTube app is installed on the device
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                startActivity(intent)
+            } else {
+                // If the YouTube app is not installed, open in a web browser
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                startActivity(webIntent)
+            }
+
         }
     }
 

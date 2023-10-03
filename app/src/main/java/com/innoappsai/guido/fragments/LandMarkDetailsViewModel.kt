@@ -67,28 +67,29 @@ class LandMarkDetailsViewModel @Inject constructor(
     }
 
 
-    fun getSinglePlaceDetails(placeUiModel: PlaceUiModel?) {
-        val placeId = placeUiModel?.placeId ?: return
+    fun getSinglePlaceDetails(placeId : String?) {
+        if(placeId == null) return
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceDataFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
                 placeId = placeId
             ) ?: return@launch
             fetchAllDataForTheLocation(placeData)
-            callNumber = placeData?.callNumber
+            getDistanceBetweenMyPlaceAndTheCurrentPlace(placeData)
+            callNumber = placeData.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
         }
 
     }
 
-    fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?){
+    private fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?){
         val placeLatLng = placeUiModel?.latLng ?: return
 
         val myPlaceLatLng = MyApp.userCurrentLatLng ?: return
 
         val totalDistance = calculateDistance(myPlaceLatLng.latitude,myPlaceLatLng.longitude,placeLatLng.latitude,placeLatLng.longitude) / 1000
-        _placeDistance.value = "${formatDouble(totalDistance)} Km"
+        _placeDistance.postValue("${formatDouble(totalDistance)} Km")
     }
 
     private fun setPlaceVideoData(locationVideos: List<VideoUiModel>) {
@@ -123,7 +124,7 @@ class LandMarkDetailsViewModel @Inject constructor(
 
 
 
-    fun fetchAllDataForTheLocation(placeUiModel: PlaceUiModel){
+    private fun fetchAllDataForTheLocation(placeUiModel: PlaceUiModel){
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceAIDataFetching.emit(true)
             val tourDataJob = async { fetchTourDataForLandMark(placeUiModel) }

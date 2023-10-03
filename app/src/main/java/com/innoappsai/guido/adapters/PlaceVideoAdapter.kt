@@ -1,7 +1,12 @@
 package com.innoappsai.guido.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.databinding.LayoutPlacesVideoItemBinding
@@ -17,18 +22,49 @@ class PlaceVideoAdapter(
         notifyDataSetChanged()
     }
 
+    private var onFullScreenButtonClick: ((videoUrl : String) -> Any?)? = null
+
+    fun setOnFullScreenClickListener(onFullScreenButtonClick: ((videoUrl : String) -> Any?)) {
+        this.onFullScreenButtonClick = onFullScreenButtonClick
+    }
+
 
     inner class PlaceVideoViewHolder(private val binding: LayoutPlacesVideoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetJavaScriptEnabled")
         fun bindItem(videoUrl: String) {
             val webSettings = binding.wvPlaceVideo.settings
             webSettings.javaScriptEnabled = true
+            webSettings.pluginState = WebSettings.PluginState.ON
 
             // Load the YouTube video URL
             binding.wvPlaceVideo.loadUrl(videoUrl)
 
             // Set a WebViewClient to handle redirects and other events
-            binding.wvPlaceVideo.webViewClient = WebViewClient()
+            val webViewClient = object : WebViewClient() {
+                override fun doUpdateVisitedHistory(
+                    view: WebView?,
+                    url: String?,
+                    isReload: Boolean
+                ) {
+                    super.doUpdateVisitedHistory(view, url, isReload)
+                }
+            }
+
+            val webChromeClient = object : WebChromeClient() {
+                override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                    super.onShowCustomView(view, callback)
+                    onFullScreenButtonClick?.invoke(videoUrl)
+                }
+
+                override fun onHideCustomView() {
+                    super.onHideCustomView()
+
+                }
+            }
+
+            binding.wvPlaceVideo.webChromeClient = webChromeClient
+            binding.wvPlaceVideo.webViewClient = webViewClient
         }
     }
 

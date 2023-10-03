@@ -44,7 +44,7 @@ class MyPlacesFragment : BaseFragment<FragmentMyPlacesBinding>(FragmentMyPlacesB
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
-                putParcelable("LANDMARK_DATA", it)
+                putString("PLACE_ID", it.placeId)
                 openNavFragment(
                     LocationDetailsFragment(),
                     childFragmentManager,
