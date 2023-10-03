@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.innoappsai.guido.Constants.placeTypes
+import com.innoappsai.guido.Constants
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
@@ -52,6 +52,7 @@ class ProfileViewModel @Inject constructor(
     private val _isPlaceInterestesSaved: MutableSharedFlow<Unit> = MutableSharedFlow()
     val isPlaceInterestesSaved: SharedFlow<Unit> = _isPlaceInterestesSaved
 
+    private val placeTypesList = ArrayList(Constants.placeTypes)
 
     init {
         getSavedPlaceTypePreferences()
@@ -62,12 +63,12 @@ class ProfileViewModel @Inject constructor(
                 val preferences = placesRepository.getAllSavedPlaceTypePreferences()
                 savedPlaceInterestsId = preferences.map { it.id }
                 val job = async {
-                    placeTypes.forEach { placetype->
+                    placeTypesList.forEach { placetype->
                         placetype.isSelected = preferences.find { it.id == placetype.id} != null
                     }
                 }
                 job.await()
-                val groupedPlaceTypes = placeTypes.groupBy { it.type }
+                val groupedPlaceTypes = placeTypesList.groupBy { it.type }
 
                 val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
                     PlaceTypeContainer(
@@ -81,9 +82,9 @@ class ProfileViewModel @Inject constructor(
 
     fun onPlaceInterestClicked(id : String){
         viewModelScope.launch(Dispatchers.IO) {
-            val isSelected = placeTypes.find { it.id == id }?.isSelected ?: false
-            placeTypes.find { it.id == id }?.isSelected = !isSelected
-            val selectedInterestsId = placeTypes.filter { it.isSelected }.map { it.id }
+            val isSelected = placeTypesList.find { it.id == id }?.isSelected ?: false
+            placeTypesList.find { it.id == id }?.isSelected = !isSelected
+            val selectedInterestsId = placeTypesList.filter { it.isSelected }.map { it.id }
             val set1 = selectedInterestsId.toSet()
             val set2 = savedPlaceInterestsId.toSet()
             val isNewPlaceInterestesSelected =
@@ -95,7 +96,7 @@ class ProfileViewModel @Inject constructor(
 
    fun savePlaceTypePreferences() {
         viewModelScope.launch {
-            val allSelectedPlaceInterestes = placeTypes.filter { it.isSelected }
+            val allSelectedPlaceInterestes = placeTypesList.filter { it.isSelected }
             placesRepository.saveFavouritePlacePreferences(allSelectedPlaceInterestes)
             appPrefs.prefDistance = distanceProgress
             _isPlaceInterestesSaved.emit(Unit)

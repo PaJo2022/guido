@@ -43,6 +43,11 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePlaceById(userId: String, placeId: String): PlaceUiModel? {
+        val response = api.deletePlaceById(userId, placeId)
+        return response.body()?.toPlaceUiModel()
+    }
+
     override suspend fun addPlace(placeRequestDTO: PlaceRequestDTO): PlaceUiModel? {
         val response = api.addPlace(placeRequestDTO)
         return if (response.isSuccessful) {

@@ -22,6 +22,11 @@ interface PlacesRepository {
         userId: String
     ): List<PlaceUiModel>
 
+    suspend fun deletePlaceById(
+        userId: String,
+        placeId: String
+    ): PlaceUiModel?
+
     suspend fun addPlace(
         placeRequestDTO: PlaceRequestDTO
     ): PlaceUiModel?

@@ -109,7 +109,7 @@ class FragmentAddPlaceDetails :
             startAddingPlace.collectIn(viewLifecycleOwner) {
                 startFetchingFeedData(it.first, it.second)
                 requireActivity().showToast("Your Place Is Adding")
-           //     requireActivity().finish()
+                requireActivity().finish()
             }
             currentScreenName.collectIn(viewLifecycleOwner) {
                 if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
@@ -214,7 +214,7 @@ class FragmentAddPlaceDetails :
             .putString(UploadWorker.FOLDER_NAME, "places_videos")
             .build()
         val uploadImageFileWorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>().setInputData(imageFileFolder)
+            OneTimeWorkRequestBuilder<UploadWorker>().addTag(UploadWorker.TAG).setInputData(imageFileFolder)
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
         val uploadVideoFileWorkRequest =
@@ -237,11 +237,12 @@ class FragmentAddPlaceDetails :
 
 // Create observers for each work request
         val uploadImageObserver = createWorkInfoObserver("UploadImageWorker", uploadImageFileWorkRequest.id)
-//        val uploadVideoObserver = createWorkInfoObserver("UploadVideoWorker", uploadVideoFileWorkRequest.id)
+        val uploadVideoObserver = createWorkInfoObserver("UploadVideoWorker", uploadVideoFileWorkRequest.id)
         val addPlaceObserver = createWorkInfoObserver("AddPlaceWorker", addPlaceWorkRequest.id)
 
 // Observe the work request states
         uploadImageWorkInfoLiveData.observe(viewLifecycleOwner, uploadImageObserver)
+        uploadVideoWorkInfoLiveData.observe(viewLifecycleOwner, uploadVideoObserver)
         addPlaceWorkInfoLiveData.observe(viewLifecycleOwner, addPlaceObserver)
 
 
@@ -249,7 +250,6 @@ class FragmentAddPlaceDetails :
 
     private fun createWorkInfoObserver(workerName: String, requestId: UUID): Observer<WorkInfo> {
         return Observer { workInfo ->
-            Log.i("JAPAN", "createWorkInfoObserver: ${workerName} is ${workInfo.state}")
             when (workInfo.state) {
                 WorkInfo.State.ENQUEUED -> {
                     // Work request is enqueued

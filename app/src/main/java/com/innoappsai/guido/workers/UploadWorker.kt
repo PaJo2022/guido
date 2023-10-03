@@ -35,6 +35,7 @@ class UploadWorker @AssistedInject constructor(
         private const val NOTIFICATION_ID = 1
         private const val PUSH_NOTIFICATION_ID = 2
         private const val NOTIFICATION_CHANNEL_NAME = "FILE UPLOAD WORKER"
+        const val TAG = "UploadWorker"
         const val FILE_URI = "FILE_URI"
         const val FOLDER_NAME = "FOLDER_NAME"
         const val OUTPUT_NAME = "OUTPUT_NAME"

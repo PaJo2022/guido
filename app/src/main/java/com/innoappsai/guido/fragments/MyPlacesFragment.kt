@@ -40,6 +40,7 @@ class MyPlacesFragment : BaseFragment<FragmentMyPlacesBinding>(FragmentMyPlacesB
                 binding.tvNoPlacesAdded.isVisible = it.isEmpty()
                 placesAdapter.setNearByPlaces(it)
             }
+
         }
         placesAdapter.setOnLandMarkClicked {
             Bundle().apply {
@@ -54,6 +55,7 @@ class MyPlacesFragment : BaseFragment<FragmentMyPlacesBinding>(FragmentMyPlacesB
             }
         }
         binding.apply {
+            ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             rvPlaces.apply {
                 adapter = placesAdapter
                 layoutManager =

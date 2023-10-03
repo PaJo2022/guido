@@ -77,6 +77,10 @@ class LocationDetailsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bottomSheetFragment = BottomPlaceOptions()
+        bottomSheetFragment.setOnSuccessFullPlaceDeleted {
+            parentFragmentManager.popBackStack()
+        }
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
         binding.apply {
@@ -115,42 +119,52 @@ class LocationDetailsFragment :
                 }
                 adapterPlaceVideos.setPlaceVideos(videoUrls)
             }
-            singlePlaceData.observe(viewLifecycleOwner) {
+            singlePlaceData.observe(viewLifecycleOwner) {placeUiModel->
                 binding.apply {
-                    tvPlaceName.text = it?.name
+                    ivPlaceOptions.apply {
+                        isVisible = placeUiModel?.createdBy == appPrefs.userId
+                        setOnClickListener {
+
+                            val bundle = Bundle()
+                            bundle.putParcelable("PLACE_DATA", placeUiModel)
+                            bottomSheetFragment.arguments = bundle
+                            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+                        }
+                    }
+                    tvPlaceName.text = placeUiModel?.name
                     tvPlaceName.isSelected = true
                     tvPlaceAddress.makeTextViewClickableLink(
-                        it?.address,
+                        placeUiModel?.address,
                         errorMessage = "No Address Found"
                     ) {
-                        openDirection(requireContext(), it?.name, it?.latLng)
+                        openDirection(requireContext(), placeUiModel?.name, placeUiModel?.latLng)
                     }
                     tvPlaceMobile.makeTextViewClickableLink(
-                        it?.callNumber, errorMessage = "No Phone Number Found"
+                        placeUiModel?.callNumber, errorMessage = "No Phone Number Found"
                     ) {
                         requestCallPermissionAndMakeCall()
                     }
                     tvPlaceWebsite.makeTextViewClickableLink(
-                        it?.website,
+                        placeUiModel?.website,
                         errorMessage = "No website found"
                     ) {
-                        openWebsite(requireContext(), it?.website.toString())
+                        openWebsite(requireContext(), placeUiModel?.website.toString())
                     }
-                    llPlaceReviews.isVisible = !it?.reviews.isNullOrEmpty()
+                    llPlaceReviews.isVisible = !placeUiModel?.reviews.isNullOrEmpty()
                 }
-                it?.photos?.let { photos ->
+                placeUiModel?.photos?.let { photos ->
                     adapterImageSlider.setPlacePhotos(photos)
                 }
-                it?.placeDescription?.let {
+                placeUiModel?.placeDescription?.let {
                     binding.llAboutThePlace.isVisible = true
                     binding.tvPlaceDescription.text = it
                 }
-                it?.videos?.let { videos ->
+                placeUiModel?.videos?.let { videos ->
                     adapterVideos.setVideos(
                         ArrayList(videos.map { video -> Uri.parse(video) })
                     )
                 }
-                it?.reviews?.let {
+                placeUiModel?.reviews?.let {
                     adapterPlaceReview.setPlaceReviews(it)
                 }
 

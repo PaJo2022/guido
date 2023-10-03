@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
+import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,23 +20,21 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.i("JAPAN", "onNewIntent: ${intent?.getStringExtra("placeId")}")
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
-        Log.i("JAPAN", "onNewIntent: ${intent?.data}")
+
         openNavFragment(
             HomeFragment(),
             supportFragmentManager,
             "HomeFragment",
             findViewById<FrameLayout>(R.id.main_fl_id)
         )
+
 
     }
 

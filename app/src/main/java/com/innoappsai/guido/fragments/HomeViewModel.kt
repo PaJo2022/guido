@@ -44,7 +44,6 @@ class HomeViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    var bottomsheetPlaceListLastPosition = 0
     var lastSearchLocationLatLng: LatLng? = null
 
     private val _nearByPlacesInGroup: MutableLiveData<List<PlaceTypeUiModel>> =
@@ -85,6 +84,7 @@ class HomeViewModel @Inject constructor(
 
     private val nearByPlacesListInGroup: ArrayList<PlaceTypeUiModel> = ArrayList()
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
+    private var listOfPlaces: ArrayList<PlaceUiModel> = ArrayList()
 
     private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
     val dataState: SharedFlow<DataState> get() = _dataState
@@ -144,16 +144,18 @@ class HomeViewModel @Inject constructor(
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
             nearByMarkerList.clear()
+            listOfPlaces.clear()
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
             val job2 = async {
                 placesRepository.fetchPlacesNearMe(
                     latitude, longitude, radius, interestList.map { it.id }
                 )
             }
-            val attraction = job2.await()
-            val latLangs = attraction.map { it.latLng }
+            listOfPlaces = job2.await() as ArrayList<PlaceUiModel>
+            val latLangs = listOfPlaces.map { it.latLng }
 
-            val placesInGroupData = async { mapPlacesByType(interestList,attraction) }.await()
+            val placesInGroupData = async { mapPlacesByType(interestList,listOfPlaces) }.await()
+            nearByPlacesListInGroup.addAll(placesInGroupData)
             placesInGroupData.forEach {placeTypeUiModel->
                 nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
             }
@@ -162,10 +164,34 @@ class HomeViewModel @Inject constructor(
             if (placesInGroupData.isEmpty()) {
                 _dataState.emit(DataState.EMPTY_DATA)
             }
-            _nearByPlacesInGroup.postValue(ArrayList(placesInGroupData))
+            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
             _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
 
+        }
+    }
+
+    fun removePlaceUsingPlaceId(placeId : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            nearByPlacesListInGroup.clear()
+            nearByPlacesList.clear()
+            nearByMarkerList.clear()
+            listOfPlaces.removeIf { it.placeId == placeId }
+            val latLangs = listOfPlaces.map { it.latLng }
+            val interestList = placesRepository.getAllSavedPlaceTypePreferences()
+            val placesInGroupData = async { mapPlacesByType(interestList,listOfPlaces) }.await()
+            nearByPlacesListInGroup.addAll(placesInGroupData)
+            placesInGroupData.forEach {placeTypeUiModel->
+                nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
+            }
+
+            nearByMarkerList.addAll(latLangs)
+            if (placesInGroupData.isEmpty()) {
+                _dataState.emit(DataState.EMPTY_DATA)
+            }
+            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+            _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
         }
     }
 

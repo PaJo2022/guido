@@ -6,6 +6,7 @@ import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -49,5 +50,13 @@ interface GuidoApi {
     suspend fun fetchPlacesByUserId(
         @Query("userId", encoded = true) userId : String
     ): Response<List<PlaceDTO>>
+
+    @DELETE("delete-place-by-id")
+    suspend fun deletePlaceById(
+        @Query("userId", encoded = true) userId : String,
+        @Query("placeId", encoded = true) placeId : String
+    ): Response<PlaceDTO>
+
+
 
 }

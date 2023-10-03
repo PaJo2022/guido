@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -47,6 +49,7 @@ import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -72,7 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private var googleMap : GoogleMap ?= null
-
+    private lateinit var workManager: WorkManager
 
 
     private val zoom = 13f
@@ -85,6 +88,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
+        workManager = WorkManager.getInstance(requireContext())
         checkLocationPermission()
     }
 
@@ -438,7 +442,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 openNavFragment(
                     LocationDetailsFragment(),
                     childFragmentManager,
-                    "ProfileFragment",
+                    "LocationDetailsFragment",
                     binding.flId,
                     this
                 )
@@ -450,7 +454,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 openNavFragment(
                     LocationDetailsFragment(),
                     childFragmentManager,
-                    "ProfileFragment",
+                    "LocationDetailsFragment",
                     binding.flId,
                     this
                 )
