@@ -67,8 +67,8 @@ class HomeViewModel @Inject constructor(
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
 
-    private val _currentLatLng: MutableLiveData<LatLng> = MutableLiveData()
-    val currentLatLng: LiveData<LatLng> get() = _currentLatLng
+    private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isLoading: SharedFlow<Boolean> get() = _isLoading
 
 
     private val _placeUiState: MutableLiveData<PlaceUiState> = MutableLiveData()
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
     private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
     val dataState: SharedFlow<DataState> get() = _dataState
 
-    fun fetchCurrentAddressFromGeoCoding(
+    private fun fetchCurrentAddressFromGeoCoding(
         latitude: Double,
         longitude: Double,
     ) {
@@ -124,22 +124,17 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun formatInterestString(input: String): String {
-        val lowercaseInput = input.lowercase()
-        val words = lowercaseInput.split(" ")
-        val formattedString = words.joinToString("_")
-        return if (words.size == 1) lowercaseInput else formattedString
-    }
 
 
-    @SuppressLint("MissingPermission")
     fun fetchPlacesDetailsNearMe(
         latitude: Double,
         longitude: Double
     ) {
         val radius = appPrefs.prefDistance
+        lastSearchLocationLatLng = LatLng(latitude, longitude)
         fetchCurrentAddressFromGeoCoding(latitude, longitude)
         viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.emit(true)
             _dataState.emit(DataState.LOADING)
             nearByPlacesListInGroup.clear()
             nearByPlacesList.clear()
@@ -167,6 +162,7 @@ class HomeViewModel @Inject constructor(
             _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
             _nearByPlaces.postValue(ArrayList(nearByPlacesList))
             _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
+            _isLoading.emit(false)
 
         }
     }
@@ -227,33 +223,7 @@ class HomeViewModel @Inject constructor(
 
 
 
-    private fun concatenatePlaceTypeIds(placeTypes: List<PlaceType>): String {
-        val ids = placeTypes.map { it.id }
-        return ids.joinToString("|")
-    }
 
-
-
-    fun fetchPlaceDetailsById(placeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val placeFields = Arrays.asList(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.LAT_LNG,
-                Place.Field.ADDRESS
-            )
-            val request = FetchPlaceRequest.builder(placeId, placeFields).build()
-            val place = awaitPlaceDetailsConnection(request) ?: return@launch
-            lastSearchLocationLatLng = place.latLng
-            place.latLng?.let {
-                _moveToLocation.postValue(Pair(it, true))
-                fetchPlacesDetailsNearMe(
-                    it.latitude, it.longitude
-                )
-            }
-
-        }
-    }
 
     private suspend fun awaitPlaceDetailsConnection(request: FetchPlaceRequest): Place? {
         return suspendCoroutine {
@@ -275,7 +245,6 @@ class HomeViewModel @Inject constructor(
             MyApp.userCurrentLatLng = currentLocation
             currentLocation?.let { latLng ->
                 _moveToLocation.postValue(Pair(latLng, shouldAnimate))
-                _currentLatLng.postValue(latLng)
                 fetchPlacesDetailsNearMe(
                     latLng.latitude, latLng.longitude
                 )

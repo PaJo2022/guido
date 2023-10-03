@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,6 +35,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
@@ -49,7 +49,6 @@ import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
-import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -218,6 +217,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
         binding.apply {
+            swipeRefreshLayout.isEnabled = false
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
                 askForNotificationPermission()
             }
@@ -250,7 +250,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     binding.flId
                 )
             }
-            bottomsheetPlaceList.bottomSheet
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
@@ -359,8 +358,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun observeData() {
         viewModel.apply {
-            getUserData().collectIn(viewLifecycleOwner){
-                Glide.with(requireContext()).load(it?.profilePicture).centerCrop().placeholder(R.drawable.ic_profile_img_placeholder).error(R.drawable.ic_profile_img_placeholder).into(binding.ivUserProfileImage)
+            isLoading.collectIn(viewLifecycleOwner) {
+                binding.swipeRefreshLayout.isRefreshing = it
+            }
+            getUserData().collectIn(viewLifecycleOwner) {
+                Glide.with(requireContext()).load(it?.profilePicture).centerCrop()
+                    .placeholder(R.drawable.ic_profile_img_placeholder)
+                    .error(R.drawable.ic_profile_img_placeholder).into(binding.ivUserProfileImage)
             }
             placeUiState.observe(viewLifecycleOwner) {
                 binding.rvPlaceCards.isVisible = it == HomeViewModel.PlaceUiState.HORIZONTAL
@@ -622,7 +626,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
 
     override fun onMarkerClick(currentMarker: Marker): Boolean {
-        viewModel.lastSearchLocationLatLng = currentMarker.position
         viewModel.showHorizontalUi()
         viewModel.onMarkerClicked(currentMarker.id)
         return false

@@ -60,8 +60,8 @@ class AddPlaceViewModel @Inject constructor(
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
 
-    private val _searchedFormattedAddress: MutableLiveData<String> = MutableLiveData()
-    val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
+    private val _searchedFormattedAddress: MutableLiveData<String?> = MutableLiveData()
+    val searchedFormattedAddress: LiveData<String?> = _searchedFormattedAddress
 
     //Place DTO Data
     private var globalPlaceName: String = ""

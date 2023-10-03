@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.innoappsai.guido.R
@@ -36,8 +34,12 @@ class AddPlaceActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+        binding.swipeRefreshLayout.isEnabled = false
 
+    }
 
+    fun toggleLoading(isLoading: Boolean) {
+        binding.swipeRefreshLayout.isRefreshing = isLoading
     }
 
 

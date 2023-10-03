@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.SnapHelper
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
@@ -84,7 +82,7 @@ class LocationDetailsFragment :
         val placeUiModel = arguments?.getParcelable<PlaceUiModel>("LANDMARK_DATA")
         setUpViewPager()
         binding.apply {
-            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             rvPlaceReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -156,7 +154,7 @@ class LocationDetailsFragment :
                     adapterImageSlider.setPlacePhotos(photos)
                 }
                 placeUiModel?.placeDescription?.let {
-                    binding.llAboutThePlace.isVisible = true
+                    binding.llPlaceAboutDescription.isVisible = true
                     binding.tvPlaceDescription.text = it
                 }
                 placeUiModel?.videos?.let { videos ->
@@ -174,9 +172,6 @@ class LocationDetailsFragment :
             }
         }
 
-        adapterPlaceImages.setOnPhotoClicked { photoUrl ->
-
-        }
 
         addOnBackPressedCallback {
             parentFragmentManager.popBackStack()

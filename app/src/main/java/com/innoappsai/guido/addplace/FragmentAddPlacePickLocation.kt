@@ -17,10 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesAutoCompleteAdapter
@@ -79,9 +77,10 @@ class FragmentAddPlacePickLocation :
                 )
             }
             searchedFormattedAddress.observe(viewLifecycleOwner) {
-                binding.tvLocationFullAddress.text = it
+                binding.tvLocationFullAddress.text = if(it == null) "Searching..." else it
             }
             isLoading.collectIn(viewLifecycleOwner) {
+                (requireActivity() as AddPlaceActivity).toggleLoading(it)
                 binding.tvNext.toggleEnableAndAlpha(!it)
             }
         }

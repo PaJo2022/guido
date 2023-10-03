@@ -12,6 +12,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/card_color8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Left ImageView -->
+            <ImageView
+                android:id="@+id/iv_arrow_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:src="@drawable/ic_arrow_back" />
+
+            <!-- Center TextView -->
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/font_bold"
+                android:text="Place Details"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/_16ssp" />
+
+            <!-- Right ImageView -->
+            <ImageView
+                android:id="@+id/iv_place_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:visibility="gone"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:fontFamily="@font/font_regular"
+                android:src="@drawable/ic_edit_black"
+                app:tint="@color/white" />
+
+
+        </androidx.appcompat.widget.Toolbar>
+
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/iv_place_image"
@@ -20,7 +63,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 
         <com.google.android.material.tabs.TabLayout
@@ -35,24 +78,8 @@
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp" />
 
-        <ImageView
-            android:id="@+id/ic_arrow_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_12sdp"
-            android:src="@drawable/ic_arrow_left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_place_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_12sdp"
-            android:visibility="gone"
-            android:src="@drawable/ic_edit_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
 
         <androidx.cardview.widget.CardView
@@ -169,6 +196,7 @@
             android:id="@+id/ll_place_about_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_24sdp"
             app:cardBackgroundColor="@color/white"
