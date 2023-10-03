@@ -69,8 +69,6 @@ class BottomPlaceOptions : BottomSheetDialogFragment() {
             tvPlaceName.text = viewModel.placeData?.name
             llDeletePlace.setOnClickListener {
                 viewModel.deletePlaceById(viewModel.placeData?.placeId ?: return@setOnClickListener)
-//                dismiss()
-//                parentFragmentManager.popBackStack()
             }
         }
 

@@ -1,12 +1,10 @@
 package com.innoappsai.guido.workers
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -15,7 +13,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.dhandadekho.mobile.utils.Resource
 import com.innoappsai.guido.R
@@ -138,9 +135,9 @@ class UploadWorker @AssistedInject constructor(
             createChannel()
         }
        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(title)
-            .setTicker(title)
-            .setContentText("Udescription")
+           .setContentTitle(title)
+           .setTicker(title)
+           .setContentText(description)
             .setSmallIcon(R.drawable.ic_website)
             .setOngoing(true)
             .build()

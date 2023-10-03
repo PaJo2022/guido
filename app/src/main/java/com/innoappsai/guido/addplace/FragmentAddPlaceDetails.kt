@@ -1,15 +1,12 @@
 package com.innoappsai.guido.addplace
 
 import android.Manifest
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.RadioButton
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
@@ -31,6 +28,7 @@ import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceDetailsBinding
+import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.AddPlaceWorker
 import com.innoappsai.guido.workers.UploadWorker
@@ -68,7 +66,7 @@ class FragmentAddPlaceDetails :
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
             tvPickVideos.setOnClickListener {
-                pickVideosFromGallery()
+                requestGalleryPermissionForVideoLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
 
 
@@ -141,17 +139,6 @@ class FragmentAddPlaceDetails :
 
     }
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            // Use the returned uri.
-            val uriContent = result.uriContent ?: return@registerForActivityResult
-            viewModel.addImageFilesToList(uriContent)
-        } else {
-            // An error occurred.
-            val exception = result.error
-
-        }
-    }
 
 
     private val requestCameraPermissionLauncher =
@@ -159,9 +146,17 @@ class FragmentAddPlaceDetails :
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                getImageFromCameraAndCrop()
+                cropImage.launch(
+                    CropImageContractOptions(
+                        null,
+                        cropImageOptions = CropImageOptions(
+                            imageSourceIncludeGallery = false,
+                            cropShape = CropImageView.CropShape.OVAL
+                        )
+                    )
+                )
             } else {
-
+                requireContext().openAppSettings()
             }
         }
 
@@ -170,36 +165,27 @@ class FragmentAddPlaceDetails :
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                getImageFromGalleryAndCrop()
+                multiplePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             } else {
-
+                requireContext().openAppSettings()
             }
         }
 
-    private fun getImageFromCameraAndCrop() {
-        cropImage.launch(
-            CropImageContractOptions(
-                null,
-                cropImageOptions = CropImageOptions(
-                    imageSourceIncludeGallery = false,
-                    cropShape = CropImageView.CropShape.OVAL
-                )
-            )
-        )
-    }
 
-    private fun getImageFromGalleryAndCrop() {
-        cropImage.launch(
-            CropImageContractOptions(
-                null,
-                cropImageOptions = CropImageOptions(
-                    imageSourceIncludeCamera = false,
-                    cropShape = CropImageView.CropShape.OVAL
+    private val requestGalleryPermissionForVideoLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                multipleVideoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                 )
-            )
-        )
-    }
-
+            } else {
+                requireContext().openAppSettings()
+            }
+        }
 
     private fun startFetchingFeedData(imageUri: Array<String>, videoUri: Array<String>) {
         val imageFileFolder = Data.Builder()
@@ -230,65 +216,47 @@ class FragmentAddPlaceDetails :
             .enqueue()
 
 
-        // Observe the states of your work requests
-        val uploadImageWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(uploadImageFileWorkRequest.id)
-        val uploadVideoWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(uploadVideoFileWorkRequest.id)
-        val addPlaceWorkInfoLiveData = workManager.getWorkInfoByIdLiveData(addPlaceWorkRequest.id)
 
-// Create observers for each work request
-        val uploadImageObserver = createWorkInfoObserver("UploadImageWorker", uploadImageFileWorkRequest.id)
-        val uploadVideoObserver = createWorkInfoObserver("UploadVideoWorker", uploadVideoFileWorkRequest.id)
-        val addPlaceObserver = createWorkInfoObserver("AddPlaceWorker", addPlaceWorkRequest.id)
-
-// Observe the work request states
-        uploadImageWorkInfoLiveData.observe(viewLifecycleOwner, uploadImageObserver)
-        uploadVideoWorkInfoLiveData.observe(viewLifecycleOwner, uploadVideoObserver)
-        addPlaceWorkInfoLiveData.observe(viewLifecycleOwner, addPlaceObserver)
 
 
     }
 
-    private fun createWorkInfoObserver(workerName: String, requestId: UUID): Observer<WorkInfo> {
-        return Observer { workInfo ->
-            when (workInfo.state) {
-                WorkInfo.State.ENQUEUED -> {
-                    // Work request is enqueued
-                    // You can perform actions when the work request is enqueued
-                }
 
-                WorkInfo.State.RUNNING -> {
-                    // Work request is running
-                    // You can perform actions when the work request is running
-                }
 
-                WorkInfo.State.SUCCEEDED -> {
-                    // Work request completed successfully
-                    // You can perform actions when the work request is completed successfully
-                }
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            // Use the returned uri.
+            val uriContent = result.uriContent ?: return@registerForActivityResult
+            viewModel.addSingleImageFileToList(uriContent)
+        } else {
+            // An error occurred.
+            val exception = result.error
 
-                WorkInfo.State.FAILED -> {
-                    // Work request failed
-                    // You can perform actions when the work request fails
-                }
-
-                else -> {
-                    // Handle other states if needed
-                }
-            }
         }
     }
 
-    private fun pickVideosFromGallery() {
-        pickVideosLauncher.launch("video/*")
-    }
 
-    private val pickVideosLauncher =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri>? ->
-            uris?.let {
+    private val multiplePhotoPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {
+            if (it != null) {
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                it.forEach { uri ->
+                    context?.contentResolver?.takePersistableUriPermission(uri, flag)
+                }
+                viewModel.addImageFilesToList(it)
+            }
+        }
+
+    private val multipleVideoPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {
+            if (it != null) {
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                it.forEach { uri ->
+                    context?.contentResolver?.takePersistableUriPermission(uri, flag)
+                }
                 viewModel.addVideoUris(it)
             }
         }
-
 
     override fun onDestroy() {
         super.onDestroy()

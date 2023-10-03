@@ -160,13 +160,24 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun addImageFilesToList(fileUri : Uri) {
+    fun addSingleImageFileToList(fileUri : Uri) {
         viewModelScope.launch {
-            if (imageFileArrayList.size <= 10) {
+            if (imageFileArrayList.size < 5) {
                 imageFileArrayList.add(fileUri)
                 _placeImages.postValue(imageFileArrayList)
             } else {
                 _error.emit("Max 10 Images Can Be Uploaded")
+            }
+        }
+    }
+
+    fun addImageFilesToList(fileUri : List<Uri>) {
+        viewModelScope.launch {
+            if (imageFileArrayList.size <= 5 && fileUri.size <= 5) {
+                imageFileArrayList.addAll(fileUri)
+                _placeImages.postValue(imageFileArrayList)
+            } else {
+                _error.emit("Max 5 Images Can Be Uploaded")
             }
         }
     }
@@ -259,7 +270,7 @@ class AddPlaceViewModel @Inject constructor(
 
     fun addVideoUris(fileUri: List<Uri>) {
         viewModelScope.launch {
-            if (videoFileArrayList.size <= 10) {
+            if (videoFileArrayList.size <= 3 && fileUri.size <= 3) {
                 videoFileArrayList.addAll(fileUri)
                 _placeVideos.postValue(videoFileArrayList)
             } else {

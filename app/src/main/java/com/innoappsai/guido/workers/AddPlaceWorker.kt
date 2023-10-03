@@ -7,20 +7,19 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
+import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -51,7 +50,7 @@ class AddPlaceWorker @AssistedInject constructor(
 
             val isPlaceAdded = placesRepository.addPlace(placeDTO)
             if (isPlaceAdded != null) {
-                sendPushNotificationOnSuccessFullPlaceAdd(placeDTO.placeName.toString(),placeDTO.placeId.toString())
+                sendPushNotificationOnSuccessFullPlaceAdd(placeDTO)
             }
             Result.success()
         } catch (e: Exception) {
@@ -60,16 +59,15 @@ class AddPlaceWorker @AssistedInject constructor(
         }
     }
 
-    private fun sendPushNotificationOnSuccessFullPlaceAdd(placeName: String,placeId : String) {
+    private fun sendPushNotificationOnSuccessFullPlaceAdd(placeDto: PlaceRequestDTO?) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val deepLinkIntent = Intent(context, MainActivity::class.java)
-        deepLinkIntent.putExtra("placeId", placeId)
-        deepLinkIntent.putExtra("placeName", placeName)
 
         val requestCode = 0 // You can change this value if needed
-        val flags = PendingIntent.FLAG_IMMUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
+        val flags =
+            PendingIntent.FLAG_IMMUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
         val pendingIntent = PendingIntent.getActivity(
             context,
             requestCode,
@@ -86,7 +84,7 @@ class AddPlaceWorker @AssistedInject constructor(
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_website)
             .setContentTitle("Place Is Added")
-            .setContentText("${placeName} is Added")
+            .setContentText("${placeDto?.placeName} is Added")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
