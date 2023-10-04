@@ -1,5 +1,6 @@
 package com.innoappsai.guido
 
+import com.innoappsai.guido.model.PlaceFeature
 import com.innoappsai.guido.model.PlaceType
 
 object Constants {
@@ -204,6 +205,15 @@ object Constants {
         PlaceType("primary_school", "Primary School", "Education", iconDrawable = R.drawable.ic_school),
         PlaceType("secondary_school", "Secondary School", "Education", iconDrawable = R.drawable.ic_school)
 
+    )
+
+
+    val placeFeaturesList = listOf(
+        PlaceFeature("Outdoor Sitting"),
+        PlaceFeature("Reservation"),
+        PlaceFeature("Wifi"),
+        PlaceFeature("Wheelchair Access"),
+        PlaceFeature("Vegetarian Friendly")
     )
 
 

@@ -25,11 +25,11 @@
 
          <!-- Left ImageView -->
          <ImageView
-             android:id="@+id/toolbar_left_image"
+             android:id="@+id/iv_arrow_back"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_gravity="start"
-             android:src="@drawable/ic_cross" />
+             android:src="@drawable/ic_arrow_back" />
 
          <!-- Center TextView -->
          <TextView
@@ -88,7 +88,7 @@
              android:id="@+id/et_place_name"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:inputType="text"
              android:text=""
              android:textColor="@color/color_primary"
              android:textColorHint="@color/color_primary"
@@ -126,7 +126,7 @@
              android:id="@+id/et_place_street_address"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:inputType="text"
              android:text=""
              android:textColor="@color/color_primary"
              android:textColorHint="@color/color_primary"
@@ -153,7 +153,7 @@
              android:id="@+id/et_place_place_city"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:inputType="text"
              android:text=""
              android:textColor="@color/color_primary"
              android:textColorHint="@color/color_primary"
@@ -180,7 +180,7 @@
              android:id="@+id/et_place_place_state"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:inputType="text"
              android:text=""
              android:textColor="@color/color_primary"
              android:textColorHint="@color/color_primary"
@@ -188,6 +188,32 @@
 
       </com.google.android.material.textfield.TextInputLayout>
 
+      <com.google.android.material.textfield.TextInputLayout
+          android:id="@+id/ti_layout_place_country"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/_8sdp"
+          android:hint="Country"
+          app:endIconMode="clear_text"
+          app:errorEnabled="true"
+          app:errorTextColor="@color/red"
+          app:helperText="700131"
+          app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_state"
+          app:layout_constraintStart_toStartOf="@+id/ti_layout_place_state"
+          app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_state">
+
+
+         <com.google.android.material.textfield.TextInputEditText
+             android:id="@+id/et_place_place_Country"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:inputType="text"
+             android:text=""
+             android:textColor="@color/color_primary"
+             android:textColorHint="@color/color_primary"
+             android:textSize="@dimen/_10sdp" />
+
+      </com.google.android.material.textfield.TextInputLayout>
 
       <com.google.android.material.textfield.TextInputLayout
           android:id="@+id/ti_layout_place_pincode"
@@ -199,16 +225,16 @@
           app:errorEnabled="true"
           app:errorTextColor="@color/red"
           app:helperText="700131"
-          app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_state"
-          app:layout_constraintStart_toStartOf="@+id/ti_layout_place_state"
-          app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_state">
+          app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_country"
+          app:layout_constraintStart_toStartOf="@+id/ti_layout_place_country"
+          app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_country">
 
 
          <com.google.android.material.textfield.TextInputEditText
              android:id="@+id/et_place_place_pincode"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:inputType="number"
              android:text=""
              android:textColor="@color/color_primary"
              android:textColorHint="@color/color_primary"

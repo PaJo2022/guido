@@ -50,11 +50,10 @@ class FragmentAddPlacePickLocation :
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
         binding.apply {
+            ivArrowBack.setOnClickListener { requireActivity().finish() }
             etSearchLocation.doOnTextChanged { text, start, before, count ->
                 if (!text.isNullOrEmpty()) {
                     searchLocationViewModel.getPredictions(text.toString())
-                } else {
-                    searchLocationViewModel.getLastSearchedPlaces()
                 }
             }
             rvPlaceSuggestions.apply {
@@ -63,6 +62,8 @@ class FragmentAddPlacePickLocation :
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
             tvNext.setOnClickListener {
+                binding.etSearchLocation.text = null
+                binding.rvPlaceSuggestions.isVisible = false
                 findNavController().navigate(R.id.fragmentChoosePlaceType)
             }
         }
@@ -77,7 +78,7 @@ class FragmentAddPlacePickLocation :
                 )
             }
             searchedFormattedAddress.observe(viewLifecycleOwner) {
-                binding.tvLocationFullAddress.text = if(it == null) "Searching..." else it
+                binding.tvLocationFullAddress.text = it ?: "Searching..."
             }
             isLoading.collectIn(viewLifecycleOwner) {
                 (requireActivity() as AddPlaceActivity).toggleLoading(it)

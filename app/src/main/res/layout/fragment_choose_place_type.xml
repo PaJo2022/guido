@@ -22,11 +22,11 @@
 
       <!-- Left ImageView -->
       <ImageView
-          android:id="@+id/toolbar_left_image"
+          android:id="@+id/iv_arrow_back"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="start"
-          android:src="@drawable/ic_cross" />
+          android:src="@drawable/ic_arrow_back" />
 
       <!-- Center TextView -->
       <TextView

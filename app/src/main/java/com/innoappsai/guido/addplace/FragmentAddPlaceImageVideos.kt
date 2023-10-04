@@ -27,6 +27,7 @@ import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceDetailsBinding
+import com.innoappsai.guido.databinding.FragmentAddPlaceImageVideosBinding
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.AddPlaceWorker
@@ -34,8 +35,8 @@ import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentAddPlaceDetails :
-    BaseFragment<FragmentAddPlaceDetailsBinding>(FragmentAddPlaceDetailsBinding::inflate) {
+class FragmentAddPlaceImageVideos :
+    BaseFragment<FragmentAddPlaceImageVideosBinding>(FragmentAddPlaceImageVideosBinding::inflate) {
 
     private val viewModel: AddPlaceViewModel by activityViewModels()
     private lateinit var adapterPlaceTypes: PlacesTypeGroupAdapter
@@ -58,40 +59,19 @@ class FragmentAddPlaceDetails :
 
         binding.apply {
             ivArrowBack.setOnClickListener { findNavController().popBackStack() }
-
+            tvPickImage.setOnClickListener {
+                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+            tvTakeImage.setOnClickListener {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+            tvPickVideos.setOnClickListener {
+                requestGalleryPermissionForVideoLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
 
 
             ivComplete.setOnClickListener {
-                val placeDescription = etPlaceDescription.text.toString()
-                val placeContactNumber = etPlaceContactNumber.text.toString()
 
-                val selectedRadioButtonId = priceRangeBtnGroup.checkedRadioButtonId
-                val selectedRadioButton =
-                    priceRangeBtnGroup.findViewById<RadioButton>(selectedRadioButtonId)
-                val placePriceRange = selectedRadioButton?.text.toString()
-
-                tiLayoutPlaceDescription.error = null
-                tiLayoutPlaceContactNumber.error = null
-
-                if (placeDescription.length < 10) {
-                    tiLayoutPlaceDescription.error = "Please enter Description for the Place"
-                    return@setOnClickListener
-                }
-                if (placeContactNumber.isEmpty()) {
-                    tiLayoutPlaceContactNumber.error = "Please enter contact number for the Place"
-                    return@setOnClickListener
-                }
-                if (placePriceRange.isEmpty()) {
-                    requireActivity().showToast("Please select the pricing for the Place")
-                    return@setOnClickListener
-                }
-
-//                viewModel.setPlaceDetails(
-//                    placeDescription,
-//                    placeContactNumber,
-//                    ,
-//                    placePriceRange
-//                )
             }
         }
         viewModel.apply {
@@ -120,12 +100,12 @@ class FragmentAddPlaceDetails :
 
 
     private fun setUpViewPager() {
-//        binding.rvPlaceImages.adapter = adapterImage
-//        binding.rvPlaceImages.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-//
-//
-//        binding.rvPlaceVideos.adapter = adapterVideo
-//        binding.rvPlaceVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.rvPlaceImages.adapter = adapterImage
+        binding.rvPlaceImages.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+
+        binding.rvPlaceVideos.adapter = adapterVideo
+        binding.rvPlaceVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
 
     }

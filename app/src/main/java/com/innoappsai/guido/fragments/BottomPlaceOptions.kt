@@ -22,6 +22,7 @@ class BottomPlaceOptions : BottomSheetDialogFragment() {
 
     private val viewModel: BottomPlaceOptionsViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val myPlaceViewModel: MyPlacesVideModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
 
     private var _binding: BottomsheetPalceOptionsBinding? = null
@@ -76,6 +77,9 @@ class BottomPlaceOptions : BottomSheetDialogFragment() {
             onPlaceDeleted.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast("${it} is deleted")
                 onSuccessFullPlaceDeleted?.invoke()
+                myPlaceViewModel.removePlaceUsingPlaceId(
+                    viewModel.placeData?.placeId ?: return@collectIn
+                )
                 homeViewModel.removePlaceUsingPlaceId(
                     viewModel.placeData?.placeId ?: return@collectIn
                 )

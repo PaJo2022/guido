@@ -30,6 +30,7 @@ class FragmentChoosePlaceType :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+            ivArrowBack.setOnClickListener { findNavController().popBackStack() }
             rvPlaceTypes.apply {
                 adapter = adapterPlaceTypes
                 layoutManager =

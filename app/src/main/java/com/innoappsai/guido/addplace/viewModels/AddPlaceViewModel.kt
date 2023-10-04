@@ -63,17 +63,22 @@ class AddPlaceViewModel @Inject constructor(
     val searchedFormattedAddress: LiveData<String?> = _searchedFormattedAddress
 
     //Place DTO Data
-    private var globalPlaceName: String = ""
-    private var globalPlaceStreetAddress: String = ""
-    private var globalPlaceCityName: String = ""
-    private var globalPlaceStateName: String = ""
-    private var globalPlaceCountryName: String = ""
-    private var globalPlacePinCode: String = ""
-    private var globalPlaceDescription: String = ""
-    private var globalPlaceContactNumber: String = ""
-    private var globalPlaceWebsite: String = ""
-    private var globalPlacePriceRange: String = ""
-    private var globalPlaceType: String = ""
+    private var globalPlaceName: String ?=null
+    private var globalPlaceStreetAddress: String ?=null
+    private var globalPlaceCityName: String ?=null
+    private var globalPlaceStateName: String ?=null
+    private var globalPlaceCountryName: String ?=null
+    private var globalPlacePinCode: String ?=null
+    private var globalPlaceDescription: String ?=null
+    private var globalPlaceContactNumber: String ?=null
+    private var globalPlaceWebsite: String ?=null
+    private var globalPlaceInstagram: String ?=null
+    private var globalPlaceFacebook: String ?=null
+    private var globalPlaceBusinessEmail: String ?=null
+    private var globalPlaceBusinessOwner: String ?=null
+    private var globalPlaceBusinessSpecialNotes: String ?=null
+    private var globalPlacePriceRange: String ?=null
+    private var globalPlaceType: String ?=null
     private var globalPlaceLatitude: Double? = null
     private var globalPlaceLongitude: Double? = null
 
@@ -138,18 +143,21 @@ class AddPlaceViewModel @Inject constructor(
         placeStreetAddress: String,
         placeCityName: String,
         placeStateName: String,
+        placeCountryName: String,
         placePinCode: String
     ) {
         globalPlaceName = placeName
         globalPlaceStreetAddress = placeStreetAddress
         globalPlaceCityName = placeCityName
         globalPlaceStateName = placeStateName
+        globalPlaceCountryName = placeCountryName
         globalPlacePinCode = placePinCode
         viewModelScope.launch {
             if (!listOf(
                     globalPlaceName,
                     globalPlaceStreetAddress,
                     globalPlaceCityName,
+                    globalPlaceCountryName,
                     globalPlaceStateName
                 ).any { it.isNullOrEmpty() }
             ) {
@@ -182,54 +190,20 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun setPlaceDetails(
-        placeDescription: String,
-        placeContactNumber: String,
-        placeWebsite: String,
-        placePriceRange: String
+    fun setMoreDetails(
+        placeInstagram: String,
+        placeFacebook: String,
+        placeBusinessEmail: String,
+        placeOwner: String,
+        placeSpecialNotes: String
     ) {
-        globalPlaceDescription = placeDescription
-        globalPlaceContactNumber = placeContactNumber
-        globalPlaceWebsite = placeWebsite
-        globalPlacePriceRange = placePriceRange
+        globalPlaceInstagram = placeInstagram
+        globalPlaceFacebook = placeFacebook
+        globalPlaceBusinessEmail = placeBusinessEmail
+        globalPlaceBusinessOwner = placeOwner
+        globalPlaceBusinessSpecialNotes = placeSpecialNotes
         viewModelScope.launch {
-            if (!listOf(
-                    globalPlaceDescription,
-                    globalPlaceContactNumber,
-                    globalPlacePriceRange
-                ).any { it.isEmpty() }
-            ) {
-                placeRequestDTO = PlaceRequestDTO(
-                    contactNumber = globalPlaceContactNumber,
-                    website = globalPlaceWebsite,
-                    createdBy = appPrefs.userId,
-                    location = PlaceRequestLocation(
-                        coordinates = listOf(
-                            globalPlaceLongitude ?: 0.0,
-                            globalPlaceLatitude ?: 0.0
-                        )
-                    ),
-                    placeDescription = globalPlaceDescription,
-                    placeAddress = globalPlaceStreetAddress,
-                    placeCity = globalPlaceCityName,
-                    placeState = globalPlaceStateName,
-                    placeCountry = globalPlaceCountryName,
-                    placeName = globalPlaceName,
-                    placeId = UUID.randomUUID().toString(),
-                    rating = 0.0,
-                    photos = null,
-                    pricingType = globalPlacePriceRange,
-                    videos = emptyList(),
-                    types = listOf(globalPlaceType)
-                )
-                val imageUriArray = imageFileArrayList.map { it.toString() }.toTypedArray()
-                val videoUriArray = videoFileArrayList.map { it.toString() }.toTypedArray()
-                MyApp.placeRequestDTO = placeRequestDTO
-                _startAddingPlace.emit(Pair(imageUriArray,videoUriArray))
-                _currentScreenName.emit(PlaceAddScreenName.COMPLETE(placeRequestDTO!!,imageUriArray,videoUriArray))
-            } else {
-                _error.emit("Please Enter All The Details")
-            }
+            _currentScreenName.emit(PlaceAddScreenName.ADD_IMAGE_VIDEOS)
         }
     }
 
@@ -273,6 +247,7 @@ class AddPlaceViewModel @Inject constructor(
     fun getStreetAddress() = globalPlaceStreetAddress
     fun getCityName() = globalPlaceCityName
     fun getStateName() = globalPlaceStateName
+    fun getCountryName() = globalPlaceCountryName
     fun onGoogleMapMoving() {
         viewModelScope.launch {
             _isLoading.emit(true)
@@ -295,6 +270,8 @@ class AddPlaceViewModel @Inject constructor(
         object ADD_TYPES : PlaceAddScreenName()
         object ADD_ADDRESS : PlaceAddScreenName()
         object ADD_DETAILS : PlaceAddScreenName()
+        object ADD_SOCIAL_DETAILS : PlaceAddScreenName()
+        object ADD_IMAGE_VIDEOS : PlaceAddScreenName()
         data class COMPLETE(val placeRequestDTO: PlaceRequestDTO,val imageUri : Array<String>,val videoUri :Array<String>) : PlaceAddScreenName()
 
     }

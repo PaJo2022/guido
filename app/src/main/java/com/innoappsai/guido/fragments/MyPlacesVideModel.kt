@@ -14,6 +14,7 @@ import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiType
 import com.innoappsai.guido.model.placesUiModel.addUiType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +27,7 @@ class MyPlacesVideModel @Inject constructor(
 ) : ViewModel() {
 
 
+    private var places: ArrayList<PlaceUiModel> = ArrayList()
     private val _nearByPlacesInGroup: MutableLiveData<List<PlaceTypeUiModel>> =
         MutableLiveData()
     val nearByPlacesInGroup: LiveData<List<PlaceTypeUiModel>> get() = _nearByPlacesInGroup
@@ -33,13 +35,14 @@ class MyPlacesVideModel @Inject constructor(
 
     fun fetchPlacesUsingUserId() {
         viewModelScope.launch {
-            val places = placesRepository.fetchPlacesUsingUserId(appPrefs.userId.toString())
+            places =
+                placesRepository.fetchPlacesUsingUserId(appPrefs.userId.toString()) as ArrayList<PlaceUiModel>
             val placesInGroupData = async { mapPlacesByType(places) }.await()
             _nearByPlacesInGroup.postValue(placesInGroupData)
         }
     }
 
-    private suspend fun mapPlacesByType(
+    private fun mapPlacesByType(
         places: List<PlaceUiModel>
     ): MutableList<PlaceTypeUiModel> {
         // Create a map to store places by type
@@ -67,6 +70,14 @@ class MyPlacesVideModel @Inject constructor(
         }
 
         return placeUiTypeUiModel
+    }
+
+    fun removePlaceUsingPlaceId(placeId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            places.removeIf { it.placeId == placeId }
+            val placesInGroupData = async { mapPlacesByType(places) }.await()
+            _nearByPlacesInGroup.postValue(placesInGroupData)
+        }
     }
 
 

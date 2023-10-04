@@ -30,20 +30,24 @@ class FragmentAddPlaceAddressDetails :
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            ivArrowBack.setOnClickListener { findNavController().popBackStack() }
             etPlaceStreetAddress.setText(viewModel.getStreetAddress())
             etPlacePlaceCity.setText(viewModel.getCityName())
             etPlacePlaceState.setText(viewModel.getStateName())
+            etPlacePlaceCountry.setText(viewModel.getCountryName())
             tvNext.setOnClickListener {
                 val placeName = binding.etPlaceName.text.toString()
                 val placeStreetAddress = binding.etPlaceStreetAddress.text.toString()
                 val placeCityName = binding.etPlacePlaceCity.text.toString()
                 val placeStateName = binding.etPlacePlaceState.text.toString()
+                val placeCountryName = binding.etPlacePlaceCountry.text.toString()
                 val placePinCode = binding.etPlacePlacePincode.text.toString()
 
 
                 tiLayoutPlaceName.error = null
                 tiLayoutPlaceStreetAddress.error = null
                 tiLayoutPlaceCity.error = null
+                tiLayoutPlaceCountry.error = null
                 tiLayoutPlaceState.error = null
 
                 if (placeName.isNullOrEmpty()) {
@@ -61,8 +65,10 @@ class FragmentAddPlaceAddressDetails :
                     tiLayoutPlaceCity.error = "Please Select Your Place City"
                     return@setOnClickListener
                 }
-
-
+                if (placeCountryName.isNullOrEmpty()) {
+                    tiLayoutPlaceCountry.error = "Please Select Your Place Country"
+                    return@setOnClickListener
+                }
                 if (placeStateName.isNullOrEmpty()) {
                     tiLayoutPlaceState.error = "Please Select Your Place State Name"
                     return@setOnClickListener
@@ -73,6 +79,7 @@ class FragmentAddPlaceAddressDetails :
                     placeStreetAddress,
                     placeCityName,
                     placeStateName,
+                    placeCountryName,
                     placePinCode
                 )
             }

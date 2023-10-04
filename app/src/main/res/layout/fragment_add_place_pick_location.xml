@@ -139,7 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:fontFamily="@font/font_regular"
-        android:text="Location Name"
+        android:text="Searching..."
         android:textColor="@color/color_primary"
         android:textSize="@dimen/_10ssp"
         app:layout_constraintEnd_toEndOf="parent"

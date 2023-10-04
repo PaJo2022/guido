@@ -6,7 +6,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyPlacesFragment : BaseFragment<FragmentMyPlacesBinding>(FragmentMyPlacesBinding::inflate) {
 
-    private val viewModel: MyPlacesVideModel by viewModels()
+    private val viewModel: MyPlacesVideModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
 
     @Inject
