@@ -43,13 +43,17 @@
                 android:textSize="@dimen/_16ssp" />
 
             <!-- Right ImageView -->
-            <ImageView
-                android:id="@+id/iv_complete"
-                android:layout_marginEnd="@dimen/_12sdp"
+            <TextView
+                android:id="@+id/tv_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:src="@drawable/ic_done" />
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:fontFamily="@font/font_regular"
+                android:text="Next"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/_16ssp" />
+
 
         </androidx.appcompat.widget.Toolbar>
 

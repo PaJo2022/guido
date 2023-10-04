@@ -59,7 +59,7 @@ class FragmentAddPlaceDetails :
 
 
 
-            ivComplete.setOnClickListener {
+            tvNext.setOnClickListener {
                 val placeDescription = etPlaceDescription.text.toString()
                 val placeContactNumber = etPlaceContactNumber.text.toString()
 
