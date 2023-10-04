@@ -43,20 +43,51 @@ class AddPlaceWorker @AssistedInject constructor(
             // Retrieve the list of byte arrays from input data
             val uploadedImageUrls = inputData.getStringArray("IMAGE_FILES")
             val uploadedVideoUrls = inputData.getStringArray("VIDEO_FILES")
+            val uploadedMapImageUrls = inputData.getStringArray("PLACE_MAP_IMAGE_FILES")
             val placeDTO = MyApp.placeRequestDTO ?: return Result.failure()
             setForeground(getForegroundInfo(applicationContext))
             placeDTO.photos = uploadedImageUrls?.toList()
             placeDTO.videos = uploadedVideoUrls?.toList()
+            placeDTO.placeMapImage = uploadedMapImageUrls?.firstOrNull()
 
             val isPlaceAdded = placesRepository.addPlace(placeDTO)
             if (isPlaceAdded != null) {
                 sendPushNotificationOnSuccessFullPlaceAdd(placeDTO)
+            }else{
+                sendErrorPushNotification("Something went wrong please try again!")
             }
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
+            sendErrorPushNotification(e.message ?: "Something Went Wrong!")
             Result.failure()
         }
+    }
+
+    private fun sendErrorPushNotification(message : String) {
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+
+
+
+        // Create a notification channel (required for Android 8.0 and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel()
+        }
+
+        // Build the notification
+        val notificationBuilder = NotificationCompat.Builder(context,
+            NOTIFICATION_CHANNEL_ID
+        )
+            .setSmallIcon(R.drawable.ic_website)
+            .setContentTitle("Error")
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(false)
+
+        // Show the notification
+        notificationManager.notify(PUSH_NOTIFICATION_ID, notificationBuilder.build())
     }
 
     private fun sendPushNotificationOnSuccessFullPlaceAdd(placeDto: PlaceRequestDTO?) {

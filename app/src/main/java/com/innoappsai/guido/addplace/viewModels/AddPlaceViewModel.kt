@@ -285,6 +285,7 @@ class AddPlaceViewModel @Inject constructor(
     fun getCityName() = globalPlaceCityName
     fun getStateName() = globalPlaceStateName
     fun getCountryName() = globalPlaceCountryName
+    fun getLatLong() = Pair(globalPlaceLatitude,globalPlaceLongitude)
     fun onGoogleMapMoving() {
         viewModelScope.launch {
             _isLoading.emit(true)

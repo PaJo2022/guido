@@ -12,6 +12,7 @@ data class PlaceUiModel(
     val placeId: String? = null,
     val name: String? = null,
     val latLng: LatLng? = null,
+    val placeMapImage: String? = null,
     val address: String? = null,
     val city: String? = null,
     val state: String? = null,

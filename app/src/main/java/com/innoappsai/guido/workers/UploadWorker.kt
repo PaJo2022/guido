@@ -42,15 +42,17 @@ class UploadWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             // Retrieve the list of byte arrays from input data
+            val inputDataBuilder = Data.Builder()
             val fileListAsArray = inputData.getStringArray(FILE_URI)
+            val staticMapFile = inputData.getStringArray("PLACE_MAP_IMAGE_FILES")
+            if (staticMapFile != null) {
+                inputDataBuilder.putStringArray("PLACE_MAP_IMAGE_FILES", staticMapFile)
+            }
             val outFileName = inputData.getString(OUTPUT_NAME) ?: return Result.failure()
             val folderName = inputData.getString("FOLDER_NAME") ?: "DEFAULT_FOLDER"
             setForeground(getForegroundInfo(applicationContext))
             if (fileListAsArray.isNullOrEmpty()) {
-                val outputData = Data.Builder()
-                    .putStringArray("uploadedUrls", emptyArray())
-                    .build()
-
+                val outputData = inputDataBuilder.build()
                 return Result.success(outputData)
             }
             val uploadedUrls = mutableListOf<String>()
@@ -72,19 +74,20 @@ class UploadWorker @AssistedInject constructor(
 
 
             // Store the list of uploaded URLs in output data
-            val outputData = Data.Builder()
+
+
+            val outputData = inputDataBuilder
                 .putStringArray(outFileName, uploadedUrls.toTypedArray())
                 .build()
-
             Result.success(outputData)
         } catch (e: Exception) {
             e.printStackTrace()
-            sendPushNotification()
+            sendPushNotification(e.message ?: "Something Went Wrong!")
             Result.failure()
         }
     }
 
-    private fun sendPushNotification() {
+    private fun sendPushNotification(message : String) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -102,7 +105,7 @@ class UploadWorker @AssistedInject constructor(
         )
             .setSmallIcon(R.drawable.ic_website)
             .setContentTitle("Error")
-            .setContentText("Please Try Again")
+            .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(false)
 

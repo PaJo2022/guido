@@ -3,4 +3,7 @@
     <external-path
         name="external_files"
         path="Android/data/${applicationId}/files/Pictures" />
+    <external-files-path
+        name="files"
+        path="." />
 </paths>

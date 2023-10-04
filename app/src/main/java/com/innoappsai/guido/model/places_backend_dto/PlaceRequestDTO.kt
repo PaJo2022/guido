@@ -6,6 +6,7 @@ data class PlaceRequestDTO(
     val location: PlaceRequestLocation? = null,
     var photos: List<String>? = null,
     var videos: List<String>? = null,
+    var placeMapImage: String? = null,
     val placeAddress: String? = null,
     val placeCity: String? = null,
     val placeState: String? = null,
