@@ -9,6 +9,9 @@ import com.innoappsai.guido.model.PlaceFeature
 import com.innoappsai.guido.model.PlaceTimings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,8 +25,21 @@ class PlaceMoreDetailsViewModel @Inject constructor(
     private val _placeTimings: MutableLiveData<List<PlaceTimings>> = MutableLiveData()
     val placeTimings: LiveData<List<PlaceTimings>> = _placeTimings
 
+
+    private val _selectedDayOfTheWeek: MutableLiveData<String> = MutableLiveData()
+    val selectedDayOfTheWeek: LiveData<String> = _selectedDayOfTheWeek
+
+    private val _selectedWorkingHourTo: MutableLiveData<String> = MutableLiveData()
+    val selectedWorkingHourTo: LiveData<String> = _selectedWorkingHourTo
+
+    private val _selectedWorkingHourFrom: MutableLiveData<String> = MutableLiveData()
+    val selectedWorkingHourFrom: LiveData<String> = _selectedWorkingHourFrom
+
     private val _placeFeaturesList = ArrayList(Constants.placeFeaturesList)
     private val _placeTimingList = ArrayList<PlaceTimings>()
+
+    private val _error: MutableSharedFlow<String> = MutableSharedFlow()
+    val error: SharedFlow<String> = _error.asSharedFlow()
 
     init {
         _placeFeatures.value = _placeFeaturesList
@@ -41,8 +57,12 @@ class PlaceMoreDetailsViewModel @Inject constructor(
 
     fun onPlaceTimingAdded(dayOfTheWeek: String, from: String, to: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (_placeTimingList.size > 7) {
+                _error.emit("Maximum 7 Timing Slots Can Be Selected")
+                return@launch
+            }
             val isThisAllReadyAdded =
-                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek && it.from == from && it.to == to } != null
+                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek || it.from == from || it.to == to } != null
             if (isThisAllReadyAdded) return@launch
 
             _placeTimingList.add(
@@ -59,5 +79,20 @@ class PlaceMoreDetailsViewModel @Inject constructor(
             _placeTimings.postValue(_placeTimingList)
         }
     }
+
+    fun onDayOfTheWeekSelected(dayOfTheWeek: String) {
+        _selectedDayOfTheWeek.value = dayOfTheWeek
+    }
+
+    fun onWorkingHoursFrom(hour: String) {
+        _selectedWorkingHourFrom.value = hour
+    }
+
+    fun onWorkingHoursTo(hour: String) {
+        _selectedWorkingHourTo.value = hour
+    }
+
+    fun getAllOpeningAndCloseTimings() = _placeTimingList
+    fun getAllPlaceFeatures() = _placeFeaturesList.filter { it.isSelected }
 
 }

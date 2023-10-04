@@ -38,13 +38,16 @@
             android:textSize="@dimen/_16ssp" />
 
         <!-- Right ImageView -->
-        <ImageView
-            android:id="@+id/iv_complete"
+        <TextView
+            android:id="@+id/tv_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="@dimen/_12sdp"
-            android:src="@drawable/ic_done" />
+            android:fontFamily="@font/font_regular"
+            android:text="Next"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/_16ssp" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -111,6 +114,8 @@
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: www.mywebsite.com"
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/tv_more_info"
                 app:layout_constraintStart_toStartOf="@+id/tv_more_info"
@@ -140,6 +145,8 @@
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: @myawesomeplace"
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_website"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_website"
@@ -168,6 +175,8 @@
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: @myawesomeplace"
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_instagram_page"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_instagram_page"
@@ -196,6 +205,8 @@
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: @myawesomeplace"
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_facebook_page"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_facebook_page"
@@ -224,6 +235,8 @@
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: @myawesomeplace"
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_business_email"
                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_business_email"
@@ -259,7 +272,7 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_layout_place_business_hours"
+                android:id="@+id/ti_layout_place_business_days"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -267,6 +280,8 @@
                 app:endIconDrawable="@drawable/ic_arrow_drop_down"
                 app:endIconMode="custom"
                 app:helperText="ie: Monday, Tueday, Wednesday..."
+                app:helperTextTextColor="@color/color_primary"
+                app:hintTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toEndOf="@+id/tv_opening_hours"
                 app:layout_constraintStart_toStartOf="@+id/tv_opening_hours"
@@ -279,6 +294,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textUri"
                     android:text=""
+                    android:enabled="false"
                     android:textColor="@color/color_primary"
                     android:textColorHint="@color/color_primary"
                     android:textSize="@dimen/_10sdp" />
@@ -294,11 +310,12 @@
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:hint="From"
                 app:endIconDrawable="@drawable/ic_arrow_drop_down"
+                app:hintTextColor="@color/color_primary"
                 app:endIconMode="custom"
                 app:hintAnimationEnabled="false"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_horizontal1"
-                app:layout_constraintStart_toStartOf="@+id/ti_layout_place_business_hours"
-                app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_business_hours">
+                app:layout_constraintStart_toStartOf="@+id/ti_layout_place_business_days"
+                app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_business_days">
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -307,6 +324,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textUri"
                     android:text=""
+                    android:enabled="false"
                     android:textColor="@color/color_primary"
                     android:textColorHint="@color/color_primary"
                     android:textSize="@dimen/_10sdp" />
@@ -328,11 +346,12 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:hint="To"
                 app:endIconDrawable="@drawable/ic_arrow_drop_down"
+                app:hintTextColor="@color/color_primary"
                 app:endIconMode="custom"
                 app:hintAnimationEnabled="false"
-                app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_business_hours"
+                app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_business_days"
                 app:layout_constraintStart_toStartOf="@+id/guideline_horizontal1"
-                app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_business_hours">
+                app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_business_days">
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -341,6 +360,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textUri"
                     android:text=""
+                    android:enabled="false"
                     android:textColor="@color/color_primary"
                     android:textColorHint="@color/color_primary"
                     android:textSize="@dimen/_10sdp" />
@@ -374,16 +394,19 @@
                 android:id="@+id/ti_layout_place_business_notes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:hint="Special Notes (Optional)"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
                 app:errorTextColor="@color/red"
                 app:helperText="Ie: Sunday we have special offers"
+                app:helperTextTextColor="@color/color_primary"
                 app:hintAnimationEnabled="false"
+                app:hintTextColor="@color/color_primary"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/rv_added_business_hours"
-                app:layout_constraintStart_toStartOf="@+id/rv_added_business_hours"
+                app:layout_constraintEnd_toEndOf="@+id/btn_add_opening_timings"
+                app:layout_constraintStart_toStartOf="@+id/btn_add_opening_timings"
                 app:layout_constraintTop_toBottomOf="@+id/rv_added_business_hours">
 
 

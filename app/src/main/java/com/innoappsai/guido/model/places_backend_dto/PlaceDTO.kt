@@ -27,7 +27,14 @@ data class PlaceDTO(
     val pricingType: String?,
     val rating: Double? = null,
     val types: List<String>? = null,
-    val website: String? = null
+    val website: String? = null,
+    val instagram: String? = null,
+    val facebook: String? = null,
+    val businessEmail: String? = null,
+    val businessOwner: String? = null,
+    val businessSpecialNotes: String? = null,
+    val placeFeatures: List<String>? = null,
+    val placeTimings: List<String>? = null,
 ) : Parcelable
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
@@ -49,6 +56,13 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
         rating = it.rating,
         callNumber = it.contactNumber,
         website = it.website,
+        instagram = it.instagram,
+        facebook = it.facebook,
+        businessEmail = it.businessEmail,
+        businessOwner = it.businessOwner,
+        businessSpecialNotes = it.businessSpecialNotes,
+        placeFeatures = it.placeFeatures,
+        placeTimings = it.placeTimings,
     )
 }
 
@@ -70,4 +84,11 @@ fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
     rating = rating,
     callNumber = contactNumber,
     website = website,
+    instagram = instagram,
+    facebook = facebook,
+    businessEmail = businessEmail,
+    businessOwner = businessOwner,
+    businessSpecialNotes = businessSpecialNotes,
+    placeFeatures = placeFeatures,
+    placeTimings = placeTimings,
 )

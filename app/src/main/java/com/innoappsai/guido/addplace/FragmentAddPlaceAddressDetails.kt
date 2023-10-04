@@ -86,7 +86,7 @@ class FragmentAddPlaceAddressDetails :
         }
 
         viewModel.apply {
-            currentScreenName.collectIn(viewLifecycleOwner) {
+            navigateNext.collectIn(viewLifecycleOwner) {
                 findNavController().navigate(R.id.fragmentAddPlaceDetails)
             }
             error.collectIn(viewLifecycleOwner) {

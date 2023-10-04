@@ -3,6 +3,7 @@ package com.innoappsai.guido.addplace
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import androidx.activity.result.PickVisualMediaRequest
@@ -71,7 +72,7 @@ class FragmentAddPlaceImageVideos :
 
 
             ivComplete.setOnClickListener {
-
+                    viewModel.uploadPlaceData()
             }
         }
         viewModel.apply {
@@ -80,11 +81,7 @@ class FragmentAddPlaceImageVideos :
                 requireActivity().showToast("Your Place Is Adding")
                 requireActivity().finish()
             }
-            currentScreenName.collectIn(viewLifecycleOwner) {
-                if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
-                    MyApp.placeRequestDTO = it.placeRequestDTO
-                }
-            }
+
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)
             }

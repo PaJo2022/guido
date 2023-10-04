@@ -1,6 +1,5 @@
 package com.innoappsai.guido.addplace
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -9,7 +8,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
@@ -19,7 +17,7 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.innoappsai.guido.BaseFragment
-import com.innoappsai.guido.MyApp
+import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.VERTICAL_VIEW
@@ -86,12 +84,11 @@ class FragmentAddPlaceDetails :
                     return@setOnClickListener
                 }
 
-//                viewModel.setPlaceDetails(
-//                    placeDescription,
-//                    placeContactNumber,
-//                    ,
-//                    placePriceRange
-//                )
+                viewModel.setPlaceBasicDetails(
+                    placeDescription,
+                    placeContactNumber,
+                    placePriceRange
+                )
             }
         }
         viewModel.apply {
@@ -100,10 +97,8 @@ class FragmentAddPlaceDetails :
                 requireActivity().showToast("Your Place Is Adding")
                 requireActivity().finish()
             }
-            currentScreenName.collectIn(viewLifecycleOwner) {
-                if (it is AddPlaceViewModel.PlaceAddScreenName.COMPLETE) {
-                    MyApp.placeRequestDTO = it.placeRequestDTO
-                }
+            navigateNext.collectIn(viewLifecycleOwner) {
+                findNavController().navigate(R.id.fragmentAddPlaceMoreDetails)
             }
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)

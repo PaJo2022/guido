@@ -34,6 +34,9 @@ class PlaceFeaturesAdapter(
                 root.setOnClickListener {
                     _onPlaceFeatureItemClicked?.invoke(placeFeature.featureName)
                 }
+                cbPlaceFeature.setOnClickListener {
+                    _onPlaceFeatureItemClicked?.invoke(placeFeature.featureName)
+                }
             }
         }
     }

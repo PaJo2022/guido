@@ -29,6 +29,13 @@ data class PlaceUiModel(
     val rating: Double? = null,
     val callNumber: String? = null,
     val website: String? = null,
+    val instagram: String? = null,
+    val facebook: String? = null,
+    val businessEmail: String? = null,
+    val businessOwner: String? = null,
+    val businessSpecialNotes: String? = null,
+    val placeFeatures: List<String>? = null,
+    val placeTimings: List<String>? = null,
     val isOpenNow: Boolean = false,
     val openTill: String? = null,
     val reviews: List<ReviewUiModel>? = null,
@@ -39,30 +46,8 @@ data class PlaceUiModel(
 
 fun List<PlaceUiModel>.addUiType(iconDrawable: Int?,placeUiType: PlaceUiType) = map {
     PlaceUiModel(
-        it.placeId,
-        it.name,
-        it.latLng,
-        it.address,
-        it.icon,
-        it.createdBy,
-        it.city,
-        it.state,
-        it.country,
-        iconDrawable,
-        it.type,
-        it.placeType,
-        it.iconBackGroundColor,
-        it.placeDescription,
-        it.photos,
-        it.videos,
-        it.rating,
-        it.callNumber,
-        it.website,
-        it.isOpenNow,
-        it.openTill,
-        it.reviews,
-        it.isSelected,
-        placeUiType
+        iconDrawable = iconDrawable,
+        placeUiType = placeUiType
     )
 }
 @Parcelize

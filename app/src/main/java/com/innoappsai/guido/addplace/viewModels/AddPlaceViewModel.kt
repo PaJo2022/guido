@@ -11,6 +11,8 @@ import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.model.PlaceFeature
+import com.innoappsai.guido.model.PlaceTimings
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
@@ -35,11 +37,13 @@ class AddPlaceViewModel @Inject constructor(
     private val _placeTypes: MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
     val placeTypes: LiveData<List<PlaceTypeContainer>> = _placeTypes
 
-    private val _currentScreenName: MutableSharedFlow<PlaceAddScreenName> = MutableSharedFlow()
-    val currentScreenName: SharedFlow<PlaceAddScreenName> = _currentScreenName.asSharedFlow()
+    private val _navigateNext: MutableSharedFlow<Unit> = MutableSharedFlow()
+    val navigateNext: SharedFlow<Unit> = _navigateNext.asSharedFlow()
 
-    private val _startAddingPlace: MutableSharedFlow<Pair<Array<String>,Array<String>>> = MutableSharedFlow()
-    val startAddingPlace: SharedFlow<Pair<Array<String>,Array<String>>> = _startAddingPlace.asSharedFlow()
+    private val _startAddingPlace: MutableSharedFlow<Pair<Array<String>, Array<String>>> =
+        MutableSharedFlow()
+    val startAddingPlace: SharedFlow<Pair<Array<String>, Array<String>>> =
+        _startAddingPlace.asSharedFlow()
 
     private val _error: MutableSharedFlow<String> = MutableSharedFlow()
     val error: SharedFlow<String> = _error.asSharedFlow()
@@ -63,22 +67,24 @@ class AddPlaceViewModel @Inject constructor(
     val searchedFormattedAddress: LiveData<String?> = _searchedFormattedAddress
 
     //Place DTO Data
-    private var globalPlaceName: String ?=null
-    private var globalPlaceStreetAddress: String ?=null
-    private var globalPlaceCityName: String ?=null
-    private var globalPlaceStateName: String ?=null
-    private var globalPlaceCountryName: String ?=null
-    private var globalPlacePinCode: String ?=null
-    private var globalPlaceDescription: String ?=null
-    private var globalPlaceContactNumber: String ?=null
-    private var globalPlaceWebsite: String ?=null
-    private var globalPlaceInstagram: String ?=null
-    private var globalPlaceFacebook: String ?=null
-    private var globalPlaceBusinessEmail: String ?=null
-    private var globalPlaceBusinessOwner: String ?=null
-    private var globalPlaceBusinessSpecialNotes: String ?=null
-    private var globalPlacePriceRange: String ?=null
-    private var globalPlaceType: String ?=null
+    private var globalPlaceName: String? = null
+    private var globalPlaceStreetAddress: String? = null
+    private var globalPlaceCityName: String? = null
+    private var globalPlaceStateName: String? = null
+    private var globalPlaceCountryName: String? = null
+    private var globalPlacePinCode: String? = null
+    private var globalPlaceDescription: String? = null
+    private var globalPlaceContactNumber: String? = null
+    private var globalPlaceWebsite: String? = null
+    private var globalPlaceInstagram: String? = null
+    private var globalPlaceFacebook: String? = null
+    private var globalPlaceBusinessEmail: String? = null
+    private var globalPlaceBusinessOwner: String? = null
+    private var globalPlaceBusinessSpecialNotes: String? = null
+    private var globalPlaceFeatures: List<PlaceFeature>? = null
+    private var globalPlaceAllTimings: ArrayList<PlaceTimings>? = null
+    private var globalPlacePriceRange: String? = null
+    private var globalPlaceType: String? = null
     private var globalPlaceLatitude: Double? = null
     private var globalPlaceLongitude: Double? = null
 
@@ -131,7 +137,7 @@ class AddPlaceViewModel @Inject constructor(
             val selectedPlaceType = placeTypesList.find { it.isSelected }
             if (selectedPlaceType != null) {
                 globalPlaceType = selectedPlaceType.id
-                _currentScreenName.emit(PlaceAddScreenName.ADD_ADDRESS)
+                _navigateNext.emit(Unit)
             } else {
                 _error.emit("Please Select You Place Type")
             }
@@ -161,7 +167,7 @@ class AddPlaceViewModel @Inject constructor(
                     globalPlaceStateName
                 ).any { it.isNullOrEmpty() }
             ) {
-                _currentScreenName.emit(PlaceAddScreenName.ADD_DETAILS)
+                _navigateNext.emit(Unit)
             } else {
                 _error.emit("Please Enter All The Details")
             }
@@ -179,7 +185,7 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun addImageFilesToList(fileUri : List<Uri>) {
+    fun addImageFilesToList(fileUri: List<Uri>) {
         viewModelScope.launch {
             if (imageFileArrayList.size <= 5 && fileUri.size <= 5) {
                 imageFileArrayList.addAll(fileUri)
@@ -190,20 +196,51 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
+    fun setPlaceBasicDetails(
+        placeDescription: String,
+        placeContactNumber: String,
+        placePriceRange: String
+    ) {
+        globalPlaceDescription = placeDescription
+        globalPlaceContactNumber = placeContactNumber
+        globalPlacePriceRange = placePriceRange
+
+        viewModelScope.launch {
+            if (!listOf(
+                    globalPlaceDescription,
+                    globalPlaceContactNumber,
+                    globalPlacePriceRange
+                ).any { it.isNullOrEmpty() }
+            ) {
+                _navigateNext.emit(Unit)
+            } else {
+                _error.emit("Please Enter All The Details")
+            }
+        }
+    }
+
+
     fun setMoreDetails(
+        placeWebsite : String,
         placeInstagram: String,
         placeFacebook: String,
         placeBusinessEmail: String,
         placeOwner: String,
-        placeSpecialNotes: String
+        placeSpecialNotes: String,
+        placeOpeningCloseTimeList: ArrayList<PlaceTimings>,
+        allPlaceFeatures: List<PlaceFeature>
     ) {
+        globalPlaceWebsite = placeWebsite
         globalPlaceInstagram = placeInstagram
         globalPlaceFacebook = placeFacebook
         globalPlaceBusinessEmail = placeBusinessEmail
         globalPlaceBusinessOwner = placeOwner
         globalPlaceBusinessSpecialNotes = placeSpecialNotes
+        globalPlaceBusinessSpecialNotes = placeSpecialNotes
+        globalPlaceAllTimings = placeOpeningCloseTimeList
+        globalPlaceFeatures = allPlaceFeatures
         viewModelScope.launch {
-            _currentScreenName.emit(PlaceAddScreenName.ADD_IMAGE_VIDEOS)
+            _navigateNext.emit(Unit)
         }
     }
 
@@ -265,6 +302,45 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
+    fun uploadPlaceData() {
+        viewModelScope.launch {
+            val imageUriArray = imageFileArrayList.map { it.toString() }.toTypedArray()
+            val videoUriArray = videoFileArrayList.map { it.toString() }.toTypedArray()
+            placeRequestDTO = PlaceRequestDTO(
+                contactNumber = globalPlaceContactNumber,
+                createdBy = appPrefs.userId,
+                location = PlaceRequestLocation(
+                    coordinates = listOf(
+                        globalPlaceLongitude ?: 0.0,
+                        globalPlaceLatitude ?: 0.0
+                    )
+                ),
+                photos = null,
+                videos = null,
+                placeAddress = globalPlaceStreetAddress,
+                placeCity = globalPlaceCityName,
+                placeState = globalPlaceStateName,
+                placeCountry = globalPlaceCountryName,
+                placeDescription = globalPlaceDescription,
+                pricingType = globalPlacePriceRange,
+                placeId = UUID.randomUUID().toString(),
+                rating = 0.0,
+                placeName = globalPlaceName,
+                types = listOf(globalPlaceType ?: ""),
+                website = globalPlaceWebsite,
+                instagram = globalPlaceInstagram,
+                facebook = globalPlaceFacebook,
+                businessEmail = globalPlaceBusinessEmail,
+                businessOwner = globalPlaceBusinessOwner,
+                businessSpecialNotes = globalPlaceBusinessSpecialNotes,
+                placeFeatures = globalPlaceFeatures?.map { it.featureName },
+                placeTimings = globalPlaceAllTimings?.map { "${it.dayOfTheWeek} ${it.from} - ${it.to}" }
+            )
+            MyApp.placeRequestDTO = placeRequestDTO
+            _startAddingPlace.emit(Pair(imageUriArray, videoUriArray))
+        }
+    }
+
 
     sealed class PlaceAddScreenName {
         object ADD_TYPES : PlaceAddScreenName()
@@ -272,7 +348,11 @@ class AddPlaceViewModel @Inject constructor(
         object ADD_DETAILS : PlaceAddScreenName()
         object ADD_SOCIAL_DETAILS : PlaceAddScreenName()
         object ADD_IMAGE_VIDEOS : PlaceAddScreenName()
-        data class COMPLETE(val placeRequestDTO: PlaceRequestDTO,val imageUri : Array<String>,val videoUri :Array<String>) : PlaceAddScreenName()
+        data class COMPLETE(
+            val placeRequestDTO: PlaceRequestDTO,
+            val imageUri: Array<String>,
+            val videoUri: Array<String>
+        ) : PlaceAddScreenName()
 
     }
 
