@@ -62,20 +62,20 @@ class PlaceMoreDetailsViewModel @Inject constructor(
                 return@launch
             }
             val isThisAllReadyAdded =
-                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek || it.from == from || it.to == to } != null
+                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek || it.openingHour == from || it.closingHour == to } != null
             if (isThisAllReadyAdded) return@launch
 
             _placeTimingList.add(
-                PlaceTimings(dayOfTheWeek = dayOfTheWeek, from = from, to = to)
+                PlaceTimings(dayOfTheWeek = dayOfTheWeek, openingHour = from, closingHour = to)
             )
 
             _placeTimings.postValue(_placeTimingList)
         }
     }
 
-    fun onPlaceTimingDeleted(id: String) {
+    fun onPlaceTimingDeleted(dayOfTheWeek: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _placeTimingList.removeIf { it.id == id }
+            _placeTimingList.removeIf { it.dayOfTheWeek == dayOfTheWeek }
             _placeTimings.postValue(_placeTimingList)
         }
     }

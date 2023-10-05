@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.innoappsai.guido.Constants.GCP_API_KEY
 import com.innoappsai.guido.MyApp
+import com.innoappsai.guido.R
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.data.tourData.TourDataRepository
@@ -15,6 +16,7 @@ import com.innoappsai.guido.model.PlaceDetailsUiModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.ChatGptResponse
 import com.innoappsai.guido.model.chatGptModel.Message
+import com.innoappsai.guido.model.placesUiModel.ExtraInfoWithIcon
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.videosUiModel.VideoUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,10 +37,13 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private var placesDetailsUiModel: PlaceDetailsUiModel? = null
 
-    var callNumber : String ?= null
+    var callNumber: String? = null
 
     private val _singlePlaceData: MutableLiveData<PlaceUiModel?> = MutableLiveData()
     val singlePlaceData: LiveData<PlaceUiModel?> = _singlePlaceData
+
+    private val _placeMoreData: MutableLiveData<ArrayList<ExtraInfoWithIcon>> = MutableLiveData()
+    val placeMoreData: LiveData<ArrayList<ExtraInfoWithIcon>> = _placeMoreData
 
     private val _landMarkData: MutableLiveData<PlaceDetailsUiModel?> = MutableLiveData()
     val landMarkData: LiveData<PlaceDetailsUiModel?> = _landMarkData
@@ -79,6 +84,33 @@ class LandMarkDetailsViewModel @Inject constructor(
             callNumber = placeData.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
+            val extraInfoList = ArrayList<ExtraInfoWithIcon>()
+            val hours = placeData.openTill
+            val website = placeData.website
+            val facebook = placeData.facebook
+            val instagram = placeData.instagram
+            val businessOwner = placeData.businessOwner
+            val businessEmail = placeData.businessEmail
+            if (!hours.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_clock, "Hours", hours))
+            }
+            if (!website.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_website_new, "Website", website))
+            }
+            if (!facebook.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_facebook_new, "Facebook", facebook))
+            }
+            if (!instagram.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_insta, "Instagram", instagram))
+            }
+            if (!businessOwner.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_owner_new, "Owner/Manager", businessOwner))
+            }
+            if (!businessEmail.isNullOrEmpty()) {
+                extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_email_new, "Email", businessEmail))
+            }
+            _placeMoreData.postValue(extraInfoList)
+
         }
 
     }

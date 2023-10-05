@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.innoappsai.guido.model.DataType
+import com.innoappsai.guido.model.PlaceTimings
 import com.innoappsai.guido.model.PlaceType
 import kotlinx.parcelize.Parcelize
 
@@ -36,8 +37,9 @@ data class PlaceUiModel(
     val businessOwner: String? = null,
     val businessSpecialNotes: String? = null,
     val placeFeatures: List<String>? = null,
-    val placeTimings: List<String>? = null,
+    val placeTimings: List<PlaceTimings>? = null,
     val isOpenNow: Boolean = false,
+    val placeOpenStatus: String? = null,
     val openTill: String? = null,
     val reviews: List<ReviewUiModel>? = null,
     var isSelected: Boolean = false,
@@ -45,10 +47,45 @@ data class PlaceUiModel(
 ) : Parcelable
 
 
-fun List<PlaceUiModel>.addUiType(iconDrawable: Int?,placeUiType: PlaceUiType) = map {
+@Parcelize
+data class ExtraInfoWithIcon(
+    val icon: Int?,
+    val title: String?,
+    val extraInfo: String?
+) : Parcelable
+
+
+fun List<PlaceUiModel>.addUiType(iconDrawable: Int?, placeUiType: PlaceUiType) = map {
     PlaceUiModel(
         iconDrawable = iconDrawable,
-        placeUiType = placeUiType
+        placeUiType = placeUiType,
+        placeId = it.placeId,
+        name = it.name,
+        createdBy = it.createdBy,
+        latLng = it.latLng,
+        placeMapImage = it.placeMapImage,
+        address = it.address,
+        city = it.city,
+        state = it.state,
+        country = it.country,
+        placeDescription = it.placeDescription,
+        icon = null,
+        iconBackGroundColor = null,
+        type = it.type,
+        photos = it.photos,
+        videos = it.videos,
+        rating = it.rating,
+        callNumber = it.callNumber,
+        website = it.website,
+        instagram = it.instagram,
+        facebook = it.facebook,
+        businessEmail = it.businessEmail,
+        businessOwner = it.businessOwner,
+        businessSpecialNotes = it.businessSpecialNotes,
+        placeFeatures = it.placeFeatures,
+        placeTimings = it.placeTimings,
+        placeOpenStatus = it.placeOpenStatus,
+        openTill = it.openTill
     )
 }
 @Parcelize

@@ -140,7 +140,7 @@ class FragmentAddPlaceMoreDetails :
                 }
 
                 placeMoreDetailsViewModel.onPlaceTimingAdded(
-                    placeOpeningDay, placeClosingHour, placeClosingHour
+                    placeOpeningDay, placeOpeningHour, placeClosingHour
                 )
 
             }

@@ -1,10 +1,12 @@
 package com.innoappsai.guido.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.util.UUID
 
+@Parcelize
 data class PlaceTimings(
-    val id: String = UUID.randomUUID().toString(),
     val dayOfTheWeek: String,
-    val from: String,
-    val to: String
-)
+    val openingHour: String,
+    val closingHour: String
+) : Parcelable

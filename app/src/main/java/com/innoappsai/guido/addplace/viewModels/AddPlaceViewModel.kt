@@ -335,7 +335,7 @@ class AddPlaceViewModel @Inject constructor(
                 businessOwner = globalPlaceBusinessOwner,
                 businessSpecialNotes = globalPlaceBusinessSpecialNotes,
                 placeFeatures = globalPlaceFeatures?.map { it.featureName },
-                placeTimings = globalPlaceAllTimings?.map { "${it.dayOfTheWeek} ${it.from} - ${it.to}" }
+                placeTimings = globalPlaceAllTimings
             )
             MyApp.placeRequestDTO = placeRequestDTO
             _startAddingPlace.emit(Pair(imageUriArray, videoUriArray))

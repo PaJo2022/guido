@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="3"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/_12sdp"
+    android:paddingVertical="@dimen/_10sdp">
+
+    <ImageView
+        android:id="@+id/iv_info_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/font_medium"
+        android:text="Hours"
+        android:textColor="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_info_icon"
+        app:layout_constraintStart_toEndOf="@+id/iv_info_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_info_icon" />
+
+    <TextView
+        android:id="@+id/tv_more_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_medium"
+        android:text="Open until 11:00pm"
+        android:textColor="@color/color_sound_compose_selected_color13"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_info_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_info_icon" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

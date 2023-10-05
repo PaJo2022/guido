@@ -1,5 +1,7 @@
 package com.innoappsai.guido.model.places_backend_dto
 
+import com.innoappsai.guido.model.PlaceTimings
+
 data class PlaceRequestDTO(
     val contactNumber: String? = null,
     val createdBy: String? = null,
@@ -24,7 +26,7 @@ data class PlaceRequestDTO(
     val businessOwner: String? = null,
     val businessSpecialNotes: String? = null,
     val placeFeatures: List<String>? = null,
-    val placeTimings: List<String>? = null,
+    val placeTimings: List<PlaceTimings>? = null,
 
     )
 

@@ -30,9 +30,9 @@ class PlaceTimingsAdapter(
         fun bindItem(placeTimings: PlaceTimings) {
             binding.apply {
                 tvPlaceTiming.text =
-                    "${placeTimings.dayOfTheWeek} ${placeTimings.from} - ${placeTimings.to}"
+                    "${placeTimings.dayOfTheWeek} ${placeTimings.openingHour} - ${placeTimings.closingHour}"
                 ivDeletePlaceTimings.setOnClickListener {
-                    _onPlaceTimingDelete?.invoke(placeTimings.id)
+                    _onPlaceTimingDelete?.invoke(placeTimings.dayOfTheWeek)
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.innoappsai.guido.Constants.getTypesOfPlaces
+import com.innoappsai.guido.model.PlaceTimings
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import kotlinx.android.parcel.Parcelize
 
@@ -25,6 +26,7 @@ data class PlaceDTO(
     val placeDescription: String? = null,
     val placeId: String? = null,
     val placeName: String? = null,
+    val placeOpenStatus: String? = null,
     val pricingType: String?,
     val rating: Double? = null,
     val types: List<String>? = null,
@@ -34,8 +36,9 @@ data class PlaceDTO(
     val businessEmail: String? = null,
     val businessOwner: String? = null,
     val businessSpecialNotes: String? = null,
+    val openTill: String? = null,
     val placeFeatures: List<String>? = null,
-    val placeTimings: List<String>? = null,
+    val placeTimings: List<PlaceTimings>? = null,
 ) : Parcelable
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
@@ -65,6 +68,8 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
         businessSpecialNotes = it.businessSpecialNotes,
         placeFeatures = it.placeFeatures,
         placeTimings = it.placeTimings,
+        placeOpenStatus = it.placeOpenStatus,
+        openTill = it.openTill
     )
 }
 
@@ -94,4 +99,6 @@ fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
     businessSpecialNotes = businessSpecialNotes,
     placeFeatures = placeFeatures,
     placeTimings = placeTimings,
+    placeOpenStatus = placeOpenStatus,
+    openTill = openTill
 )

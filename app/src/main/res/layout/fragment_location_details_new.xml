@@ -92,6 +92,17 @@
             app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"
             tools:text="Place Name" />
 
+        <TextView
+            android:id="@+id/place_opening_status"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="Opening Soon"
+            app:layout_constraintStart_toStartOf="@+id/tv_place_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+
         <RatingBar
             android:id="@+id/place_rating"
             style="?android:attr/ratingBarStyleSmall"
@@ -103,7 +114,7 @@
             android:rating="2.0"
             android:stepSize="1.0"
             app:layout_constraintStart_toStartOf="@+id/tv_place_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+            app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
         <TextView
             android:id="@+id/place_rating_text"
             android:layout_width="wrap_content"
@@ -228,7 +239,7 @@
         <ImageView
             android:id="@+id/place_map_image"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
+            android:layout_height="@dimen/_150sdp"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:background="@color/red"
@@ -261,7 +272,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/_12sdp"
-            android:layout_marginHorizontal="@dimen/_12sdp"
             app:layout_constraintTop_toBottomOf="@+id/tv_place_address" />
 
 

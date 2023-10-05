@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -16,22 +15,20 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.adapters.DividerItemDecoration
 import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.ImageSliderAdapter
+import com.innoappsai.guido.adapters.PlaceMoreInfoAdapter
 import com.innoappsai.guido.adapters.PlaceReviewAdapter
 import com.innoappsai.guido.adapters.PlaceVideoAdapter
 import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.callToNumber
-import com.innoappsai.guido.collectIn
-import com.innoappsai.guido.databinding.FragmentLocationDetailsBinding
 import com.innoappsai.guido.databinding.FragmentLocationDetailsNewBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
-import com.innoappsai.guido.openWebsite
-import com.innoappsai.guido.toggleEnableAndVisibility
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,6 +43,8 @@ class LocationDetailsFragment :
     private lateinit var adapterImageSlider: ImageSliderAdapter
     private lateinit var adapterPlaceVideos: PlaceVideoAdapter
     private lateinit var adapterVideos: VideoAdapter
+    private lateinit var adapterPlaceExtraInfo: PlaceMoreInfoAdapter
+
     @Inject
     lateinit var appPrefs: AppPrefs
 
@@ -57,6 +56,7 @@ class LocationDetailsFragment :
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
         adapterPlaceVideos = PlaceVideoAdapter()
+        adapterPlaceExtraInfo = PlaceMoreInfoAdapter()
         adapterVideos = VideoAdapter(requireContext())
     }
 
@@ -93,6 +93,12 @@ class LocationDetailsFragment :
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
+            rvPlaceExtraDetails.apply {
+                addItemDecoration(DividerItemDecoration(requireContext()))
+                adapter = adapterPlaceExtraInfo
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
         }
         viewModel.apply {
             getSinglePlaceDetails(palceId)
@@ -118,7 +124,10 @@ class LocationDetailsFragment :
 //                }
 //                adapterPlaceVideos.setPlaceVideos(videoUrls)
             }
-            singlePlaceData.observe(viewLifecycleOwner) {placeUiModel->
+            placeMoreData.observe(viewLifecycleOwner) {
+                adapterPlaceExtraInfo.setPlaceExtraInfo(it)
+            }
+            singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
                 binding.apply {
                     ivPlaceOptions.apply {
                         isVisible = placeUiModel?.createdBy == appPrefs.userId
@@ -129,9 +138,12 @@ class LocationDetailsFragment :
                             bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
                         }
                     }
+
+                    placeOpeningStatus.text = placeUiModel?.placeOpenStatus
                     tvPlaceName.text = placeUiModel?.name
                     tvPlaceName.isSelected = true
-                    Glide.with(requireContext()).load(placeUiModel?.placeMapImage).centerCrop().into(binding.placeMapImage)
+                    Glide.with(requireContext()).load(placeUiModel?.placeMapImage).centerCrop()
+                        .into(binding.placeMapImage)
                     tvPlaceAddress.makeTextViewClickableLink(
                         placeUiModel?.address,
                         errorMessage = "No Address Found"
