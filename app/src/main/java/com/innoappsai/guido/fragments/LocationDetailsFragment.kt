@@ -69,12 +69,10 @@ class LocationDetailsFragment :
 
         }.attach()
 
-//        binding.rvPlaceVideos.adapter = adapterVideos
-//        binding.rvPlaceVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-//
-//
-//        binding.rvPlaceYoutubeVideos.adapter = adapterPlaceVideos
-//        binding.rvPlaceYoutubeVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.viewPagerVideos.adapter = adapterVideos
+        binding.viewPagerVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+
     }
 
 
@@ -159,7 +157,7 @@ class LocationDetailsFragment :
                     binding.tvPlaceDescription.text = it
                 }
                 placeUiModel?.videos?.let { videos ->
-
+                    adapterVideos.setVideos(ArrayList(videos.map { Uri.parse(it) }))
                 }
                 placeUiModel?.reviews?.let {
                     adapterPlaceReview.setPlaceReviews(it)
