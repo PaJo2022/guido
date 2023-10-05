@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class TourDataRepositoryImpl @Inject constructor(
     private val api: ChatGptApi
-) : TourDataRepository {
+) : ChatGptRepository {
     override suspend fun getTourDataAboutTheLandMark(chatGptRequest: ChatGptRequest): ChatGptResponse? {
         return try {
             val response = api.fetchLocationDetailsFromChatGpt(chatGptRequest)

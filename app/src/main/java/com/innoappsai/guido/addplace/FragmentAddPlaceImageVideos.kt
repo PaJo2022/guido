@@ -18,6 +18,7 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.VERTICAL_VIEW
@@ -69,17 +70,11 @@ class FragmentAddPlaceImageVideos :
 
 
             ivComplete.setOnClickListener {
-                    viewModel.uploadPlaceData()
+                findNavController().navigate(R.id.fragmentAddPlaceDetails)
             }
         }
         viewModel.apply {
-            startAddingPlace.collectIn(viewLifecycleOwner) {
-                startFetchingFeedData(it.first, it.second)
-                requireActivity().showToast("Your Place Is Adding")
-                requireActivity().finish()
-            }
-
-            error.collectIn(viewLifecycleOwner) {
+        error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)
             }
             placeImages.observe(viewLifecycleOwner) {
@@ -153,78 +148,6 @@ class FragmentAddPlaceImageVideos :
         }
 
 
-    fun generateStaticMapUrl(latitude: Double, longitude: Double): String {
-        val apiKey =
-            "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY" // Replace with your Google Maps API key
-        val marker = "icon:http://www.google.com/mapfiles/arrow.png|$latitude,$longitude"
-        val size = "200x200" // Adjust the size as needed
-
-        return "https://maps.googleapis.com/maps/api/staticmap?" +
-                "size=$size&" +
-                "markers=$marker&" +
-                "key=$apiKey"
-    }
-
-    private fun startFetchingFeedData(imageUri: Array<String>, videoUri: Array<String>) {
-        val latitude = viewModel.getLatLong().first!!
-        val longitude = viewModel.getLatLong().second!!
-        val mapUrl = generateStaticMapUrl(latitude, longitude)
-        val inputData = Data.Builder()
-            .putString(
-                DownloadImageWorker.KEY_IMAGE_URL,
-                mapUrl
-            )
-            .putString(DownloadImageWorker.KEY_CACHE_FILE_NAME, "cached_image.jpg")
-            .build()
-
-
-        val downloadImageWorker =
-            OneTimeWorkRequestBuilder<DownloadImageWorker>().setInputData(inputData)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-
-        val imageFileFolder = Data.Builder()
-            .putString(UploadWorker.OUTPUT_NAME, "IMAGE_FILES")
-            .putStringArray(UploadWorker.FILE_URI, imageUri)
-            .putString(UploadWorker.FOLDER_NAME, "places_images")
-            .build()
-
-        val videoFileFolder = Data.Builder()
-            .putString(UploadWorker.OUTPUT_NAME, "VIDEO_FILES")
-            .putStringArray(UploadWorker.FILE_URI, videoUri)
-            .putString(UploadWorker.FOLDER_NAME, "places_videos")
-            .build()
-
-
-        val uploadImageFileWorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>().addTag(UploadWorker.TAG)
-                .setInputData(imageFileFolder)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-        val uploadVideoFileWorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>().setInputData(videoFileFolder)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-        val uploadMapImageWorkRequest =
-            OneTimeWorkRequestBuilder<UploadWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-        val addPlaceWorkRequest =
-            OneTimeWorkRequestBuilder<AddPlaceWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-        workManager
-            .beginWith(downloadImageWorker)
-            .then(uploadMapImageWorkRequest)
-            .then(listOf(uploadImageFileWorkRequest, uploadVideoFileWorkRequest))
-            .then(addPlaceWorkRequest)
-            .enqueue()
-
-
-
-
-
-    }
 
 
 

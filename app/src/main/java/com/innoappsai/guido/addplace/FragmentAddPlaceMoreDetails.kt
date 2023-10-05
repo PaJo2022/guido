@@ -34,7 +34,7 @@ class FragmentAddPlaceMoreDetails :
     private lateinit var adapterPlaceFeatures: PlaceFeaturesAdapter
     private lateinit var adapterPlaceTimings: PlaceTimingsAdapter
 
-    private lateinit var workManager: WorkManager
+
 
     private val daysList =
         arrayListOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
@@ -54,7 +54,6 @@ class FragmentAddPlaceMoreDetails :
         adapterPlaceTypes = PlacesTypeGroupAdapter(requireContext(), VERTICAL_VIEW)
         adapterPlaceFeatures = PlaceFeaturesAdapter(requireContext())
         adapterPlaceTimings = PlaceTimingsAdapter(requireContext())
-        workManager = WorkManager.getInstance(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

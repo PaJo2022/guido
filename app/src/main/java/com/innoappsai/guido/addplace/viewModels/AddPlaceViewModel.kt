@@ -10,6 +10,7 @@ import com.innoappsai.guido.Constants
 import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.PlaceFeature
 import com.innoappsai.guido.model.PlaceTimings
@@ -17,6 +18,8 @@ import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
 import com.innoappsai.guido.model.VideoItem
 import com.innoappsai.guido.model.VideoType
+import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
+import com.innoappsai.guido.model.chatGptModel.Message
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +36,8 @@ import javax.inject.Inject
 class AddPlaceViewModel @Inject constructor(
     private val appPrefs: AppPrefs,
     private val locationClient: LocationClient,
-    private val placesRepository: PlacesRepository
+    private val placesRepository: PlacesRepository,
+    private val chatGptRepository: ChatGptRepository,
 ) : ViewModel() {
 
     private val _placeTypes: MutableLiveData<List<PlaceTypeContainer>> = MutableLiveData()
@@ -52,6 +56,8 @@ class AddPlaceViewModel @Inject constructor(
 
     private val _isLoading: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val isLoading: SharedFlow<Boolean> = _isLoading.asSharedFlow()
+    private val _isPlaceDescriptionGenerating: MutableSharedFlow<String> = MutableSharedFlow()
+    val isPlaceDescriptionGenerating: SharedFlow<String> = _isPlaceDescriptionGenerating.asSharedFlow()
 
     private val imageFileArrayList: ArrayList<Uri> = ArrayList()
     private val videoFileArrayList: ArrayList<Uri> = ArrayList()
@@ -67,6 +73,9 @@ class AddPlaceViewModel @Inject constructor(
 
     private val _searchedFormattedAddress: MutableLiveData<String?> = MutableLiveData()
     val searchedFormattedAddress: LiveData<String?> = _searchedFormattedAddress
+
+    private val _generatedPlaceDescription: MutableLiveData<String> = MutableLiveData()
+    val generatedPlaceDescription: LiveData<String> = _generatedPlaceDescription
 
     //Place DTO Data
     private var globalPlaceName: String? = null
@@ -214,7 +223,7 @@ class AddPlaceViewModel @Inject constructor(
                     globalPlacePriceRange
                 ).any { it.isNullOrEmpty() }
             ) {
-                _navigateNext.emit(Unit)
+                uploadPlaceData()
             } else {
                 _error.emit("Please Enter All The Details")
             }
@@ -307,7 +316,7 @@ class AddPlaceViewModel @Inject constructor(
         }
     }
 
-    fun uploadPlaceData() {
+    private fun uploadPlaceData() {
         viewModelScope.launch {
             val imageUriArray = imageFileArrayList.map { it.toString() }.toTypedArray()
             val videoUriArray = videoFileArrayList.map { it.toString() }.toTypedArray()
@@ -343,6 +352,37 @@ class AddPlaceViewModel @Inject constructor(
             )
             MyApp.placeRequestDTO = placeRequestDTO
             _startAddingPlace.emit(Pair(imageUriArray, videoUriArray))
+        }
+    }
+
+    fun generatePlaceDescriptionUsingTheData(){
+        viewModelScope.launch {
+            val message = "I want you to act as a place owner and generate a compelling description for my business. Here are the details you can use:\n" +
+                    "\n" +
+                    "Place Name: ${globalPlaceName}\n" +
+                    "Street Address: ${globalPlaceStreetAddress}\n" +
+                    "City: ${globalPlaceCityName}\n" +
+                    "State: ${globalPlaceStateName}\n" +
+                    "Country: ${globalPlaceCountryName}\n" +
+                    "Pin Code: ${globalPlacePinCode}\n" +
+                    "Contact Number: ${globalPlaceContactNumber}\n" +
+                    "Website: ${globalPlaceWebsite}\n" +
+                    "Instagram: ${globalPlaceInstagram}\n" +
+                    "Facebook: ${globalPlaceFacebook}\n" +
+                    "Business Email: ${globalPlaceBusinessEmail}\n" +
+                    "Business Owner: ${globalPlaceBusinessOwner}\n" +
+                    "Special Notes: ${globalPlaceBusinessSpecialNotes}\n" +
+                    "Features: ${globalPlaceFeatures}\n" +
+                    "Timings: ${globalPlaceAllTimings}"
+            _isLoading.emit(true)
+            _isPlaceDescriptionGenerating.emit("We are generating description for your place....")
+           val response =  chatGptRepository.getTourDataAboutTheLandMark(
+                ChatGptRequest(
+                    listOf(Message(message,"user"))
+                )
+            )
+            _isLoading.emit(false)
+            _generatedPlaceDescription.postValue(response?.choices?.firstOrNull()?.message?.content.toString())
         }
     }
 

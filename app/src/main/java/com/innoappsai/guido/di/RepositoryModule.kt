@@ -1,7 +1,6 @@
 package com.innoappsai.guido.di
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.innoappsai.guido.api.UserApi
 import com.innoappsai.guido.api.ChatGptApi
@@ -15,7 +14,7 @@ import com.innoappsai.guido.data.file.FileRepository
 import com.innoappsai.guido.data.file.FileRepositoryImpl
 import com.innoappsai.guido.data.places.BackendPlacesRepositoryImpl
 import com.innoappsai.guido.data.places.PlacesRepository
-import com.innoappsai.guido.data.tourData.TourDataRepository
+import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.tourData.TourDataRepositoryImpl
 import com.innoappsai.guido.data.videos.VideoRepository
 import com.innoappsai.guido.data.videos.VideosRepositoryImpl
@@ -42,7 +41,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTourDataRepository(api: ChatGptApi): TourDataRepository = TourDataRepositoryImpl(api)
+    fun provideTourDataRepository(api: ChatGptApi): ChatGptRepository = TourDataRepositoryImpl(api)
 
 
     @Provides

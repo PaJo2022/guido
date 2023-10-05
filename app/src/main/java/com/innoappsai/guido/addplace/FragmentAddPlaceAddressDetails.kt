@@ -87,7 +87,7 @@ class FragmentAddPlaceAddressDetails :
 
         viewModel.apply {
             navigateNext.collectIn(viewLifecycleOwner) {
-                findNavController().navigate(R.id.fragmentAddPlaceDetails)
+                findNavController().navigate(R.id.fragmentAddPlaceMoreDetails)
             }
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)

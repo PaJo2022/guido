@@ -9,7 +9,7 @@ import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
-import com.innoappsai.guido.data.tourData.TourDataRepository
+import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.videos.VideoRepository
 import com.innoappsai.guido.formatDouble
 import com.innoappsai.guido.model.PlaceDetailsUiModel
@@ -33,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LandMarkDetailsViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val tourDataRepository: TourDataRepository,
+    private val tourDataRepository: ChatGptRepository,
     private val placeRepository: PlacesRepository
 ) :
     ViewModel() {
