@@ -13,6 +13,11 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
@@ -28,11 +33,14 @@ import com.innoappsai.guido.callToNumber
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentLocationDetailsNewBinding
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.generateStaticMapUrl
 import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
+import com.innoappsai.guido.workers.DownloadImageWorker
+import com.innoappsai.guido.workers.UpdatePlaceStaticMapWorker
+import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.ArrayList
 import javax.inject.Inject
 
 
@@ -47,6 +55,7 @@ class LocationDetailsFragment :
     private lateinit var adapterPlaceVideos: PlaceVideoAdapter
     private lateinit var adapterVideos: VideoAdapter
     private lateinit var adapterPlaceExtraInfo: PlaceMoreInfoAdapter
+    private lateinit var workManager: WorkManager
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -61,6 +70,7 @@ class LocationDetailsFragment :
         adapterPlaceVideos = PlaceVideoAdapter()
         adapterPlaceExtraInfo = PlaceMoreInfoAdapter()
         adapterVideos = VideoAdapter(requireContext())
+        workManager = WorkManager.getInstance(requireContext())
     }
 
     private fun setUpViewPager() {
@@ -126,6 +136,13 @@ class LocationDetailsFragment :
                 adapterPlaceExtraInfo.setPlaceExtraInfo(it)
             }
             singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
+                if (placeUiModel != null && placeUiModel.placeMapImage == null) {
+                    startUploadingPlaceData(
+                        placeId = placeUiModel.placeId!!,
+                        latitude = placeUiModel.latLng?.latitude!!,
+                        longitude = placeUiModel.latLng.longitude
+                    )
+                }
                 binding.apply {
                     ivPlaceOptions.apply {
                         isVisible = placeUiModel?.createdBy == appPrefs.userId
@@ -142,7 +159,12 @@ class LocationDetailsFragment :
                     tvPlaceName.isSelected = true
                     placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
                     placeRatingText.text = "(${placeUiModel?.rating ?: 0})"
-                    Glide.with(requireContext()).load(placeUiModel?.placeMapImage).centerCrop()
+                    Glide.with(requireContext()).load(
+                        placeUiModel?.placeMapImage ?: generateStaticMapUrl(
+                            latitude = placeUiModel?.latLng?.latitude ?: 0.0,
+                            longitude = placeUiModel?.latLng?.longitude ?:0.0
+                        )
+                    ).centerCrop()
                         .into(binding.placeMapImage)
                     tvPlaceAddress.makeTextViewClickableLink(
                         placeUiModel?.address,
@@ -230,6 +252,47 @@ class LocationDetailsFragment :
             requestCallPermissionLauncher.launch(permission)
         }
     }
+
+    private fun startUploadingPlaceData(placeId: String, latitude: Double, longitude: Double) {
+        val mapUrl = generateStaticMapUrl(latitude, longitude)
+        val inputData = Data.Builder()
+            .putString(
+                DownloadImageWorker.KEY_IMAGE_URL,
+                mapUrl
+            )
+            .putString("PLACE_ID", placeId)
+            .putString(DownloadImageWorker.KEY_CACHE_FILE_NAME, "cached_image.jpg")
+            .build()
+
+
+        val downloadImageWorker =
+            OneTimeWorkRequestBuilder<DownloadImageWorker>().setInputData(inputData)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+
+        val uploadImageWorker =
+            OneTimeWorkRequestBuilder<UploadWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+
+        val updatePlaceStaticMapUpdateWorker =
+            OneTimeWorkRequestBuilder<UpdatePlaceStaticMapWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+
+        workManager
+            .beginUniqueWork(
+                "creating_static_map_url",
+                ExistingWorkPolicy.KEEP,
+                downloadImageWorker
+            )
+            .then(uploadImageWorker)
+            .then(updatePlaceStaticMapUpdateWorker)
+            .enqueue()
+
+
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

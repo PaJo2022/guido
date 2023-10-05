@@ -26,6 +26,7 @@ import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceDetailsBinding
+import com.innoappsai.guido.generateStaticMapUrl
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.AddPlaceWorker
@@ -98,7 +99,7 @@ class FragmentAddPlaceDetails :
                 binding.etPlaceDescription.setText(it)
             }
             startAddingPlace.collectIn(viewLifecycleOwner) {
-                startFetchingFeedData(it.first, it.second)
+                startUploadingPlaceData(it.first, it.second)
                 requireActivity().showToast("Your Place Is Adding")
                 requireActivity().finish()
             }
@@ -116,7 +117,7 @@ class FragmentAddPlaceDetails :
     }
 
 
-    private fun startFetchingFeedData(imageUri: Array<String>, videoUri: Array<String>) {
+    private fun startUploadingPlaceData(imageUri: Array<String>, videoUri: Array<String>) {
         val latitude = viewModel.getLatLong().first!!
         val longitude = viewModel.getLatLong().second!!
         val mapUrl = generateStaticMapUrl(latitude, longitude)
@@ -198,17 +199,7 @@ class FragmentAddPlaceDetails :
             }
         }
 
-    private fun generateStaticMapUrl(latitude: Double, longitude: Double): String {
-        val apiKey =
-            "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY" // Replace with your Google Maps API key
-        val marker = "icon:http://www.google.com/mapfiles/arrow.png|$latitude,$longitude"
-        val size = "200x200" // Adjust the size as needed
 
-        return "https://maps.googleapis.com/maps/api/staticmap?" +
-                "size=$size&" +
-                "markers=$marker&" +
-                "key=$apiKey"
-    }
 
     private val requestGalleryPermissionLauncher =
         registerForActivityResult(

@@ -49,6 +49,14 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         return response.body()?.toPlaceUiModel()
     }
 
+    override suspend fun updatePlaceStaticMapByPlaceId(
+        placeId: String,
+        staticMapUrl: String
+    ): PlaceUiModel? {
+        val response = api.updatePlaceStaticMapUrlPlaceById(placeId,staticMapUrl)
+        return response.body()?.toPlaceUiModel()
+    }
+
     override suspend fun addPlace(placeRequestDTO: PlaceRequestDTO): PlaceUiModel? {
         val response = api.addPlace(placeRequestDTO)
         return if (response.isSuccessful) {

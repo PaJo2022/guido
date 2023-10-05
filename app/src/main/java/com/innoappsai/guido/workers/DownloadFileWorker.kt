@@ -2,7 +2,6 @@ package com.innoappsai.guido.workers
 
 import android.content.Context
 import android.os.Environment
-import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -20,8 +19,13 @@ class DownloadImageWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+        val inputDataBuilder = Data.Builder()
         val imageUrl = inputData.getString(KEY_IMAGE_URL)
         val cacheFileName = inputData.getString(KEY_CACHE_FILE_NAME)
+        val placeId = inputData.getString("PLACE_ID")
+        if (placeId != null) {
+            inputDataBuilder.putString("PLACE_ID", placeId)
+        }
 
         if (imageUrl.isNullOrEmpty() || cacheFileName.isNullOrEmpty()) {
             return@withContext Result.failure()
@@ -50,7 +54,7 @@ class DownloadImageWorker(
                 applicationContext.packageName + ".provider",
                 cacheFile
             )
-            val outputData = Data.Builder()
+            val outputData = inputDataBuilder
                 .putString(UploadWorker.OUTPUT_NAME, "PLACE_MAP_IMAGE_FILES")
                 .putStringArray(FILE_URI, arrayOf(uri.toString()))
                 .putString(UploadWorker.FOLDER_NAME, "places_map_static_image")

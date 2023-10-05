@@ -28,6 +28,11 @@ interface PlacesRepository {
         placeId: String
     ): PlaceUiModel?
 
+    suspend fun updatePlaceStaticMapByPlaceId(
+        placeId: String,
+        staticMapUrl : String
+    ): PlaceUiModel?
+
     suspend fun addPlace(
         placeRequestDTO: PlaceRequestDTO
     ): PlaceUiModel?

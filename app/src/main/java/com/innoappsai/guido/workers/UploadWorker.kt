@@ -44,6 +44,10 @@ class UploadWorker @AssistedInject constructor(
             // Retrieve the list of byte arrays from input data
             val inputDataBuilder = Data.Builder()
             val fileListAsArray = inputData.getStringArray(FILE_URI)
+            val placeId = inputData.getString("PLACE_ID")
+            if (placeId != null) {
+                inputDataBuilder.putString("PLACE_ID", placeId)
+            }
             val staticMapFile = inputData.getStringArray("PLACE_MAP_IMAGE_FILES")
             if (staticMapFile != null) {
                 inputDataBuilder.putStringArray("PLACE_MAP_IMAGE_FILES", staticMapFile)

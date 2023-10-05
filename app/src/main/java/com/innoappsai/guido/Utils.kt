@@ -169,3 +169,15 @@ fun updateApiKey(originalString: String?): String {
         return originalString.toString()
     }
 }
+
+fun generateStaticMapUrl(latitude: Double, longitude: Double): String {
+    val apiKey =
+        "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY" // Replace with your Google Maps API key
+    val marker = "icon:http://www.google.com/mapfiles/arrow.png|$latitude,$longitude"
+    val size = "200x200" // Adjust the size as needed
+
+    return "https://maps.googleapis.com/maps/api/staticmap?" +
+            "size=$size&" +
+            "markers=$marker&" +
+            "key=$apiKey"
+}

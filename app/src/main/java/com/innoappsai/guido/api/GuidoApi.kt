@@ -9,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface GuidoApi {
@@ -55,6 +56,12 @@ interface GuidoApi {
     suspend fun deletePlaceById(
         @Query("userId", encoded = true) userId : String,
         @Query("placeId", encoded = true) placeId : String
+    ): Response<PlaceDTO>
+
+    @PUT("update-static-map-url-by-place-id")
+    suspend fun updatePlaceStaticMapUrlPlaceById(
+        @Query("placeId", encoded = true) placeId : String,
+        @Query("newStaticMapUrl") staticMapUrl : String,
     ): Response<PlaceDTO>
 
 
