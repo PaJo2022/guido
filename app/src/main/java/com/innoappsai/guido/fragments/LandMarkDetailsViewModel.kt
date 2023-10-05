@@ -13,6 +13,8 @@ import com.innoappsai.guido.data.tourData.TourDataRepository
 import com.innoappsai.guido.data.videos.VideoRepository
 import com.innoappsai.guido.formatDouble
 import com.innoappsai.guido.model.PlaceDetailsUiModel
+import com.innoappsai.guido.model.VideoItem
+import com.innoappsai.guido.model.VideoType
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.ChatGptResponse
 import com.innoappsai.guido.model.chatGptModel.Message
@@ -24,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,14 +42,16 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     var callNumber: String? = null
 
+    private val _videoLinkList: ArrayList<VideoItem> = ArrayList()
+
     private val _singlePlaceData: MutableLiveData<PlaceUiModel?> = MutableLiveData()
     val singlePlaceData: LiveData<PlaceUiModel?> = _singlePlaceData
 
     private val _placeMoreData: MutableLiveData<ArrayList<ExtraInfoWithIcon>> = MutableLiveData()
     val placeMoreData: LiveData<ArrayList<ExtraInfoWithIcon>> = _placeMoreData
 
-    private val _landMarkData: MutableLiveData<PlaceDetailsUiModel?> = MutableLiveData()
-    val landMarkData: LiveData<PlaceDetailsUiModel?> = _landMarkData
+    private val _landMarkVideoData: MutableLiveData<List<VideoItem>> = MutableLiveData()
+    val landMarkVideoData: LiveData<List<VideoItem>> = _landMarkVideoData
 
     private val _landMarkTourDataData: MutableLiveData<String> = MutableLiveData()
     val landMarkTourDataData: LiveData<String> = _landMarkTourDataData
@@ -55,20 +60,18 @@ class LandMarkDetailsViewModel @Inject constructor(
     val placeDistance: LiveData<String> = _placeDistance
 
 
-
     private val _isPlaceDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
-    val isPlaceDataFetching: SharedFlow<Boolean> = _isPlaceDataFetching
+    val isPlaceDataFetching: SharedFlow<Boolean> = _isPlaceDataFetching.asSharedFlow()
 
     private val _isPlaceVideoFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val isPlaceVideoFetching: SharedFlow<Boolean> = _isPlaceVideoFetching.asSharedFlow()
 
 
     private val _isPlaceAIDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
-    val isPlaceAIDataFetching: SharedFlow<Boolean> = _isPlaceAIDataFetching
+    val isPlaceAIDataFetching: SharedFlow<Boolean> = _isPlaceAIDataFetching.asSharedFlow()
 
     init {
         placesDetailsUiModel = PlaceDetailsUiModel()
-
-
     }
 
 
@@ -76,14 +79,32 @@ class LandMarkDetailsViewModel @Inject constructor(
         if(placeId == null) return
         viewModelScope.launch(Dispatchers.IO) {
             _isPlaceDataFetching.emit(true)
+            _isPlaceAIDataFetching.emit(true)
+            _isPlaceVideoFetching.emit(true)
             val placeData = placeRepository.fetchSinglePlacesDetails(
                 placeId = placeId
             ) ?: return@launch
-            fetchAllDataForTheLocation(placeData)
+            if (placeData.placeDescription.isNullOrEmpty()) {
+                fetchAiDescriptionForThePlace(placeData)
+            }
+            fetchVideosForTheLocation(placeData)
+            _isPlaceAIDataFetching.emit(false)
+            _isPlaceVideoFetching.emit(false)
+
             getDistanceBetweenMyPlaceAndTheCurrentPlace(placeData)
             callNumber = placeData.callNumber
             _isPlaceDataFetching.emit(false)
             _singlePlaceData.postValue(placeData)
+
+            // For Videos
+            val videos = placeData.videos?.map {
+                VideoItem(videoType = VideoType.OWN_VIDEO, it)
+            } ?: emptyList()
+            _videoLinkList.addAll(videos)
+            _landMarkVideoData.postValue(_videoLinkList)
+
+
+            // For Extra Information
             val extraInfoList = ArrayList<ExtraInfoWithIcon>()
             val hours = placeData.openTill
             val website = placeData.website
@@ -155,23 +176,27 @@ class LandMarkDetailsViewModel @Inject constructor(
     }
 
 
-
-    private fun fetchAllDataForTheLocation(placeUiModel: PlaceUiModel){
+    private fun fetchAiDescriptionForThePlace(placeUiModel: PlaceUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            _isPlaceAIDataFetching.emit(true)
             val tourDataJob = async { fetchTourDataForLandMark(placeUiModel) }
             val tourData = tourDataJob.await()
-            _isPlaceAIDataFetching.emit(false)
             setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
         }
+    }
+
+    private fun fetchVideosForTheLocation(placeUiModel: PlaceUiModel) {
+
         viewModelScope.launch(Dispatchers.IO) {
-            _isPlaceVideoFetching.emit(true)
             val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
             val landMarkVideo = landMarkVideoJob.await()
-            _isPlaceVideoFetching.emit(false)
-            setPlaceVideoData(landMarkVideo)
-            _landMarkData.postValue(placesDetailsUiModel)
+            _videoLinkList.addAll(landMarkVideo.map {
+                VideoItem(videoType = VideoType.YOUTUBE_VIDEO, it.videoUrl.toString())
+            })
+            _landMarkVideoData.postValue(_videoLinkList)
         }
     }
+
+
+
 
 }

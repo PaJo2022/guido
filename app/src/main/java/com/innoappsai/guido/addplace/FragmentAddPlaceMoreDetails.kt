@@ -31,8 +31,6 @@ class FragmentAddPlaceMoreDetails :
     private val viewModel: AddPlaceViewModel by activityViewModels()
     private val placeMoreDetailsViewModel: PlaceMoreDetailsViewModel by viewModels()
     private lateinit var adapterPlaceTypes: PlacesTypeGroupAdapter
-    private lateinit var adapterImage: ImageAdapter
-    private lateinit var adapterVideo: VideoAdapter
     private lateinit var adapterPlaceFeatures: PlaceFeaturesAdapter
     private lateinit var adapterPlaceTimings: PlaceTimingsAdapter
 
@@ -54,8 +52,6 @@ class FragmentAddPlaceMoreDetails :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapterPlaceTypes = PlacesTypeGroupAdapter(requireContext(), VERTICAL_VIEW)
-        adapterImage = ImageAdapter(requireContext())
-        adapterVideo = VideoAdapter(requireContext())
         adapterPlaceFeatures = PlaceFeaturesAdapter(requireContext())
         adapterPlaceTimings = PlaceTimingsAdapter(requireContext())
         workManager = WorkManager.getInstance(requireContext())
@@ -184,12 +180,7 @@ class FragmentAddPlaceMoreDetails :
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)
             }
-            placeImages.observe(viewLifecycleOwner) {
-                adapterImage.setPlacePhotos(it)
-            }
-            placeVideos.observe(viewLifecycleOwner) {
-                adapterVideo.setVideos(it)
-            }
+
         }
 
         placeMoreDetailsViewModel.apply {

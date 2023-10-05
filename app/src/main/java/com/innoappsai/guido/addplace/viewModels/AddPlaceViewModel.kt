@@ -15,6 +15,8 @@ import com.innoappsai.guido.model.PlaceFeature
 import com.innoappsai.guido.model.PlaceTimings
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.PlaceTypeContainer
+import com.innoappsai.guido.model.VideoItem
+import com.innoappsai.guido.model.VideoType
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,8 +59,8 @@ class AddPlaceViewModel @Inject constructor(
     private val _placeImages: MutableLiveData<ArrayList<Uri>> = MutableLiveData()
     val placeImages: LiveData<ArrayList<Uri>> = _placeImages
 
-    private val _placeVideos: MutableLiveData<ArrayList<Uri>> = MutableLiveData()
-    val placeVideos: LiveData<ArrayList<Uri>> = _placeVideos
+    private val _placeVideos: MutableLiveData<ArrayList<VideoItem>> = MutableLiveData()
+    val placeVideos: LiveData<ArrayList<VideoItem>> = _placeVideos
 
     private val _moveToLocation: MutableLiveData<Pair<LatLng, Boolean>> = MutableLiveData()
     val moveToLocation: LiveData<Pair<LatLng, Boolean>> get() = _moveToLocation
@@ -296,7 +298,9 @@ class AddPlaceViewModel @Inject constructor(
         viewModelScope.launch {
             if (videoFileArrayList.size <= 3 && fileUri.size <= 3) {
                 videoFileArrayList.addAll(fileUri)
-                _placeVideos.postValue(videoFileArrayList)
+                _placeVideos.postValue(java.util.ArrayList(videoFileArrayList.map {
+                    VideoItem(VideoType.OWN_VIDEO, it.toString())
+                }))
             } else {
                 _error.emit("Max 3 Videos Can Be Uploaded")
             }

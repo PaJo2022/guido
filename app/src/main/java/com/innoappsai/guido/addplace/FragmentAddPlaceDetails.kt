@@ -37,16 +37,12 @@ class FragmentAddPlaceDetails :
 
     private val viewModel: AddPlaceViewModel by activityViewModels()
     private lateinit var adapterPlaceTypes: PlacesTypeGroupAdapter
-    private lateinit var adapterImage: ImageAdapter
-    private lateinit var adapterVideo: VideoAdapter
 
     private lateinit var workManager: WorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapterPlaceTypes = PlacesTypeGroupAdapter(requireContext(), VERTICAL_VIEW)
-        adapterImage = ImageAdapter(requireContext())
-        adapterVideo = VideoAdapter(requireContext())
         workManager = WorkManager.getInstance(requireContext())
     }
 
@@ -102,12 +98,6 @@ class FragmentAddPlaceDetails :
             }
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)
-            }
-            placeImages.observe(viewLifecycleOwner) {
-                adapterImage.setPlacePhotos(it)
-            }
-            placeVideos.observe(viewLifecycleOwner) {
-                adapterVideo.setVideos(it)
             }
         }
 
@@ -244,9 +234,6 @@ class FragmentAddPlaceDetails :
             }
         }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        adapterVideo.releasePlayers()
-    }
+
 
 }

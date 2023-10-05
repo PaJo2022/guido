@@ -1,391 +1,408 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:fillViewport="true"
     tools:context=".fragments.HomeFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/card_color8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
-        <!-- Left ImageView -->
-        <ImageView
-            android:id="@+id/iv_arrow_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:src="@drawable/ic_arrow_back" />
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:background="@color/card_color8"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Center TextView -->
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/font_bold"
-            android:text="Place Details"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/_16ssp" />
+          <!-- Left ImageView -->
+          <ImageView
+              android:id="@+id/iv_arrow_back"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="start"
+              android:src="@drawable/ic_arrow_back" />
 
-        <!-- Right ImageView -->
-        <ImageView
-            android:id="@+id/iv_place_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="@dimen/_12sdp"
-            android:fontFamily="@font/font_regular"
-            android:src="@drawable/ic_edit_black"
-            android:visibility="gone"
-            app:tint="@color/white" />
+          <!-- Center TextView -->
+          <TextView
+              android:id="@+id/toolbar_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:fontFamily="@font/font_bold"
+              android:text="Place Details"
+              android:textColor="#ffffff"
+              android:textSize="@dimen/_16ssp" />
 
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+          <!-- Right ImageView -->
+          <ImageView
+              android:id="@+id/iv_place_options"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:layout_marginEnd="@dimen/_12sdp"
+              android:fontFamily="@font/font_regular"
+              android:src="@drawable/ic_edit_black"
+              android:visibility="gone"
+              app:tint="@color/white" />
 
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/iv_place_image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_250sdp"
-                android:background="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+      </androidx.appcompat.widget.Toolbar>
+
+      <androidx.core.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:fillViewport="true"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/vp_place_image_indicator"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_place_image"
-                app:tabBackground="@drawable/tab_selector"
-                app:tabGravity="center"
-                app:tabIndicatorHeight="0dp" />
+              <androidx.viewpager2.widget.ViewPager2
+                  android:id="@+id/iv_place_image"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/_250sdp"
+                  android:background="@color/white"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent" />
 
 
-            <TextView
-                android:id="@+id/tv_place_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:fontFamily="@font/font_bold"
-                android:textColor="@color/color_primary"
-                android:textSize="@dimen/_16ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"
-                tools:text="Place Name" />
-
-            <TextView
-                android:id="@+id/place_opening_status"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:text="Opening Soon"
-                android:textColor="@color/color_primary"
-                app:layout_constraintStart_toStartOf="@+id/tv_place_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
-
-            <RatingBar
-                android:id="@+id/place_rating"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:numStars="5"
-                android:rating="2.0"
-                android:stepSize="1.0"
-                app:layout_constraintStart_toStartOf="@+id/tv_place_name"
-                app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
-
-            <TextView
-                android:id="@+id/place_rating_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:fontFamily="@font/font_medium"
-                android:text="(3)"
-                android:textColor="@color/card_color4"
-                android:textSize="@dimen/_14ssp"
-                app:layout_constraintBottom_toBottomOf="@+id/place_rating"
-                app:layout_constraintStart_toEndOf="@+id/place_rating"
-                app:layout_constraintTop_toTopOf="@+id/place_rating" />
+              <com.google.android.material.tabs.TabLayout
+                  android:id="@+id/vp_place_image_indicator"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@color/transparent"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/iv_place_image"
+                  app:tabBackground="@drawable/tab_selector"
+                  app:tabGravity="center"
+                  app:tabIndicatorHeight="0dp" />
 
 
-            <TextView
-                android:id="@+id/tv_place_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:fontFamily="@font/font_medium"
-                android:text="3.21 km."
-                android:textColor="@color/quantum_grey"
-                android:textSize="@dimen/_14ssp"
-                app:layout_constraintBottom_toBottomOf="@+id/place_rating"
-                app:layout_constraintStart_toEndOf="@+id/place_rating_text"
-                app:layout_constraintTop_toTopOf="@+id/place_rating" />
+              <TextView
+                  android:id="@+id/tv_place_name"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_10sdp"
+                  android:fontFamily="@font/font_bold"
+                  android:textColor="@color/color_primary"
+                  android:textSize="@dimen/_16ssp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"
+                  tools:text="Place Name" />
 
-            <TextView
-                android:id="@+id/tv_place_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/place_rating" />
+              <TextView
+                  android:id="@+id/place_opening_status"
+                  style="?android:attr/ratingBarStyleSmall"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/_4sdp"
+                  android:text="Opening Soon"
+                  android:textColor="@color/color_primary"
+                  app:layout_constraintStart_toStartOf="@+id/tv_place_name"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
 
-            <View
-                android:id="@+id/divider1"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_2sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@color/quantum_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_description" />
+              <RatingBar
+                  android:id="@+id/place_rating"
+                  style="?android:attr/ratingBarStyleSmall"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/_8sdp"
+                  android:numStars="5"
+                  android:rating="0.0"
+                  android:stepSize="1.0"
+                  app:layout_constraintStart_toStartOf="@+id/tv_place_name"
+                  app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ll_place_extra_options"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider1">
-
-                <ImageView
-                    android:id="@+id/iv_website"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/circular_background"
-                    android:backgroundTint="@color/card_color6"
-                    android:padding="@dimen/_12sdp"
-                    android:rotation="120"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_add_review"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+              <TextView
+                  android:id="@+id/place_rating_text"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="@dimen/_4sdp"
+                  android:fontFamily="@font/font_medium"
+                  android:text="(0)"
+                  android:textColor="@color/card_color4"
+                  android:textSize="@dimen/_14ssp"
+                  app:layout_constraintBottom_toBottomOf="@+id/place_rating"
+                  app:layout_constraintStart_toEndOf="@+id/place_rating"
+                  app:layout_constraintTop_toTopOf="@+id/place_rating" />
 
 
-                <ImageView
-                    android:id="@+id/iv_add_review"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/circular_background"
-                    android:backgroundTint="@color/card_color6"
-                    android:padding="@dimen/_12sdp"
-                    android:src="@drawable/ic_edit_black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_add_photo"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/iv_website"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/white" />
+              <TextView
+                  android:id="@+id/tv_place_distance"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="@dimen/_8sdp"
+                  android:fontFamily="@font/font_medium"
+                  android:text="3.21 km."
+                  android:textColor="@color/quantum_grey"
+                  android:textSize="@dimen/_14ssp"
+                  app:layout_constraintBottom_toBottomOf="@+id/place_rating"
+                  app:layout_constraintStart_toEndOf="@+id/place_rating_text"
+                  app:layout_constraintTop_toTopOf="@+id/place_rating" />
+
+              <TextView
+                  android:id="@+id/tv_place_description"
+                  android:layout_width="0dp"
+                  android:layout_height="@dimen/_150sdp"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_20sdp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/place_rating" />
+
+              <ProgressBar
+                  android:id="@+id/circular_progress_place_description"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:visibility="gone"
+                  app:layout_constraintTop_toTopOf="@+id/tv_place_description"
+                  app:layout_constraintStart_toStartOf="@+id/tv_place_description"
+                  app:layout_constraintEnd_toEndOf="@+id/tv_place_description"
+                  app:layout_constraintBottom_toBottomOf="@+id/tv_place_description" />
+
+              <View
+                  android:id="@+id/divider1"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/_2sdp"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  android:background="@color/quantum_grey"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_place_description" />
 
 
-                <ImageView
-                    android:id="@+id/iv_add_photo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/circular_background"
-                    android:backgroundTint="@color/card_color6"
-                    android:padding="@dimen/_12sdp"
-                    android:src="@drawable/ic_add_photo"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_share_place"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/iv_add_review"
-                    app:layout_constraintTop_toTopOf="parent" />
+              <androidx.constraintlayout.widget.ConstraintLayout
+                  android:id="@+id/ll_place_extra_options"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+                  <ImageView
+                      android:id="@+id/iv_website"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/circular_background"
+                      android:backgroundTint="@color/card_color6"
+                      android:padding="@dimen/_12sdp"
+                      android:rotation="120"
+                      android:src="@drawable/ic_link"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toStartOf="@+id/iv_add_review"
+                      app:layout_constraintHorizontal_bias="0.5"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent" />
 
 
-                <ImageView
-                    android:id="@+id/iv_share_place"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/circular_background"
-                    android:backgroundTint="@color/card_color6"
-                    android:padding="@dimen/_12sdp"
-                    android:src="@drawable/ic_share"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/iv_add_photo"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ImageView
-                android:id="@+id/place_map_image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_150sdp"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@color/transparent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_place_extra_options" />
-
-            <TextView
-                android:id="@+id/tv_place_address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:background="@color/quantum_grey"
-                android:ellipsize="marquee"
-                android:fontFamily="@font/font_semi_bold"
-                android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_12sdp"
-                android:singleLine="true"
-                android:textColor="@color/color_primary"
-                android:textSize="@dimen/_12ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/place_map_image"
-                tools:text="How do you rate this place?" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_place_extra_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_address" />
+                  <ImageView
+                      android:id="@+id/iv_add_review"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/circular_background"
+                      android:backgroundTint="@color/card_color6"
+                      android:padding="@dimen/_12sdp"
+                      android:src="@drawable/ic_edit_black"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toStartOf="@+id/iv_add_photo"
+                      app:layout_constraintHorizontal_bias="0.5"
+                      app:layout_constraintStart_toEndOf="@+id/iv_website"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:tint="@color/white" />
 
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_2sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@color/quantum_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_place_extra_details" />
+                  <ImageView
+                      android:id="@+id/iv_add_photo"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/circular_background"
+                      android:backgroundTint="@color/card_color6"
+                      android:padding="@dimen/_12sdp"
+                      android:src="@drawable/ic_add_photo"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toStartOf="@+id/iv_share_place"
+                      app:layout_constraintHorizontal_bias="0.5"
+                      app:layout_constraintStart_toEndOf="@+id/iv_add_review"
+                      app:layout_constraintTop_toTopOf="parent" />
 
 
-            <TextView
-                android:id="@+id/tv_have_you_liked_it"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:fontFamily="@font/font_semi_bold"
-                android:text="How do you rate this place?"
-                android:textColor="@color/color_primary"
-                android:textSize="@dimen/_12ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider2" />
+                  <ImageView
+                      android:id="@+id/iv_share_place"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/circular_background"
+                      android:backgroundTint="@color/card_color6"
+                      android:padding="@dimen/_12sdp"
+                      android:src="@drawable/ic_share"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_bias="0.5"
+                      app:layout_constraintStart_toEndOf="@+id/iv_add_photo"
+                      app:layout_constraintTop_toTopOf="parent" />
 
-            <RatingBar
-                android:id="@+id/rate_this_place"
-                style="?android:attr/ratingBarStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:stepSize="0.1"
-                app:layout_constraintEnd_toEndOf="@+id/tv_have_you_liked_it"
-                app:layout_constraintStart_toStartOf="@+id/tv_have_you_liked_it"
-                app:layout_constraintTop_toBottomOf="@+id/tv_have_you_liked_it" />
+              </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <View
-                android:id="@+id/divider3"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_2sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@color/quantum_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rate_this_place" />
+              <ImageView
+                  android:id="@+id/place_map_image"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/_150sdp"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  android:background="@color/transparent"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/ll_place_extra_options" />
 
+              <TextView
+                  android:id="@+id/tv_place_address"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:background="@color/quantum_grey"
+                  android:ellipsize="marquee"
+                  android:fontFamily="@font/font_semi_bold"
+                  android:paddingHorizontal="@dimen/_8sdp"
+                  android:paddingVertical="@dimen/_12sdp"
+                  android:singleLine="true"
+                  android:textColor="@color/color_primary"
+                  android:textSize="@dimen/_12ssp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/place_map_image"
+                  tools:text="How do you rate this place?" />
 
-            <TextView
-                android:id="@+id/tv_place_videos"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:fontFamily="@font/font_semi_bold"
-                android:text="Check More About This Place"
-                android:textColor="@color/color_primary"
-                android:textSize="@dimen/_12ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider3" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/view_pager_videos"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_200sdp"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_videos" />
+              <androidx.recyclerview.widget.RecyclerView
+                  android:id="@+id/rv_place_extra_details"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_place_address" />
 
 
-            <TextView
-                android:id="@+id/tv_place_reviews"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:fontFamily="@font/font_semi_bold"
-                android:text="Check What Community Says"
-                android:textColor="@color/color_primary"
-                android:textSize="@dimen/_12ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_pager_videos" />
+              <View
+                  android:id="@+id/divider2"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/_2sdp"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  android:background="@color/quantum_grey"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/rv_place_extra_details" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_reviews"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_reviews" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+              <TextView
+                  android:id="@+id/tv_have_you_liked_it"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_20sdp"
+                  android:fontFamily="@font/font_semi_bold"
+                  android:text="How do you rate this place?"
+                  android:textColor="@color/color_primary"
+                  android:textSize="@dimen/_12ssp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
-    </androidx.core.widget.NestedScrollView>
+              <RatingBar
+                  android:id="@+id/rate_this_place"
+                  style="?android:attr/ratingBarStyle"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/_8sdp"
+                  android:isIndicator="true"
+                  android:numStars="5"
+                  android:stepSize="0.1"
+                  app:layout_constraintEnd_toEndOf="@+id/tv_have_you_liked_it"
+                  app:layout_constraintStart_toStartOf="@+id/tv_have_you_liked_it"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_have_you_liked_it" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+              <View
+                  android:id="@+id/divider3"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/_2sdp"
+                  android:layout_marginTop="@dimen/_12sdp"
+                  android:background="@color/quantum_grey"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/rate_this_place" />
+
+
+              <TextView
+                  android:id="@+id/tv_place_videos"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_20sdp"
+                  android:fontFamily="@font/font_semi_bold"
+                  android:text="Check More About This Place"
+                  android:textColor="@color/color_primary"
+                  android:textSize="@dimen/_12ssp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+              <androidx.viewpager2.widget.ViewPager2
+                  android:id="@+id/view_pager_videos"
+                  android:layout_width="0dp"
+                  android:layout_height="@dimen/_200sdp"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_10sdp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_place_videos" />
+
+
+              <TextView
+                  android:id="@+id/tv_place_reviews"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_20sdp"
+                  android:fontFamily="@font/font_semi_bold"
+                  android:text="Check What Community Says"
+                  android:textColor="@color/color_primary"
+                  android:textSize="@dimen/_12ssp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/view_pager_videos" />
+
+              <androidx.recyclerview.widget.RecyclerView
+                  android:id="@+id/rv_reviews"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="@dimen/_12sdp"
+                  android:layout_marginTop="@dimen/_10sdp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/tv_place_reviews" />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </androidx.core.widget.NestedScrollView>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

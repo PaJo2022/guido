@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -24,12 +25,14 @@ import com.innoappsai.guido.adapters.PlaceVideoAdapter
 import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.callToNumber
+import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentLocationDetailsNewBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.ArrayList
 import javax.inject.Inject
 
 
@@ -100,27 +103,24 @@ class LocationDetailsFragment :
         }
         viewModel.apply {
             getSinglePlaceDetails(palceId)
-//            isPlaceDataFetching.collectIn(viewLifecycleOwner){
-//                binding.llPlaceData.toggleEnableAndVisibility(!it)
-//                binding.cbLcoationDataFetching.isVisible = it
-//            }
-//            isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
-//                binding.pbChatgptApiCalling.isVisible = it
-//                if (!it) {
-//                    val layoutParams = binding.tvAboutThePlace.layoutParams
-//                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-//                    binding.tvAboutThePlace.layoutParams = layoutParams
-//                }
-//            }
+            isPlaceDataFetching.collectIn(viewLifecycleOwner) {
+                binding.swipeRefreshLayout.isRefreshing = it
+            }
+            isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
+                binding.circularProgressPlaceDescription.isVisible = it
+                if (!it) {
+                    val layoutParams = binding.tvPlaceDescription.layoutParams
+                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    binding.tvPlaceDescription.layoutParams = layoutParams
+                }
+            }
             placeDistance.observe(viewLifecycleOwner) {
                 binding.tvPlaceDistance.text = it
             }
-            landMarkData.observe(viewLifecycleOwner) {
-//                binding.llPlaceYoutubeVideos.isVisible = !it?.locationVideos.isNullOrEmpty()
-//                val videoUrls = it?.locationVideos?.map { videoUiModel ->
-//                    videoUiModel.videoUrl
-//                }
-//                adapterPlaceVideos.setPlaceVideos(videoUrls)
+            landMarkVideoData.observe(viewLifecycleOwner) {
+                binding.tvPlaceVideos.isVisible = it.isNotEmpty()
+                binding.viewPagerVideos.isVisible = it.isNotEmpty()
+                adapterVideos.setVideos(ArrayList(it))
             }
             placeMoreData.observe(viewLifecycleOwner) {
                 adapterPlaceExtraInfo.setPlaceExtraInfo(it)
@@ -136,10 +136,12 @@ class LocationDetailsFragment :
                             bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
                         }
                     }
-
+                    ivAddPhoto.isVisible = placeUiModel?.createdBy == appPrefs.userId
                     placeOpeningStatus.text = placeUiModel?.placeOpenStatus
                     tvPlaceName.text = placeUiModel?.name
                     tvPlaceName.isSelected = true
+                    placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
+                    placeRatingText.text = "(${placeUiModel?.rating ?: 0})"
                     Glide.with(requireContext()).load(placeUiModel?.placeMapImage).centerCrop()
                         .into(binding.placeMapImage)
                     tvPlaceAddress.makeTextViewClickableLink(
@@ -156,16 +158,14 @@ class LocationDetailsFragment :
                 placeUiModel?.placeDescription?.let {
                     binding.tvPlaceDescription.text = it
                 }
-                placeUiModel?.videos?.let { videos ->
-                    adapterVideos.setVideos(ArrayList(videos.map { Uri.parse(it) }))
-                }
+
                 placeUiModel?.reviews?.let {
                     adapterPlaceReview.setPlaceReviews(it)
                 }
 
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
-
+                binding.tvPlaceDescription.text = it
             }
         }
 
