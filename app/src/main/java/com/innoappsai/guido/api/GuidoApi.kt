@@ -4,6 +4,8 @@ import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
+import com.innoappsai.guido.model.review.ReviewRequestDTO
+import com.innoappsai.guido.model.review.ReviewResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -55,15 +57,26 @@ interface GuidoApi {
     @DELETE("delete-place-by-id")
     suspend fun deletePlaceById(
         @Query("userId", encoded = true) userId : String,
-        @Query("placeId", encoded = true) placeId : String
+        @Query("placeId", encoded = true) placeId: String
     ): Response<PlaceDTO>
 
     @PUT("update-static-map-url-by-place-id")
     suspend fun updatePlaceStaticMapUrlPlaceById(
-        @Query("placeId", encoded = true) placeId : String,
-        @Query("newStaticMapUrl") staticMapUrl : String,
+        @Query("placeId", encoded = true) placeId: String,
+        @Query("newStaticMapUrl") staticMapUrl: String,
     ): Response<PlaceDTO>
 
 
+    // Reviews
+
+    @POST("add-review")
+    suspend fun addReview(
+        @Body reviewRequestDTO: ReviewRequestDTO
+    ): Response<ReviewResponseDTO>
+
+    @GET("reviews-by-place-id")
+    suspend fun fetchReviewByPlaceId(
+        @Query("placeId", encoded = true) placeId: String
+    ): Response<List<ReviewResponseDTO>>
 
 }

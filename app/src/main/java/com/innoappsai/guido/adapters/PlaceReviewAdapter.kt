@@ -3,20 +3,19 @@ package com.innoappsai.guido.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.databinding.LayoutPlacesReviewItemBinding
-import com.innoappsai.guido.model.placesUiModel.ReviewUiModel
+import com.innoappsai.guido.model.review.Review
 
 class PlaceReviewAdapter(
     private val appContext: Context
 ) : RecyclerView.Adapter<PlaceReviewAdapter.PlaceReviewViewHolder>() {
 
 
-    private var _placeReview: List<ReviewUiModel> = ArrayList()
+    private var _placeReview: List<Review> = ArrayList()
 
-    fun setPlaceReviews(placeReview: List<ReviewUiModel>) {
+    fun setPlaceReviews(placeReview: List<Review>) {
         _placeReview = placeReview
         notifyDataSetChanged()
     }
@@ -29,17 +28,15 @@ class PlaceReviewAdapter(
 
     inner class PlaceReviewViewHolder(private val binding: LayoutPlacesReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(reviewUiModel: ReviewUiModel) {
-            Glide.with(appContext).load(reviewUiModel.authorProfilePic).centerCrop().into(binding.ivAuthorImage)
-            binding.tvAuthorName.text = reviewUiModel.authorName
-            binding.tvReviewStar.rating = reviewUiModel.authorRating.toFloat()
-            binding.tvReviewDate.text = reviewUiModel.reviewDone
-            binding.tvReview.apply {
-                isVisible = reviewUiModel.reviewText.isNotEmpty()
-                text = reviewUiModel.reviewText
-            }
+        fun bindItem(reviewUiModel: Review) {
+             Glide.with(appContext).load(reviewUiModel.user?.profilePicture).centerCrop().into(binding.ivAuthorImage)
+              binding.tvAuthorName.text = reviewUiModel.user?.displayName
+            binding.tvReviewStar.rating = reviewUiModel.rating?.toFloat() ?: 0.0f
+            // binding.tvReviewDate.text = reviewUiModel.reviewDone
+            binding.tvReviewTitle.text = reviewUiModel.description
+            binding.tvReviewDescription.text = reviewUiModel.description
             binding.ivAuthorImage.setOnClickListener {
-               // _onItemClickListener?.invoke(photoUrl)
+                // _onItemClickListener?.invoke(photoUrl)
             }
         }
     }

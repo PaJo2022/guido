@@ -14,6 +14,8 @@ import kotlinx.parcelize.Parcelize
 data class User@JvmOverloads constructor(
     @PrimaryKey(autoGenerate = false)
     val id: String = "",
+    @SerializedName("_id")
+    val dbId : String?=null,
     val firstName: String? = null,
     val lastName: String? = null,
     val displayName: String? = null,

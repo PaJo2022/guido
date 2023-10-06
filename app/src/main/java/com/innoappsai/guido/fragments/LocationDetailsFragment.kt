@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -21,6 +23,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.DividerItemDecoration
 import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.ImageSliderAdapter
@@ -95,10 +98,24 @@ class LocationDetailsFragment :
         bottomSheetFragment.setOnSuccessFullPlaceDeleted {
             parentFragmentManager.popBackStack()
         }
-        val palceId = arguments?.getString("PLACE_ID")
+        val placeId = arguments?.getString("PLACE_ID")
         setUpViewPager()
         binding.apply {
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            tvHaveYouLikedIt.setOnClickListener {
+                val rating = 2.5f
+                Bundle().apply {
+                    putFloat("PLACE_RATING", rating)
+                    putString("PLACE_ID", placeId)
+                    openNavFragment(
+                        AddReviewFragment(),
+                        childFragmentManager,
+                        "ProfileFragment",
+                        binding.flId,
+                        this
+                    )
+                }
+            }
             rvReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -112,7 +129,7 @@ class LocationDetailsFragment :
             }
         }
         viewModel.apply {
-            getSinglePlaceDetails(palceId)
+            getSinglePlaceDetails(placeId)
             isPlaceDataFetching.collectIn(viewLifecycleOwner) {
                 binding.swipeRefreshLayout.isRefreshing = it
             }
@@ -181,13 +198,14 @@ class LocationDetailsFragment :
                     binding.tvPlaceDescription.text = it
                 }
 
-                placeUiModel?.reviews?.let {
-                    adapterPlaceReview.setPlaceReviews(it)
-                }
 
             }
             landMarkTourDataData.observe(viewLifecycleOwner) {
                 binding.tvPlaceDescription.text = it
+            }
+            placeReviews.observe(viewLifecycleOwner) {
+                binding.tvNoReviewsYet.isVisible = it.isNullOrEmpty()
+                adapterPlaceReview.setPlaceReviews(it)
             }
         }
 
@@ -291,6 +309,28 @@ class LocationDetailsFragment :
             .enqueue()
 
 
+    }
+
+    private fun openNavFragment(
+        f: Fragment?,
+        fm: FragmentManager,
+        FragmentName: String,
+        view: View,
+        args: Bundle? = null
+    ) {
+        val ft = fm.beginTransaction()
+
+        // Pass the bundle as arguments to the fragment, if provided
+        if (args != null) {
+            f?.arguments = args
+        }
+        ft.setCustomAnimations(
+            R.anim.in_from_right,
+            R.anim.out_to_left,
+            R.anim.in_from_left,
+            R.anim.out_to_right
+        )
+        ft.replace(view.id, f!!, FragmentName).addToBackStack(FragmentName).commit()
     }
 
 

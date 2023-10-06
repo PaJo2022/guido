@@ -9,6 +9,7 @@ import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.data.review.ReviewRepository
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.videos.VideoRepository
 import com.innoappsai.guido.formatDouble
@@ -20,6 +21,7 @@ import com.innoappsai.guido.model.chatGptModel.ChatGptResponse
 import com.innoappsai.guido.model.chatGptModel.Message
 import com.innoappsai.guido.model.placesUiModel.ExtraInfoWithIcon
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.model.review.Review
 import com.innoappsai.guido.model.videosUiModel.VideoUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +36,8 @@ import javax.inject.Inject
 class LandMarkDetailsViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val tourDataRepository: ChatGptRepository,
-    private val placeRepository: PlacesRepository
+    private val placeRepository: PlacesRepository,
+    private val reviewRepository: ReviewRepository
 ) :
     ViewModel() {
 
@@ -58,6 +61,9 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private val _placeDistance: MutableLiveData<String> = MutableLiveData()
     val placeDistance: LiveData<String> = _placeDistance
+
+    private val _placeReviews: MutableLiveData<List<Review>> = MutableLiveData()
+    val placeReviews: LiveData<List<Review>> = _placeReviews
 
 
     private val _isPlaceDataFetching: MutableSharedFlow<Boolean> = MutableSharedFlow()
@@ -133,7 +139,7 @@ class LandMarkDetailsViewModel @Inject constructor(
             _placeMoreData.postValue(extraInfoList)
 
         }
-
+        fetchReviewsForThePlace(placeId)
     }
 
     private fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?){
@@ -196,7 +202,12 @@ class LandMarkDetailsViewModel @Inject constructor(
         }
     }
 
-
+    private fun fetchReviewsForThePlace(placeId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val reviews = reviewRepository.getReviewByPlaceId(placeId)
+            _placeReviews.postValue(reviews)
+        }
+    }
 
 
 }

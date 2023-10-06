@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    tools:context=".fragments.HomeFragment">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:background="@color/card_color8"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent">
+
+          <!-- Left ImageView -->
+          <ImageView
+              android:id="@+id/iv_arrow_back"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="start"
+              android:src="@drawable/ic_cross" />
+
+          <!-- Center TextView -->
+          <TextView
+              android:id="@+id/toolbar_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:fontFamily="@font/font_bold"
+              android:text="Place Details"
+              android:textColor="#ffffff"
+              android:textSize="@dimen/_16ssp" />
+
+          <!-- Right ImageView -->
+          <TextView
+              android:id="@+id/tv_post"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:layout_marginEnd="@dimen/_12sdp"
+              android:fontFamily="@font/font_regular"
+              android:text="Post"
+              android:textColor="#ffffff"
+              android:textSize="@dimen/_16ssp" />
+
+
+      </androidx.appcompat.widget.Toolbar>
+
+      <androidx.core.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:fillViewport="true"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+
+
+             <RatingBar
+                 android:id="@+id/rate_bar"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 android:layout_gravity="center"
+                 android:isIndicator="true"
+                 android:numStars="5"
+                 android:stepSize="0.1"
+                 android:rating="4"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toTopOf="parent" />
+
+             <TextView
+                 android:id="@+id/tv_rating"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:fontFamily="@font/font_regular"
+                 android:text="4.0"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 android:textColor="@color/color_primary"
+                 android:textSize="@dimen/_14ssp"
+                 app:layout_constraintEnd_toEndOf="@+id/rate_bar"
+                 app:layout_constraintStart_toStartOf="@+id/rate_bar"
+                 app:layout_constraintTop_toBottomOf="@+id/rate_bar" />
+
+             <com.google.android.material.textfield.TextInputLayout
+                 android:id="@+id/ti_layout_place_review_title"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 app:endIconMode="clear_text"
+                 app:errorEnabled="true"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 android:layout_marginHorizontal="@dimen/_12sdp"
+                 app:errorTextColor="@color/red"
+                 app:helperText="Required"
+                 app:hintAnimationEnabled="false"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/tv_rating">
+
+
+                 <com.google.android.material.textfield.TextInputEditText
+                     android:id="@+id/et_place_review_title"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:gravity="start"
+                     android:inputType="text"
+                     android:hint="Title"
+                     android:textColor="@color/color_primary"
+                     android:textColorHint="@color/color_primary" />
+
+             </com.google.android.material.textfield.TextInputLayout>
+
+             <com.google.android.material.textfield.TextInputLayout
+                 android:id="@+id/ti_layout_place_review_description"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:hint="What you like or dislike about this place"
+                 app:counterEnabled="true"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 app:counterMaxLength="2000"
+                 app:endIconMode="clear_text"
+                 app:errorEnabled="true"
+                 app:errorTextColor="@color/red"
+                 app:helperText="Minimum of 10 characters"
+                 app:hintAnimationEnabled="false"
+                 app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_review_title"
+                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_review_title"
+                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_review_title">
+
+
+                 <com.google.android.material.textfield.TextInputEditText
+                     android:id="@+id/et_place_review_description"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:gravity="start"
+                     android:inputType="text | textMultiLine"
+                     android:paddingVertical="@dimen/_30sdp"
+                     android:text=""
+                     android:textColor="@color/color_primary"
+                     android:textColorHint="@color/color_primary" />
+
+             </com.google.android.material.textfield.TextInputLayout>
+
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </androidx.core.widget.NestedScrollView>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

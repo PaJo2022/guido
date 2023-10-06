@@ -146,7 +146,7 @@ class HomeViewModel @Inject constructor(
                     latitude, longitude, radius, interestList.map { it.id }
                 )
             }
-            listOfPlaces = job2.await() as ArrayList<PlaceUiModel>
+            listOfPlaces = ArrayList(job2.await())
             val latLangs = listOfPlaces.map { it.latLng }
 
             val placesInGroupData = async { mapPlacesByType(listOfPlaces) }.await()

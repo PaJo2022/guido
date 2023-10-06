@@ -14,6 +14,8 @@ import com.innoappsai.guido.data.file.FileRepository
 import com.innoappsai.guido.data.file.FileRepositoryImpl
 import com.innoappsai.guido.data.places.BackendPlacesRepositoryImpl
 import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.data.review.ReviewRepository
+import com.innoappsai.guido.data.review.ReviewRepositoryImpl
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.tourData.TourDataRepositoryImpl
 import com.innoappsai.guido.data.videos.VideoRepository
@@ -66,6 +68,9 @@ class RepositoryModule {
     fun provideFileRepositoryImpl(firebaseStorage: FirebaseStorage): FileRepository =
         FileRepositoryImpl(firebaseStorage)
 
-
+    @Provides
+    @Singleton
+    fun provideReviewRepositoryImpl(guidoApi: GuidoApi): ReviewRepository =
+        ReviewRepositoryImpl(guidoApi)
 
 }

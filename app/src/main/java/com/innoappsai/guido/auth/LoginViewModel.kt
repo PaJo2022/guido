@@ -84,11 +84,11 @@ class LoginViewModel @Inject constructor(
 
     private fun checkIfNewUserOrElseLogin(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
-            val userId = user.id ?: return@launch
+            val userId = user.id
+            appPrefs.userId = userId
             val userData = authRepository.onLogin(userId)
             if (userData != null) {
                 _isLoading.emit(false)
-                appPrefs.userId = userId
                 userRepository.addUser(userData)
                 _userLoginState.postValue(UserLoginState.UserLoggedIn(user))
                 return@launch
