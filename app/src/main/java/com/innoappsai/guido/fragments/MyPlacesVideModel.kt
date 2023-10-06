@@ -47,7 +47,7 @@ class MyPlacesVideModel @Inject constructor(
     ): MutableList<PlaceTypeUiModel> {
         // Create a map to store places by type
         val placeUiTypeUiModel = mutableListOf<PlaceTypeUiModel>()
-        val placesGroupedByType = places.groupBy { it.type }
+        val placesGroupedByType = places.groupBy { it.superType }
         placeUiTypeUiModel.clear()
         // Iterate through the place types
         placesGroupedByType.entries.forEach { mapData ->
@@ -59,7 +59,6 @@ class MyPlacesVideModel @Inject constructor(
                     mapData.key,
                     Constants.getPlaceTypeIcon(mapData.key.toString()),
                     places = mapData.value.addUiType(
-                        Constants.getPlaceTypeIcon(mapData.key.toString()),
                         PlaceUiType.LARGE
                     ),
                     dataType = DataType.DATA

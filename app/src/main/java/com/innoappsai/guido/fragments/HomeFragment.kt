@@ -22,9 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,6 +35,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.Constants.iconResourceMapping
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
@@ -51,7 +49,6 @@ import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
-import com.innoappsai.guido.workers.DownloadImageWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -344,10 +341,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val markerUrl = placeUiModel.icon
         val markerLatLng = placeUiModel.latLng
         val landMarkName = placeUiModel.name
+        val resourceId = iconResourceMapping[placeUiModel.icon]
+        if (markerLatLng == null || landMarkName == null || resourceId == null) return
 
-        if (markerLatLng == null || landMarkName == null || placeUiModel.iconDrawable == null) return
+
         val iconBitmap =
-            ContextCompat.getDrawable(requireContext(), placeUiModel.iconDrawable)!!.toBitmap()
+            ContextCompat.getDrawable(requireContext(), resourceId)!!.toBitmap()
         val markerOptions = MarkerOptions()
             .position(markerLatLng)
             .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
@@ -394,8 +393,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             selectedMarker.collectIn(viewLifecycleOwner) { markerData ->
                 val marker = markerData.marker
                 try {
+                    val resourceId = iconResourceMapping[markerData.placeUiModel.icon] ?: return@collectIn
                     val newIcon =
-                        ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
+                        ContextCompat.getDrawable(requireContext(), resourceId)!!
                             .toBitmap(150,150)
                     marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
                 }catch (e : Exception){
@@ -638,8 +638,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     override fun onInfoWindowClose(marker: Marker) {
 
         val markerData = viewModel.markerDataList.find { it.marker.id == marker.id } ?: return
+        val resourceId = iconResourceMapping[markerData.placeUiModel.icon] ?: return
         val newIcon =
-            ContextCompat.getDrawable(requireContext(), markerData.placeUiModel.iconDrawable!!)!!
+            ContextCompat.getDrawable(requireContext(),resourceId)!!
                 .toBitmap()
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
     }

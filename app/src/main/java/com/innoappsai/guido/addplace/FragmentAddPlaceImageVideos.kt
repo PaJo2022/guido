@@ -9,9 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -28,9 +25,6 @@ import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceImageVideosBinding
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.showToast
-import com.innoappsai.guido.workers.AddPlaceWorker
-import com.innoappsai.guido.workers.DownloadImageWorker
-import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -69,7 +63,7 @@ class FragmentAddPlaceImageVideos :
             }
 
 
-            ivComplete.setOnClickListener {
+            tvNext.setOnClickListener {
                 findNavController().navigate(R.id.fragmentAddPlaceDetails)
             }
         }

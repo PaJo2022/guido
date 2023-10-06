@@ -149,7 +149,7 @@ class HomeViewModel @Inject constructor(
             listOfPlaces = job2.await() as ArrayList<PlaceUiModel>
             val latLangs = listOfPlaces.map { it.latLng }
 
-            val placesInGroupData = async { mapPlacesByType(interestList,listOfPlaces) }.await()
+            val placesInGroupData = async { mapPlacesByType(listOfPlaces) }.await()
             nearByPlacesListInGroup.addAll(placesInGroupData)
             placesInGroupData.forEach {placeTypeUiModel->
                 nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
@@ -174,8 +174,7 @@ class HomeViewModel @Inject constructor(
             nearByMarkerList.clear()
             listOfPlaces.removeIf { it.placeId == placeId }
             val latLangs = listOfPlaces.map { it.latLng }
-            val interestList = placesRepository.getAllSavedPlaceTypePreferences()
-            val placesInGroupData = async { mapPlacesByType(interestList,listOfPlaces) }.await()
+            val placesInGroupData = async { mapPlacesByType(listOfPlaces) }.await()
             nearByPlacesListInGroup.addAll(placesInGroupData)
             placesInGroupData.forEach {placeTypeUiModel->
                 nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
@@ -192,23 +191,21 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun mapPlacesByType(
-        placeTypes: List<PlaceType>,
         places: List<PlaceUiModel>
     ): MutableList<PlaceTypeUiModel> {
         // Create a map to store places by type
         val placeUiTypeUiModel = mutableListOf<PlaceTypeUiModel>()
-        val placesGroupedByType = places.groupBy { it.type }
+        val placesGroupedByType = places.groupBy { it.superType }
         placeUiTypeUiModel.clear()
         // Iterate through the place types
         placesGroupedByType.entries.forEach {mapData->
 
 
-                // Store the list in the map
             placeUiTypeUiModel.add(
                 PlaceTypeUiModel(
                     mapData.key,
                     getPlaceTypeIcon(mapData.key.toString()),
-                    places = mapData.value.addUiType( getPlaceTypeIcon(mapData.key.toString()), PlaceUiType.LARGE),
+                    places = mapData.value.addUiType(PlaceUiType.LARGE),
                     dataType =  DataType.DATA
                 )
             )

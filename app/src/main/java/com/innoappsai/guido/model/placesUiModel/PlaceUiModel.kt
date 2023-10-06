@@ -20,7 +20,8 @@ data class PlaceUiModel(
     val country: String? = null,
     val createdBy: String? = null,
     val icon: String? = null,
-    val iconDrawable: Int? = null,
+    val typeName: String? = null,
+    val superType: String? = null,
     val type: String? = null,
     val placeType: PlaceType? = null,
     val placeDescription: String? = null,
@@ -55,9 +56,11 @@ data class ExtraInfoWithIcon(
 ) : Parcelable
 
 
-fun List<PlaceUiModel>.addUiType(iconDrawable: Int?, placeUiType: PlaceUiType) = map {
+fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
     PlaceUiModel(
-        iconDrawable = iconDrawable,
+        icon = it.icon,
+        typeName = it.typeName,
+        superType = it.superType,
         placeUiType = placeUiType,
         placeId = it.placeId,
         name = it.name,
@@ -69,7 +72,6 @@ fun List<PlaceUiModel>.addUiType(iconDrawable: Int?, placeUiType: PlaceUiType) =
         state = it.state,
         country = it.country,
         placeDescription = it.placeDescription,
-        icon = null,
         iconBackGroundColor = null,
         type = it.type,
         photos = it.photos,
