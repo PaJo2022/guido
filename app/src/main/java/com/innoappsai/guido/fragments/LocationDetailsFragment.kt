@@ -102,20 +102,6 @@ class LocationDetailsFragment :
         setUpViewPager()
         binding.apply {
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
-            tvHaveYouLikedIt.setOnClickListener {
-                val rating = 2.5f
-                Bundle().apply {
-                    putFloat("PLACE_RATING", rating)
-                    putString("PLACE_ID", placeId)
-                    openNavFragment(
-                        AddReviewFragment(),
-                        childFragmentManager,
-                        "ProfileFragment",
-                        binding.flId,
-                        this
-                    )
-                }
-            }
             rvReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -153,6 +139,20 @@ class LocationDetailsFragment :
                 adapterPlaceExtraInfo.setPlaceExtraInfo(it)
             }
             singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
+                binding.tvHaveYouLikedIt.setOnClickListener {
+                    val rating = 2.5f
+                    Bundle().apply {
+                        putFloat("PLACE_RATING", rating)
+                        putString("PLACE_DB_ID", placeUiModel?.dbId)
+                        openNavFragment(
+                            AddReviewFragment(),
+                            childFragmentManager,
+                            "ProfileFragment",
+                            binding.flId,
+                            this
+                        )
+                    }
+                }
                 if (placeUiModel != null && placeUiModel.placeMapImage == null) {
                     startUploadingPlaceData(
                         placeId = placeUiModel.placeId!!,
@@ -175,7 +175,7 @@ class LocationDetailsFragment :
                     tvPlaceName.text = placeUiModel?.name
                     tvPlaceName.isSelected = true
                     placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
-                    placeRatingText.text = "(${placeUiModel?.rating ?: 0})"
+                    placeRatingText.text = "(${placeUiModel?.reviewsCount ?: 0})"
                     Glide.with(requireContext()).load(
                         placeUiModel?.placeMapImage ?: generateStaticMapUrl(
                             latitude = placeUiModel?.latLng?.latitude ?: 0.0,

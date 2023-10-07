@@ -136,10 +136,11 @@ class LandMarkDetailsViewModel @Inject constructor(
             if (!businessEmail.isNullOrEmpty()) {
                 extraInfoList.add(ExtraInfoWithIcon(R.drawable.ic_email_new, "Email", businessEmail))
             }
+            placeData?.dbId?.let { fetchReviewsForThePlace(it) }
             _placeMoreData.postValue(extraInfoList)
 
         }
-        fetchReviewsForThePlace(placeId)
+
     }
 
     private fun getDistanceBetweenMyPlaceAndTheCurrentPlace(placeUiModel: PlaceUiModel?){

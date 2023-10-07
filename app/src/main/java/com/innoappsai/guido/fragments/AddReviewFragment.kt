@@ -25,8 +25,8 @@ class AddReviewFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val rating = arguments?.getFloat("PLACE_RATING") ?: 0.0f
-        viewModel.placeId = arguments?.getString("PLACE_ID")
+        var rating = arguments?.getFloat("PLACE_RATING") ?: 0.0f
+        viewModel.placeId = arguments?.getString("PLACE_DB_ID")
         binding.apply {
             rateBar.rating = rating
             tvRating.text = rating.toString()
@@ -34,7 +34,7 @@ class AddReviewFragment :
             tvPost.setOnClickListener {
                 val reviewTitle = etPlaceReviewTitle.text.toString()
                 val reviewDescription = etPlaceReviewDescription.text.toString()
-                val rating = rateBar.rating
+                rating = 1.5f
 
                 tiLayoutPlaceReviewTitle.error = null
                 tiLayoutPlaceReviewDescription.error = null

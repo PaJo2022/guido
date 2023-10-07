@@ -29,6 +29,7 @@ data class PlaceDTO(
     val placeOpenStatus: String? = null,
     val pricingType: String?,
     val rating: Double? = null,
+    val reviewsCount: Int? = null,
     val types: List<String>? = null,
     val website: String? = null,
     val instagram: String? = null,
@@ -46,6 +47,7 @@ data class PlaceDTO(
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
     PlaceUiModel(
+        dbId = it.id,
         placeId = it.placeId,
         name = it.placeName,
         createdBy = it.createdBy,
@@ -64,6 +66,7 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
         photos = it.photos,
         videos = it.videos,
         rating = it.rating,
+        reviewsCount = it.reviewsCount,
         callNumber = it.contactNumber,
         website = it.website,
         instagram = it.instagram,
@@ -79,6 +82,7 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
 }
 
 fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
+    dbId = id,
     placeId = placeId,
     name = placeName,
     createdBy = createdBy,
@@ -97,6 +101,7 @@ fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
     photos = photos,
     videos = videos,
     rating = rating,
+    reviewsCount = reviewsCount,
     callNumber = contactNumber,
     website = website,
     instagram = instagram,
