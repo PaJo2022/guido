@@ -8,6 +8,7 @@ import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import com.innoappsai.guido.model.toUiModel
@@ -23,6 +24,23 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     private val api: GuidoApi,
     private val db: MyAppDataBase
 ) : PlacesRepository {
+    override suspend fun fetchPlacesNearMeAndSaveInLocalDb(
+        latitude: Double,
+        longitude: Double,
+        radius: Int,
+        types: List<String>
+    ) {
+        val places = api.fetchPlacesNearMe(latitude, longitude, radius, types).body()
+        db.withTransaction {
+            db.placeDao().apply {
+                deleteAllPlaces()
+                insertPlaces(places)
+            }
+        }
+    }
+
+    override fun getPlacesNearMeFromLocalDb() =
+        db.placeDao().getAllPlaces().map { it.toPlaceUiModel() }
 
 
     override suspend fun fetchPlacesNearMe(
@@ -56,16 +74,25 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deletePlaceById(userId: String, placeId: String): PlaceUiModel? {
+    override suspend fun deletePlaceById(userId: String, placeId: String): PlaceDTO? {
         val response = api.deletePlaceById(userId, placeId)
-        return response.body()?.toPlaceUiModel()
+        if (response.isSuccessful && response.body() != null) {
+            db.placeDao().deletePlaceById(placeId)
+        }
+        return response.body()
+    }
+
+    override suspend fun deletePlaceFromDB(placeId: String) {
+        withContext(Dispatchers.IO) {
+            db.placeDao().deletePlaceById(placeId)
+        }
     }
 
     override suspend fun updatePlaceStaticMapByPlaceId(
         placeId: String,
         staticMapUrl: String
     ): PlaceUiModel? {
-        val response = api.updatePlaceStaticMapUrlPlaceById(placeId,staticMapUrl)
+        val response = api.updatePlaceStaticMapUrlPlaceById(placeId, staticMapUrl)
         return response.body()?.toPlaceUiModel()
     }
 
@@ -89,11 +116,12 @@ class BackendPlacesRepositoryImpl @Inject constructor(
             fetch = {
                 api.fetchPlacesDetails(placeId).body()
             },
-            shouldFetch = { false },
-            saveFetchResult = { places ->
+            shouldFetch = {
+                it.serverDbId == null
+            },
+            saveFetchResult = { place ->
                 db.withTransaction {
-                    db.placeDao().deletePlaceById(placeId)
-                    db.placeDao().insertPlace(places)
+                    db.placeDao().updatePlace(place)
                 }
             }
         )

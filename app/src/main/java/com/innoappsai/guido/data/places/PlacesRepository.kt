@@ -4,14 +4,21 @@ import com.innoappsai.guido.model.FullPlaceData
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
-import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PlacesRepository {
+    suspend fun fetchPlacesNearMeAndSaveInLocalDb(
+        latitude: Double,
+        longitude: Double,
+        radius: Int,
+        types: List<String>
+    )
 
+    fun getPlacesNearMeFromLocalDb(): Flow<List<PlaceUiModel>>
 
     suspend fun fetchPlacesNearMe(
         latitude: Double,
@@ -27,7 +34,11 @@ interface PlacesRepository {
     suspend fun deletePlaceById(
         userId: String,
         placeId: String
-    ): PlaceUiModel?
+    ): PlaceDTO?
+
+    suspend fun deletePlaceFromDB(
+        placeId: String
+    )
 
     suspend fun updatePlaceStaticMapByPlaceId(
         placeId: String,

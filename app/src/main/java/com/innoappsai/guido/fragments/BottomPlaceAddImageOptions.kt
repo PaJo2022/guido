@@ -77,12 +77,6 @@ class BottomPlaceAddImageOptions : BottomSheetDialogFragment() {
             onPlaceDeleted.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast("${it} is deleted")
                 onSuccessFullPlaceDeleted?.invoke()
-                myPlaceViewModel.removePlaceUsingPlaceId(
-                    viewModel.placeData?.placeId ?: return@collectIn
-                )
-                homeViewModel.removePlaceUsingPlaceId(
-                    viewModel.placeData?.placeId ?: return@collectIn
-                )
             }
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast("${it} is deleted")

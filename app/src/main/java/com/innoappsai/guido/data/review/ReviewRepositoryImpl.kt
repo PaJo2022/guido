@@ -21,8 +21,7 @@ class ReviewRepositoryImpl @Inject constructor(
             val placeId = reviewRequestDTO.placeId!!
             db.withTransaction {
                 db.placeDao().apply {
-                    deletePlaceById(placeId)
-                    insertPlace(placeDTO)
+                    updatePlace(placeDTO)
                 }
             }
         }

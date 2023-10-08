@@ -21,8 +21,8 @@ class BottomPlaceOptionsViewModel @Inject constructor(
 
     var placeData: PlaceUiModel? = null
 
-    private val _onPlaceDeleted: MutableSharedFlow<String> = MutableSharedFlow()
-    val onPlaceDeleted: SharedFlow<String> = _onPlaceDeleted.asSharedFlow()
+    private val _onPlaceDeleted: MutableSharedFlow<String?> = MutableSharedFlow()
+    val onPlaceDeleted: SharedFlow<String?> = _onPlaceDeleted.asSharedFlow()
 
     private val _error: MutableSharedFlow<String> = MutableSharedFlow()
     val error: SharedFlow<String> = _error.asSharedFlow()
@@ -33,10 +33,12 @@ class BottomPlaceOptionsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val deletedPlace = placesRepository.deletePlaceById(userId, placeId)
             if (deletedPlace != null) {
-                _onPlaceDeleted.emit(deletedPlace.name.toString())
+                _onPlaceDeleted.emit("Place Deleted")
             } else {
                 _error.emit("Something went wrong")
             }
         }
     }
+
+
 }

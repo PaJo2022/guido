@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import kotlinx.coroutines.flow.Flow
 
@@ -17,10 +18,13 @@ interface PlaceDao {
     suspend fun insertPlace(place: PlaceDTO?)
 
     @Query("SELECT * FROM PLACE_DTO WHERE placeId =:dbId")
-    fun getPlaceById(dbId : String) : Flow<PlaceDTO>
+    fun getPlaceById(dbId: String): Flow<PlaceDTO>
 
     @Query("SELECT * FROM PLACE_DTO")
-    fun getAllPlaces() : Flow<List<PlaceDTO>>
+    fun getAllPlaces(): Flow<List<PlaceDTO>>
+
+    @Update
+    suspend fun updatePlace(place: PlaceDTO?)
 
     @Query("DELETE FROM PLACE_DTO WHERE placeId = :dbId")
     suspend fun deletePlaceById(dbId: String)

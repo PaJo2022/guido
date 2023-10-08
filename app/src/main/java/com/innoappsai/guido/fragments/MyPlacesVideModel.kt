@@ -71,13 +71,7 @@ class MyPlacesVideModel @Inject constructor(
         return placeUiTypeUiModel
     }
 
-    fun removePlaceUsingPlaceId(placeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            places.removeIf { it.placeId == placeId }
-            val placesInGroupData = async { mapPlacesByType(places) }.await()
-            _nearByPlacesInGroup.postValue(placesInGroupData)
-        }
-    }
+
 
 
 }
