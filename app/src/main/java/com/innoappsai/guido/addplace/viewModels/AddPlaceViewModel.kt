@@ -338,7 +338,6 @@ class AddPlaceViewModel @Inject constructor(
                 placeDescription = globalPlaceDescription,
                 pricingType = globalPlacePriceRange,
                 placeId = UUID.randomUUID().toString(),
-                rating = 0.0,
                 placeName = globalPlaceName,
                 types = listOf(globalPlaceType ?: ""),
                 website = globalPlaceWebsite,

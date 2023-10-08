@@ -25,6 +25,7 @@ data class PlaceUiModel(
     val superType: String? = null,
     val type: String? = null,
     val placeType: PlaceType? = null,
+    val pricingType: String? = null,
     val placeDescription: String? = null,
     @SerializedName("icon_background_color")
     val iconBackGroundColor: String? = null,
@@ -66,6 +67,7 @@ fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
         superType = it.superType,
         placeUiType = placeUiType,
         placeId = it.placeId,
+        pricingType = it.pricingType,
         name = it.name,
         createdBy = it.createdBy,
         latLng = it.latLng,

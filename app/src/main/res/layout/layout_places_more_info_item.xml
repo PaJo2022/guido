@@ -30,16 +30,38 @@
         app:layout_constraintStart_toEndOf="@+id/iv_info_icon"
         app:layout_constraintTop_toTopOf="@+id/iv_info_icon" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineOne"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50" />
+
     <TextView
         android:id="@+id/tv_more_info_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/font_medium"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:text="Open until 11:00pm"
+        android:gravity="end"
         android:textColor="@color/color_sound_compose_selected_color13"
         app:layout_constraintBottom_toBottomOf="@+id/iv_info_icon"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineOne"
         app:layout_constraintTop_toTopOf="@+id/iv_info_icon" />
+
+    <ImageView
+        android:id="@+id/iv_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_medium"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_info_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_info_icon"
+        app:tint="@color/color_primary" />
 
 
 

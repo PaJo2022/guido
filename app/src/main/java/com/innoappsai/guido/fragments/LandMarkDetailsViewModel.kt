@@ -91,11 +91,14 @@ class LandMarkDetailsViewModel @Inject constructor(
                 placeId = placeId
             ) ?: return@launch
             if (placeData.placeDescription.isNullOrEmpty()) {
-                fetchAiDescriptionForThePlace(placeData)
+                fetchTourDataForLandMark(placeData)
+            }else{
+                _isPlaceAIDataFetching.emit(false)
             }
             fetchVideosForTheLocation(placeData)
-            _isPlaceAIDataFetching.emit(false)
             _isPlaceVideoFetching.emit(false)
+
+
 
             getDistanceBetweenMyPlaceAndTheCurrentPlace(placeData)
             callNumber = placeData.callNumber
@@ -152,13 +155,8 @@ class LandMarkDetailsViewModel @Inject constructor(
         _placeDistance.postValue("${formatDouble(totalDistance)} Km")
     }
 
-    private fun setPlaceVideoData(locationVideos: List<VideoUiModel>) {
-        placesDetailsUiModel?.locationVideos = locationVideos
-    }
 
-    private fun setTourDataData(tourDataInHtml: String) {
-        _landMarkTourDataData.postValue(tourDataInHtml)
-    }
+
 
 
     private suspend fun fetchVideosForTheLandMarkName(placeUiModel: PlaceUiModel): List<VideoUiModel> {
@@ -171,25 +169,23 @@ class LandMarkDetailsViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchTourDataForLandMark(placeUiModel: PlaceUiModel): ChatGptResponse? {
-        val placeName = placeUiModel.name
-        val location = placeUiModel.address
-        val message = "As a tour guide tell me about the place ${placeName} at ${location} with all relevant details and interesting and useful facts"
-        return tourDataRepository.getTourDataAboutTheLandMark(
-           ChatGptRequest(
-               listOf(Message(message,"user"))
+    private fun fetchTourDataForLandMark(placeUiModel: PlaceUiModel) {
+       viewModelScope.launch(Dispatchers.IO) {
+           val placeName = placeUiModel.name
+           val location = placeUiModel.address
+           val message = "As a tour guide tell me about the place ${placeName} at ${location} with all relevant details and interesting and useful facts"
+           val data =  tourDataRepository.getTourDataAboutTheLandMark(
+               ChatGptRequest(
+                   listOf(Message(message,"user"))
+               )
            )
-        )
+           _landMarkTourDataData.postValue(data?.choices?.firstOrNull()?.message?.content ?: "No Details Found")
+           _isPlaceAIDataFetching.emit(false)
+       }
     }
 
 
-    private fun fetchAiDescriptionForThePlace(placeUiModel: PlaceUiModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val tourDataJob = async { fetchTourDataForLandMark(placeUiModel) }
-            val tourData = tourDataJob.await()
-            setTourDataData(tourData?.choices?.firstOrNull()?.message?.content.toString())
-        }
-    }
+
 
     private fun fetchVideosForTheLocation(placeUiModel: PlaceUiModel) {
 

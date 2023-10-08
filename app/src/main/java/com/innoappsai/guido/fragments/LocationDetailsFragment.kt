@@ -5,8 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -23,6 +25,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.Constants.iconResourceMapping
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.DividerItemDecoration
 import com.innoappsai.guido.adapters.ImageAdapter
@@ -40,6 +43,7 @@ import com.innoappsai.guido.generateStaticMapUrl
 import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
+import com.innoappsai.guido.openWebsite
 import com.innoappsai.guido.workers.DownloadImageWorker
 import com.innoappsai.guido.workers.UpdatePlaceStaticMapWorker
 import com.innoappsai.guido.workers.UploadWorker
@@ -139,10 +143,10 @@ class LocationDetailsFragment :
                 adapterPlaceExtraInfo.setPlaceExtraInfo(it)
             }
             singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
-                binding.tvHaveYouLikedIt.setOnClickListener {
-                    val rating = 2.5f
+                setPlacePricingType(placeUiModel?.pricingType)
+                binding.ratingBarForPlace.setOnRatingBarChangeListener { ratingBar, fl, b ->
                     Bundle().apply {
-                        putFloat("PLACE_RATING", rating)
+                        putFloat("PLACE_RATING", fl)
                         putString("PLACE_DB_ID", placeUiModel?.dbId)
                         openNavFragment(
                             AddReviewFragment(),
@@ -161,6 +165,28 @@ class LocationDetailsFragment :
                     )
                 }
                 binding.apply {
+
+                    ivWebsite.setOnClickListener {
+                        placeUiModel?.website?.let { it1 -> openWebsite(requireContext(), it1) }
+                    }
+                    ivCall.setOnClickListener {
+                        requestCallPermissionAndMakeCall()
+                    }
+                    ivAddReview.setOnClickListener {
+                        Bundle().apply {
+                            putString("PLACE_DB_ID", placeUiModel?.dbId)
+                            openNavFragment(
+                                AddReviewFragment(),
+                                childFragmentManager,
+                                "ProfileFragment",
+                                binding.flId,
+                                this
+                            )
+                        }
+                    }
+                    ivAddPhoto.setOnClickListener {
+                       //Add Photo Logic
+                    }
                     ivPlaceOptions.apply {
                         isVisible = placeUiModel?.createdBy == appPrefs.userId
                         setOnClickListener {
@@ -183,10 +209,8 @@ class LocationDetailsFragment :
                         )
                     ).centerCrop()
                         .into(binding.placeMapImage)
-                    tvPlaceAddress.makeTextViewClickableLink(
-                        placeUiModel?.address,
-                        errorMessage = "No Address Found"
-                    ) {
+                    tvPlaceAddress.text = placeUiModel?.address
+                    placeMapImage.setOnClickListener {
                         openDirection(requireContext(), placeUiModel?.name, placeUiModel?.latLng)
                     }
 
@@ -228,6 +252,9 @@ class LocationDetailsFragment :
                 startActivity(webIntent)
             }
 
+        }
+        adapterPlaceExtraInfo.setOnPaceExtraInfoClicked {
+            openWebsite(requireContext(),it)
         }
     }
 
@@ -309,6 +336,19 @@ class LocationDetailsFragment :
             .enqueue()
 
 
+    }
+
+    private fun setPlacePricingType(pricingType : String?){
+        val numberOfDollars = if(pricingType.equals("Expensive",true)) 3 else if(pricingType.equals("Moderate",true)) 2 else if(pricingType.equals("Inexpensive",true)) 1 else 0
+        for(i in 0 until numberOfDollars){
+            val imageView = ImageView(requireContext())
+            imageView.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            imageView.setImageResource(R.drawable.ic_dollar)
+            binding.llPlaceCosting.addView(imageView)
+        }
     }
 
     private fun openNavFragment(

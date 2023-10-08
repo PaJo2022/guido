@@ -3,8 +3,10 @@ package com.innoappsai.guido.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.databinding.LayoutPlacesMoreInfoItemBinding
+import com.innoappsai.guido.isURLValid
 import com.innoappsai.guido.model.placesUiModel.ExtraInfoWithIcon
 
 class PlaceMoreInfoAdapter(
@@ -18,9 +20,9 @@ class PlaceMoreInfoAdapter(
         notifyDataSetChanged()
     }
 
-    private var onExtraInfoClicked: ((videoUrl: String) -> Any?)? = null
+    private var onExtraInfoClicked: ((url: String) -> Any?)? = null
 
-    fun setOnPaceExtraInfoClicked(onExtraInfoClicked: ((videoUrl: String) -> Any?)) {
+    fun setOnPaceExtraInfoClicked(onExtraInfoClicked: ((url: String) -> Any?)) {
         this.onExtraInfoClicked = onExtraInfoClicked
     }
 
@@ -33,6 +35,13 @@ class PlaceMoreInfoAdapter(
                 placeWithExtraInfoWithIcon.icon?.let { ivInfoIcon.setImageResource(it) }
                 tvInfoTitle.text = placeWithExtraInfoWithIcon.title
                 tvMoreInfoTitle.text = placeWithExtraInfoWithIcon.extraInfo
+                tvMoreInfoTitle.isVisible = !isURLValid(placeWithExtraInfoWithIcon.extraInfo.toString())
+                ivNext.isVisible = isURLValid(placeWithExtraInfoWithIcon.extraInfo.toString())
+                root.setOnClickListener {
+                    if (isURLValid(placeWithExtraInfoWithIcon.extraInfo.toString())) {
+                        onExtraInfoClicked?.invoke(placeWithExtraInfoWithIcon.extraInfo.toString())
+                    }
+                }
             }
         }
     }

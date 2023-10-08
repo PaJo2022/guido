@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddReviewBinding
 import com.innoappsai.guido.db.AppPrefs
@@ -31,10 +32,13 @@ class AddReviewFragment :
             rateBar.rating = rating
             tvRating.text = rating.toString()
             swipeRefreshLayout.isEnabled = false
+            rateBar.setOnRatingBarChangeListener { ratingBar, fl, b ->
+                binding.tvRating.text = fl.toString()
+                rating = fl
+            }
             tvPost.setOnClickListener {
                 val reviewTitle = etPlaceReviewTitle.text.toString()
                 val reviewDescription = etPlaceReviewDescription.text.toString()
-                rating = 1.5f
 
                 tiLayoutPlaceReviewTitle.error = null
                 tiLayoutPlaceReviewDescription.error = null
@@ -64,6 +68,9 @@ class AddReviewFragment :
                 }
                 parentFragmentManager.popBackStack()
             }
+        }
+        addOnBackPressedCallback {
+            parentFragmentManager.popBackStack()
         }
     }
 

@@ -16,7 +16,6 @@ data class PlaceRequestDTO(
     val placeDescription: String? = null,
     val pricingType: String? = null,
     val placeId: String? = null,
-    val rating: Double? = null,
     val placeName: String? = null,
     val types: List<String>? = null,
     val website: String? = null,

@@ -67,7 +67,7 @@ class PlacesListAdapter(
                 tvPlaceDescription.text = place.address
                 tvPlaceDescription.isSelected = true
                 placeRating.rating = place.rating?.toFloat() ?: 0f
-                placeRatingText.text = "(${place.rating ?: 0.0})"
+                placeRatingText.text = "(${place.reviewsCount ?: 0})"
                 placeDistance.text = getDistanceBetweenMyPlaceAndTheCurrentPlace(place)
                 root.setOnClickListener {
                     onItemClickListener?.invoke(place)

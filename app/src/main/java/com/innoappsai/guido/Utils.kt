@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.URL
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -162,7 +163,7 @@ fun updateApiKey(originalString: String?): String {
     // Check if the originalString contains "GCP_KEY"
     if (originalString?.contains("GCP_API_KEY") == true) {
         // Replace "GCP_KEY" with the actual API key
-        val replacedString = originalString.replace("GCP_API_KEY", "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY")
+        val replacedString = originalString.replace("GCP_API_KEY", "_AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY")
         return replacedString
     } else {
         // If "GCP_KEY" is not found, return the original string as is
@@ -180,4 +181,26 @@ fun generateStaticMapUrl(latitude: Double, longitude: Double): String {
             "size=$size&" +
             "markers=$marker&" +
             "key=$apiKey"
+}
+
+fun isURLValid(urlString: String): Boolean {
+    try {
+        // Attempt to create a URL object from the given string
+        val url = URL(urlString)
+
+        // Check if the URL is well-formed
+        url.toURI()
+
+        // Additional checks for specific URL patterns if needed
+        // For example, you can check if it uses a valid protocol (e.g., http, https)
+        // if (url.protocol != "http" && url.protocol != "https") {
+        //     return false
+        // }
+
+        // If no exceptions are thrown, the URL is valid
+        return true
+    } catch (e: Exception) {
+        // Malformed URL or other exceptions indicate it's not valid
+        return false
+    }
 }

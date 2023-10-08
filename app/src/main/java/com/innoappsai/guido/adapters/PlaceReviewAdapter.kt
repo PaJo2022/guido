@@ -3,8 +3,10 @@ package com.innoappsai.guido.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.LayoutPlacesReviewItemBinding
 import com.innoappsai.guido.model.review.Review
 
@@ -29,10 +31,12 @@ class PlaceReviewAdapter(
     inner class PlaceReviewViewHolder(private val binding: LayoutPlacesReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(reviewUiModel: Review) {
-             Glide.with(appContext).load(reviewUiModel.user?.profilePicture).centerCrop().into(binding.ivAuthorImage)
-              binding.tvAuthorName.text = reviewUiModel.user?.displayName
+            Glide.with(appContext).load(reviewUiModel.user?.profilePicture).centerCrop()
+                .placeholder(R.drawable.ic_profile_img_placeholder)
+                .error(R.drawable.ic_profile_img_placeholder).into(binding.ivAuthorImage)
+            binding.tvAuthorName.text = reviewUiModel.user?.displayName
             binding.tvReviewStar.rating = reviewUiModel.rating?.toFloat() ?: 0.0f
-            // binding.tvReviewDate.text = reviewUiModel.reviewDone
+            binding.tvReviewDate.isVisible = false
             binding.tvReviewTitle.text = reviewUiModel.description
             binding.tvReviewDescription.text = reviewUiModel.description
             binding.ivAuthorImage.setOnClickListener {

@@ -78,7 +78,7 @@
                       android:id="@+id/iv_place_image"
                       android:layout_width="match_parent"
                       android:layout_height="@dimen/_250sdp"
-                      android:background="@color/white"
+                      android:background="@drawable/no_image_placeholder"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toTopOf="parent" />
@@ -95,6 +95,7 @@
                       app:tabBackground="@drawable/tab_selector"
                       app:tabGravity="center"
                       app:tabIndicatorHeight="0dp" />
+
 
 
                   <TextView
@@ -130,7 +131,8 @@
                       android:layout_marginTop="@dimen/_8sdp"
                       android:numStars="5"
                       android:rating="0.0"
-                      android:stepSize="1.0"
+                      android:stepSize="0.5"
+                      android:progressTint="@color/quantum_yellow"
                       app:layout_constraintStart_toStartOf="@+id/tv_place_name"
                       app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
 
@@ -161,12 +163,27 @@
                       app:layout_constraintStart_toEndOf="@+id/place_rating_text"
                       app:layout_constraintTop_toTopOf="@+id/place_rating" />
 
+                  <LinearLayout
+                      android:id="@+id/ll_place_costing"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="@dimen/_8sdp"
+                      android:orientation="horizontal"
+                      app:layout_constraintBottom_toBottomOf="@+id/place_rating"
+                      app:layout_constraintStart_toEndOf="@+id/tv_place_distance"
+                      app:layout_constraintTop_toTopOf="@+id/place_rating">
+
+
+
+                  </LinearLayout>
+
                   <TextView
                       android:id="@+id/tv_place_description"
                       android:layout_width="0dp"
                       android:layout_height="@dimen/_150sdp"
                       android:layout_marginHorizontal="@dimen/_12sdp"
                       android:layout_marginTop="@dimen/_20sdp"
+                      android:textColor="@color/color_primary"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toBottomOf="@+id/place_rating" />
@@ -201,66 +218,138 @@
                       app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toBottomOf="@+id/divider1">
 
-                      <ImageView
+                      <LinearLayout
+                          android:id="@+id/iv_call"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:gravity="center"
+                          android:orientation="vertical"
+                          app:layout_constraintBottom_toBottomOf="parent"
+                          app:layout_constraintEnd_toStartOf="@+id/iv_website"
+                          app:layout_constraintHorizontal_bias="0.5"
+                          app:layout_constraintStart_toStartOf="parent"
+                          app:layout_constraintTop_toTopOf="parent">
+
+
+                          <ImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:background="@drawable/circular_background"
+                              android:backgroundTint="@color/card_color6"
+                              android:padding="@dimen/_8sdp"
+                              android:src="@drawable/ic_call" />
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginTop="@dimen/_4sdp"
+                              android:fontFamily="@font/font_regular"
+                              android:text="Call"
+                              android:textColor="@color/color_primary"
+                              android:textSize="@dimen/_12ssp" />
+
+                      </LinearLayout>
+
+
+                      <LinearLayout
                           android:id="@+id/iv_website"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:background="@drawable/circular_background"
-                          android:backgroundTint="@color/card_color6"
-                          android:padding="@dimen/_12sdp"
-                          android:rotation="120"
-                          android:src="@drawable/ic_link"
+                          android:gravity="center"
+                          android:orientation="vertical"
                           app:layout_constraintBottom_toBottomOf="parent"
                           app:layout_constraintEnd_toStartOf="@+id/iv_add_review"
                           app:layout_constraintHorizontal_bias="0.5"
-                          app:layout_constraintStart_toStartOf="parent"
-                          app:layout_constraintTop_toTopOf="parent" />
+                          app:layout_constraintStart_toEndOf="@+id/iv_call"
+                          app:layout_constraintTop_toTopOf="parent">
+
+                          <ImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:background="@drawable/circular_background"
+                              android:backgroundTint="@color/card_color6"
+                              android:padding="@dimen/_8sdp"
+                              android:rotation="120"
+                              android:src="@drawable/ic_link" />
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginTop="@dimen/_4sdp"
+                              android:fontFamily="@font/font_regular"
+                              android:text="Website"
+                              android:textColor="@color/color_primary"
+                              android:textSize="@dimen/_12ssp" />
+
+                      </LinearLayout>
 
 
-                      <ImageView
+                      <LinearLayout
                           android:id="@+id/iv_add_review"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:background="@drawable/circular_background"
-                          android:backgroundTint="@color/card_color6"
-                          android:padding="@dimen/_12sdp"
-                          android:src="@drawable/ic_edit_black"
+                          android:gravity="center"
+                          android:orientation="vertical"
                           app:layout_constraintBottom_toBottomOf="parent"
                           app:layout_constraintEnd_toStartOf="@+id/iv_add_photo"
                           app:layout_constraintHorizontal_bias="0.5"
                           app:layout_constraintStart_toEndOf="@+id/iv_website"
-                          app:layout_constraintTop_toTopOf="parent"
-                          app:tint="@color/white" />
+                          app:layout_constraintTop_toTopOf="parent">
 
 
-                      <ImageView
+                          <ImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:background="@drawable/circular_background"
+                              android:backgroundTint="@color/card_color6"
+                              android:padding="@dimen/_8sdp"
+                              android:src="@drawable/ic_edit_black"
+                              app:tint="@color/white" />
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginTop="@dimen/_4sdp"
+                              android:fontFamily="@font/font_regular"
+                              android:text="Add Review"
+                              android:textColor="@color/color_primary"
+                              android:textSize="@dimen/_12ssp" />
+
+                      </LinearLayout>
+
+
+                      <LinearLayout
                           android:id="@+id/iv_add_photo"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:background="@drawable/circular_background"
-                          android:backgroundTint="@color/card_color6"
-                          android:padding="@dimen/_12sdp"
-                          android:src="@drawable/ic_add_photo"
-                          app:layout_constraintBottom_toBottomOf="parent"
-                          app:layout_constraintEnd_toStartOf="@+id/iv_share_place"
-                          app:layout_constraintHorizontal_bias="0.5"
-                          app:layout_constraintStart_toEndOf="@+id/iv_add_review"
-                          app:layout_constraintTop_toTopOf="parent" />
-
-
-                      <ImageView
-                          android:id="@+id/iv_share_place"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:background="@drawable/circular_background"
-                          android:backgroundTint="@color/card_color6"
-                          android:padding="@dimen/_12sdp"
-                          android:src="@drawable/ic_share"
+                          android:gravity="center"
+                          android:orientation="vertical"
                           app:layout_constraintBottom_toBottomOf="parent"
                           app:layout_constraintEnd_toEndOf="parent"
                           app:layout_constraintHorizontal_bias="0.5"
-                          app:layout_constraintStart_toEndOf="@+id/iv_add_photo"
-                          app:layout_constraintTop_toTopOf="parent" />
+                          app:layout_constraintStart_toEndOf="@+id/iv_add_review"
+                          app:layout_constraintTop_toTopOf="parent">
+
+
+                          <ImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:background="@drawable/circular_background"
+                              android:backgroundTint="@color/card_color6"
+                              android:padding="@dimen/_8sdp"
+                              android:src="@drawable/ic_add_photo" />
+
+                          <TextView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginTop="@dimen/_4sdp"
+                              android:fontFamily="@font/font_regular"
+                              android:text="Add Photo"
+                              android:textColor="@color/color_primary"
+                              android:textSize="@dimen/_12ssp" />
+
+                      </LinearLayout>
+
 
                   </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -286,7 +375,7 @@
                       android:paddingHorizontal="@dimen/_8sdp"
                       android:paddingVertical="@dimen/_12sdp"
                       android:singleLine="true"
-                      android:textColor="@color/color_primary"
+                      android:textColor="@color/white"
                       android:textSize="@dimen/_12ssp"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
@@ -329,15 +418,14 @@
                       app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
                   <RatingBar
-                      android:id="@+id/rate_this_place"
-                      style="?android:attr/ratingBarStyle"
+                      android:id="@+id/rating_bar_for_place"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="center"
                       android:layout_marginTop="@dimen/_8sdp"
-                      android:isIndicator="true"
                       android:numStars="5"
-                      android:stepSize="0.1"
+                      android:rating="0"
+                      android:stepSize="0.5"
+                      android:progressTint="@color/quantum_yellow"
                       app:layout_constraintEnd_toEndOf="@+id/tv_have_you_liked_it"
                       app:layout_constraintStart_toStartOf="@+id/tv_have_you_liked_it"
                       app:layout_constraintTop_toBottomOf="@+id/tv_have_you_liked_it" />
@@ -350,7 +438,7 @@
                       android:background="@color/quantum_grey"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toBottomOf="@+id/rate_this_place" />
+                      app:layout_constraintTop_toBottomOf="@+id/rating_bar_for_place" />
 
 
                   <TextView
@@ -400,6 +488,7 @@
                       android:visibility="gone"
                       tools:visibility="visible"
                       android:text="No Reviews Yet"
+                      android:layout_marginVertical="@dimen/_24sdp"
                       android:textColor="@color/color_primary"
                       android:textSize="@dimen/_12ssp"
                       app:layout_constraintBottom_toBottomOf="parent"
