@@ -72,7 +72,7 @@ interface GuidoApi {
     @POST("add-review")
     suspend fun addReview(
         @Body reviewRequestDTO: ReviewRequestDTO
-    ): Response<ReviewResponseDTO>
+    ): Response<PlaceDTO>
 
     @GET("reviews-by-place-id")
     suspend fun fetchReviewByPlaceId(

@@ -1,6 +1,8 @@
 package com.innoappsai.guido.model.places_backend_dto
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import com.innoappsai.guido.Constants.getTypesOfPlaces
@@ -9,7 +11,10 @@ import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
+@Entity(tableName = "PLACE_DTO")
 data class PlaceDTO(
+    @PrimaryKey(autoGenerate = false)
+    val placeId: String,
     @SerializedName("_id")
     val id: String? = null,
     val contactNumber: String? = null,
@@ -24,7 +29,6 @@ data class PlaceDTO(
     val placeState: String? = null,
     val placeCountry: String? = null,
     val placeDescription: String? = null,
-    val placeId: String? = null,
     val placeName: String? = null,
     val placeOpenStatus: String? = null,
     val pricingType: String?,
@@ -47,7 +51,7 @@ data class PlaceDTO(
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
     PlaceUiModel(
-        dbId = it.id,
+        serverDbId = it.id,
         placeId = it.placeId,
         name = it.placeName,
         createdBy = it.createdBy,
@@ -83,7 +87,7 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
 }
 
 fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
-    dbId = id,
+    serverDbId = id,
     placeId = placeId,
     name = placeName,
     createdBy = createdBy,

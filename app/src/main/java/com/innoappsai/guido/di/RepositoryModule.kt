@@ -70,7 +70,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideReviewRepositoryImpl(guidoApi: GuidoApi): ReviewRepository =
-        ReviewRepositoryImpl(guidoApi)
+    fun provideReviewRepositoryImpl(guidoApi: GuidoApi,myAppDataBase: MyAppDataBase): ReviewRepository =
+        ReviewRepositoryImpl(guidoApi,myAppDataBase)
 
 }

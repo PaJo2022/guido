@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlaceUiModel(
-    val dbId: String? = null,
+    val serverDbId: String? = null,
     val placeId: String? = null,
     val name: String? = null,
     val latLng: LatLng? = null,
@@ -61,7 +61,7 @@ data class ExtraInfoWithIcon(
 
 fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
     PlaceUiModel(
-        dbId = it.dbId,
+        serverDbId  = it.serverDbId,
         icon = it.icon,
         typeName = it.typeName,
         superType = it.superType,

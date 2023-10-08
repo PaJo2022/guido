@@ -47,8 +47,9 @@ class AddReviewViewModel @Inject constructor(
                 reviewTitle = reviewTitle,
                 reviewDescription = reviewDescription
             )
-            val review = reviewRepository.addReview(reviewRequest)
-            _isReviewAdded.emit(review != null)
+            val updatedPlace = reviewRepository.addReview(reviewRequest)
+
+            _isReviewAdded.emit(updatedPlace != null)
             _isLoading.emit(false)
         }
     }

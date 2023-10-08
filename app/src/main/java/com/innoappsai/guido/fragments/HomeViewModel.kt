@@ -1,6 +1,5 @@
 package com.innoappsai.guido.fragments
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,19 +16,18 @@ import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.DataType
 import com.innoappsai.guido.model.MarkerData
-import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.innoappsai.guido.model.placesUiModel.PlaceTypeUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiType
 import com.innoappsai.guido.model.placesUiModel.addUiType
+import com.innoappsai.guido.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import java.util.Arrays
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -141,28 +139,46 @@ class HomeViewModel @Inject constructor(
             nearByMarkerList.clear()
             listOfPlaces.clear()
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
-            val job2 = async {
-                placesRepository.fetchPlacesNearMe(
-                    latitude, longitude, radius, interestList.map { it.id }
-                )
-            }
-            listOfPlaces = ArrayList(job2.await())
-            val latLangs = listOfPlaces.map { it.latLng }
 
-            val placesInGroupData = async { mapPlacesByType(listOfPlaces) }.await()
-            nearByPlacesListInGroup.addAll(placesInGroupData)
-            placesInGroupData.forEach {placeTypeUiModel->
-                nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
+            placesRepository.fetchPlacesNearMe(
+                latitude, longitude, radius, interestList.map { it.id }
+            ).collect { dataState ->
+                when (dataState) {
+                    is Resource.Error -> {
+                        _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+                        _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+                        _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
+                        _isLoading.emit(false)
+                        return@collect
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Success -> {
+                        listOfPlaces = ArrayList(dataState.data ?: emptyList())
+                        val latLangs = listOfPlaces.map { it.latLng }
+
+                        val placesInGroupData = async { mapPlacesByType(listOfPlaces) }.await()
+                        nearByPlacesListInGroup.addAll(placesInGroupData)
+                        placesInGroupData.forEach { placeTypeUiModel ->
+                            nearByPlacesList.addAll(ArrayList(placeTypeUiModel.places))
+                        }
+
+                        nearByMarkerList.addAll(latLangs)
+                        if (placesInGroupData.isEmpty()) {
+                            _dataState.emit(DataState.EMPTY_DATA)
+                        }
+                        _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
+                        _nearByPlaces.postValue(ArrayList(nearByPlacesList))
+                        _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
+                        _isLoading.emit(false)
+                    }
+                }
+
             }
 
-            nearByMarkerList.addAll(latLangs)
-            if (placesInGroupData.isEmpty()) {
-                _dataState.emit(DataState.EMPTY_DATA)
-            }
-            _nearByPlacesInGroup.postValue(ArrayList(nearByPlacesListInGroup))
-            _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-            _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
-            _isLoading.emit(false)
 
         }
     }

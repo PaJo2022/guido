@@ -11,7 +11,11 @@ import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import com.innoappsai.guido.model.toUiModel
+import com.innoappsai.guido.utils.Resource
+import com.innoappsai.guido.utils.networkBoundResource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -26,13 +30,21 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         longitude: Double,
         radius: Int,
         types: List<String>
-    ): List<PlaceUiModel> {
-        val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
-        return if (response.isSuccessful) {
-            response.body()?.toPlaceUiModel() ?: emptyList()
-        } else {
-            emptyList()
-        }
+    ): Flow<Resource<List<PlaceUiModel>>> {
+        return networkBoundResource(
+            query = {
+                db.placeDao().getAllPlaces().map { it.toPlaceUiModel() }
+            },
+            fetch = {
+                api.fetchPlacesNearMe(latitude, longitude, radius, types).body()
+            },
+            saveFetchResult = { places ->
+                db.withTransaction {
+                    db.placeDao().deleteAllPlaces()
+                    db.placeDao().insertPlaces(places)
+                }
+            }
+        )
     }
 
     override suspend fun fetchPlacesUsingUserId(userId: String): List<PlaceUiModel> {
@@ -67,19 +79,24 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun fetchSinglePlacesDetails(
+    override  fun fetchSinglePlacesDetails(
         placeId: String
-    ): PlaceUiModel? {
-        return try {
-            val response = api.fetchPlacesDetails(placeId)
-            if (response.isSuccessful) {
-                response.body()?.toPlaceUiModel()
-            } else {
-                null
+    ): Flow<Resource<PlaceUiModel>> {
+        return networkBoundResource(
+            query = {
+                db.placeDao().getPlaceById(placeId).map { it.toPlaceUiModel() }
+            },
+            fetch = {
+                api.fetchPlacesDetails(placeId).body()
+            },
+            shouldFetch = { false },
+            saveFetchResult = { places ->
+                db.withTransaction {
+                    db.placeDao().deletePlaceById(placeId)
+                    db.placeDao().insertPlace(places)
+                }
             }
-        } catch (e: Exception) {
-            null
-        }
+        )
     }
 
     override suspend fun fetchAddressFromLatLng(

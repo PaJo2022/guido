@@ -119,7 +119,7 @@ class LocationDetailsFragment :
             }
         }
         viewModel.apply {
-            getSinglePlaceDetails(placeId)
+            fetchDetailsById(placeId)
             isPlaceDataFetching.collectIn(viewLifecycleOwner) {
                 binding.swipeRefreshLayout.isRefreshing = it
             }
@@ -147,7 +147,7 @@ class LocationDetailsFragment :
                 binding.ratingBarForPlace.setOnRatingBarChangeListener { ratingBar, fl, b ->
                     Bundle().apply {
                         putFloat("PLACE_RATING", fl)
-                        putString("PLACE_DB_ID", placeUiModel?.dbId)
+                        putString("PLACE_DB_ID", placeUiModel?.serverDbId)
                         openNavFragment(
                             AddReviewFragment(),
                             childFragmentManager,
@@ -158,11 +158,11 @@ class LocationDetailsFragment :
                     }
                 }
                 if (placeUiModel != null && placeUiModel.placeMapImage == null) {
-                    startUploadingPlaceData(
-                        placeId = placeUiModel.placeId!!,
-                        latitude = placeUiModel.latLng?.latitude!!,
-                        longitude = placeUiModel.latLng.longitude
-                    )
+//                    startUploadingPlaceData(
+//                        placeId = placeUiModel.placeId!!,
+//                        latitude = placeUiModel.latLng?.latitude!!,
+//                        longitude = placeUiModel.latLng.longitude
+//                    )
                 }
                 binding.apply {
 
@@ -174,7 +174,7 @@ class LocationDetailsFragment :
                     }
                     ivAddReview.setOnClickListener {
                         Bundle().apply {
-                            putString("PLACE_DB_ID", placeUiModel?.dbId)
+                            putString("PLACE_DB_ID", placeUiModel?.serverDbId)
                             openNavFragment(
                                 AddReviewFragment(),
                                 childFragmentManager,
