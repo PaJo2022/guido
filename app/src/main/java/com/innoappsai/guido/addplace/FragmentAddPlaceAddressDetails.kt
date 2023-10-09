@@ -2,15 +2,21 @@ package com.innoappsai.guido.addplace
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
+import com.innoappsai.guido.adapters.PlacesAutoCompleteAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.VERTICAL_VIEW
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentAddPlaceAddressDetailsBinding
+import com.innoappsai.guido.fragments.SearchLocationViewModel
 import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,11 +24,16 @@ import dagger.hilt.android.AndroidEntryPoint
 class FragmentAddPlaceAddressDetails :
     BaseFragment<FragmentAddPlaceAddressDetailsBinding>(FragmentAddPlaceAddressDetailsBinding::inflate) {
 
+    private var isSearchedAddressUsingApi = false
     private val viewModel: AddPlaceViewModel by activityViewModels()
     private lateinit var adapterPlaceTypes: PlacesTypeGroupAdapter
+    private lateinit var adapterPlaceAutoComplete: PlacesAutoCompleteAdapter
+
+    private val searchLocationViewModel: SearchLocationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        adapterPlaceAutoComplete = PlacesAutoCompleteAdapter(requireContext())
         adapterPlaceTypes = PlacesTypeGroupAdapter(requireContext(), VERTICAL_VIEW)
     }
 
@@ -35,6 +46,18 @@ class FragmentAddPlaceAddressDetails :
             etPlacePlaceCity.setText(viewModel.getCityName())
             etPlacePlaceState.setText(viewModel.getStateName())
             etPlacePlaceCountry.setText(viewModel.getCountryName())
+            etPlaceStreetAddress.doOnTextChanged { text, start, before, count ->
+                if (!text.isNullOrEmpty() && !isSearchedAddressUsingApi) {
+                    searchLocationViewModel.getPredictions(text.toString())
+                }
+                binding.rvPlaceSuggestions.isVisible =
+                    !text.isNullOrEmpty() && !isSearchedAddressUsingApi
+            }
+            rvPlaceSuggestions.apply {
+                adapter = adapterPlaceAutoComplete
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
             tvNext.setOnClickListener {
                 val placeName = binding.etPlaceName.text.toString()
                 val placeStreetAddress = binding.etPlaceStreetAddress.text.toString()
@@ -92,6 +115,31 @@ class FragmentAddPlaceAddressDetails :
             error.collectIn(viewLifecycleOwner) {
                 requireActivity().showToast(it)
             }
+            searchedFormattedAddress.observe(viewLifecycleOwner) {
+                binding.apply {
+                    etPlaceStreetAddress.setText(viewModel.getStreetAddress())
+                    etPlacePlaceCity.setText(viewModel.getCityName())
+                    etPlacePlaceState.setText(viewModel.getStateName())
+                    etPlacePlaceCountry.setText(viewModel.getCountryName())
+                }
+                adapterPlaceAutoComplete.setPredications(emptyList())
+                isSearchedAddressUsingApi = false
+            }
+        }
+
+        searchLocationViewModel.apply {
+            suggestedLocations.observe(viewLifecycleOwner) {
+                binding.rvPlaceSuggestions.isVisible = it.isNotEmpty()
+                adapterPlaceAutoComplete.setPredications(it)
+            }
+        }
+        adapterPlaceAutoComplete.setOnPlaceSelected {
+            binding.rvPlaceSuggestions.isVisible = false
+            isSearchedAddressUsingApi = true
+            viewModel.fetchCurrentAddressFromGeoCoding(
+                it.latitude,
+                it.longitude
+            )
         }
 
     }

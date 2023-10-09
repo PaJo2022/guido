@@ -134,6 +134,8 @@
 
       </com.google.android.material.textfield.TextInputLayout>
 
+
+
       <com.google.android.material.textfield.TextInputLayout
           android:id="@+id/ti_layout_place_city"
           android:layout_width="0dp"
@@ -242,6 +244,15 @@
 
       </com.google.android.material.textfield.TextInputLayout>
 
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rv_place_suggestions"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:background="@color/white"
+
+          app:layout_constraintEnd_toEndOf="@+id/ti_layout_place_street_address"
+          app:layout_constraintStart_toStartOf="@+id/ti_layout_place_street_address"
+          app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_street_address" />
    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
