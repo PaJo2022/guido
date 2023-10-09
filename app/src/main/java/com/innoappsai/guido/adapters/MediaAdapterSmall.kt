@@ -8,14 +8,12 @@ import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.innoappsai.guido.databinding.LayoutAddImageItemBinding
 import com.innoappsai.guido.databinding.LayoutAddImageItemSmallBinding
-import com.innoappsai.guido.databinding.VideoItemLayoutBinding
 import com.innoappsai.guido.databinding.VideoItemLayoutSmallBinding
 import com.innoappsai.guido.model.review.MediaType
 import com.innoappsai.guido.model.review.PlaceMediaItem
 
-class MediaAdapter(private val appContext: Context) :
+class MediaAdapterSmall(private val appContext: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var _mediaItems: List<PlaceMediaItem> = ArrayList()

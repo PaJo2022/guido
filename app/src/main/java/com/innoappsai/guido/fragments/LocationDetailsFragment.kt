@@ -1,11 +1,8 @@
 package com.innoappsai.guido.fragments
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -25,14 +22,12 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
-import com.innoappsai.guido.Constants.iconResourceMapping
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.DividerItemDecoration
 import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.adapters.PlaceMoreInfoAdapter
 import com.innoappsai.guido.adapters.PlaceReviewAdapter
-import com.innoappsai.guido.adapters.PlaceVideoAdapter
 import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.callToNumber
@@ -40,7 +35,6 @@ import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentLocationDetailsNewBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateStaticMapUrl
-import com.innoappsai.guido.makeTextViewClickableLink
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.openWebsite
@@ -234,6 +228,18 @@ class LocationDetailsFragment :
 
         addOnBackPressedCallback {
             parentFragmentManager.popBackStack()
+        }
+        adapterPlaceReview.setOnReviewImageClicked {
+            Bundle().apply {
+                putParcelable("PLACE_REVIEW_DATA", it)
+                openNavFragment(
+                    ReviewMediaListFragment(),
+                    childFragmentManager,
+                    "ReviewMediaListFragment",
+                    binding.flId,
+                    this
+                )
+            }
         }
 
 //        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))

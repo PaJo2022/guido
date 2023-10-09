@@ -23,16 +23,16 @@ class PlaceReviewAdapter(
         notifyDataSetChanged()
     }
 
-    private var _onItemClickListener: ((String) -> Any?)? = null
+    private var _onItemClickListener: ((review: Review) -> Any?)? = null
 
-    fun setOnPhotoClicked(onItemClickListener : ((String) -> Any?)){
+    fun setOnReviewImageClicked(onItemClickListener: ((review: Review) -> Any?)) {
         _onItemClickListener = onItemClickListener
     }
 
     inner class PlaceReviewViewHolder(private val binding: LayoutPlacesReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(reviewUiModel: Review) {
-            val adapterMedia = MediaAdapter(appContext)
+            val adapterMedia = MediaAdapterSmall(appContext)
 
 
             Glide.with(appContext).load(reviewUiModel.user?.profilePicture).centerCrop()
@@ -49,6 +49,9 @@ class PlaceReviewAdapter(
                     LinearLayoutManager(appContext, LinearLayoutManager.HORIZONTAL, false)
             }
             adapterMedia.setPlaceMediaItems(reviewUiModel.mediaFiles ?: emptyList())
+            adapterMedia.setOnPlaceMediaItemClickListener {
+                _onItemClickListener?.invoke(reviewUiModel)
+            }
             binding.ivAuthorImage.setOnClickListener {
                 // _onItemClickListener?.invoke(photoUrl)
             }
