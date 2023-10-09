@@ -11,6 +11,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
+import com.innoappsai.guido.model.review.ReviewRequestDTO
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
@@ -28,6 +29,7 @@ class MyApp : Application(), Configuration.Provider {
 
 
         var placeRequestDTO : PlaceRequestDTO?= null
+        var reviewRequestDTO : ReviewRequestDTO?= null
     }
     override fun onCreate() {
         super.onCreate()

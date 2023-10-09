@@ -7,5 +7,7 @@ data class ReviewRequestDTO(
     val reviewTitle: String? = null,
     val userId: String? = null,
     val authorName: String? = null,
-    val authorProfileUrl: String? = null
+    val authorProfileUrl: String? = null,
+    var reviewImageUrls : List<String> ?= null,
+    var reviewVideoUrls : List<String> ?= null
 )

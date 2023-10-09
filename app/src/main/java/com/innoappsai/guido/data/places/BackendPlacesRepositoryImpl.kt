@@ -79,7 +79,7 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         if (response.isSuccessful && response.body() != null) {
             db.placeDao().deletePlaceById(placeId)
         }
-        return response.body()
+        return null
     }
 
     override suspend fun deletePlaceFromDB(placeId: String) {

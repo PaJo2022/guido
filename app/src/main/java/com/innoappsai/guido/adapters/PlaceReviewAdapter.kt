@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.R
@@ -31,6 +32,9 @@ class PlaceReviewAdapter(
     inner class PlaceReviewViewHolder(private val binding: LayoutPlacesReviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(reviewUiModel: Review) {
+            val adapterMedia = MediaAdapter(appContext)
+
+
             Glide.with(appContext).load(reviewUiModel.user?.profilePicture).centerCrop()
                 .placeholder(R.drawable.ic_profile_img_placeholder)
                 .error(R.drawable.ic_profile_img_placeholder).into(binding.ivAuthorImage)
@@ -39,6 +43,12 @@ class PlaceReviewAdapter(
             binding.tvReviewDate.isVisible = false
             binding.tvReviewTitle.text = reviewUiModel.description
             binding.tvReviewDescription.text = reviewUiModel.description
+            binding.rvPlaceReviewImagesVideos.apply {
+                adapter = adapterMedia
+                layoutManager =
+                    LinearLayoutManager(appContext, LinearLayoutManager.HORIZONTAL, false)
+            }
+            adapterMedia.setPlaceMediaItems(reviewUiModel.mediaFiles ?: emptyList())
             binding.ivAuthorImage.setOnClickListener {
                 // _onItemClickListener?.invoke(photoUrl)
             }

@@ -156,6 +156,105 @@
              </com.google.android.material.textfield.TextInputLayout>
 
 
+             <TextView
+                 android:id="@+id/tv_place_images"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 android:fontFamily="@font/font_semi_bold"
+                 android:text="Place Images"
+                 android:textColor="@color/color_primary"
+                 android:textSize="@dimen/_16ssp"
+                 app:layout_constraintStart_toStartOf="@+id/ti_layout_place_review_description"
+                 app:layout_constraintTop_toBottomOf="@+id/ti_layout_place_review_description" />
+
+             <TextView
+                 android:id="@+id/tv_pick_image"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_8sdp"
+                 android:drawableEnd="@drawable/ic_upload"
+                 android:fontFamily="@font/font_medium"
+                 android:paddingHorizontal="@dimen/_8sdp"
+                 android:paddingVertical="@dimen/_4sdp"
+                 android:text="Pick Image"
+                 android:textColor="@color/color_primary"
+                 android:textSize="@dimen/_12ssp"
+                 app:layout_constraintEnd_toStartOf="@+id/tv_take_image"
+                 app:layout_constraintHorizontal_bias="0.5"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/tv_place_images" />
+
+             <TextView
+                 android:id="@+id/tv_take_image"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@color/color_primary"
+                 android:fontFamily="@font/font_medium"
+                 android:gravity="center"
+                 android:paddingHorizontal="@dimen/_10sdp"
+                 android:paddingVertical="@dimen/_4sdp"
+                 android:text="Take Image"
+                 android:textColor="@color/white"
+                 android:textSize="@dimen/_12ssp"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintHorizontal_bias="0.5"
+                 app:layout_constraintStart_toEndOf="@+id/tv_pick_image"
+                 app:layout_constraintTop_toTopOf="@+id/tv_pick_image" />
+
+             <androidx.viewpager2.widget.ViewPager2
+                 android:id="@+id/rv_place_images"
+                 android:layout_width="0dp"
+                 android:layout_height="@dimen/_250sdp"
+                 android:layout_marginTop="@dimen/_12sdp"
+                 android:background="@drawable/no_image_placeholder"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/tv_pick_image" />
+
+
+             <TextView
+                 android:id="@+id/tv_place_videos"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_16sdp"
+                 android:fontFamily="@font/font_semi_bold"
+                 android:text="Place Videos"
+                 android:textColor="@color/color_primary"
+                 android:textSize="@dimen/_16ssp"
+                 android:visibility="gone"
+                 app:layout_constraintStart_toStartOf="@+id/rv_place_images"
+                 app:layout_constraintTop_toBottomOf="@+id/rv_place_images" />
+
+             <TextView
+                 android:id="@+id/tv_pick_videos"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/_8sdp"
+                 android:drawableEnd="@drawable/ic_upload"
+                 android:fontFamily="@font/font_medium"
+                 android:paddingHorizontal="@dimen/_8sdp"
+                 android:paddingVertical="@dimen/_4sdp"
+                 android:text="Pick Videos"
+                 android:textColor="@color/color_primary"
+                 android:textSize="@dimen/_12ssp"
+                 app:layout_constraintEnd_toEndOf="@+id/rv_place_images"
+                 app:layout_constraintHorizontal_bias="0.5"
+                 app:layout_constraintStart_toStartOf="@+id/rv_place_images"
+                 app:layout_constraintTop_toBottomOf="@+id/tv_place_videos" />
+
+
+             <androidx.viewpager2.widget.ViewPager2
+                 android:id="@+id/rv_place_videos"
+                 android:layout_width="0dp"
+                 android:layout_height="@dimen/_250sdp"
+                 android:layout_marginVertical="@dimen/_12sdp"
+                 android:background="@drawable/no_image_placeholder"
+                 app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/tv_pick_videos" />
+
          </androidx.constraintlayout.widget.ConstraintLayout>
 
       </androidx.core.widget.NestedScrollView>

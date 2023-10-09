@@ -59,7 +59,6 @@ class LocationDetailsFragment :
     private lateinit var adapterPlaceImages: ImageAdapter
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
     private lateinit var adapterImageSlider: ImageSliderAdapter
-    private lateinit var adapterPlaceVideos: PlaceVideoAdapter
     private lateinit var adapterVideos: VideoAdapter
     private lateinit var adapterPlaceExtraInfo: PlaceMoreInfoAdapter
     private lateinit var workManager: WorkManager
@@ -74,7 +73,6 @@ class LocationDetailsFragment :
         adapterPlaceImages = ImageAdapter(requireContext())
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
-        adapterPlaceVideos = PlaceVideoAdapter()
         adapterPlaceExtraInfo = PlaceMoreInfoAdapter()
         adapterVideos = VideoAdapter(requireContext())
         workManager = WorkManager.getInstance(requireContext())
@@ -238,21 +236,17 @@ class LocationDetailsFragment :
             parentFragmentManager.popBackStack()
         }
 
-        adapterPlaceVideos.setOnFullScreenClickListener{videoUrl->
-
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-            intent.setPackage("com.google.android.youtube")
-
-            // Verify that the YouTube app is installed on the device
-            if (intent.resolveActivity(requireContext().packageManager) != null) {
-                startActivity(intent)
-            } else {
-                // If the YouTube app is not installed, open in a web browser
-                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-                startActivity(webIntent)
-            }
-
-        }
+//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+//        intent.setPackage("com.google.android.youtube")
+//
+//        // Verify that the YouTube app is installed on the device
+//        if (intent.resolveActivity(requireContext().packageManager) != null) {
+//            startActivity(intent)
+//        } else {
+//            // If the YouTube app is not installed, open in a web browser
+//            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+//            startActivity(webIntent)
+//        }
         adapterPlaceExtraInfo.setOnPaceExtraInfoClicked {
             openWebsite(requireContext(),it)
         }
