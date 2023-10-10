@@ -25,7 +25,7 @@ class PlaceReviewAdapter(
 
     private var _onItemClickListener: ((review: Review) -> Any?)? = null
 
-    fun setOnReviewImageClicked(onItemClickListener: ((review: Review) -> Any?)) {
+    fun setOnReviewImageClicked(onItemClickListener: ((review: Review) -> Unit)) {
         _onItemClickListener = onItemClickListener
     }
 

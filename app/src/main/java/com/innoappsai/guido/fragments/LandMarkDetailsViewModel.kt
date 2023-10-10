@@ -1,6 +1,5 @@
 package com.innoappsai.guido.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,7 +29,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -186,15 +184,29 @@ class LandMarkDetailsViewModel @Inject constructor(
 
     private fun fetchTourDataForLandMark(placeUiModel: PlaceUiModel) {
        viewModelScope.launch(Dispatchers.IO) {
-           val placeName = placeUiModel.name
-           val location = placeUiModel.address
-           val message = "As a tour guide tell me about the place ${placeName} at ${location} with all relevant details and interesting and useful facts"
-           val data =  tourDataRepository.getTourDataAboutTheLandMark(
+           val message =
+               "I want you to act as a place owner and generate a compelling description for my business. Here are the details you can use:\n" +
+                       "\n" +
+                       "Place Name: ${placeUiModel.name}\n" +
+                       "Street Address: ${placeUiModel.address}\n" +
+                       "City: ${placeUiModel.city}\n" +
+                       "State: ${placeUiModel.state}\n" +
+                       "Country: ${placeUiModel.country}\n" +
+                       "Contact Number: ${placeUiModel.callNumber}\n" +
+                       "Website: ${placeUiModel.website}\n" +
+                       "Instagram: ${placeUiModel.instagram}\n" +
+                       "Facebook: ${placeUiModel.facebook}\n" +
+                       "Business Email: ${placeUiModel.businessEmail}\n" +
+                       "Business Owner: ${placeUiModel.name}\n" +
+                       "Timings: ${placeUiModel.placeTimings}"
+           val data = tourDataRepository.getTourDataAboutTheLandMark(
                ChatGptRequest(
-                   listOf(Message(message,"user"))
+                   listOf(Message(message, "user"))
                )
            )
-           _landMarkTourDataData.postValue(data?.choices?.firstOrNull()?.message?.content ?: "No Details Found")
+           _landMarkTourDataData.postValue(
+               data?.choices?.firstOrNull()?.message?.content ?: "No Details Found"
+           )
            _isPlaceAIDataFetching.emit(false)
        }
     }

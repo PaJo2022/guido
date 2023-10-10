@@ -34,7 +34,7 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         db.withTransaction {
             db.placeDao().apply {
                 deleteAllPlaces()
-                insertPlaces(places)
+                insertPlaces(places ?: emptyList())
             }
         }
     }
@@ -117,7 +117,7 @@ class BackendPlacesRepositoryImpl @Inject constructor(
                 api.fetchPlacesDetails(placeId).body()
             },
             shouldFetch = {
-                it.serverDbId == null
+                true
             },
             saveFetchResult = { place ->
                 db.withTransaction {

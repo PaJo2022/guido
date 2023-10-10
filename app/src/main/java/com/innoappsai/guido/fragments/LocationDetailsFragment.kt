@@ -1,7 +1,9 @@
 package com.innoappsai.guido.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -136,6 +138,8 @@ class LocationDetailsFragment :
             }
             singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
                 setPlacePricingType(placeUiModel?.pricingType)
+                binding.ivCall.isVisible = placeUiModel?.callNumber != null
+                binding.ivWebsite.isVisible = placeUiModel?.website != null
                 binding.ratingBarForPlace.setOnRatingBarChangeListener { ratingBar, fl, b ->
                     Bundle().apply {
                         putFloat("PLACE_RATING", fl)
@@ -148,13 +152,6 @@ class LocationDetailsFragment :
                             this
                         )
                     }
-                }
-                if (placeUiModel != null && placeUiModel.placeMapImage == null) {
-//                    startUploadingPlaceData(
-//                        placeId = placeUiModel.placeId!!,
-//                        latitude = placeUiModel.latLng?.latitude!!,
-//                        longitude = placeUiModel.latLng.longitude
-//                    )
                 }
                 binding.apply {
 
@@ -189,7 +186,7 @@ class LocationDetailsFragment :
                         }
                     }
                     ivAddPhoto.isVisible = placeUiModel?.createdBy == appPrefs.userId
-                    placeOpeningStatus.text = placeUiModel?.placeOpenStatus
+                    placeOpeningStatus.text = placeUiModel?.placeOpenStatus ?: "Closed"
                     tvPlaceName.text = placeUiModel?.name
                     tvPlaceName.isSelected = true
                     placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
@@ -242,19 +239,22 @@ class LocationDetailsFragment :
             }
         }
 
-//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-//        intent.setPackage("com.google.android.youtube")
-//
-//        // Verify that the YouTube app is installed on the device
-//        if (intent.resolveActivity(requireContext().packageManager) != null) {
-//            startActivity(intent)
-//        } else {
-//            // If the YouTube app is not installed, open in a web browser
-//            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-//            startActivity(webIntent)
-//        }
+
+        adapterVideos.setOnFullScreenClickListener { videoUrl ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+            intent.setPackage("com.google.android.youtube")
+
+            // Verify that the YouTube app is installed on the device
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                startActivity(intent)
+            } else {
+                // If the YouTube app is not installed, open in a web browser
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                startActivity(webIntent)
+            }
+        }
         adapterPlaceExtraInfo.setOnPaceExtraInfoClicked {
-            openWebsite(requireContext(),it)
+            openWebsite(requireContext(), it)
         }
     }
 

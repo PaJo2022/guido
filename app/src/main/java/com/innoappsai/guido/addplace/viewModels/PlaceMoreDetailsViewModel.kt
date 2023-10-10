@@ -62,7 +62,7 @@ class PlaceMoreDetailsViewModel @Inject constructor(
                 return@launch
             }
             val isThisAllReadyAdded =
-                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek || it.openingHour == from || it.closingHour == to } != null
+                _placeTimingList.find { it.dayOfTheWeek == dayOfTheWeek && it.openingHour == from && it.closingHour == to } != null
             if (isThisAllReadyAdded) return@launch
 
             _placeTimingList.add(

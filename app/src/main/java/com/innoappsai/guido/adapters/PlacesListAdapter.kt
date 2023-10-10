@@ -60,7 +60,7 @@ class PlacesListAdapter(
                 tvPlaceName.text = place.name
                 tvPlaceName.isSelected = true
                 tvPlaceIsOpen.apply {
-                    text = if(place.isOpenNow) "Open" else "Closed"
+                    text = place.placeOpenStatus
                     val textColor = ContextCompat.getColor(appContext, if(place.isOpenNow) R.color.color_sound_compose_selected_color3 else R.color.color_primary)
                     setTextColor(textColor)
                 }

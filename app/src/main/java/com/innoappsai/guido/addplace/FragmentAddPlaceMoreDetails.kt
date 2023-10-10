@@ -6,15 +6,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
-import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.PlaceFeaturesAdapter
 import com.innoappsai.guido.adapters.PlaceTimingsAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.VERTICAL_VIEW
-import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addplace.dialog.PlaceOpeningDateTimeDialog
 import com.innoappsai.guido.addplace.dialog.PlaceOpeningDateTimeDialog.Companion.DateTimeType
 import com.innoappsai.guido.addplace.viewModels.AddPlaceViewModel
@@ -118,19 +115,20 @@ class FragmentAddPlaceMoreDetails :
                 tiLayoutPlaceBusinessOpeningTo.error = null
 
                 if (placeOpeningDay.isNullOrEmpty()) {
-                    tiLayoutPlaceBusinessDays.error = "Please select a day of the week"
+                    etPlaceBusinessOpeningDays.requestFocus()
+                    requireActivity().showToast("Please select a day of the week")
                     return@setOnClickListener
                 }
 
                 if (placeOpeningHour.isNullOrEmpty()) {
-                    tiLayoutPlaceBusinessOpeningFrom.error =
-                        "Please select a when your business starts"
+                    tiLayoutPlaceBusinessOpeningFrom.requestFocus()
+                    requireActivity().showToast("Please select a when your business starts")
                     return@setOnClickListener
                 }
 
                 if (placeClosingHour.isNullOrEmpty()) {
-                    tiLayoutPlaceBusinessOpeningTo.error =
-                        "Please select a when your business closes"
+                    etPlaceBusinessOpeningTo.requestFocus()
+                    requireActivity().showToast("Please select a when your business closes")
                     return@setOnClickListener
                 }
 
@@ -159,6 +157,11 @@ class FragmentAddPlaceMoreDetails :
 
                 val placeOpeningCloseTimeList =
                     placeMoreDetailsViewModel.getAllOpeningAndCloseTimings()
+                if (placeOpeningCloseTimeList.isEmpty()) {
+                    binding.etPlaceBusinessOpeningDays.requestFocus()
+                    requireActivity().showToast("At least Add One Business Timings")
+                    return@setOnClickListener
+                }
                 val allPlaceFeatures = placeMoreDetailsViewModel.getAllPlaceFeatures()
                 viewModel.setMoreDetails(
                     placeWebsite,

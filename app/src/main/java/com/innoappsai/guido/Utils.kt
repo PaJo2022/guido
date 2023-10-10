@@ -177,10 +177,7 @@ fun generateStaticMapUrl(latitude: Double, longitude: Double): String {
     val marker = "icon:http://www.google.com/mapfiles/arrow.png|$latitude,$longitude"
     val size = "200x200" // Adjust the size as needed
 
-    return "https://maps.googleapis.com/maps/api/staticmap?" +
-            "size=$size&" +
-            "markers=$marker&" +
-            "key=$apiKey"
+    return "https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=13&size=600x300&maptype=roadmap&markers=${latitude},${longitude}&key=${apiKey}"
 }
 
 fun isURLValid(urlString: String): Boolean {

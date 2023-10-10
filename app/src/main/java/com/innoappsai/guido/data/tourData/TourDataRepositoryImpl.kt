@@ -1,5 +1,6 @@
 package com.innoappsai.guido.data.tourData
 
+import android.util.Log
 import com.innoappsai.guido.api.ChatGptApi
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.ChatGptResponse
@@ -13,6 +14,7 @@ class TourDataRepositoryImpl @Inject constructor(
             val response = api.fetchLocationDetailsFromChatGpt(chatGptRequest)
             response.body()
         }catch (e : Exception){
+            Log.i("JAPAN", "getTourDataAboutTheLandMark: ${e}")
             null
         }
     }
