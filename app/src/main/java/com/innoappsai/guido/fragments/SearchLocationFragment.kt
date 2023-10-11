@@ -47,7 +47,7 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
-           icArrowBack.setOnClickListener {
+           ivArrowBack.setOnClickListener {
                parentFragmentManager.popBackStack()
            }
        }

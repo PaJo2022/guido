@@ -1,6 +1,7 @@
 package com.innoappsai.guido.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Build
@@ -49,6 +50,7 @@ import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.placeFilter.FilterActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -243,12 +245,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 layoutManager = placeCardHorizontalLayoutManager
             }
             ivUserProfileImage.setOnClickListener {
-                openNavFragment(
-                    ProfileNewFragment(),
-                    childFragmentManager,
-                    "ProfileFragment",
-                    binding.flId
-                )
+                startActivity(Intent(requireContext(), FilterActivity()::class.java))
+//                openNavFragment(
+//                    ProfileNewFragment(),
+//                    childFragmentManager,
+//                    "ProfileFragment",
+//                    binding.flId
+//                )
             }
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
@@ -595,8 +598,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onResume() {
         super.onResume()
-
         binding.mapView.onResume()
+        if(MyApp.isNewInterestsSet){
+            viewModel.resetSearchWithNewInterestes()
+            MyApp.isNewInterestsSet = false
+        }
     }
 
     override fun onPause() {

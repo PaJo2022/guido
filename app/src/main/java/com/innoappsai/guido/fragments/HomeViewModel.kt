@@ -140,12 +140,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
             _dataState.emit(DataState.LOADING)
-            val interestList = placesRepository.getAllSavedPlaceTypePreferences()
+            val interestList =
+                if (MyApp.tempPlaceInterestes.isNullOrEmpty()) placesRepository.getAllSavedPlaceTypePreferences() else emptyList()
             val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
                 latitude,
                 longitude,
-                radius,
-                interestList.map { it.id }
+                if (MyApp.tempPlaceDistance != null) MyApp.tempPlaceDistance!! else radius,
+                if (MyApp.tempPlaceInterestes != null) MyApp.tempPlaceInterestes!!.map { it.id } else interestList.map { it.id }
             )
             if (response is Resource.Error) {
                 _dataState.emit(DataState.EMPTY_DATA)

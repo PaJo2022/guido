@@ -123,7 +123,7 @@ class UserDetailsFragment :
             btnLogout.isVisible = !viewModel.isFromSignUpFlow
             btnDeleteAccount.isVisible = !viewModel.isFromSignUpFlow
 
-            icArrowBack.setOnClickListener {
+            ivArrowBack.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
             btnLogout.setOnClickListener {

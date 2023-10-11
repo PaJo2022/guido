@@ -1,329 +1,343 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="@color/white"
     tools:context=".fragments.HomeFragment">
 
-   <androidx.constraintlayout.widget.ConstraintLayout
+   <androidx.appcompat.widget.Toolbar
+       android:id="@+id/toolbar"
        android:layout_width="match_parent"
-       android:layout_height="match_parent">
+       android:layout_height="?attr/actionBarSize"
+       android:background="@color/card_color4"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent">
 
-      <LinearLayout
-          android:id="@+id/linearLayout4"
+      <!-- Left ImageView -->
+      <ImageView
+          android:id="@+id/iv_arrow_back"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="start"
+          android:src="@drawable/ic_arrow_back" />
+
+
+
+   </androidx.appcompat.widget.Toolbar>
+
+   <androidx.core.widget.NestedScrollView
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:fillViewport="true"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+      <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="match_parent"
-          android:layout_height="@dimen/_164sdp"
-          android:background="@drawable/rounded_shape_circle"
-          android:orientation="vertical"
-          app:layout_constraintBottom_toTopOf="@+id/guidelineOne"
-          app:layout_constraintTop_toTopOf="parent" />
-      <androidx.constraintlayout.widget.Guideline
-          android:id="@+id/guidelineOne"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:orientation="horizontal"
-          app:layout_constraintGuide_percent="0.23" />
-      <androidx.constraintlayout.widget.Guideline
-          android:id="@+id/guidelineTwo"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:orientation="horizontal"
-          app:layout_constraintGuide_percent="0.15" />
+          android:layout_height="match_parent">
 
-      <de.hdodenhof.circleimageview.CircleImageView
-          android:id="@+id/circleImageView"
-          android:layout_width="@dimen/_120sdp"
-          android:layout_height="@dimen/_120sdp"
-          android:src="@drawable/ic_profile_img_placeholder"
-          app:cardBackgroundColor="@color/transparent"
-          app:cardCornerRadius="@dimen/_40sdp"
-          app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintRight_toRightOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+         <LinearLayout
+             android:id="@+id/linearLayout4"
+             android:layout_width="match_parent"
+             android:layout_height="@dimen/_100sdp"
+             android:background="@drawable/rounded_shape_circle"
+             android:orientation="vertical"
+             app:layout_constraintTop_toTopOf="parent" />
 
-      <ProgressBar
-          android:id="@+id/circular_progress_profile_pic"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:progressTint="@color/color_primary"
-          android:visibility="gone"
-          app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
-          app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-          app:layout_constraintStart_toStartOf="@+id/circleImageView"
-          app:layout_constraintTop_toTopOf="@+id/guidelineTwo" />
+         <androidx.constraintlayout.widget.Guideline
+             android:id="@+id/guidelineOne"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:orientation="horizontal"
+             app:layout_constraintGuide_percent="0.23" />
 
-      <ImageView
-          android:id="@+id/iv_edit_profile_picture"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
-          app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-          app:layout_constraintHorizontal_bias="1.0"
-          app:layout_constraintStart_toStartOf="@+id/circleImageView" />
+         <androidx.constraintlayout.widget.Guideline
+             android:id="@+id/guidelineTwo"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:orientation="horizontal"
+             app:layout_constraintGuide_percent="0.15" />
 
-      <ImageView
-          android:id="@+id/ic_arrow_back"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:padding="@dimen/_12sdp"
-          android:src="@drawable/ic_arrow_left"
-          android:backgroundTint="@color/white"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          app:tint="@color/white" />
+         <de.hdodenhof.circleimageview.CircleImageView
+             android:id="@+id/circleImageView"
+             android:layout_width="@dimen/_80sdp"
+             android:layout_height="@dimen/_80sdp"
+             android:src="@drawable/ic_profile_img_placeholder"
+             app:cardBackgroundColor="@color/transparent"
+             app:cardCornerRadius="@dimen/_40sdp"
+             app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
+             app:layout_constraintLeft_toLeftOf="parent"
+             app:layout_constraintRight_toRightOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
-      <TextView
-          android:id="@+id/tv_company_name"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/_30sdp"
-          android:fontFamily="@font/font_medium"
-          android:text="Guido"
-          android:textColor="@color/white"
-          android:textSize="@dimen/_42ssp"
-          app:layout_constraintBottom_toTopOf="@+id/circleImageView"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"/>
+         <ProgressBar
+             android:id="@+id/circular_progress_profile_pic"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:progressTint="@color/color_primary"
+             android:visibility="gone"
+             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+             app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+             app:layout_constraintStart_toStartOf="@+id/circleImageView"
+             app:layout_constraintTop_toTopOf="@+id/guidelineTwo" />
+
+         <ImageView
+             android:id="@+id/iv_edit_profile_picture"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+             app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+             app:layout_constraintHorizontal_bias="1.0"
+             app:layout_constraintStart_toStartOf="@+id/circleImageView" />
 
 
-      <TextView
-          android:id="@+id/title_edit_profile"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="@font/font_medium"
-          android:text="Edit Profile"
-          android:background="@drawable/edit_text_background"
-          android:padding="@dimen/_12sdp"
-          android:textColor="@color/card_color4"
-          android:textSize="@dimen/_16ssp"
-          android:layout_marginTop="@dimen/_14sdp"
-          app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-          app:layout_constraintLeft_toLeftOf="@id/circleImageView"
-          app:layout_constraintRight_toRightOf="@+id/circleImageView" />
-
-      <TextView
-          android:id="@+id/title_save_profile"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="@font/font_medium"
-          android:text="Save Profile"
-          android:background="@drawable/button_backgroud_corner"
-          android:padding="@dimen/_12sdp"
-          android:textColor="@color/white"
-          android:textSize="@dimen/_16ssp"
-          android:visibility="visible"
-          android:layout_marginTop="@dimen/_14sdp"
-          app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-          app:layout_constraintLeft_toLeftOf="@id/circleImageView"
-          app:layout_constraintRight_toRightOf="@+id/circleImageView" />
-
-      <ImageView
-          android:id="@+id/iv_cancel_edit"
-          android:layout_width="@dimen/_20sdp"
-          android:layout_height="@dimen/_20sdp"
-          android:src="@drawable/ic_cancel"
-          android:layout_marginStart="@dimen/_8sdp"
-          app:layout_constraintBottom_toBottomOf="@+id/title_edit_profile"
-          app:layout_constraintStart_toEndOf="@+id/title_edit_profile"
-          app:layout_constraintTop_toTopOf="@+id/title_edit_profile" />
-
-      <TextView
-          android:id="@+id/title_profile_picture"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="@dimen/_12sdp"
-          android:layout_marginTop="@dimen/_12sdp"
-          android:fontFamily="@font/font_regular"
-          android:text="Profile Picture"
-          android:textColor="@color/white"
-          android:textSize="@dimen/_12ssp"
-          android:visibility="gone"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintRight_toRightOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/ic_arrow_back" />
+         <TextView
+             android:id="@+id/tv_company_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:fontFamily="@font/font_medium"
+             android:text="Guido"
+             android:textColor="@color/white"
+             android:textSize="@dimen/_42ssp"
+             app:layout_constraintBottom_toTopOf="@+id/circleImageView"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
 
 
+         <TextView
+             android:id="@+id/title_edit_profile"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="@dimen/_14sdp"
+             android:background="@drawable/edit_text_background"
+             android:fontFamily="@font/font_medium"
+             android:padding="@dimen/_12sdp"
+             android:text="Edit Profile"
+             android:textColor="@color/card_color4"
+             android:textSize="@dimen/_16ssp"
+             app:layout_constraintLeft_toLeftOf="@id/circleImageView"
+             app:layout_constraintRight_toRightOf="@+id/circleImageView"
+             app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+
+         <TextView
+             android:id="@+id/title_save_profile"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="@dimen/_14sdp"
+             android:background="@drawable/button_backgroud_corner"
+             android:fontFamily="@font/font_medium"
+             android:padding="@dimen/_12sdp"
+             android:text="Save Profile"
+             android:textColor="@color/white"
+             android:textSize="@dimen/_16ssp"
+             android:visibility="visible"
+             app:layout_constraintLeft_toLeftOf="@id/circleImageView"
+             app:layout_constraintRight_toRightOf="@+id/circleImageView"
+             app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+
+         <ImageView
+             android:id="@+id/iv_cancel_edit"
+             android:layout_width="@dimen/_20sdp"
+             android:layout_height="@dimen/_20sdp"
+             android:layout_marginStart="@dimen/_8sdp"
+             android:src="@drawable/ic_cancel"
+             app:layout_constraintBottom_toBottomOf="@+id/title_edit_profile"
+             app:layout_constraintStart_toEndOf="@+id/title_edit_profile"
+             app:layout_constraintTop_toTopOf="@+id/title_edit_profile" />
+
+         <TextView
+             android:id="@+id/title_profile_picture"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="@dimen/_12sdp"
+             android:layout_marginTop="@dimen/_12sdp"
+             android:fontFamily="@font/font_regular"
+             android:text="Profile Picture"
+             android:textColor="@color/white"
+             android:textSize="@dimen/_12ssp"
+             android:visibility="gone"
+             app:layout_constraintLeft_toLeftOf="parent"
+             app:layout_constraintRight_toRightOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/ic_arrow_back" />
 
 
-      <TextView
-          android:id="@+id/title_profile_name"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/_12sdp"
-          android:fontFamily="@font/font_regular"
-          android:text="User Name"
-          android:layout_marginLeft="@dimen/_14sdp"
-          android:textColor="@color/quantum_black_100"
-          android:textSize="@dimen/_12ssp"
-           app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/title_edit_profile" />
+         <TextView
+             android:id="@+id/title_profile_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="@dimen/_14sdp"
+             android:layout_marginTop="@dimen/_12sdp"
+             android:fontFamily="@font/font_regular"
+             android:text="User Name"
+             android:textColor="@color/quantum_black_100"
+             android:textSize="@dimen/_12ssp"
+             app:layout_constraintLeft_toLeftOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/title_edit_profile" />
 
-      <com.google.android.material.textfield.TextInputLayout
-          android:id="@+id/ti_layout_user_name"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginHorizontal="@dimen/_14sdp"
-          android:layout_marginTop="@dimen/_3sdp"
-          app:errorEnabled="true"
-          app:errorTextColor="@color/red"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="@+id/title_profile_name"
-          app:layout_constraintTop_toBottomOf="@+id/title_profile_name">
-
-
-         <com.google.android.material.textfield.TextInputEditText
-             android:id="@+id/et_profile_name"
+         <com.google.android.material.textfield.TextInputLayout
+             android:id="@+id/ti_layout_user_name"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="text"
-             android:textColor="@color/color_primary"
-             android:textColorHint="@color/color_primary"
-             android:textSize="@dimen/_10sdp" />
-
-      </com.google.android.material.textfield.TextInputLayout>
-
-
-      <TextView
-          android:id="@+id/title_profile_email"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="@font/font_regular"
-          android:text="Email"
-          android:textColor="@color/quantum_black_100"
-          android:textSize="@dimen/_12ssp"
-          app:layout_constraintStart_toStartOf="@+id/title_profile_name"
-          app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_name" />
-
-      <com.google.android.material.textfield.TextInputLayout
-          android:id="@+id/ti_layout_user_email"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginHorizontal="@dimen/_14sdp"
-          android:layout_marginTop="@dimen/_3sdp"
-          app:errorEnabled="true"
-          app:errorTextColor="@color/red"
-          android:enabled="false"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="@+id/title_profile_email"
-          app:layout_constraintTop_toBottomOf="@+id/title_profile_email" >
+             android:layout_marginHorizontal="@dimen/_14sdp"
+             android:layout_marginTop="@dimen/_3sdp"
+             app:errorEnabled="true"
+             app:errorTextColor="@color/red"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="@+id/title_profile_name"
+             app:layout_constraintTop_toBottomOf="@+id/title_profile_name">
 
 
-         <com.google.android.material.textfield.TextInputEditText
-             android:id="@+id/et_profile_base_email"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/color_primary"
+                android:textColorHint="@color/color_primary"
+                android:textSize="@dimen/_10sdp" />
+
+         </com.google.android.material.textfield.TextInputLayout>
+
+
+         <TextView
+             android:id="@+id/title_profile_email"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:fontFamily="@font/font_regular"
+             android:text="Email"
+             android:textColor="@color/quantum_black_100"
+             android:textSize="@dimen/_12ssp"
+             app:layout_constraintStart_toStartOf="@+id/title_profile_name"
+             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_name" />
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:id="@+id/ti_layout_user_email"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="textEmailAddress"
+             android:layout_marginHorizontal="@dimen/_14sdp"
+             android:layout_marginTop="@dimen/_3sdp"
              android:enabled="false"
-             android:textColor="@color/color_primary"
-             android:textColorHint="@color/color_primary"
-             android:textSize="@dimen/_10sdp" />
-
-      </com.google.android.material.textfield.TextInputLayout>
-
-
-      <TextView
-          android:id="@+id/title_profile_base_location"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="@font/font_regular"
-          android:text="Location"
-          android:textColor="@color/quantum_black_100"
-          android:textSize="@dimen/_12ssp"
-          app:layout_constraintStart_toStartOf="@+id/title_profile_email"
-          app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_email" />
+             app:errorEnabled="true"
+             app:errorTextColor="@color/red"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="@+id/title_profile_email"
+             app:layout_constraintTop_toBottomOf="@+id/title_profile_email">
 
 
-      <com.google.android.material.textfield.TextInputLayout
-          android:id="@+id/ti_layout_user_location"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginHorizontal="@dimen/_14sdp"
-          android:layout_marginTop="@dimen/_3sdp"
-          app:errorEnabled="true"
-          app:errorTextColor="@color/red"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="@+id/title_profile_base_location"
-          app:layout_constraintTop_toBottomOf="@+id/title_profile_base_location">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_base_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/color_primary"
+                android:textColorHint="@color/color_primary"
+                android:textSize="@dimen/_10sdp" />
+
+         </com.google.android.material.textfield.TextInputLayout>
 
 
-         <com.google.android.material.textfield.TextInputEditText
-             android:id="@+id/et_profile_base_location"
+         <TextView
+             android:id="@+id/title_profile_base_location"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:fontFamily="@font/font_regular"
+             android:text="Location"
+             android:textColor="@color/quantum_black_100"
+             android:textSize="@dimen/_12ssp"
+             app:layout_constraintStart_toStartOf="@+id/title_profile_email"
+             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_email" />
+
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:id="@+id/ti_layout_user_location"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:inputType="text"
-             android:textColor="@color/color_primary"
-             android:textColorHint="@color/color_primary"
-             android:textSize="@dimen/_10sdp" />
-
-      </com.google.android.material.textfield.TextInputLayout>
-
-
-
+             android:layout_marginHorizontal="@dimen/_14sdp"
+             android:layout_marginTop="@dimen/_3sdp"
+             app:errorEnabled="true"
+             app:errorTextColor="@color/red"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="@+id/title_profile_base_location"
+             app:layout_constraintTop_toBottomOf="@+id/title_profile_base_location">
 
 
-      <Button
-          android:id="@+id/btn_create"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/_32sdp"
-          android:text="Create Account"
-          app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
-          android:backgroundTint="@color/color_secondary"
-          app:layout_constraintHorizontal_bias="0.5"
-          android:visibility="gone"
-          app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
-          app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_base_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/color_primary"
+                android:textColorHint="@color/color_primary"
+                android:textSize="@dimen/_10sdp" />
 
-      <TextView
-          android:id="@+id/btn_logout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/_32sdp"
-          android:layout_marginHorizontal="@dimen/_10sdp"
-          android:text="Logout"
-          android:textSize="@dimen/_13sdp"
-          android:textColor="@color/white"
-          android:padding="@dimen/_12sdp"
-          android:gravity="center"
-          android:background="@drawable/button_backgroud_corner"
-          app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
+         </com.google.android.material.textfield.TextInputLayout>
 
 
-      <TextView
-          android:id="@+id/btn_delete_account"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/_10sdp"
-          android:layout_marginHorizontal="@dimen/_10sdp"
-          android:text="Delete Account"
-          android:textSize="@dimen/_13sdp"
-          android:textColor="@color/white"
-          android:padding="@dimen/_12sdp"
-          android:gravity="center"
-          android:background="@drawable/button_backgroud_corner"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/btn_logout"
-          app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+         <Button
+             android:id="@+id/btn_create"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="@dimen/_32sdp"
+             android:backgroundTint="@color/color_secondary"
+             android:text="Create Account"
+             android:visibility="gone"
+             app:layout_constraintEnd_toEndOf="@+id/ti_layout_user_location"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
+             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
+
+         <androidx.appcompat.widget.AppCompatButton
+             android:id="@+id/btn_logout"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/_10sdp"
+             android:layout_marginTop="@dimen/_32sdp"
+             android:background="@drawable/button_backgroud_corner"
+             android:gravity="center"
+             android:text="Logout"
+             android:textColor="@color/white"
+             android:textSize="@dimen/_13sdp"
+             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
 
 
-      <ProgressBar
-          android:id="@+id/circular_progress_profile"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:progressTint="@color/color_primary"
-          android:visibility="gone"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
+         <androidx.appcompat.widget.AppCompatButton
+             android:id="@+id/btn_delete_account"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/_10sdp"
+             android:layout_marginTop="@dimen/_10sdp"
+             android:background="@drawable/button_backgroud_corner"
+             android:gravity="center"
+             android:text="Delete Account"
+             android:textColor="@color/white"
+             android:textSize="@dimen/_13sdp"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toEndOf="@+id/btn_logout"
+             app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
 
 
-   </androidx.constraintlayout.widget.ConstraintLayout>
+         <ProgressBar
+             android:id="@+id/circular_progress_profile"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:progressTint="@color/color_primary"
+             android:visibility="gone"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.core.widget.NestedScrollView>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+   </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

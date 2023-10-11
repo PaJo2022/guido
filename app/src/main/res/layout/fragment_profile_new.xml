@@ -10,17 +10,37 @@
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent">
+       <androidx.appcompat.widget.Toolbar
+           android:id="@+id/toolbar"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:background="@color/card_color4"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toTopOf="parent">
+
+           <!-- Left ImageView -->
+           <ImageView
+               android:id="@+id/iv_arrow_back"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="start"
+               android:src="@drawable/ic_arrow_back" />
+
+
+
+       </androidx.appcompat.widget.Toolbar>
 
        <androidx.core.widget.NestedScrollView
            android:id="@+id/nestedScrollView"
            android:layout_width="match_parent"
            android:layout_height="0dp"
-           android:fillViewport="true"
            android:layout_marginBottom="@dimen/_10sdp"
+           android:fillViewport="true"
            app:layout_constraintBottom_toTopOf="@+id/btn_save_changes"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent">
+           app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
 
            <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,11 +48,10 @@
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:background="@color/white">
-               <!-- app:layout_constraintBottom_toTopOf="@+id/guidelineOne"-->
                <LinearLayout
                    android:id="@+id/linearLayout5"
                    android:layout_width="match_parent"
-                   android:layout_height="@dimen/_164sdp"
+                   android:layout_height="@dimen/_100sdp"
                    android:background="@drawable/rounded_shape_circle"
                    android:orientation="vertical"
                    app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +60,6 @@
                    android:id="@+id/tv_company_name"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:layout_marginTop="@dimen/_30sdp"
                    android:fontFamily="@font/font_medium"
                    android:text="Guido"
                    android:textColor="@color/white"
@@ -54,8 +72,8 @@
 
                <de.hdodenhof.circleimageview.CircleImageView
                    android:id="@+id/circleImageView"
-                   android:layout_width="@dimen/_120sdp"
-                   android:layout_height="@dimen/_120sdp"
+                   android:layout_width="@dimen/_80sdp"
+                   android:layout_height="@dimen/_80sdp"
                    android:src="@drawable/ic_profile_img_placeholder"
                    app:cardBackgroundColor="@color/transparent"
                    app:cardCornerRadius="@dimen/_40sdp"
@@ -152,17 +170,9 @@
                    android:text="Edit Profile"
                    android:textColor="@color/white"
                    android:textSize="@dimen/_14sdp"
-                   app:layout_constraintTop_toBottomOf="@+id/interestItem"/>
+                   app:layout_constraintTop_toBottomOf="@+id/interestItem" />
 
-               <ImageView
-                   android:id="@+id/ic_arrow_back"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:padding="@dimen/_12sdp"
-                   android:src="@drawable/ic_arrow_left"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toTopOf="parent"
-                   app:tint="@color/white" />
+
 
 
                <androidx.constraintlayout.widget.Guideline
@@ -185,14 +195,14 @@
                    android:layout_height="wrap_content"
                    android:layout_marginHorizontal="@dimen/_12sdp"
                    android:layout_marginTop="@dimen/_32sdp"
+                   android:drawableTint="@color/color_primary"
                    android:fontFamily="@font/font_semi_bold"
                    android:text="My Places"
                    android:textColor="@color/quantum_black_100"
                    android:textSize="@dimen/_16ssp"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile"
                    app:drawableEndCompat="@drawable/ic_arrow_right"
-                   android:drawableTint="@color/color_primary"/>
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
 
 
                <TextView
@@ -207,7 +217,6 @@
                    android:textSize="@dimen/_16ssp"
                    app:layout_constraintStart_toStartOf="parent"
                    app:layout_constraintTop_toBottomOf="@+id/tv_my_places" />
-
 
 
                <ImageView
@@ -283,11 +292,11 @@
                    android:layout_marginHorizontal="@dimen/_12sdp"
                    android:layout_marginTop="@dimen/_10sdp"
                    android:orientation="vertical"
-                   tools:itemCount="5"
-                   tools:listitem="@layout/layout_place_group_item"
                    app:layout_constraintEnd_toEndOf="parent"
                    app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_interests" />
+                   app:layout_constraintTop_toBottomOf="@+id/tv_interests"
+                   tools:itemCount="5"
+                   tools:listitem="@layout/layout_place_group_item" />
 
 
            </androidx.constraintlayout.widget.ConstraintLayout>

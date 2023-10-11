@@ -1,15 +1,13 @@
 package com.innoappsai.guido
 
 import android.app.Application
-import android.net.Uri
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Configuration
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
-import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
+import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.review.ReviewRequestDTO
 import dagger.hilt.android.HiltAndroidApp
@@ -29,7 +27,10 @@ class MyApp : Application(), Configuration.Provider {
 
 
         var placeRequestDTO : PlaceRequestDTO?= null
-        var reviewRequestDTO : ReviewRequestDTO?= null
+        var reviewRequestDTO: ReviewRequestDTO? = null
+        var tempPlaceInterestes: List<PlaceType> ?= null
+        var tempPlaceDistance: Int ?= null
+        var isNewInterestsSet: Boolean = false
     }
     override fun onCreate() {
         super.onCreate()

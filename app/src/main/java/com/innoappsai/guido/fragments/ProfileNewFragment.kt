@@ -88,7 +88,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
             tvMyPlaces.setOnClickListener { OpenNavFragment(
                 MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId
             ) }
-            icArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     binding.tvDistance.text = "$p1 Km"
