@@ -16,7 +16,7 @@ interface PlacesRepository {
         longitude: Double,
         radius: Int,
         types: List<String>
-    )
+    ) : Resource<List<PlaceDTO>>
 
     fun getPlacesNearMeFromLocalDb(): Flow<List<PlaceUiModel>>
 

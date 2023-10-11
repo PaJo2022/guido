@@ -21,6 +21,7 @@ import com.innoappsai.guido.model.placesUiModel.PlaceTypeUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiType
 import com.innoappsai.guido.model.placesUiModel.addUiType
+import com.innoappsai.guido.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -140,11 +141,19 @@ class HomeViewModel @Inject constructor(
             _isLoading.emit(true)
             _dataState.emit(DataState.LOADING)
             val interestList = placesRepository.getAllSavedPlaceTypePreferences()
-            placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
+            val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
                 latitude,
                 longitude,
                 radius,
-                interestList.map { it.id })
+                interestList.map { it.id }
+            )
+            if (response is Resource.Error) {
+                _dataState.emit(DataState.EMPTY_DATA)
+                _nearByPlacesInGroup.postValue(emptyList())
+                _nearByPlaces.postValue(ArrayList(emptyList()))
+                _nearByPlacesMarkerPoints.postValue(emptyList())
+                _isLoading.emit(false)
+            }
         }
 
     }

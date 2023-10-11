@@ -40,6 +40,7 @@ import com.innoappsai.guido.generateStaticMapUrl
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.openWebsite
+import com.innoappsai.guido.toggleEnableAndVisibility
 import com.innoappsai.guido.workers.DownloadImageWorker
 import com.innoappsai.guido.workers.UpdatePlaceStaticMapWorker
 import com.innoappsai.guido.workers.UploadWorker
@@ -115,6 +116,10 @@ class LocationDetailsFragment :
         viewModel.apply {
             fetchDetailsById(placeId)
             isPlaceDataFetching.collectIn(viewLifecycleOwner) {
+                binding.apply {
+                    llLocationPrimaryDetails.root.toggleEnableAndVisibility(!it)
+                    llLocationPrimaryDetailsShimmer.root.toggleEnableAndVisibility(it)
+                }
                 binding.swipeRefreshLayout.isRefreshing = it
             }
             isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
@@ -126,7 +131,7 @@ class LocationDetailsFragment :
                 }
             }
             placeDistance.observe(viewLifecycleOwner) {
-                binding.tvPlaceDistance.text = it
+                binding.llLocationPrimaryDetails.tvPlaceDistance.text = it
             }
             landMarkVideoData.observe(viewLifecycleOwner) {
                 binding.tvPlaceVideos.isVisible = it.isNotEmpty()
@@ -186,11 +191,11 @@ class LocationDetailsFragment :
                         }
                     }
                     ivAddPhoto.isVisible = placeUiModel?.createdBy == appPrefs.userId
-                    placeOpeningStatus.text = placeUiModel?.placeOpenStatus ?: "Closed"
-                    tvPlaceName.text = placeUiModel?.name
-                    tvPlaceName.isSelected = true
-                    placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
-                    placeRatingText.text = "(${placeUiModel?.reviewsCount ?: 0})"
+                    llLocationPrimaryDetails.placeOpeningStatus.text = placeUiModel?.placeOpenStatus ?: "Closed"
+                    llLocationPrimaryDetails.tvPlaceName.text = placeUiModel?.name
+                    llLocationPrimaryDetails.tvPlaceName.isSelected = true
+                    llLocationPrimaryDetails.placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
+                    llLocationPrimaryDetails.placeRatingText.text = "(${placeUiModel?.reviewsCount ?: 0})"
                     Glide.with(requireContext()).load(
                         placeUiModel?.placeMapImage ?: generateStaticMapUrl(
                             latitude = placeUiModel?.latLng?.latitude ?: 0.0,

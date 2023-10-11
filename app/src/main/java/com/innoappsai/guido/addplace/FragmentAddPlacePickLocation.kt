@@ -178,6 +178,7 @@ class FragmentAddPlacePickLocation :
         }
 
         googleMap?.uiSettings?.setAllGesturesEnabled(true)
+        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
         try {
             googleMap?.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(

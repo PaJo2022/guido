@@ -523,6 +523,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
 
         googleMap?.uiSettings?.setAllGesturesEnabled(true)
+        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
         try {
             googleMap?.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(

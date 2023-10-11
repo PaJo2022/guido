@@ -29,14 +29,22 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         longitude: Double,
         radius: Int,
         types: List<String>
-    ) {
-        val places = api.fetchPlacesNearMe(latitude, longitude, radius, types).body()
-        db.withTransaction {
-            db.placeDao().apply {
-                deleteAllPlaces()
-                insertPlaces(places ?: emptyList())
+    ): Resource<List<PlaceDTO>> {
+        val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
+        val places =  response.body()
+       return if(response.isSuccessful && places != null){
+            db.withTransaction {
+                db.placeDao().apply {
+                    deleteAllPlaces()
+                    insertPlaces(places)
+                }
             }
+            Resource.Success(places)
+        }else{
+            Resource.Error(Throwable(response.message()),null)
         }
+
+
     }
 
     override fun getPlacesNearMeFromLocalDb() =

@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/color_light_grey_50"
+            android:progressTint="@color/color_light_grey_50"
             android:numStars="5"
             android:rating="2.0"
             android:stepSize="1.0" />

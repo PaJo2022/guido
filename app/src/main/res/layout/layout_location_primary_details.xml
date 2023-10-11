@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/transparent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".fragments.HomeFragment">
+
+    <TextView
+        android:id="@+id/tv_place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/font_bold"
+        android:textColor="@color/color_primary"
+        android:textSize="@dimen/_16ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Place Name" />
+
+    <TextView
+        android:id="@+id/place_opening_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_4sdp"
+        tools:text="Opening Soon"
+        android:textColor="@color/color_primary"
+        app:layout_constraintStart_toStartOf="@+id/tv_place_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+
+    <RatingBar
+        android:id="@+id/place_rating"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:numStars="5"
+        android:rating="0.0"
+        android:stepSize="0.5"
+        android:progressTint="@color/quantum_yellow"
+        app:layout_constraintStart_toStartOf="@+id/tv_place_name"
+        app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
+
+    <TextView
+        android:id="@+id/place_rating_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:fontFamily="@font/font_medium"
+        tools:text="(0)"
+        android:textColor="@color/card_color4"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintBottom_toBottomOf="@+id/place_rating"
+        app:layout_constraintStart_toEndOf="@+id/place_rating"
+        app:layout_constraintTop_toTopOf="@+id/place_rating" />
+
+
+    <TextView
+        android:id="@+id/tv_place_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:fontFamily="@font/font_medium"
+        tools:text="3.21 km."
+        android:textColor="@color/quantum_grey"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintBottom_toBottomOf="@+id/place_rating"
+        app:layout_constraintStart_toEndOf="@+id/place_rating_text"
+        app:layout_constraintTop_toTopOf="@+id/place_rating" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

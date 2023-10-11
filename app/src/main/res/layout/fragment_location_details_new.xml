@@ -96,72 +96,25 @@
                       app:tabGravity="center"
                       app:tabIndicatorHeight="0dp" />
 
+                 <include
+                     android:id="@+id/ll_location_primary_details"
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:visibility="invisible"
+                     layout="@layout/layout_location_primary_details"
+                     app:layout_constraintStart_toStartOf="parent"
+                     app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"/>
 
-
-                  <TextView
-                      android:id="@+id/tv_place_name"
-                      android:layout_width="wrap_content"
+                  <include
+                      android:id="@+id/ll_location_primary_details_shimmer"
                       android:layout_height="wrap_content"
-                      android:layout_marginStart="@dimen/_12sdp"
-                      android:layout_marginTop="@dimen/_10sdp"
-                      android:fontFamily="@font/font_bold"
-                      android:textColor="@color/color_primary"
-                      android:textSize="@dimen/_16ssp"
+                      android:layout_width="wrap_content"
+                      layout="@layout/layout_location_primary_details_shimmer"
                       app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"
-                      tools:text="Place Name" />
-
-                  <TextView
-                      android:id="@+id/place_opening_status"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center"
-                      android:layout_marginTop="@dimen/_4sdp"
-                      android:text="Opening Soon"
-                      android:textColor="@color/color_primary"
-                      app:layout_constraintStart_toStartOf="@+id/tv_place_name"
-                      app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
-
-                  <RatingBar
-                      android:id="@+id/place_rating"
-                      style="?android:attr/ratingBarStyleSmall"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center"
-                      android:layout_marginTop="@dimen/_8sdp"
-                      android:numStars="5"
-                      android:rating="0.0"
-                      android:stepSize="0.5"
-                      android:progressTint="@color/quantum_yellow"
-                      app:layout_constraintStart_toStartOf="@+id/tv_place_name"
-                      app:layout_constraintTop_toBottomOf="@+id/place_opening_status" />
-
-                  <TextView
-                      android:id="@+id/place_rating_text"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_marginStart="@dimen/_4sdp"
-                      android:fontFamily="@font/font_medium"
-                      android:text="(0)"
-                      android:textColor="@color/card_color4"
-                      android:textSize="@dimen/_14ssp"
-                      app:layout_constraintBottom_toBottomOf="@+id/place_rating"
-                      app:layout_constraintStart_toEndOf="@+id/place_rating"
-                      app:layout_constraintTop_toTopOf="@+id/place_rating" />
+                      app:layout_constraintTop_toBottomOf="@+id/vp_place_image_indicator"/>
 
 
-                  <TextView
-                      android:id="@+id/tv_place_distance"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_marginStart="@dimen/_8sdp"
-                      android:fontFamily="@font/font_medium"
-                      android:text="3.21 km."
-                      android:textColor="@color/quantum_grey"
-                      android:textSize="@dimen/_14ssp"
-                      app:layout_constraintBottom_toBottomOf="@+id/place_rating"
-                      app:layout_constraintStart_toEndOf="@+id/place_rating_text"
-                      app:layout_constraintTop_toTopOf="@+id/place_rating" />
+
 
                   <LinearLayout
                       android:id="@+id/ll_place_costing"
@@ -169,9 +122,9 @@
                       android:layout_height="wrap_content"
                       android:layout_marginStart="@dimen/_8sdp"
                       android:orientation="horizontal"
-                      app:layout_constraintBottom_toBottomOf="@+id/place_rating"
-                      app:layout_constraintStart_toEndOf="@+id/tv_place_distance"
-                      app:layout_constraintTop_toTopOf="@+id/place_rating">
+                      app:layout_constraintBottom_toBottomOf="@+id/ll_location_primary_details"
+                      app:layout_constraintStart_toEndOf="@+id/ll_location_primary_details"
+                      app:layout_constraintTop_toTopOf="@+id/ll_location_primary_details">
 
 
 
@@ -186,7 +139,7 @@
                       android:textColor="@color/color_primary"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toBottomOf="@+id/place_rating" />
+                      app:layout_constraintTop_toBottomOf="@+id/ll_location_primary_details" />
 
                   <ProgressBar
                       android:id="@+id/circular_progress_place_description"

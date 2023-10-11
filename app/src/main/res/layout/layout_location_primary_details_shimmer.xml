@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    tools:context=".fragments.HomeFragment">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_tv_place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_light_grey_50"
+            android:fontFamily="@font/font_bold"
+            android:text="Place Name"
+            android:textColor="@color/transparent"
+            android:textSize="@dimen/_16ssp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_tv_place_opening_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        app:layout_constraintStart_toStartOf="@+id/shimmer_tv_place_name"
+        app:layout_constraintTop_toBottomOf="@+id/shimmer_tv_place_name">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@color/color_light_grey_50"
+            android:text="Opening Soon"
+            android:textColor="@color/transparent" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_place_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintStart_toStartOf="@+id/shimmer_tv_place_name"
+        app:layout_constraintTop_toBottomOf="@+id/shimmer_tv_place_opening_status">
+
+        <RatingBar
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/color_light_grey_50"
+            android:numStars="5"
+            android:progressTint="@color/transparent"
+            android:rating="2.0"
+            android:stepSize="1.0" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_place_rating_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/shimmer_place_rating"
+        app:layout_constraintStart_toEndOf="@+id/shimmer_place_rating"
+        app:layout_constraintTop_toTopOf="@+id/shimmer_place_rating">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:background="@color/color_light_grey_50"
+            android:fontFamily="@font/font_medium"
+            android:text="(0)"
+            android:textColor="@color/transparent"
+            android:textSize="@dimen/_14ssp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_tv_place_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/shimmer_place_rating"
+        app:layout_constraintStart_toEndOf="@+id/shimmer_place_rating_text"
+        app:layout_constraintTop_toTopOf="@+id/shimmer_place_rating" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:background="@color/color_light_grey_50"
+            android:fontFamily="@font/font_medium"
+            android:text="3.21 km."
+            android:textColor="@color/transparent"
+            android:textSize="@dimen/_14ssp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
