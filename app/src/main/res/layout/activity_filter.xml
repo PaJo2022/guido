@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".placeFilter.FilterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -74,10 +75,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:fontFamily="@font/font_bold"
                     android:text="Radius"
-                    android:textColor="@color/quantum_black_100"
-                    android:textSize="@dimen/_16ssp"
+                    style="@style/TitleTextStyle"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -133,10 +132,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:fontFamily="@font/font_bold"
+                    style="@style/TitleTextStyle"
                     android:text="Features"
-                    android:textColor="@color/quantum_black_100"
-                    android:textSize="@dimen/_16ssp"
                     app:layout_constraintStart_toStartOf="@+id/textView4"
                     app:layout_constraintTop_toBottomOf="@+id/iv_man_walking" />
 
@@ -154,10 +151,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:fontFamily="@font/font_bold"
                     android:text="What Are You Looking For"
-                    android:textColor="@color/quantum_black_100"
-                    android:textSize="@dimen/_16ssp"
+                    style="@style/TitleTextStyle"
                     app:layout_constraintStart_toStartOf="@+id/textView4"
                     app:layout_constraintTop_toBottomOf="@+id/rv_place_features" />
 

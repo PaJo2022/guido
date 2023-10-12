@@ -39,6 +39,8 @@ import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.Constants.iconResourceMapping
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
+import com.innoappsai.guido.adapters.PlaceFilterHorizontalAdapter
+import com.innoappsai.guido.adapters.PlaceFilterHorizontalItemDecorator
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
 import com.innoappsai.guido.adapters.PlacesHorizontalListAdapter
 import com.innoappsai.guido.addplace.AddPlaceActivity
@@ -49,6 +51,7 @@ import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
+import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.placeFilter.FilterActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,6 +78,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var placesAdapter: PlacesGroupListAdapter
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
+    private lateinit var placeFilterAdapter: PlaceFilterHorizontalAdapter
     private var googleMap: GoogleMap? = null
     private lateinit var workManager: WorkManager
 
@@ -89,6 +93,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
+        placeFilterAdapter = PlaceFilterHorizontalAdapter(requireContext())
         workManager = WorkManager.getInstance(requireContext())
         checkLocationPermission()
     }
@@ -228,6 +233,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
+            bottomsheetPlaceList.rvFilters.apply {
+                addItemDecoration(PlaceFilterHorizontalItemDecorator(requireContext()))
+                adapter = placeFilterAdapter
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            }
             binding.bottomsheetPlaceList.llLocateMe.root.setOnClickListener {
                 checkLocationPermission(shouldAnimate = true)
             }
@@ -245,13 +256,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 layoutManager = placeCardHorizontalLayoutManager
             }
             ivUserProfileImage.setOnClickListener {
-                startActivity(Intent(requireContext(), FilterActivity()::class.java))
-//                openNavFragment(
-//                    ProfileNewFragment(),
-//                    childFragmentManager,
-//                    "ProfileFragment",
-//                    binding.flId
-//                )
+                openNavFragment(
+                    ProfileNewFragment(),
+                    childFragmentManager,
+                    "ProfileFragment",
+                    binding.flId
+                )
             }
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
@@ -337,6 +347,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         observeData()
 
+        placeFilterAdapter.setOnFilterItemClicked{placeFilter->
+            when(placeFilter.placeFilterType){
+                PlaceFilterType.FULL_FILTER -> {
+                    startActivity(Intent(requireContext(), FilterActivity()::class.java))
+                }
+                PlaceFilterType.UNLOCK_FILTERS -> {
+
+                }
+                PlaceFilterType.SORT -> {
+
+                }
+                PlaceFilterType.OPEN_NOW -> {
+
+                }
+                PlaceFilterType.MORE_FILTERS -> {
+                    startActivity(Intent(requireContext(), FilterActivity()::class.java))
+                }
+
+                PlaceFilterType.TRAVEL_ITINERARY -> {
+
+                }
+            }
+        }
 
     }
 

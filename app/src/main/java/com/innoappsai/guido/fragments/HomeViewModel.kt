@@ -140,6 +140,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
             _dataState.emit(DataState.LOADING)
+            _nearByPlacesInGroup.postValue(DUMMY_PLACE_TYPE_UI_MODEL)
             val interestList =
                 if (MyApp.tempPlaceInterestes.isNullOrEmpty()) placesRepository.getAllSavedPlaceTypePreferences() else emptyList()
             val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
@@ -203,13 +204,13 @@ class HomeViewModel @Inject constructor(
         placeUiTypeUiModel.clear()
         // Iterate through the place types
         placesGroupedByType.entries.forEach {mapData->
-
+            val sortedPlaces = mapData.value.sortedBy { it.rating }
 
             placeUiTypeUiModel.add(
                 PlaceTypeUiModel(
                     mapData.key,
                     getPlaceTypeIcon(mapData.key.toString()),
-                    places = mapData.value.addUiType(PlaceUiType.LARGE),
+                    places = sortedPlaces.addUiType(PlaceUiType.LARGE),
                     dataType =  DataType.DATA
                 )
             )

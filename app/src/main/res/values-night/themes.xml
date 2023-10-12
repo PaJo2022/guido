@@ -1,7 +1,69 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.Guido" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/card_color4</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
+
+    <style name="Theme.Guido" parent="Base.Theme.Guido">
+        <item name="chipStyle">@style/Widget.App.Chip</item>
+        <item name="android:statusBarColor">@color/card_color4</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_background_color</item>
+    </style>
+
+
+
+    <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/color_light_grey_80</item>
+        <item name="android:editTextColor">@color/white</item>
+        <item name="android:fontFamily">@font/font_regular</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="queryHint">Search near You</item>
+        <item name="iconifiedByDefault">false</item>
+    </style>
+
+    <style name="BottomNavigationViewTextStyle">
+        <item name="android:fontFamily">@font/font_medium</item>
+        <item name="android:textSize">@dimen/_12sdp</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/color_primary</item>
+        <item name="boxStrokeWidth">@dimen/_10sdp</item>
+    </style>
+
+    <!-- TextView Style -->
+    <!-- Title Text Style -->
+    <style name="TitleTextStyle">
+        <item name="android:textSize">@dimen/_16ssp</item>  <!-- Text size for title -->
+        <item name="android:textColor">@color/light_text_color</item>  <!-- Text color for title -->
+        <item name="android:fontFamily">@font/font_bold</item>  <!-- Font for title -->
+    </style>
+
+    <!-- Subtitle Text Style -->
+    <style name="SubtitleTextStyle">
+        <item name="android:textSize">@dimen/_14ssp</item>  <!-- Text size for subtitle -->
+        <item name="android:textColor">@color/light_text_color
+        </item>  <!-- Text color for subtitle -->
+        <item name="android:fontFamily">@font/font_medium</item>  <!-- Font for subtitle -->
+    </style>
+
+    <!-- Description Text Style -->
+    <style name="DescriptionTextStyle">
+        <item name="android:textSize">@dimen/_12ssp</item>  <!-- Text size for description -->
+        <item name="android:textColor">@color/light_text_color
+        </item>  <!-- Text color for description -->
+        <item name="android:fontFamily">@font/font_regular</item>  <!-- Font for description -->
+    </style>
+
+
+
 </resources>

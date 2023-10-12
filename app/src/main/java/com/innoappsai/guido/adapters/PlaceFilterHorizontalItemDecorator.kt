@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.intuit.sdp.R
 
 
-class CustomItemDecoration(private val appContext: Context) : RecyclerView.ItemDecoration() {
+class PlaceFilterHorizontalItemDecorator(private val appContext: Context) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
@@ -18,20 +18,9 @@ class CustomItemDecoration(private val appContext: Context) : RecyclerView.ItemD
         val position = parent.getChildAdapterPosition(view)
         val itemCount = state.itemCount
 
-        when (position) {
-            0 -> {
-                outRect.left = leftAndRightMargin
-                outRect.right = horizontalMargin
-            }
-            itemCount - 1 -> {
-                outRect.left = horizontalMargin
-                outRect.right = leftAndRightMargin
-            }
-            else -> {
-                outRect.left = horizontalMargin
-                outRect.right = horizontalMargin
-            }
-        }
+       if(position == itemCount - 1){
+           outRect.right = leftAndRightMargin
+       }
     }
 }
 

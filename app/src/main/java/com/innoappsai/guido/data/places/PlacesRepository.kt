@@ -40,6 +40,8 @@ interface PlacesRepository {
         placeId: String
     )
 
+    suspend fun deleteAllPlacesFromDB()
+
     suspend fun updatePlaceStaticMapByPlaceId(
         placeId: String,
         staticMapUrl : String

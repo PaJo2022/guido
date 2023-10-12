@@ -96,6 +96,12 @@ class BackendPlacesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteAllPlacesFromDB() {
+        withContext(Dispatchers.IO){
+            db.placeDao().deleteAllPlaces()
+        }
+    }
+
     override suspend fun updatePlaceStaticMapByPlaceId(
         placeId: String,
         staticMapUrl: String
