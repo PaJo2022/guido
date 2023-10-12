@@ -366,7 +366,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 PlaceFilterType.TRAVEL_ITINERARY -> {
-
+                    if (MyApp.userCurrentFormattedAddress == null) return@setOnFilterItemClicked Unit
+                    Bundle().apply {
+                        putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
+                        openNavFragment(
+                            FragmentPlaceGenerateItineary(),
+                            childFragmentManager,
+                            "FragmentPlaceGenerateItineary",
+                            binding.flId,
+                            this
+                        )
+                    }
                 }
             }
         }

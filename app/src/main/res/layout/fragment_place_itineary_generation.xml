@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/bottomSheet"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <androidx.appcompat.widget.Toolbar
+           android:id="@+id/toolbar"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:background="@color/card_color8"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toTopOf="parent">
+
+           <!-- Left ImageView -->
+           <ImageView
+               android:id="@+id/iv_arrow_back"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="start"
+               android:src="@drawable/ic_arrow_back" />
+
+           <!-- Center TextView -->
+           <TextView
+               android:id="@+id/toolbar_title"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center"
+               android:fontFamily="@font/font_bold"
+               android:text="Generate Itineary"
+               android:textColor="#ffffff"
+               android:textSize="@dimen/_16ssp" />
+
+           <!-- Right ImageView -->
+
+
+       </androidx.appcompat.widget.Toolbar>
+
+
+       <androidx.core.widget.NestedScrollView
+           android:id="@+id/scroll_view"
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:fillViewport="true"
+           app:layout_constraintBottom_toTopOf="@+id/btn_generate"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+           <androidx.constraintlayout.widget.ConstraintLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+
+
+               <TextView
+                   android:id="@+id/tv_number_of_days"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_12sdp"
+                   android:text="Number Of Days You Want To Stay?"
+                   app:layout_constraintStart_toStartOf="@+id/ti_layout_stay_days"
+                   app:layout_constraintTop_toTopOf="parent" />
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/ti_layout_stay_days"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginHorizontal="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   android:hint="Number Of Days You Wanna Stay"
+                   app:endIconMode="clear_text"
+                   app:errorEnabled="true"
+                   app:errorTextColor="@color/red"
+                   app:helperText="Ie: 5"
+                   app:helperTextTextColor="@color/color_primary"
+                   app:hintAnimationEnabled="false"
+                   app:hintTextColor="@color/color_primary"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_number_of_days">
+
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/et_place_website"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="number"
+                       android:textColor="@color/color_primary"
+                       android:textColorHint="@color/color_primary"
+                       android:textSize="@dimen/_10sdp" />
+
+               </com.google.android.material.textfield.TextInputLayout>
+
+               <TextView
+                   android:id="@+id/tv_interests"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_16sdp"
+                   android:text="Interests"
+                   app:layout_constraintStart_toStartOf="@+id/ti_layout_stay_days"
+                   app:layout_constraintTop_toBottomOf="@+id/ti_layout_stay_days" />
+
+
+               <com.google.android.material.chip.ChipGroup
+                   android:id="@+id/chipGroupInterests"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   app:layout_constraintEnd_toEndOf="@+id/ti_layout_stay_days"
+                   app:layout_constraintStart_toStartOf="@+id/tv_interests"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_interests"
+                   app:singleSelection="false">
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipAdventure"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Adventure" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipCulture"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Culture" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipRelaxation"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Relaxation" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipNature"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Nature" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipFood"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Food" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipShopping"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Shopping" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipArt"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Art" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipHistory"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="History" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipEntertainment"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Entertainment" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipSports"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Sports" />
+
+
+               </com.google.android.material.chip.ChipGroup>
+
+
+               <TextView
+                   android:id="@+id/tv_budget"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_16sdp"
+                   android:text="Budget"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/chipGroupInterests" />
+
+
+               <TextView
+                   android:id="@+id/tv_min_budget"
+                   style="@style/SubtitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_12sdp"
+                   android:text="$500"
+                   app:layout_constraintStart_toStartOf="@+id/tv_budget"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_budget" />
+
+               <SeekBar
+                   android:id="@+id/seekbar_budget"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:max="10000"
+                   android:min="500"
+                   android:progress="250"
+                   android:progressTint="@color/card_color4"
+                   app:layout_constraintBottom_toBottomOf="@+id/tv_min_budget"
+                   app:layout_constraintEnd_toStartOf="@+id/tv_max_budget"
+                   app:layout_constraintStart_toEndOf="@+id/tv_min_budget"
+                   app:layout_constraintTop_toTopOf="@+id/tv_min_budget" />
+
+               <TextView
+                   android:id="@+id/tv_budget_value"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/font_regular"
+                   android:text="$400"
+                   android:textColor="@color/quantum_black_100"
+                   app:layout_constraintBottom_toBottomOf="@+id/tv_budget"
+                   app:layout_constraintEnd_toEndOf="@+id/tv_max_budget"
+                   app:layout_constraintStart_toStartOf="@+id/tv_max_budget" />
+
+               <TextView
+                   android:id="@+id/tv_max_budget"
+                   style="@style/SubtitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_12sdp"
+                   android:layout_marginEnd="@dimen/_12sdp"
+                   android:text="$10,00"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_budget" />
+
+               <TextView
+                   android:id="@+id/tv_accommodation"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_16sdp"
+                   android:text="Accommodation"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_min_budget" />
+
+               <com.google.android.material.chip.ChipGroup
+                   android:id="@+id/accommodationChipGroup"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   app:layout_constraintEnd_toEndOf="@+id/chipGroupInterests"
+                   app:layout_constraintStart_toStartOf="@+id/tv_accommodation"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_accommodation"
+                   app:singleSelection="true">
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipHotel"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Hotel" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipHostel"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Hostel" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipAirbnb"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Airbnb" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipResort"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Resort" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipCamping"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Camping" />
+
+                   <!-- Add more chips for other accommodation options as needed -->
+
+               </com.google.android.material.chip.ChipGroup>
+
+               <TextView
+                   android:id="@+id/tv_transportation"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_16sdp"
+                   android:text="Transportation"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/accommodationChipGroup" />
+
+               <com.google.android.material.chip.ChipGroup
+                   android:id="@+id/transportationChipGroup"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   app:layout_constraintEnd_toEndOf="@+id/chipGroupInterests"
+                   app:layout_constraintStart_toStartOf="@+id/tv_transportation"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_transportation"
+                   app:singleSelection="true">
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipFlight"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Flight" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipTrain"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Train" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipCarRental"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Car Rental" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipPublicTransport"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Public Transport" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipWalking"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Walking" />
+
+                   <!-- Add more chips for other accommodation options as needed -->
+
+               </com.google.android.material.chip.ChipGroup>
+
+               <TextView
+                   android:id="@+id/tv_weather_season"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_16sdp"
+                   android:text="Favourite Season"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/transportationChipGroup" />
+
+               <com.google.android.material.chip.ChipGroup
+                   android:id="@+id/weatherSeasonChipGroup"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   android:layout_marginBottom="@dimen/_8sdp"
+                   app:layout_constraintBottom_toBottomOf="parent"
+                   app:layout_constraintEnd_toEndOf="@+id/chipGroupInterests"
+                   app:layout_constraintStart_toStartOf="@+id/tv_transportation"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_weather_season"
+                   app:singleSelection="true">
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipSunny"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Sunny" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipRainy"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Rainy" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipSnowy"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Snowy" />
+
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipSummer"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Summer" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipAutumn"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Autumn" />
+
+                   <com.google.android.material.chip.Chip
+                       android:id="@+id/chipWinter"
+                       style="@style/Widget.MaterialComponents.Chip.Choice"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Winter" />
+
+                   <!-- Add more chips for other weather and season options as needed -->
+
+               </com.google.android.material.chip.ChipGroup>
+
+
+
+           </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+       </androidx.core.widget.NestedScrollView>
+
+       <androidx.appcompat.widget.AppCompatButton
+           android:id="@+id/btn_generate"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@color/color_background"
+           android:text="Generate"
+           style="@style/TitleTextStyle"
+           android:textColor="@color/white"
+           android:layout_marginHorizontal="@dimen/_12sdp"
+           android:layout_marginBottom="@dimen/_12sdp"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent" />
+
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+</FrameLayout>
