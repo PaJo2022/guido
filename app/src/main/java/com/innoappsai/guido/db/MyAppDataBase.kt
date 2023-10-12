@@ -3,6 +3,7 @@ package com.innoappsai.guido.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.innoappsai.guido.TravelItinerary
 import com.innoappsai.guido.db.typeconverters.PlaceDTOConverter
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
@@ -15,8 +16,9 @@ import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
         User::class,
         PlaceAutocomplete::class,
         PlaceDTO::class,
+        TravelItinerary::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(PlaceDTOConverter::class)
@@ -25,4 +27,5 @@ abstract class MyAppDataBase : RoomDatabase() {
     abstract fun locationSearchDao() : LocationSearchDao
     abstract fun userDao(): UserDao
     abstract fun placeDao(): PlaceDao
+    abstract fun itineraryDao(): ItineraryDao
 }

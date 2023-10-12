@@ -18,6 +18,8 @@ import com.innoappsai.guido.data.review.ReviewRepository
 import com.innoappsai.guido.data.review.ReviewRepositoryImpl
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.tourData.TourDataRepositoryImpl
+import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
+import com.innoappsai.guido.data.travel_itinerary.ItineraryRepositoryImpl
 import com.innoappsai.guido.data.videos.VideoRepository
 import com.innoappsai.guido.data.videos.VideosRepositoryImpl
 import com.innoappsai.guido.db.AppPrefs
@@ -72,5 +74,10 @@ class RepositoryModule {
     @Singleton
     fun provideReviewRepositoryImpl(guidoApi: GuidoApi,myAppDataBase: MyAppDataBase): ReviewRepository =
         ReviewRepositoryImpl(guidoApi,myAppDataBase)
+
+    @Provides
+    @Singleton
+    fun provideTravelItineraryRepositoryImpl(myAppDataBase: MyAppDataBase): ItineraryRepository =
+        ItineraryRepositoryImpl(myAppDataBase)
 
 }

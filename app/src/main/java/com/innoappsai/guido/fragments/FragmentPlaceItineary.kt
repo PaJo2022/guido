@@ -7,12 +7,20 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
 import com.innoappsai.guido.toggleEnableAndAlpha
+import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 
 @AndroidEntryPoint
 class FragmentPlaceItineary : BottomSheetDialogFragment() {
@@ -23,11 +31,15 @@ class FragmentPlaceItineary : BottomSheetDialogFragment() {
     private var _binding: FragmentPlaceItinearyBinding? = null
     private val binding: FragmentPlaceItinearyBinding get() = _binding!!
 
+    private lateinit var workManager: WorkManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        workManager = WorkManager.getInstance(requireContext())
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
             ?.let { bottomSheet ->
@@ -45,7 +57,11 @@ class FragmentPlaceItineary : BottomSheetDialogFragment() {
         binding.ivArrowBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-        message?.let { viewModel.generatePlaceItineary(it) }
+        viewModel.generatePlaceItineary()
+        message?.let {
+            startGenerating(it)
+        }
+
 
         addOnBackPressedCallback {
             parentFragmentManager.popBackStack()
@@ -59,6 +75,35 @@ class FragmentPlaceItineary : BottomSheetDialogFragment() {
                 binding.btnApply.toggleEnableAndAlpha(true)
             }
         }
+    }
+
+    private fun startGenerating(message: String) {
+        val inputData = Data.Builder().putString(
+            "ITINERARY_QUERY", message
+        ).putString("ITINERARY_ID", viewModel.itineraryId).build()
+
+        val uploadImageFileWorkRequest =
+            OneTimeWorkRequestBuilder<CreateItineraryGeneratorWorker>().addTag(
+                CreateItineraryGeneratorWorker.TAG
+            ).setInputData(inputData)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build()
+        workManager.enqueueUniqueWork(
+            "GENERATE_TRAVEL_ITINERARY",
+            ExistingWorkPolicy.KEEP,
+            uploadImageFileWorkRequest
+        )
+
+        workManager.getWorkInfosForUniqueWorkLiveData("GENERATE_TRAVEL_ITINERARY")
+            .observe(viewLifecycleOwner) { works ->
+                val workState = works.map { it.state }.firstOrNull()
+                binding.animationView.isVisible =
+                    workState != WorkInfo.State.SUCCEEDED && workState != WorkInfo.State.FAILED && workState != WorkInfo.State.CANCELLED
+                binding.tvLoading.isVisible =
+                    workState != WorkInfo.State.SUCCEEDED && workState != WorkInfo.State.FAILED && workState != WorkInfo.State.CANCELLED
+                binding.btnApply.toggleEnableAndAlpha(workState == WorkInfo.State.SUCCEEDED || workState == WorkInfo.State.FAILED || workState == WorkInfo.State.CANCELLED)
+
+            }
+
     }
 
 

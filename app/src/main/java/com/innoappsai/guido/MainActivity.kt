@@ -27,7 +27,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         _binding = ActivityMainBinding.inflate(layoutInflater)
+        Log.i("JAPAN", "onCreate: ${intent}")
 
+        intent.getStringExtra("DEEPLINK")?.let {
+            if(it.equals("PLACE_ITINERARY_SCREEN",false)){
+
+            }
+        }
 
         openNavFragment(
             HomeFragment(),
@@ -37,6 +43,14 @@ class MainActivity : AppCompatActivity() {
         )
 
 
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.i("JAPAN", "onNewIntent: ${intent}")
+        intent?.getStringExtra("ITINERARY_DB_ID")?.let {
+            showToast(it)
+        }
     }
 
     fun openNavFragment(
