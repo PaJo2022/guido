@@ -65,7 +65,7 @@ interface PlacesRepository {
     ): FullPlaceData?
 
     suspend fun fetchPlaceAutoCompleteSuggestion(
-       query : String
+        query: String
     ): List<PlaceAutoCompleteDTO>
 
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
@@ -75,4 +75,13 @@ interface PlacesRepository {
     suspend fun insertNewSearchedLocation(placeAutocomplete: PlaceAutocomplete)
 
     fun getSearchedLocations(): Flow<List<PlaceAutocomplete>>
+
+
+    suspend fun updateAllPlacesIsCheckedAndCheckBoxFor(
+        isChecked: Boolean,
+        shouldShowCheckBox: Boolean
+    )
+
+    suspend fun updatePlaceIsChecked(placeId: String, isChecked: Boolean)
+    suspend fun getSelectedLandMarks(): List<PlaceUiModel>
 }

@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -83,12 +84,19 @@ class HomeViewModel @Inject constructor(
     val searchedFormattedAddress: LiveData<String> = _searchedFormattedAddress
 
 
-
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
 
 
     private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
     val dataState: SharedFlow<DataState> get() = _dataState
+
+    private val _showItineraryGenerationLayout: MutableLiveData<Boolean> = MutableLiveData()
+    val showItineraryGenerationLayout: LiveData<Boolean> get() = _showItineraryGenerationLayout
+
+
+    private val _selectedPlaces: MutableLiveData<List<PlaceUiModel>> = MutableLiveData()
+    val selectedPlaces: LiveData<List<PlaceUiModel>> get() = _selectedPlaces
+
 
     init {
         getNearByPlaces()
@@ -161,9 +169,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getNearByPlaces() {
-        placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }
-            .onEach { listOfPlaceUiModel ->
-
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }.collect{listOfPlaceUiModel->
                 nearByPlacesList.clear()
                 nearByMarkerList.clear()
 
@@ -191,7 +198,9 @@ class HomeViewModel @Inject constructor(
                 _nearByPlaces.postValue(ArrayList(nearByPlacesList))
                 _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
                 _isLoading.emit(false)
-            }.launchIn(viewModelScope)
+                _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
+            }
+        }
     }
 
 
@@ -219,24 +228,6 @@ class HomeViewModel @Inject constructor(
         }
 
         return placeUiTypeUiModel
-    }
-
-
-
-
-
-
-
-    private suspend fun awaitPlaceDetailsConnection(request: FetchPlaceRequest): Place? {
-        return suspendCoroutine {
-            placesClient.fetchPlace(request).addOnSuccessListener { response ->
-                val place = response.place
-                it.resume(place)
-
-            }.addOnFailureListener { exception ->
-                it.resume(null)
-            }
-        }
     }
 
 
@@ -297,17 +288,38 @@ class HomeViewModel @Inject constructor(
 
     fun getUserData() = userRepository.getUserDetailsFlow()
     fun deletePlace(placeId: String?) {
-       viewModelScope.launch(Dispatchers.IO) {
-           placesRepository.deletePlaceFromDB(placeId.toString())
-       }
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.deletePlaceFromDB(placeId.toString())
+        }
+    }
+
+    fun onItineraryGenerationClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _showItineraryGenerationLayout.postValue(true)
+            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(true,true)
+        }
+    }
+
+    fun onItineraryGenerationCancelledClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _showItineraryGenerationLayout.postValue(false)
+            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false,false)
+        }
+    }
+
+    fun onPlaceSelectedForItinerary(placeId: String?, checked: Boolean) {
+        if(placeId == null) return
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.updatePlaceIsChecked(placeId,checked)
+        }
     }
 
     enum class PlaceUiState {
         HORIZONTAL, VERTICAL, NONE
     }
 
-    enum class DataState{
-        LOADING,EMPTY_DATA
+    enum class DataState {
+        LOADING, EMPTY_DATA
     }
 
 

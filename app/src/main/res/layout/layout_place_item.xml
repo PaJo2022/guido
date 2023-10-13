@@ -84,6 +84,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/place_rating" />
 
+    <CheckBox
+        android:id="@+id/cb_is_celected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/place_distance"
+        app:layout_constraintStart_toStartOf="@+id/place_distance"
+        app:layout_constraintTop_toBottomOf="@+id/place_distance" />
+
 
     <TextView
         android:id="@+id/tv_place_is_open"

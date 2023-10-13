@@ -47,6 +47,8 @@ data class PlaceUiModel(
     val openTill: String? = null,
     val reviews: List<ReviewUiModel>? = null,
     var isSelected: Boolean = false,
+    var isChecked: Boolean = false,
+    var shouldShowCheckBox: Boolean = false,
     var placeUiType: PlaceUiType = PlaceUiType.SMALL
 ) : Parcelable
 
@@ -61,6 +63,8 @@ data class ExtraInfoWithIcon(
 
 fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
     PlaceUiModel(
+        isChecked = it.isChecked,
+        shouldShowCheckBox = it.isChecked,
         serverDbId  = it.serverDbId,
         icon = it.icon,
         typeName = it.typeName,
@@ -104,7 +108,7 @@ data class ReviewUiModel(
     val reviewedDateInMillis: Long,
     val reviewText: String,
     val reviewDone: String,
-): Parcelable
+) : Parcelable
 
 
 

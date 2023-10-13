@@ -18,7 +18,7 @@ import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
         PlaceDTO::class,
         TravelItinerary::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(PlaceDTOConverter::class)

@@ -263,6 +263,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     binding.flId
                 )
             }
+            bottomsheetPlaceList.apply {
+                ivCloseGenerateItineraryLayout.setOnClickListener {
+                    viewModel.onItineraryGenerationCancelledClicked()
+                }
+                btnGenerate.setOnClickListener {
+                    Bundle().apply {
+                        putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
+                        openNavFragment(
+                            FragmentPlaceGenerateItineary(),
+                            childFragmentManager,
+                            "FragmentPlaceGenerateItineary",
+                            binding.flId,
+                            this
+                        )
+                    }
+                }
+            }
+
             snapHelper1.attachToRecyclerView(binding.rvPlaceCards)
         }
 
@@ -284,13 +302,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
 
         val screenHeight = requireContext().getScreenHeight()
-        val peekHeight1 = (screenHeight * 0.15).roundToInt()
-
+        val peekHeight1 = (screenHeight * 0.18).roundToInt()
+        bottomSheetBehavior.peekHeight = peekHeight1
         val margin = (screenHeight * 0.10).roundToInt()
         val maxHeight = (screenHeight * 0.65).roundToInt()
 
-        bottomSheetBehavior.peekHeight = peekHeight1
-        bottomSheetBehavior.maxHeight = maxHeight
+
         bottomSheetBehavior.maxHeight = maxHeight
 
         bottomSheetBehavior.isHideable = false
@@ -366,16 +383,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 PlaceFilterType.TRAVEL_ITINERARY -> {
-                    if (MyApp.userCurrentFormattedAddress == null) return@setOnFilterItemClicked Unit
-                    Bundle().apply {
-                        putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
-                        openNavFragment(
-                            FragmentPlaceGenerateItineary(),
-                            childFragmentManager,
-                            "FragmentPlaceGenerateItineary",
-                            binding.flId,
-                            this
-                        )
+                    if (MyApp.userCurrentFormattedAddress != null) {
+                        viewModel.onItineraryGenerationClicked()
                     }
                 }
             }
@@ -406,6 +415,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun observeData() {
         viewModel.apply {
+            selectedPlaces.observe(viewLifecycleOwner) {
+                binding.bottomsheetPlaceList.tvSelectedPlaces.text =
+                    "${it.size} Landmarks are selected"
+            }
+            showItineraryGenerationLayout.observe(viewLifecycleOwner) {
+                val screenHeight = requireContext().getScreenHeight()
+                binding.bottomsheetPlaceList.llPickLandmarks.isVisible = it
+                if (it) {
+                    val peekHeight = (screenHeight * 0.15).roundToInt()
+                    bottomSheetBehavior.peekHeight = peekHeight
+                    val maxHeight = (screenHeight * 0.85).roundToInt()
+                    bottomSheetBehavior.maxHeight = maxHeight
+                } else {
+                    val peekHeight = (screenHeight * 0.18).roundToInt()
+                    bottomSheetBehavior.peekHeight = peekHeight
+                    val maxHeight = (screenHeight * 0.65).roundToInt()
+                    bottomSheetBehavior.maxHeight = maxHeight
+                }
+            }
             isLoading.collectIn(viewLifecycleOwner) {
                 binding.swipeRefreshLayout.isRefreshing = it
             }
@@ -512,6 +540,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     this
                 )
             }
+        }
+        placesAdapter.setOnLandMarkCheckBoxClicked { placeUiModel, isChecked ->
+            viewModel.onPlaceSelectedForItinerary(placeUiModel.placeId, isChecked)
         }
     }
 

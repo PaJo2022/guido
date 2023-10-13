@@ -47,6 +47,8 @@ data class PlaceDTO(
     val superType: String? = null,
     val placeFeatures: List<String>? = null,
     val placeTimings: List<PlaceTimings>? = null,
+    var isChecked: Boolean = false,
+    var shouldShowCheckBox: Boolean = false,
 ) : Parcelable
 
 fun List<PlaceDTO>.toPlaceUiModel() = map{
@@ -82,7 +84,9 @@ fun List<PlaceDTO>.toPlaceUiModel() = map{
         placeFeatures = it.placeFeatures,
         placeTimings = it.placeTimings,
         placeOpenStatus = it.placeOpenStatus,
-        openTill = it.openTill
+        openTill = it.openTill,
+        isChecked = it.isChecked,
+        shouldShowCheckBox = it.shouldShowCheckBox
     )
 }
 
@@ -118,5 +122,7 @@ fun PlaceDTO.toPlaceUiModel() =  PlaceUiModel(
     placeFeatures = placeFeatures,
     placeTimings = placeTimings,
     placeOpenStatus = placeOpenStatus,
-    openTill = openTill
+    openTill = openTill,
+    isChecked = isChecked,
+    shouldShowCheckBox = shouldShowCheckBox
 )

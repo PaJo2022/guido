@@ -188,6 +188,23 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     }
 
     override fun getSearchedLocations() = db.locationSearchDao().getRecentSearchLocations()
+    override suspend fun updateAllPlacesIsCheckedAndCheckBoxFor(
+        isChecked: Boolean,
+        shouldShowCheckBox: Boolean
+    ) {
+        withContext(Dispatchers.IO){
+            db.placeDao().updateAllPlacesIsCheckedAndCheckBoxFor(isChecked, shouldShowCheckBox)
+        }
+    }
+
+    override suspend fun updatePlaceIsChecked(placeId: String, isChecked: Boolean) {
+        withContext(Dispatchers.IO){
+            db.placeDao().updatePlaceIsChecked(placeId, isChecked)
+        }
+
+    }
+
+    override suspend fun getSelectedLandMarks() = db.placeDao().getAllSelectedPlaces().map { it.toPlaceUiModel() }
 
 
 }

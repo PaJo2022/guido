@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.MyApp
@@ -30,9 +31,16 @@ class PlacesListAdapter(
 
     private var onItemClickListener: ((PlaceUiModel) -> Any?)? = null
 
-    fun setOnLandMarkClicked(onItemClickListener : ((PlaceUiModel) -> Any?)){
+    fun setOnLandMarkClicked(onItemClickListener: ((PlaceUiModel) -> Any?)) {
         this.onItemClickListener = onItemClickListener
     }
+
+    private var onLandMarkCheckBoxClicked: ((PlaceUiModel, Boolean) -> Any?)? = null
+
+    fun setOnLandMarkCheckBoxClicked(onLandMarkCheckBoxClicked: ((PlaceUiModel, Boolean) -> Any?)) {
+        this.onLandMarkCheckBoxClicked = onLandMarkCheckBoxClicked
+    }
+
 
     inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -61,7 +69,10 @@ class PlacesListAdapter(
                 tvPlaceName.isSelected = true
                 tvPlaceIsOpen.apply {
                     text = place.placeOpenStatus
-                    val textColor = ContextCompat.getColor(appContext, if(place.isOpenNow) R.color.color_sound_compose_selected_color3 else R.color.color_primary)
+                    val textColor = ContextCompat.getColor(
+                        appContext,
+                        if (place.isOpenNow) R.color.color_sound_compose_selected_color3 else R.color.color_primary
+                    )
                     setTextColor(textColor)
                 }
                 tvPlaceDescription.text = place.address
@@ -69,6 +80,13 @@ class PlacesListAdapter(
                 placeRating.rating = place.rating?.toFloat() ?: 0f
                 placeRatingText.text = "(${place.reviewsCount ?: 0})"
                 placeDistance.text = getDistanceBetweenMyPlaceAndTheCurrentPlace(place)
+                cbIsCelected.apply {
+                    isVisible = place.shouldShowCheckBox
+                    isChecked = place.isChecked
+                    this.setOnCheckedChangeListener { compoundButton, b ->
+                        onLandMarkCheckBoxClicked?.invoke(place, b)
+                    }
+                }
                 root.setOnClickListener {
                     onItemClickListener?.invoke(place)
                 }

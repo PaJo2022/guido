@@ -26,11 +26,19 @@ class PlacesGroupListAdapter(private val appContext : Context) :
         notifyDataSetChanged()
     }
 
-    private var onItemClickListener : ((PlaceUiModel) -> Any?)? =null
+    private var onItemClickListener: ((PlaceUiModel) -> Any?)? = null
 
-    fun setOnLandMarkClicked(onItemClickListener : ((PlaceUiModel) -> Any?)){
+    fun setOnLandMarkClicked(onItemClickListener: ((PlaceUiModel) -> Any?)) {
         this.onItemClickListener = onItemClickListener
     }
+
+
+    private var onLandMarkCheckBoxClicked: ((PlaceUiModel, Boolean) -> Any?)? = null
+
+    fun setOnLandMarkCheckBoxClicked(onLandMarkCheckBoxClicked: ((PlaceUiModel, Boolean) -> Any?)) {
+        this.onLandMarkCheckBoxClicked = onLandMarkCheckBoxClicked
+    }
+
 
     inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -41,13 +49,17 @@ class PlacesGroupListAdapter(private val appContext : Context) :
                 tvPlaceType.text = place.type.toString().uppercase(Locale.ENGLISH)
                 rvPlaces.apply {
                     adapter = placesAdapter
-                    layoutManager = LinearLayoutManager(appContext,LinearLayoutManager.VERTICAL,false)
+                    layoutManager =
+                        LinearLayoutManager(appContext, LinearLayoutManager.VERTICAL, false)
                 }
                 place.places?.let { placesAdapter.setNearByPlaces(it) }
-                placesAdapter.setOnLandMarkClicked {place->
+                placesAdapter.setOnLandMarkClicked { place ->
                     onItemClickListener?.invoke(place)
                 }
-             //   Glide.with(appContext).load(place.icon).centerCrop().into(ivPlaceTypeIcon)
+                placesAdapter.setOnLandMarkCheckBoxClicked { placeUiModel, b ->
+                    onLandMarkCheckBoxClicked?.invoke(placeUiModel, b)
+                }
+                //   Glide.with(appContext).load(place.icon).centerCrop().into(ivPlaceTypeIcon)
             }
         }
     }

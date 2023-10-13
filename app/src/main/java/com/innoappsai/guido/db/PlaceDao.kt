@@ -32,4 +32,14 @@ interface PlaceDao {
     @Query("DELETE FROM PLACE_DTO ")
     suspend fun deleteAllPlaces()
 
+    @Query("UPDATE PLACE_DTO SET isChecked = :isChecked,shouldShowCheckBox = :shouldShowCheckBox")
+    suspend fun updateAllPlacesIsCheckedAndCheckBoxFor(isChecked: Boolean,shouldShowCheckBox : Boolean)
+
+
+    @Query("UPDATE PLACE_DTO SET isChecked = :isChecked WHERE placeId = :placeId")
+    suspend fun updatePlaceIsChecked(placeId: String, isChecked: Boolean)
+
+
+    @Query("SELECT * FROM PLACE_DTO WHERE isChecked = 1 AND shouldShowCheckBox = 1")
+    suspend fun getAllSelectedPlaces(): List<PlaceDTO>
 }
