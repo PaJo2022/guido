@@ -175,9 +175,10 @@ class LandMarkDetailsViewModel @Inject constructor(
     private suspend fun fetchVideosForTheLandMarkName(placeUiModel: PlaceUiModel): List<VideoUiModel> {
         val placeName = placeUiModel.name
         val city = placeUiModel.city
+        val state = placeUiModel.state
         val country = placeUiModel.country
         return videoRepository.fetchPlacesVideos(
-            query = "${placeName},${city},${country}",
+            query = "${placeName},${city},${state},${country}",
             apiKey = GCP_API_KEY
         )
     }

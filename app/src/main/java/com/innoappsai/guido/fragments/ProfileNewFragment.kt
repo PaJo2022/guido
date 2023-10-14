@@ -33,7 +33,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
     private lateinit var thumbView: View
     private lateinit var viewModel: ProfileViewModel
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -43,13 +42,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         thumbView = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_seekbar_thumb, null, false)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val currentDistanceInPref = appPrefs.prefDistance
-        binding.seekbarDistance.progress = currentDistanceInPref / 1000
-        binding.tvDistance.text = "${currentDistanceInPref / 1000} Km"
     }
 
     private fun OpenNavFragment(
@@ -87,25 +79,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                 MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId
             ) }
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
-            seekbarDistance.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                    binding.tvDistance.text = "$p1 Km"
-                }
-
-                override fun onStartTrackingTouch(p0: SeekBar?) {
-
-                }
-
-                override fun onStopTrackingTouch(p0: SeekBar?) {
-                   viewModel.onDistanceChanged(p0?.progress ?: return)
-                }
-
-            })
-
-
-            btnSaveChanges.setOnClickListener {
-                viewModel.savePlaceTypePreferences()
-            }
         }
 
         viewModel.apply {
@@ -128,9 +101,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                 sharedViewModel.onPreferencesSaved()
                 parentFragmentManager.popBackStack()
             }
-            newInterestsSelected.observe(viewLifecycleOwner) {
-                binding.btnSaveChanges.isVisible = it
-            }
+
 
         }
 

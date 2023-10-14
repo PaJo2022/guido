@@ -1,5 +1,6 @@
 package com.innoappsai.guido.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -87,6 +88,16 @@ class FragmentPlaceItineary : BottomSheetDialogFragment() {
                 binding.tvLoading.isVisible = false
                 binding.btnApply.toggleEnableAndAlpha(true)
             }
+        }
+        binding.btnApply.setOnClickListener {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, viewModel.itineraryText)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
     }
 

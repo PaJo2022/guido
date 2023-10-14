@@ -15,6 +15,5 @@ interface VideoApi {
         @Query("key") key : String,
         @Query("order") order : String = "viewCount",
         @Query("type") type : String="video",
-        @Query("videoDuration") videoDuration : String = "long",
     ) : Response<YoutubeVideosDTO>
 }

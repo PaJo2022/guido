@@ -18,7 +18,6 @@ class VideosRepositoryImpl @Inject constructor(
                 emptyList()
             }
         }catch (e : Exception){
-            Log.i("JAPAN", "DATA $e")
             emptyList()
         }
     }

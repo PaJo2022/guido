@@ -37,7 +37,7 @@
            android:layout_height="0dp"
            android:layout_marginBottom="@dimen/_10sdp"
            android:fillViewport="true"
-           app:layout_constraintBottom_toTopOf="@+id/btn_save_changes"
+           app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/toolbar">
@@ -205,121 +205,11 @@
                    app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
 
 
-               <TextView
-                   android:id="@+id/textView4"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginStart="@dimen/_12sdp"
-                   android:layout_marginTop="@dimen/_32sdp"
-                   android:fontFamily="@font/font_semi_bold"
-                   android:text="Radius"
-                   android:textColor="@color/quantum_black_100"
-                   android:textSize="@dimen/_16ssp"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_my_places" />
-
-
-               <ImageView
-                   android:id="@+id/iv_man_walking"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="@dimen/_8sdp"
-                   android:src="@drawable/ic_walking"
-                   app:layout_constraintStart_toStartOf="@+id/textView4"
-                   app:layout_constraintTop_toBottomOf="@+id/textView4"
-                   app:tint="@color/quantum_black_100" />
-
-               <SeekBar
-                   android:id="@+id/seekbar_distance"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:max="25"
-                   android:min="1"
-                   android:progress="5"
-                   app:layout_constraintEnd_toStartOf="@+id/iv_man_driving"
-                   app:layout_constraintStart_toEndOf="@+id/iv_man_walking"
-                   app:layout_constraintTop_toTopOf="@+id/iv_man_walking" />
-
-               <TextView
-                   android:id="@+id/tv_distance"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:fontFamily="@font/font_regular"
-                   android:text="5Km"
-                   android:textColor="@color/quantum_black_100"
-                   app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                   app:layout_constraintEnd_toEndOf="@+id/iv_man_driving"
-                   app:layout_constraintStart_toStartOf="@+id/iv_man_driving"
-                   app:layout_constraintTop_toTopOf="@+id/textView4" />
-
-               <ImageView
-                   android:id="@+id/iv_man_driving"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="@dimen/_8sdp"
-                   android:layout_marginEnd="@dimen/_12sdp"
-                   android:src="@drawable/ic_bike"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/textView4"
-                   app:tint="@color/quantum_black_100" />
-
-               <View
-                   android:id="@+id/divider_1"
-                   android:layout_width="match_parent"
-                   android:layout_height="@dimen/_8sdp"
-                   android:layout_marginTop="@dimen/_12sdp"
-                   android:background="@color/color_light_grey_80"
-                   app:layout_constraintTop_toBottomOf="@+id/iv_man_walking" />
-
-
-               <TextView
-                   android:id="@+id/tv_interests"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginStart="@dimen/_12sdp"
-                   android:layout_marginTop="@dimen/_12sdp"
-                   android:fontFamily="@font/font_semi_bold"
-                   android:text="What You Want To Check"
-                   android:textColor="@color/quantum_black_100"
-                   android:textSize="@dimen/_16ssp"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/divider_1" />
-
-               <androidx.recyclerview.widget.RecyclerView
-                   android:id="@+id/rv_interests"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_marginHorizontal="@dimen/_12sdp"
-                   android:layout_marginTop="@dimen/_10sdp"
-                   android:orientation="vertical"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintStart_toStartOf="parent"
-                   app:layout_constraintTop_toBottomOf="@+id/tv_interests"
-                   tools:itemCount="5"
-                   tools:listitem="@layout/layout_place_group_item" />
 
 
            </androidx.constraintlayout.widget.ConstraintLayout>
        </androidx.core.widget.NestedScrollView>
 
-       <TextView
-           android:id="@+id/btn_save_changes"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="@dimen/_20sdp"
-           android:background="@drawable/button_rounded_shape"
-           android:gravity="center"
-           android:padding="@dimen/_12sdp"
-           android:text="Save Changes"
-           android:visibility="gone"
-           tools:visibility="visible"
-           android:textColor="@color/white"
-           android:textSize="@dimen/_14sdp"
-           android:layout_marginBottom="@dimen/_10sdp"
-           android:layout_marginHorizontal="@dimen/_12sdp"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           />
+
    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

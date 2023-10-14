@@ -17,6 +17,7 @@ class FragmentPlaceItinearyViewModel @Inject constructor(
 ) : ViewModel() {
 
     var itineraryId: String? = null
+    var itineraryText : String ?= null
 
     private val _generatedItineary: MutableLiveData<String> = MutableLiveData()
     val generatedItineary: LiveData<String> = _generatedItineary
@@ -28,6 +29,7 @@ class FragmentPlaceItinearyViewModel @Inject constructor(
     fun generatePlaceItineraryById(itineraryId: String) {
 
         itineraryRepository.getItineraryById(itineraryId).onEach {
+            itineraryText = it?.valueInText
             _generatedItineary.postValue(it?.valueInText)
         }.launchIn(viewModelScope)
     }
