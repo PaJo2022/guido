@@ -112,7 +112,9 @@ class BackendPlacesRepositoryImpl @Inject constructor(
 
     override suspend fun addPlace(placeRequestDTO: PlaceRequestDTO): PlaceUiModel? {
         val response = api.addPlace(placeRequestDTO)
-        return if (response.isSuccessful) {
+        return if (response.isSuccessful && response.body() != null) {
+            val addedPlace = response.body()!!
+            db.placeDao().insertPlace(addedPlace)
             response.body()?.toPlaceUiModel()
         } else {
             null

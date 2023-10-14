@@ -18,7 +18,6 @@ import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.data.places.PlacesRepository
-import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -95,10 +94,11 @@ class AddPlaceWorker @AssistedInject constructor(
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val deepLinkIntent = Intent(context, MainActivity::class.java)
-
-        val requestCode = 0 // You can change this value if needed
+        deepLinkIntent.putExtra("ADDED_PLACE_ID", placeDto?.placeId)
+        deepLinkIntent.putExtra("DEEPLINK", "PLACE_DETAILS_SCREEN")
+        val requestCode = 1 // You can change this value if needed
         val flags =
-            PendingIntent.FLAG_IMMUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
+            PendingIntent.FLAG_MUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
         val pendingIntent = PendingIntent.getActivity(
             context,
             requestCode,

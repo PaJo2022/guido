@@ -54,7 +54,6 @@ import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.placeFilter.FilterActivity
-import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import com.innoappsai.guido.workers.WorkerState
 import dagger.hilt.android.AndroidEntryPoint
@@ -223,6 +222,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        arguments?.getString("DEEPLINK")?.let {
+            if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
+                navigateToGeneratedItinerary()
+            } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
+                val placeId = arguments?.getString("ADDED_PLACE_ID") ?: return
+                navigateToPlaceDetailsScreen(placeId)
+            }
+
+        }
 
         val snapHelper1: SnapHelper = PagerSnapHelper()
         val placeCardHorizontalLayoutManager =
@@ -232,18 +240,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.getMapAsync(this)
         binding.apply {
             llItineraryIsAdded.root.setOnClickListener {
-                requireActivity().showToast(CreateItineraryGeneratorWorker.itineraryDbId ?: "No ID")
-                Bundle().apply {
-                    putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
-                    openNavFragment(
-                        FragmentPlaceItineary(),
-                        childFragmentManager,
-                        "FragmentPlaceItineary",
-                        binding.flId,
-                        this
-                    )
-                }
-                CreateItineraryGeneratorWorker.onObserved()
+                navigateToGeneratedItinerary()
             }
             swipeRefreshLayout.isEnabled = false
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
@@ -413,6 +410,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
 
+    }
+
+    fun navigateToGeneratedItinerary() {
+        Bundle().apply {
+            putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
+            openNavFragment(
+                FragmentPlaceItineary(),
+                childFragmentManager,
+                "FragmentPlaceItineary",
+                binding.flId,
+                this
+            )
+        }
+        viewModel.onItineraryGenerationCancelledClicked()
+        CreateItineraryGeneratorWorker.onObserved()
+    }
+
+    fun navigateToPlaceDetailsScreen(placeId: String) {
+        Bundle().apply {
+            putString("PLACE_ID", placeId)
+            openNavFragment(
+                LocationDetailsFragment(),
+                childFragmentManager,
+                "LocationDetailsFragment",
+                binding.flId,
+                this
+            )
+        }
     }
 
     private fun setLocationMarkers(placeUiModel: PlaceUiModel) {

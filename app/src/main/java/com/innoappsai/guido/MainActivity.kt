@@ -8,16 +8,15 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.innoappsai.guido.databinding.ActivityAddPlaceBinding
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
-import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
 
+    private var homeFragment: HomeFragment? = null
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
 
@@ -29,17 +28,15 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         Log.i("JAPAN", "onCreate: ${intent}")
 
-        intent.getStringExtra("DEEPLINK")?.let {
-            if(it.equals("PLACE_ITINERARY_SCREEN",false)){
 
-            }
-        }
+        homeFragment = HomeFragment()
 
         openNavFragment(
-            HomeFragment(),
+            homeFragment!!,
             supportFragmentManager,
             "HomeFragment",
-            findViewById<FrameLayout>(R.id.main_fl_id)
+            findViewById<FrameLayout>(R.id.main_fl_id),
+            intent.extras
         )
 
 
@@ -47,9 +44,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.i("JAPAN", "onNewIntent: ${intent}")
-        intent?.getStringExtra("ITINERARY_DB_ID")?.let {
-            showToast(it)
+        intent?.extras?.getString("DEEPLINK")?.let {
+            if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
+                homeFragment?.navigateToGeneratedItinerary()
+            } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
+                val placeId = intent.extras?.getString("ADDED_PLACE_ID") ?: return
+                homeFragment?.navigateToPlaceDetailsScreen(placeId)
+            } else {
+                // Later DeepLinks
+            }
+
         }
     }
 

@@ -120,7 +120,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
         deepLinkIntent.putExtra("DEEPLINK", "PLACE_ITINERARY_SCREEN")
         val requestCode = 0 // You can change this value if needed
         val flags =
-            PendingIntent.FLAG_IMMUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
+            PendingIntent.FLAG_MUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
         val pendingIntent = PendingIntent.getActivity(
             context,
             requestCode,
@@ -136,7 +136,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
         // Build the notification
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_website)
-            .setContentTitle("Itinerary is created")
+            .setContentTitle("Itinerary is Added")
             .setContentText("Your Itinerary is Added")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
@@ -155,13 +155,13 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(
                 NOTIFICATION_ID,
-                createNotification(context, "Adding", "Your Place Is Adding"),
+                createNotification(context, "Creating", "Your Itinerary Is Creating"),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         } else {
             ForegroundInfo(
                 NOTIFICATION_ID,
-                createNotification(context, "Adding", "Your Place Is Adding"),
+                createNotification(context, "Creating", "Your Itinerary Is Creating"),
             )
         }
     }
