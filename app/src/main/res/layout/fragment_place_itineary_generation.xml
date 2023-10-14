@@ -75,7 +75,6 @@
                    android:layout_height="wrap_content"
                    android:layout_marginHorizontal="@dimen/_12sdp"
                    android:layout_marginTop="@dimen/_4sdp"
-                   android:hint="Number Of Days You Wanna Stay"
                    app:endIconMode="clear_text"
                    app:errorEnabled="true"
                    app:errorTextColor="@color/red"
@@ -89,7 +88,7 @@
 
 
                    <com.google.android.material.textfield.TextInputEditText
-                       android:id="@+id/et_place_website"
+                       android:id="@+id/et_place_stay_days"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:inputType="number"
@@ -387,8 +386,6 @@
                    android:layout_width="0dp"
                    android:layout_height="wrap_content"
                    android:layout_marginTop="@dimen/_4sdp"
-                   android:layout_marginBottom="@dimen/_8sdp"
-                   app:layout_constraintBottom_toBottomOf="parent"
                    app:layout_constraintEnd_toEndOf="@+id/chipGroupInterests"
                    app:layout_constraintStart_toStartOf="@+id/tv_transportation"
                    app:layout_constraintTop_toBottomOf="@+id/tv_weather_season"
@@ -440,6 +437,48 @@
                    <!-- Add more chips for other weather and season options as needed -->
 
                </com.google.android.material.chip.ChipGroup>
+
+
+               <TextView
+                   android:id="@+id/tv_extra_info"
+                   style="@style/TitleTextStyle"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_12sdp"
+                   android:text="Extra Information"
+                   app:layout_constraintStart_toStartOf="@+id/tv_weather_season"
+                   app:layout_constraintTop_toBottomOf="@+id/weatherSeasonChipGroup" />
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/ti_layout_extra_info"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginHorizontal="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_4sdp"
+                   android:layout_marginBottom="@dimen/_8sdp"
+                   app:endIconMode="clear_text"
+                   app:errorEnabled="true"
+                   app:errorTextColor="@color/red"
+                   app:helperText="Ie: I love to visit this place at this time"
+                   app:helperTextTextColor="@color/color_primary"
+                   app:hintAnimationEnabled="false"
+                   app:hintTextColor="@color/color_primary"
+                   app:layout_constraintBottom_toBottomOf="parent"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_extra_info">
+
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/et_place_extra_info"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="text"
+                       android:textColor="@color/color_primary"
+                       android:textColorHint="@color/color_primary"
+                       android:textSize="@dimen/_10sdp" />
+
+               </com.google.android.material.textfield.TextInputLayout>
 
 
 

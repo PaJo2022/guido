@@ -54,6 +54,9 @@ import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.placeFilter.FilterActivity
+import com.innoappsai.guido.showToast
+import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
+import com.innoappsai.guido.workers.WorkerState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -80,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var placeFilterAdapter: PlaceFilterHorizontalAdapter
     private var googleMap: GoogleMap? = null
-    private lateinit var workManager: WorkManager
+    private val workManager: WorkManager by lazy { WorkManager.getInstance(requireContext()) }
 
 
     private val zoom = 13f
@@ -88,17 +91,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     @Inject
     lateinit var appPrefs: AppPrefs
 
+    private fun observeWorkers() {
+        CreateItineraryGeneratorWorker.workerState.observe(viewLifecycleOwner) { workState ->
+            binding.llItineraryIsAdded.root.isVisible = workState == WorkerState.COMPLETE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         placesAdapter = PlacesGroupListAdapter(requireContext())
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
         placeFilterAdapter = PlaceFilterHorizontalAdapter(requireContext())
-        workManager = WorkManager.getInstance(requireContext())
         checkLocationPermission()
     }
 
-    private fun askForNotificationPermission(){
+    private fun askForNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // Check if the permission is already granted
             val permission = Manifest.permission.POST_NOTIFICATIONS
@@ -224,6 +231,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
         binding.apply {
+            llItineraryIsAdded.root.setOnClickListener {
+                requireActivity().showToast(CreateItineraryGeneratorWorker.itineraryDbId ?: "No ID")
+                Bundle().apply {
+                    putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
+                    openNavFragment(
+                        FragmentPlaceItineary(),
+                        childFragmentManager,
+                        "FragmentPlaceItineary",
+                        binding.flId,
+                        this
+                    )
+                }
+                CreateItineraryGeneratorWorker.onObserved()
+            }
             swipeRefreshLayout.isEnabled = false
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
                 askForNotificationPermission()
@@ -268,10 +289,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     viewModel.onItineraryGenerationCancelledClicked()
                 }
                 btnGenerate.setOnClickListener {
+                    viewModel.onItineraryGenerationCancelledClicked()
                     Bundle().apply {
                         putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
                         openNavFragment(
-                            FragmentPlaceGenerateItineary(),
+                            FragmentPlaceGenerateItinerary(),
                             childFragmentManager,
                             "FragmentPlaceGenerateItineary",
                             binding.flId,
@@ -363,6 +385,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
 
         observeData()
+        observeWorkers()
 
         placeFilterAdapter.setOnFilterItemClicked{placeFilter->
             when(placeFilter.placeFilterType){
@@ -473,7 +496,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                             .toBitmap(150,150)
                     marker.setIcon(BitmapDescriptorFactory.fromBitmap(newIcon))
                 }catch (e : Exception){
-
+                    Log.i("JAPAN", "observeData: ${e.message}")
                 }
                 marker.showInfoWindow()
                 moveCamera(marker.position, true)

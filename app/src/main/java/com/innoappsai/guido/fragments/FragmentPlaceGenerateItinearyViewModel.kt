@@ -1,6 +1,5 @@
 package com.innoappsai.guido.fragments
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.innoappsai.guido.data.places.PlacesRepository
@@ -27,26 +26,29 @@ class FragmentPlaceGenerateItineraryViewModel @Inject constructor(
     private val _generateItinerary: MutableSharedFlow<String> = MutableSharedFlow()
     val generateItinerary: SharedFlow<String> = _generateItinerary.asSharedFlow()
 
-    fun generate(numberOfDaysUserWantToTravel: String, placeAddress: String?) {
+    fun generate(
+        numberOfDaysUserWantToTravel: String,
+        extraInformation: String,
+        placeAddress: String?
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             val selectedLandMarks = placesRepository.getSelectedLandMarks()
-
+            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false, false)
             val commaSeparatedStringForSelectedPlaces =
                 selectedLandMarks.map { "${it.name},${it.city},${it.state},${it.country}" }
                     .joinToString(", ")
             val commaSeparatedStringForInterests = itineraryPlaceInterestList.joinToString(", ")
-            //I want to geenrate a travel itineary for given details of place with    1.list of interest user want to do 2.user's preffered accomodation 3. user preferred transporation 4.user preffered season 5. user preferred budged
+
             val message =
                 "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to ${placeAddress} and these are my preferreses" +
-                        "Number of days i wanna stay there is $numberOfDaysUserWantToTravel\n" +
-                        "These are the landmarks i wanna visit $commaSeparatedStringForSelectedPlaces\n" +
-                        "The Things i want to do there are $commaSeparatedStringForInterests\n" +
+                        "Number of days i wanna stay there is ${numberOfDaysUserWantToTravel}\n" +
+                        "These are the landmarks i wanna visit ${commaSeparatedStringForSelectedPlaces}\n" +
+                        "The Things i want to do there are ${commaSeparatedStringForInterests}\n" +
                         "This is my preferrred Transporation there ${selectedTransportation}\n" +
                         "This is my preferrred Accommodation there ${selectedAccommodation}\n" +
                         "This is my preferrred budget spent there ${selectedBudget}\n" +
-                        "This is my preferrred season to go there ${selectedSeason}\n"
-            Log.i("JAPAN", " ${commaSeparatedStringForSelectedPlaces}")
-            Log.i("JAPAN", "generate: ${message}")
+                        "This is my preferrred season to go there ${selectedSeason}\n" +
+                        "These are some extra information for my travel ${extraInformation}\n"
              _generateItinerary.emit(message)
         }
 

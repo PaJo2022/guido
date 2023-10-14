@@ -48,7 +48,8 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:numStars="5"
             android:rating="2.0"
-            android:stepSize="1.0"
+            android:stepSize="0.5"
+            android:progressTint="@color/quantum_greywhite1000"
             app:layout_constraintStart_toStartOf="@+id/tv_place_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
 

@@ -15,12 +15,12 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
 import com.innoappsai.guido.toggleEnableAndAlpha
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.UUID
 
 @AndroidEntryPoint
 class FragmentPlaceItineary : BottomSheetDialogFragment() {
@@ -54,17 +54,30 @@ class FragmentPlaceItineary : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val message = arguments?.getString("GENERATE_ITINEARY_MESSAGE")
+        val itineraryDbId = arguments?.getString("ITINERARY_DB_ID")
         binding.ivArrowBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-        viewModel.generatePlaceItineary()
-        message?.let {
-            startGenerating(it)
+
+        if (itineraryDbId != null) {
+            viewModel.generatePlaceItineraryById(itineraryDbId)
+
+        } else {
+            viewModel.itineraryId?.let { viewModel.generatePlaceItineraryById(it) }
+            message?.let {
+                startGenerating(it)
+            }
         }
 
 
         addOnBackPressedCallback {
-            parentFragmentManager.popBackStack()
+            if (itineraryDbId != null) {
+                parentFragmentManager.popBackStack()
+            }else{
+                parentFragmentManager.popBackStack()
+                parentFragmentManager.popBackStack()
+            }
+
         }
 
         viewModel.apply {

@@ -11,6 +11,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
@@ -23,7 +25,6 @@ import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.Message
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.util.UUID
 
 @HiltWorker
 class CreateItineraryGeneratorWorker @AssistedInject constructor(
@@ -39,6 +40,14 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
         private const val NOTIFICATION_ID = 11
         private const val NOTIFICATION_CHANNEL_NAME = "GENERATE ITINERARY"
         const val TAG = "CreateItineraryGeneratorWorker"
+        private val _workerState: MutableLiveData<WorkerState> = MutableLiveData()
+        val workerState: LiveData<WorkerState> = _workerState
+
+        var itineraryDbId: String? = null
+
+        fun onObserved() {
+            _workerState.value = WorkerState.IDLE
+        }
     }
 
     private lateinit var itineraryIdForDB: String
@@ -49,6 +58,8 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
             // Retrieve the list of byte arrays from input data
             val query = inputData.getString("ITINERARY_QUERY") ?: return Result.failure()
             itineraryIdForDB = inputData.getString("ITINERARY_ID") ?: return Result.failure()
+            itineraryDbId = itineraryIdForDB
+            _workerState.postValue(WorkerState.RUNNING)
             setForeground(getForegroundInfo(applicationContext))
 
 
@@ -65,8 +76,10 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
             } else {
                 sendErrorPushNotification("Something went wrong please try again!")
             }
+            _workerState.postValue(WorkerState.COMPLETE)
             Result.success()
         } catch (e: Exception) {
+            _workerState.postValue(WorkerState.FAILED)
             e.printStackTrace()
             sendErrorPushNotification(e.message ?: "Something Went Wrong!")
             Result.failure()

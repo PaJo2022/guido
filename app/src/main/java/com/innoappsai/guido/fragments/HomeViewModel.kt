@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.innoappsai.guido.Constants.getPlaceTypeIcon
 import com.innoappsai.guido.LocationClient
@@ -27,14 +25,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -163,6 +156,14 @@ class HomeViewModel @Inject constructor(
                 _nearByPlaces.postValue(ArrayList(emptyList()))
                 _nearByPlacesMarkerPoints.postValue(emptyList())
                 _isLoading.emit(false)
+            }else if (response is Resource.Success){
+                if(response.data.isNullOrEmpty()){
+                    _dataState.emit(DataState.EMPTY_DATA)
+                    _nearByPlacesInGroup.postValue(emptyList())
+                    _nearByPlaces.postValue(ArrayList(emptyList()))
+                    _nearByPlacesMarkerPoints.postValue(emptyList())
+                    _isLoading.emit(false)
+                }
             }
         }
 
@@ -177,7 +178,6 @@ class HomeViewModel @Inject constructor(
                 val latLangs = listOfPlaceUiModel.map { it.latLng }
 
                 val placesInGroupData = mapPlacesByType(listOfPlaceUiModel)
-
                 placesInGroupData.forEach { placeTypeUiModel ->
                     placeTypeUiModel.places?.let { nearByPlacesList.addAll(it) }
                 }
@@ -191,14 +191,20 @@ class HomeViewModel @Inject constructor(
                 }
 
                 nearByMarkerList.addAll(latLangs)
-                if (placesInGroupData.isEmpty()) {
+                if (listOfPlaceUiModel.isEmpty()) {
                     _dataState.emit(DataState.EMPTY_DATA)
+                    _nearByPlacesInGroup.postValue(emptyList())
+                    _nearByPlaces.postValue(ArrayList(emptyList()))
+                    _nearByPlacesMarkerPoints.postValue(emptyList())
+                    _isLoading.emit(false)
+                } else {
+                    _nearByPlacesInGroup.postValue(nearByPlacesListInGroup)
+                    _nearByPlaces.postValue(listOfPlaceUiModel)
+                    _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
+                    _isLoading.emit(false)
+                    _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
                 }
-                _nearByPlacesInGroup.postValue(nearByPlacesListInGroup)
-                _nearByPlaces.postValue(ArrayList(nearByPlacesList))
-                _nearByPlacesMarkerPoints.postValue(ArrayList(nearByPlacesList))
-                _isLoading.emit(false)
-                _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
+
             }
         }
     }
@@ -274,7 +280,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
             job.await()
-            _nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
+            //_nearByPlaces.postValue(markerDataList.map { it.placeUiModel })
             _selectedMarker.emit(markerDataList[selectedPosition])
             _scrollHorizontalPlaceListToPosition.emit(selectedPosition)
         }

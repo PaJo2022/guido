@@ -32,7 +32,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
     private lateinit var thumbView: View
     private lateinit var viewModel: ProfileViewModel
-    private lateinit var placesTypeGroupAdapter: PlacesTypeGroupAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
@@ -42,7 +41,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
-        placesTypeGroupAdapter = PlacesTypeGroupAdapter(requireContext(), CHIPS_VIEW)
         thumbView = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_seekbar_thumb, null, false)
     }
@@ -104,11 +102,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
             })
 
-            rvInterests.apply {
-                adapter = placesTypeGroupAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            }
+
             btnSaveChanges.setOnClickListener {
                 viewModel.savePlaceTypePreferences()
             }
@@ -129,9 +123,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                         .into(circleImageView)
                 }
             }
-            userInterestes.observe(viewLifecycleOwner) {
-                placesTypeGroupAdapter.setPlacesType(it)
-            }
+
             isPlaceInterestesSaved.collectIn(viewLifecycleOwner) {
                 sharedViewModel.onPreferencesSaved()
                 parentFragmentManager.popBackStack()
@@ -140,19 +132,6 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                 binding.btnSaveChanges.isVisible = it
             }
 
-        }
-        placesTypeGroupAdapter.setOnPlaceTypeSelected {
-            homeViewModel.resetData()
-            viewModel.onPlaceInterestClicked(it.id)
-
-        }
-        placesTypeGroupAdapter.setOnInterestSectionOpen{
-           viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-               delay(100)
-               withContext(Dispatchers.Main){
-                   binding.nestedScrollView.fullScroll(View.FOCUS_DOWN)
-               }
-           }
         }
 
         addOnBackPressedCallback {

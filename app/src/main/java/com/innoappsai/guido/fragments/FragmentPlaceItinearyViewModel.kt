@@ -21,11 +21,16 @@ class FragmentPlaceItinearyViewModel @Inject constructor(
     private val _generatedItineary: MutableLiveData<String> = MutableLiveData()
     val generatedItineary: LiveData<String> = _generatedItineary
 
-
-    fun generatePlaceItineary() {
+    init {
         itineraryId = UUID.randomUUID().toString()
-        itineraryRepository.getItineraryById(itineraryId!!).onEach {
+    }
+
+    fun generatePlaceItineraryById(itineraryId: String) {
+
+        itineraryRepository.getItineraryById(itineraryId).onEach {
             _generatedItineary.postValue(it?.valueInText)
         }.launchIn(viewModelScope)
     }
+
+
 }

@@ -16,7 +16,7 @@ import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentPlaceGenerateItineary :
+class FragmentPlaceGenerateItinerary :
     BaseFragment<FragmentPlaceItinearyGenerationBinding>(FragmentPlaceItinearyGenerationBinding::inflate) {
 
 
@@ -87,12 +87,15 @@ class FragmentPlaceGenerateItineary :
         }
 
         binding.btnGenerate.setOnClickListener {
-            val numberOfDaysUserWantToTravel = binding.tvNumberOfDays.text.toString()
+            val numberOfDaysUserWantToTravel = binding.etPlaceStayDays.text.toString()
+            val extraInformation = binding.etPlaceExtraInfo.text.toString()
             binding.tiLayoutStayDays.error = null
+            binding.tiLayoutExtraInfo.error = null
             if (numberOfDaysUserWantToTravel.isEmpty()) {
                 binding.tiLayoutStayDays.error = "Please select number of days you want to stay"
                 return@setOnClickListener
             }
+
             if (viewModel.selectedTransportation.isNullOrEmpty()
                 || viewModel.itineraryPlaceInterestList.isEmpty()
                 || viewModel.selectedAccommodation.isNullOrEmpty()
@@ -101,7 +104,7 @@ class FragmentPlaceGenerateItineary :
                 requireActivity().showToast("Please enter all the details")
                 return@setOnClickListener
             }
-                viewModel.generate(numberOfDaysUserWantToTravel,placeAddress)
+                viewModel.generate(numberOfDaysUserWantToTravel,extraInformation,placeAddress)
         }
 
         viewModel.apply {

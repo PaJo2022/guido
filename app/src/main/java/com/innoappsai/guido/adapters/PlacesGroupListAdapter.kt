@@ -42,10 +42,9 @@ class PlacesGroupListAdapter(private val appContext : Context) :
 
     inner class PlacesListAdapterViewHolder(private val binding: LayoutPlaceListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private val placesAdapter = PlacesListAdapter(appContext)
         fun bindItem(place: PlaceTypeUiModel) {
-            val placesAdapter = PlacesListAdapter(appContext)
             binding.apply {
-
                 tvPlaceType.text = place.type.toString().uppercase(Locale.ENGLISH)
                 rvPlaces.apply {
                     adapter = placesAdapter
