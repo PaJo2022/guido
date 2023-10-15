@@ -49,9 +49,15 @@ class FragmentPlaceGenerateItineraryViewModel @Inject constructor(
                         "This is my preferrred budget spent there ${selectedBudget}\n" +
                         "This is my preferrred season to go there ${selectedSeason}\n" +
                         "These are some extra information for my travel ${extraInformation}\n"
-             _generateItinerary.emit(message)
+            _generateItinerary.emit(message)
         }
 
 
+    }
+
+    fun onItineraryGenerationCancelledClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false, false)
+        }
     }
 }

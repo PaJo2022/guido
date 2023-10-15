@@ -1,5 +1,6 @@
 package com.innoappsai.guido.api
 
+import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
@@ -79,4 +80,11 @@ interface GuidoApi {
         @Query("placeId", encoded = true) placeId: String
     ): Response<List<ReviewResponseDTO>>
 
+
+    @POST("ask-ai")
+    suspend fun askAI(
+        @Query("userId") userId: String?,
+        @Query("shouldSendEmail") shouldSendEmail: Boolean,
+        @Body chatGptRequest: ChatGptRequest,
+    ): Response<String?>
 }

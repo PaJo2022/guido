@@ -19,8 +19,10 @@ import androidx.work.WorkerParameters
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.R
 import com.innoappsai.guido.TravelItinerary
+import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
+import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.Message
 import dagger.assisted.Assisted
@@ -31,7 +33,9 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val workerParams: WorkerParameters,
     private val chatGptRepository: ChatGptRepository,
-    private val itineraryRepository: ItineraryRepository
+    private val itineraryRepository: ItineraryRepository,
+    private val userRepository: UserRepository,
+    private val appPrefs: AppPrefs
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
@@ -61,17 +65,22 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
             itineraryDbId = itineraryIdForDB
             _workerState.postValue(WorkerState.RUNNING)
             setForeground(getForegroundInfo(applicationContext))
-
+            val userId = appPrefs.userId.toString()
+            val currentUser = userRepository.getUserDetails(userId)
+            if (currentUser?.dbId == null) {
+                sendErrorPushNotification("Please re login again")
+                return Result.failure()
+            }
 
             val aiResponse = chatGptRepository.getTourDataAboutTheLandMark(
-                ChatGptRequest(
+                userDbId = currentUser.dbId,
+                shouldSendEmail = true,
+                chatGptRequest = ChatGptRequest(
                     listOf(Message(query, "user"))
                 )
             )
             if (aiResponse != null) {
-                aiResponse.choices.firstOrNull()?.message?.content?.let {
-                    itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, it))
-                }
+                itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, aiResponse))
                 sendPushNotificationOnSuccessFullPlaceAdd()
             } else {
                 sendErrorPushNotification("Something went wrong please try again!")

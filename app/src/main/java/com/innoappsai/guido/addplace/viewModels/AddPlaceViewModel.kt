@@ -287,6 +287,7 @@ class AddPlaceViewModel @Inject constructor(
             globalPlaceStateName = fullPlaceData?.state.toString()
             globalPlaceCountryName = fullPlaceData?.country.toString()
             MyApp.userCurrentFormattedAddress = fullPlaceData?.address.toString()
+            MyApp.currentCountry = fullPlaceData?.country.toString()
             _searchedFormattedAddress.postValue(fullPlaceData?.address.toString())
             _isLoading.emit(false)
         }
@@ -376,12 +377,12 @@ class AddPlaceViewModel @Inject constructor(
             _isLoading.emit(true)
             _isPlaceDescriptionGenerating.emit("We are generating description for your place....")
            val response =  chatGptRepository.getTourDataAboutTheLandMark(
-                ChatGptRequest(
-                    listOf(Message(message,"user"))
-                )
+               chatGptRequest = ChatGptRequest(
+                   listOf(Message(message, "user"))
+               )
             )
             _isLoading.emit(false)
-            _generatedPlaceDescription.postValue(response?.choices?.firstOrNull()?.message?.content.toString())
+            _generatedPlaceDescription.postValue(response)
         }
     }
 

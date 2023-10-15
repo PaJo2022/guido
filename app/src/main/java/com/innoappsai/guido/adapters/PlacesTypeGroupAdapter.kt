@@ -49,25 +49,7 @@ class PlacesTypeGroupAdapter(
         fun bindItem(type: PlaceTypeContainer) {
             binding.apply {
                 tvPlaceType.text = type.type + " (+${type.placeTypes.size})"
-                if (type.isOpened) {
-                    rotateViewBy(ivPlaceArrow, 270f)
-                    motionLayout.transitionToEnd()
-                } else {
-                    rotateViewBy(ivPlaceArrow, 90f)
-                    motionLayout.transitionToStart()
-                }
                 llPlaceType.setOnClickListener {
-                    type.isOpened = !type.isOpened
-                    if(type.isOpened){
-                        rotateViewBy(ivPlaceArrow,270f)
-                        motionLayout.transitionToEnd()
-                    }else{
-                        rotateViewBy(ivPlaceArrow,90f)
-                        motionLayout.transitionToStart()
-                    }
-                    if(type.isOpened){
-                        onIntrestSectionOpened?.invoke()
-                    }
                     tvPlaceType.text = type.type + if(type.isOpened) "" else " (+${type.placeTypes.size})"
                 }
 

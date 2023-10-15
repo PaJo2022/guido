@@ -15,8 +15,6 @@
     <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
-        <item name="chipBackgroundColor">@color/chip_background_color</item>
-        <item name="android:textColor">@color/chip_text_background_color</item>
     </style>
 
 

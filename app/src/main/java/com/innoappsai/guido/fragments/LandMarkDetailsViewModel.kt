@@ -201,12 +201,12 @@ class LandMarkDetailsViewModel @Inject constructor(
                        "Business Owner: ${placeUiModel.name}\n" +
                        "Timings: ${placeUiModel.placeTimings}"
            val data = tourDataRepository.getTourDataAboutTheLandMark(
-               ChatGptRequest(
+               chatGptRequest =  ChatGptRequest(
                    listOf(Message(message, "user"))
                )
            )
            _landMarkTourDataData.postValue(
-               data?.choices?.firstOrNull()?.message?.content ?: "No Details Found"
+               data ?: "No Details Found"
            )
            _isPlaceAIDataFetching.emit(false)
        }

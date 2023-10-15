@@ -8,11 +8,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.CurrencyConstant
 import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyGenerationBinding
-import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,12 +27,15 @@ class FragmentPlaceGenerateItinerary :
         super.onViewCreated(view, savedInstanceState)
 
         val placeAddress = arguments?.getString("PLACE_ADDRESS")
+        val placeCountry = arguments?.getString("PLACE_COUNTRY")
 
         binding.ivArrowBack.setOnClickListener {
+            viewModel.onItineraryGenerationCancelledClicked()
             parentFragmentManager.popBackStack()
         }
 
         addOnBackPressedCallback {
+            viewModel.onItineraryGenerationCancelledClicked()
             parentFragmentManager.popBackStack()
         }
 
@@ -70,9 +73,17 @@ class FragmentPlaceGenerateItinerary :
                     viewModel.selectedSeason = selectedWeatherSeason
                 }
             }
+            tvMinBudget.text = "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
+            tvMaxBudget.text =
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}10,000"
+            tvBudgetValue.text =
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
+            viewModel.selectedBudget =
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
             seekbarBudget.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                    binding.tvBudgetValue.text = "$${p1}"
+                    binding.tvBudgetValue.text =
+                        "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}${p1}"
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -80,7 +91,9 @@ class FragmentPlaceGenerateItinerary :
                 }
 
                 override fun onStopTrackingTouch(p0: SeekBar?) {
-                    viewModel.selectedBudget = p0?.progress.toString()
+                    viewModel.selectedBudget =
+                        "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}${p0?.progress}"
+
                 }
 
             })
@@ -89,21 +102,6 @@ class FragmentPlaceGenerateItinerary :
         binding.btnGenerate.setOnClickListener {
             val numberOfDaysUserWantToTravel = binding.etPlaceStayDays.text.toString()
             val extraInformation = binding.etPlaceExtraInfo.text.toString()
-            binding.tiLayoutStayDays.error = null
-            binding.tiLayoutExtraInfo.error = null
-            if (numberOfDaysUserWantToTravel.isEmpty()) {
-                binding.tiLayoutStayDays.error = "Please select number of days you want to stay"
-                return@setOnClickListener
-            }
-
-            if (viewModel.selectedTransportation.isNullOrEmpty()
-                || viewModel.itineraryPlaceInterestList.isEmpty()
-                || viewModel.selectedAccommodation.isNullOrEmpty()
-                || viewModel.selectedBudget.isNullOrEmpty()
-                || viewModel.selectedSeason.isNullOrEmpty()){
-                requireActivity().showToast("Please enter all the details")
-                return@setOnClickListener
-            }
                 viewModel.generate(numberOfDaysUserWantToTravel,extraInformation,placeAddress)
         }
 
@@ -112,7 +110,7 @@ class FragmentPlaceGenerateItinerary :
                 Bundle().apply {
                     putString("GENERATE_ITINEARY_MESSAGE", it)
                     openNavFragment(
-                        FragmentPlaceItineary(),
+                        FragmentPlaceItinerary(),
                         childFragmentManager,
                         "FragmentPlaceItineary",
                         binding.bottomSheet,

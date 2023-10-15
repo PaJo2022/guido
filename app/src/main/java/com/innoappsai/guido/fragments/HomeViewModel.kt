@@ -100,11 +100,13 @@ class HomeViewModel @Inject constructor(
         longitude: Double,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val address = placesRepository.fetchAddressFromLatLng(
+            val fullPlaceData = placesRepository.fetchAddressFromLatLng(
                 latitude, longitude
-            )?.address.toString()
-            MyApp.userCurrentFormattedAddress = address
-            _searchedFormattedAddress.postValue(address)
+            )
+            MyApp.userCurrentFormattedAddress = fullPlaceData?.address.toString()
+            MyApp.currentCountry = fullPlaceData?.country.toString()
+
+            _searchedFormattedAddress.postValue(fullPlaceData?.address.toString())
         }
     }
 
@@ -218,17 +220,21 @@ class HomeViewModel @Inject constructor(
         val placesGroupedByType = places.groupBy { it.superType }
         placeUiTypeUiModel.clear()
         // Iterate through the place types
-        placesGroupedByType.entries.forEach {mapData->
-            val sortedPlaces = mapData.value.sortedBy { it.rating }
+        placesGroupedByType.entries.forEach { mapData ->
+            val sortedPlaces =
+                mapData.value.sortedWith(compareByDescending<PlaceUiModel> { it.reviewsCount }.thenBy { it.name })
 
-            placeUiTypeUiModel.add(
-                PlaceTypeUiModel(
-                    mapData.key,
-                    getPlaceTypeIcon(mapData.key.toString()),
-                    places = sortedPlaces.addUiType(PlaceUiType.LARGE),
-                    dataType =  DataType.DATA
+
+            if (sortedPlaces.isNotEmpty()) {
+                placeUiTypeUiModel.add(
+                    PlaceTypeUiModel(
+                        mapData.key,
+                        getPlaceTypeIcon(mapData.key.toString()),
+                        places = sortedPlaces.addUiType(PlaceUiType.LARGE),
+                        dataType = DataType.DATA
+                    )
                 )
-            )
+            }
 
 
         }
@@ -306,10 +312,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onItineraryGenerationCancelledClicked() {
+    fun onItineraryGenerationCancelledClicked(isForceCancel: Boolean = true) {
         viewModelScope.launch(Dispatchers.IO) {
             _showItineraryGenerationLayout.postValue(false)
-            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false,false)
+            if (isForceCancel) {
+                placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false, false)
+            }
+
         }
     }
 

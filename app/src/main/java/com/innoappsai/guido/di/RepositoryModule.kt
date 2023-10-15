@@ -45,7 +45,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTourDataRepository(api: ChatGptApi): ChatGptRepository = TourDataRepositoryImpl(api)
+    fun provideTourDataRepository(api: GuidoApi): ChatGptRepository = TourDataRepositoryImpl(api)
 
 
     @Provides

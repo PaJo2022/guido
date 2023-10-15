@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -43,6 +44,7 @@ import com.innoappsai.guido.adapters.PlaceFilterHorizontalAdapter
 import com.innoappsai.guido.adapters.PlaceFilterHorizontalItemDecorator
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
 import com.innoappsai.guido.adapters.PlacesHorizontalListAdapter
+import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.addplace.AddPlaceActivity
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.collectIn
@@ -54,6 +56,7 @@ import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.placeFilter.FilterActivity
+import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import com.innoappsai.guido.workers.WorkerState
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,7 +86,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var placeFilterAdapter: PlaceFilterHorizontalAdapter
     private var googleMap: GoogleMap? = null
     private val workManager: WorkManager by lazy { WorkManager.getInstance(requireContext()) }
-
+    private var doubleBackToExitPressedOnce = false
 
     private val zoom = 13f
 
@@ -286,9 +289,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     viewModel.onItineraryGenerationCancelledClicked()
                 }
                 btnGenerate.setOnClickListener {
-                    viewModel.onItineraryGenerationCancelledClicked()
+                    viewModel.onItineraryGenerationCancelledClicked(isForceCancel = false)
                     Bundle().apply {
                         putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
+                        putString("PLACE_COUNTRY", MyApp.currentCountry)
                         openNavFragment(
                             FragmentPlaceGenerateItinerary(),
                             childFragmentManager,
@@ -410,13 +414,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
 
+        addOnBackPressedCallback {
+            if (doubleBackToExitPressedOnce) {
+                requireActivity().finish()
+            }
+            this.doubleBackToExitPressedOnce = true
+            requireActivity().showToast("Press back again to close the app")
+            Handler().postDelayed({
+                doubleBackToExitPressedOnce = false
+            }, 2000) // 2000 milliseconds or 2 seconds
+        }
+
     }
 
     fun navigateToGeneratedItinerary() {
         Bundle().apply {
             putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
             openNavFragment(
-                FragmentPlaceItineary(),
+                FragmentPlaceItinerary(),
                 childFragmentManager,
                 "FragmentPlaceItineary",
                 binding.flId,

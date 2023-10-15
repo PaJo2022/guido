@@ -64,7 +64,7 @@ data class ExtraInfoWithIcon(
 fun List<PlaceUiModel>.addUiType(placeUiType: PlaceUiType) = map {
     PlaceUiModel(
         isChecked = it.isChecked,
-        shouldShowCheckBox = it.isChecked,
+        shouldShowCheckBox = it.shouldShowCheckBox,
         serverDbId  = it.serverDbId,
         icon = it.icon,
         typeName = it.typeName,

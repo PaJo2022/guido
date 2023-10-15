@@ -16,7 +16,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
 import com.innoappsai.guido.toggleEnableAndAlpha
@@ -24,7 +23,7 @@ import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentPlaceItineary : BottomSheetDialogFragment() {
+class FragmentPlaceItinerary : BottomSheetDialogFragment() {
 
 
     private val viewModel: FragmentPlaceItinearyViewModel by viewModels()

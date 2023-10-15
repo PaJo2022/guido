@@ -50,7 +50,7 @@ class NetworkModule {
     fun provideChatGptApi(okHttpClient: OkHttpClient) : ChatGptApi {
 
         val baseUrl = "https://api.openai.com/v1/chat/"
-        val token = "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" // Replace with your actual Bearer token
+            val token = "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" // Replace with your actual Bearer token
 
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)

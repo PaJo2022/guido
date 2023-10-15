@@ -6,7 +6,8 @@ data class PlaceFilter(
     val leftIcon: Int? = null,
     val title: String? = null,
     val rightIcon: Int? = null,
-    val placeFilterType: PlaceFilterType
+    val placeFilterType: PlaceFilterType,
+    var isSelected : Boolean = false
 )
 
 enum class PlaceFilterType {

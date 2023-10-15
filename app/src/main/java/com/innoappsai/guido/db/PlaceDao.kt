@@ -36,7 +36,7 @@ interface PlaceDao {
     suspend fun updateAllPlacesIsCheckedAndCheckBoxFor(isChecked: Boolean,shouldShowCheckBox : Boolean)
 
 
-    @Query("UPDATE PLACE_DTO SET isChecked = :isChecked WHERE placeId = :placeId")
+    @Query("UPDATE PLACE_DTO SET isChecked = :isChecked,shouldShowCheckBox = 1 WHERE placeId = :placeId")
     suspend fun updatePlaceIsChecked(placeId: String, isChecked: Boolean)
 
 
