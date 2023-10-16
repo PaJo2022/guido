@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel : MainActivityViewModel by viewModels()
 
     private var homeFragment: HomeFragment? = null
     private var _binding: ActivityMainBinding? = null
@@ -26,8 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        Log.i("JAPAN", "onCreate: ${intent}")
-
+        viewModel.removeAllSavedPlaces()
 
         homeFragment = HomeFragment()
 

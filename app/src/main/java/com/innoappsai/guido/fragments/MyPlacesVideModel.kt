@@ -54,16 +54,16 @@ class MyPlacesVideModel @Inject constructor(
 
 
             // Store the list in the map
-            placeUiTypeUiModel.add(
-                PlaceTypeUiModel(
-                    mapData.key,
-                    Constants.getPlaceTypeIcon(mapData.key.toString()),
-                    places = mapData.value.addUiType(
-                        PlaceUiType.LARGE
-                    ),
-                    dataType = DataType.DATA
-                )
-            )
+//            placeUiTypeUiModel.add(
+//                PlaceTypeUiModel(
+//                    mapData.key,
+//                    Constants.getPlaceTypeIcon(mapData.key.toString()),
+//                    places = mapData.value.addUiType(
+//                        PlaceUiType.LARGE
+//                    ),
+//                    dataType = DataType.DATA
+//                )
+//            )
 
 
         }

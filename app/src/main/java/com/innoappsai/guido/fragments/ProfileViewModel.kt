@@ -43,11 +43,7 @@ class ProfileViewModel @Inject constructor(
         distanceProgress = distance
     }
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            placesRepository.deleteAllPlacesFromDB()
-        }
-    }
+
 
 
 

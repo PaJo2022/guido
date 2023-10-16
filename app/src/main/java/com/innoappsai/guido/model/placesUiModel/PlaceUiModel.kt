@@ -117,47 +117,36 @@ enum class PlaceUiType {
 }
 
 
+
 @Parcelize
 data class PlaceTypeUiModel(
-    val type: String? = null,
-    val icon: Int? = null,
-    val places: List<PlaceUiModel>? = null,
+    val categoryTitle: String? = null,
+    val place: PlaceUiModel? = null,
     var dataType: DataType = DataType.SHIMMER
 ) : Parcelable
 
 
 val DUMMY_PLACE_TYPE_UI_MODEL = arrayListOf(
     PlaceTypeUiModel(
-        type = "",
-        icon = null,
-        places = listOf(
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            ),
-            PlaceUiModel(
-                placeUiType = PlaceUiType.LARGE_SHIMMER
-            )
-        )
-    )
+        dataType = DataType.SHIMMER
+    ),
+    PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),  PlaceTypeUiModel(
+        dataType = DataType.SHIMMER
+    ),
 )

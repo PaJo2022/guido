@@ -181,30 +181,86 @@ class HomeViewModel @Inject constructor(
                     nearByMarkerList.clear()
 
                     val latLangs = listOfPlaceUiModel.map { it.latLng }
+                    val placesInGroupData = listOfPlaceUiModel.groupBy { it.superType }
+                    val places = ArrayList<PlaceTypeUiModel>()
+                    placesInGroupData.forEach {
+                        places.add(PlaceTypeUiModel(categoryTitle = it.key))
+                        val sortedPlaces = when (sortType) {
+                            SortType.DISTANCE -> {
+                                it.value.map { place ->
+                                    val distance = calculateDistance(
+                                        MyApp.userCurrentLatLng?.latitude!!,
+                                        MyApp.userCurrentLatLng?.longitude!!,
+                                        place.latLng?.latitude!!,
+                                        place.latLng.longitude
+                                    ) / 1000
+                                    place to distance
+                                }
+                                    .sortedBy { it.second }
+                                    .map { it.first }
+                            }
 
-                    val placesInGroupData = mapPlacesByType(sortType, listOfPlaceUiModel)
-                    placesInGroupData.forEach { placeTypeUiModel ->
-                        placeTypeUiModel.places?.let { nearByPlacesList.addAll(it) }
-                    }
-                    val nearByPlacesListInGroup = placesInGroupData.map {
-                        PlaceTypeUiModel(
-                            type = it.type,
-                            icon = it.icon,
-                            places = it.places,
-                            dataType = it.dataType
-                        )
+                            SortType.MOST_POPULAR -> {
+                                it.value.sortedBy { it.reviewsCount }
+                            }
+
+                            SortType.HIGHEST_RATING -> {
+                                it.value.sortedBy { it.rating }
+                            }
+
+                            SortType.A_TO_Z -> {
+                                it.value.sortedBy { it.name }
+                            }
+
+                            SortType.COST_LOW_TO_HIGH -> {
+                                it.value.map { place ->
+                                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                                        0
+                                    } else if (place.pricingType.equals("Moderate", true)) {
+                                        1
+                                    } else {
+                                        2
+                                    }
+                                    place to priceType
+                                }.sortedBy { it.second }.map { it.first }
+                            }
+
+                            SortType.COST_HIGH_TO_LOW -> {
+                                it.value.map { place ->
+                                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                                        0
+                                    } else if (place.pricingType.equals("Moderate", true)) {
+                                        1
+                                    } else {
+                                        2
+                                    }
+                                    place to priceType
+                                }.sortedByDescending { it.second }.map { it.first }
+                            }
+
+                            SortType.OPEN_NOW -> {
+                                it.value.filter { it.placeOpenStatus.equals("open", true) }
+                            }
+
+                        }
+                        val createdPlaces = sortedPlaces.map { uiModel ->
+                            PlaceTypeUiModel(
+                                place = uiModel
+                            )
+                        }
+                        places.addAll(createdPlaces)
                     }
 
-                    nearByMarkerList.addAll(latLangs)
-                    if (listOfPlaceUiModel.isEmpty() || placesInGroupData.isEmpty()) {
+                    if (listOfPlaceUiModel.isEmpty()) {
                         _dataState.postValue(DataState.EMPTY_DATA)
                         _nearByPlacesInGroup.postValue(emptyList())
                         _nearByPlaces.postValue(ArrayList(emptyList()))
                         _nearByPlacesMarkerPoints.postValue(emptyList())
                         _isLoading.emit(false)
                     } else {
+                        nearByMarkerList.addAll(latLangs)
                         _dataState.postValue(DataState.DATA)
-                        _nearByPlacesInGroup.postValue(nearByPlacesListInGroup)
+                        _nearByPlacesInGroup.postValue(places)
                         _nearByPlaces.postValue(listOfPlaceUiModel)
                         _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
                         _isLoading.emit(false)
@@ -285,17 +341,17 @@ class HomeViewModel @Inject constructor(
 
             }
 
-
-           if(sortedPlaces.isNotEmpty()){
-               placeUiTypeUiModel.add(
-                   PlaceTypeUiModel(
-                       mapData.key,
-                       getPlaceTypeIcon(mapData.key.toString()),
-                       places = sortedPlaces.addUiType(PlaceUiType.LARGE),
-                       dataType = DataType.DATA
-                   )
-               )
-           }
+//
+//           if(sortedPlaces.isNotEmpty()){
+//               placeUiTypeUiModel.add(
+//                   PlaceTypeUiModel(
+//                       mapData.key,
+//                       getPlaceTypeIcon(mapData.key.toString()),
+//                       places = sortedPlaces.addUiType(PlaceUiType.LARGE),
+//                       dataType = DataType.DATA
+//                   )
+//               )
+//           }
 
 
         }
