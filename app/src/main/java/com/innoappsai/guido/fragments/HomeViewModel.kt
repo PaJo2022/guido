@@ -10,10 +10,12 @@ import com.innoappsai.guido.Constants.getPlaceTypeIcon
 import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.auth.repo.user.UserRepository
+import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.DataType
 import com.innoappsai.guido.model.MarkerData
+import com.innoappsai.guido.model.SortType
 import com.innoappsai.guido.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.innoappsai.guido.model.placesUiModel.PlaceTypeUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
@@ -80,8 +82,8 @@ class HomeViewModel @Inject constructor(
     private val nearByPlacesList: ArrayList<PlaceUiModel> = ArrayList()
 
 
-    private val _dataState: MutableSharedFlow<DataState> = MutableSharedFlow()
-    val dataState: SharedFlow<DataState> get() = _dataState
+    private val _dataState: MutableLiveData<DataState> = MutableLiveData()
+    val dataState: LiveData<DataState> get() = _dataState
 
     private val _showItineraryGenerationLayout: MutableLiveData<Boolean> = MutableLiveData()
     val showItineraryGenerationLayout: LiveData<Boolean> get() = _showItineraryGenerationLayout
@@ -142,7 +144,7 @@ class HomeViewModel @Inject constructor(
         fetchCurrentAddressFromGeoCoding(latitude, longitude)
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
-            _dataState.emit(DataState.LOADING)
+            _dataState.postValue(DataState.LOADING)
             _nearByPlacesInGroup.postValue(DUMMY_PLACE_TYPE_UI_MODEL)
             val interestList =
                 if (MyApp.tempPlaceInterestes.isNullOrEmpty()) placesRepository.getAllSavedPlaceTypePreferences() else emptyList()
@@ -153,14 +155,14 @@ class HomeViewModel @Inject constructor(
                 if (MyApp.tempPlaceInterestes != null) MyApp.tempPlaceInterestes!!.map { it.id } else interestList.map { it.id }
             )
             if (response is Resource.Error) {
-                _dataState.emit(DataState.EMPTY_DATA)
+                _dataState.postValue(DataState.EMPTY_DATA)
                 _nearByPlacesInGroup.postValue(emptyList())
                 _nearByPlaces.postValue(ArrayList(emptyList()))
                 _nearByPlacesMarkerPoints.postValue(emptyList())
                 _isLoading.emit(false)
             }else if (response is Resource.Success){
                 if(response.data.isNullOrEmpty()){
-                    _dataState.emit(DataState.EMPTY_DATA)
+                    _dataState.postValue(DataState.EMPTY_DATA)
                     _nearByPlacesInGroup.postValue(emptyList())
                     _nearByPlaces.postValue(ArrayList(emptyList()))
                     _nearByPlacesMarkerPoints.postValue(emptyList())
@@ -171,41 +173,43 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    private fun getNearByPlaces() {
+    private fun getNearByPlaces(sortType: SortType = SortType.DISTANCE) {
         viewModelScope.launch(Dispatchers.IO) {
-            placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }.collect{listOfPlaceUiModel->
-                nearByPlacesList.clear()
-                nearByMarkerList.clear()
+            placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }
+                .collect { listOfPlaceUiModel ->
+                    nearByPlacesList.clear()
+                    nearByMarkerList.clear()
 
-                val latLangs = listOfPlaceUiModel.map { it.latLng }
+                    val latLangs = listOfPlaceUiModel.map { it.latLng }
 
-                val placesInGroupData = mapPlacesByType(listOfPlaceUiModel)
-                placesInGroupData.forEach { placeTypeUiModel ->
-                    placeTypeUiModel.places?.let { nearByPlacesList.addAll(it) }
-                }
-                val nearByPlacesListInGroup = placesInGroupData.map {
-                    PlaceTypeUiModel(
-                        type = it.type,
-                        icon = it.icon,
-                        places = it.places,
-                        dataType = it.dataType
-                    )
-                }
+                    val placesInGroupData = mapPlacesByType(sortType, listOfPlaceUiModel)
+                    placesInGroupData.forEach { placeTypeUiModel ->
+                        placeTypeUiModel.places?.let { nearByPlacesList.addAll(it) }
+                    }
+                    val nearByPlacesListInGroup = placesInGroupData.map {
+                        PlaceTypeUiModel(
+                            type = it.type,
+                            icon = it.icon,
+                            places = it.places,
+                            dataType = it.dataType
+                        )
+                    }
 
-                nearByMarkerList.addAll(latLangs)
-                if (listOfPlaceUiModel.isEmpty()) {
-                    _dataState.emit(DataState.EMPTY_DATA)
-                    _nearByPlacesInGroup.postValue(emptyList())
-                    _nearByPlaces.postValue(ArrayList(emptyList()))
-                    _nearByPlacesMarkerPoints.postValue(emptyList())
-                    _isLoading.emit(false)
-                } else {
-                    _nearByPlacesInGroup.postValue(nearByPlacesListInGroup)
-                    _nearByPlaces.postValue(listOfPlaceUiModel)
-                    _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
-                    _isLoading.emit(false)
-                    _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
-                }
+                    nearByMarkerList.addAll(latLangs)
+                    if (listOfPlaceUiModel.isEmpty() || placesInGroupData.isEmpty()) {
+                        _dataState.postValue(DataState.EMPTY_DATA)
+                        _nearByPlacesInGroup.postValue(emptyList())
+                        _nearByPlaces.postValue(ArrayList(emptyList()))
+                        _nearByPlacesMarkerPoints.postValue(emptyList())
+                        _isLoading.emit(false)
+                    } else {
+                        _dataState.postValue(DataState.DATA)
+                        _nearByPlacesInGroup.postValue(nearByPlacesListInGroup)
+                        _nearByPlaces.postValue(listOfPlaceUiModel)
+                        _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
+                        _isLoading.emit(false)
+                        _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
+                    }
 
             }
         }
@@ -213,6 +217,7 @@ class HomeViewModel @Inject constructor(
 
 
     private suspend fun mapPlacesByType(
+        sortType: SortType = SortType.DISTANCE,
         places: List<PlaceUiModel>
     ): MutableList<PlaceTypeUiModel> {
         // Create a map to store places by type
@@ -221,20 +226,76 @@ class HomeViewModel @Inject constructor(
         placeUiTypeUiModel.clear()
         // Iterate through the place types
         placesGroupedByType.entries.forEach { mapData ->
-            val sortedPlaces =
-                mapData.value.sortedWith(compareByDescending<PlaceUiModel> { it.reviewsCount }.thenBy { it.name })
+            val sortedPlaces = when (sortType) {
+                SortType.DISTANCE -> {
+                    mapData.value.map { place ->
+                        val distance = calculateDistance(
+                            MyApp.userCurrentLatLng?.latitude!!,
+                            MyApp.userCurrentLatLng?.longitude!!,
+                            place.latLng?.latitude!!,
+                            place.latLng.longitude
+                        ) / 1000
+                        place to distance
+                    }
+                        .sortedBy { it.second }
+                        .map { it.first }
+                }
 
+                SortType.MOST_POPULAR -> {
+                    mapData.value.sortedBy { it.reviewsCount }
+                }
 
-            if (sortedPlaces.isNotEmpty()) {
-                placeUiTypeUiModel.add(
-                    PlaceTypeUiModel(
-                        mapData.key,
-                        getPlaceTypeIcon(mapData.key.toString()),
-                        places = sortedPlaces.addUiType(PlaceUiType.LARGE),
-                        dataType = DataType.DATA
-                    )
-                )
+                SortType.HIGHEST_RATING -> {
+                    mapData.value.sortedBy { it.rating }
+                }
+
+                SortType.A_TO_Z -> {
+                    mapData.value.sortedBy { it.name }
+                }
+
+                SortType.COST_LOW_TO_HIGH -> {
+                    mapData.value.map { place ->
+                        val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                            0
+                        } else if (place.pricingType.equals("Moderate", true)) {
+                            1
+                        } else {
+                            2
+                        }
+                        place to priceType
+                    }.sortedBy { it.second }.map { it.first }
+                }
+
+                SortType.COST_HIGH_TO_LOW -> {
+                    mapData.value.map { place ->
+                        val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                            0
+                        } else if (place.pricingType.equals("Moderate", true)) {
+                            1
+                        } else {
+                            2
+                        }
+                        place to priceType
+                    }.sortedByDescending { it.second }.map { it.first }
+                }
+
+                SortType.OPEN_NOW -> {
+                    mapData.value.filter { it.placeOpenStatus.equals("open", true) }
+                }
+
             }
+
+
+           if(sortedPlaces.isNotEmpty()){
+               placeUiTypeUiModel.add(
+                   PlaceTypeUiModel(
+                       mapData.key,
+                       getPlaceTypeIcon(mapData.key.toString()),
+                       places = sortedPlaces.addUiType(PlaceUiType.LARGE),
+                       dataType = DataType.DATA
+                   )
+               )
+           }
 
 
         }
@@ -323,10 +384,18 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onPlaceSelectedForItinerary(placeId: String?, checked: Boolean) {
-        if(placeId == null) return
+        if (placeId == null) return
         viewModelScope.launch(Dispatchers.IO) {
-            placesRepository.updatePlaceIsChecked(placeId,checked)
+            placesRepository.updatePlaceIsChecked(placeId, checked)
         }
+    }
+
+    fun onOpenNowFilterClicked() {
+        getNearByPlaces(SortType.OPEN_NOW)
+    }
+
+    fun sortOptionSelected(sortType: SortType) {
+        getNearByPlaces(sortType)
     }
 
     enum class PlaceUiState {
@@ -334,7 +403,7 @@ class HomeViewModel @Inject constructor(
     }
 
     enum class DataState {
-        LOADING, EMPTY_DATA
+        LOADING, DATA,EMPTY_DATA
     }
 
 

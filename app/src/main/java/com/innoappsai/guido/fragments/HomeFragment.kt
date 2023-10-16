@@ -78,6 +78,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
 
+    private var bottomSheetFragment: BottomPlaceSortOptions? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val viewModel: HomeViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -202,7 +203,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun openNavFragment(
         f: Fragment?,
         fm: FragmentManager,
-        FragmentName: String,
+        fragmentName: String,
         view: View,
         args: Bundle? = null
     ) {
@@ -218,7 +219,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             R.anim.in_from_left,
             R.anim.out_to_right
         )
-        ft.replace(view.id, f!!, FragmentName).addToBackStack(FragmentName).commit()
+        ft.replace(view.id, f!!, fragmentName).addToBackStack(fragmentName).commit()
     }
 
 
@@ -397,10 +398,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
                 }
                 PlaceFilterType.SORT -> {
-
+                    bottomSheetFragment = BottomPlaceSortOptions()
+                    bottomSheetFragment?.show(childFragmentManager, bottomSheetFragment?.tag)
+                    bottomSheetFragment?.setOnSortOptionSelected{
+                        viewModel.sortOptionSelected(it)
+                    }
                 }
                 PlaceFilterType.OPEN_NOW -> {
-
+                    viewModel.onOpenNowFilterClicked()
                 }
                 PlaceFilterType.MORE_FILTERS -> {
                     startActivity(Intent(requireContext(), FilterActivity()::class.java))
@@ -409,6 +414,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 PlaceFilterType.TRAVEL_ITINERARY -> {
                     if (MyApp.userCurrentFormattedAddress != null) {
                         viewModel.onItineraryGenerationClicked()
+                    }else{
+
                     }
                 }
             }
@@ -424,6 +431,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 doubleBackToExitPressedOnce = false
             }, 2000) // 2000 milliseconds or 2 seconds
         }
+
 
     }
 
@@ -517,7 +525,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             nearByPlacesInGroup.observe(viewLifecycleOwner) {
                 placesAdapter.setNearByPlaces(it)
             }
-            dataState.collectIn(viewLifecycleOwner){
+            dataState.observe(viewLifecycleOwner){
                 binding.bottomsheetPlaceList.apply {
                     rvPlaces.isVisible = it != HomeViewModel.DataState.EMPTY_DATA
                     animationView.isVisible = it == HomeViewModel.DataState.EMPTY_DATA
