@@ -73,13 +73,13 @@ class FragmentPlaceGenerateItinerary :
                     viewModel.selectedSeason = selectedWeatherSeason
                 }
             }
-            tvMinBudget.text = "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
+            tvMinBudget.text = "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}15,00"
             tvMaxBudget.text =
-                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}10,000"
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}1,00,000"
             tvBudgetValue.text =
-                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}15000"
             viewModel.selectedBudget =
-                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}500"
+                "${CurrencyConstant.countryCurrencyMap[placeCountry.toString()]}15000"
             seekbarBudget.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     binding.tvBudgetValue.text =

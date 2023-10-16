@@ -401,7 +401,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     bottomSheetFragment = BottomPlaceSortOptions()
                     bottomSheetFragment?.show(childFragmentManager, bottomSheetFragment?.tag)
                     bottomSheetFragment?.setOnSortOptionSelected{
+                        bottomSheetFragment = null
                         viewModel.sortOptionSelected(it)
+
                     }
                 }
                 PlaceFilterType.OPEN_NOW -> {

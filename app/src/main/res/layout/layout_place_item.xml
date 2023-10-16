@@ -121,11 +121,4 @@
         app:layout_constraintStart_toStartOf="@+id/place_rating"
         app:layout_constraintTop_toBottomOf="@+id/tv_place_is_open" />
 
-<View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="#2F9E9E9E"
-    android:layout_marginTop="@dimen/_8sdp"
-    app:layout_constraintTop_toBottomOf="@+id/card_image_view"
-    app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
