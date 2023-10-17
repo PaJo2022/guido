@@ -1,26 +1,23 @@
 package com.innoappsai.guido.fragments
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.innoappsai.guido.Constants.getPlaceTypeIcon
 import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
-import com.innoappsai.guido.model.DataType
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.SortType
 import com.innoappsai.guido.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.innoappsai.guido.model.placesUiModel.PlaceTypeUiModel
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
-import com.innoappsai.guido.model.placesUiModel.PlaceUiType
-import com.innoappsai.guido.model.placesUiModel.addUiType
 import com.innoappsai.guido.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val placesRepository: PlacesRepository,
-    private val placesClient: PlacesClient,
     private val appPrefs: AppPrefs,
     private var locationClient: LocationClient,
     private val userRepository: UserRepository
@@ -92,6 +88,9 @@ class HomeViewModel @Inject constructor(
     private val _selectedPlaces: MutableLiveData<List<PlaceUiModel>> = MutableLiveData()
     val selectedPlaces: LiveData<List<PlaceUiModel>> get() = _selectedPlaces
 
+    private var isNewDataFetched : Boolean = false
+    var isPlaceGeneratedOptionClicked = false
+
 
     init {
         getNearByPlaces()
@@ -146,6 +145,7 @@ class HomeViewModel @Inject constructor(
             _isLoading.emit(true)
             _dataState.postValue(DataState.LOADING)
             _nearByPlacesInGroup.postValue(DUMMY_PLACE_TYPE_UI_MODEL)
+            isNewDataFetched = true
             val interestList =
                 if (MyApp.tempPlaceInterestes.isNullOrEmpty()) placesRepository.getAllSavedPlaceTypePreferences() else emptyList()
             val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
@@ -176,73 +176,24 @@ class HomeViewModel @Inject constructor(
     private fun getNearByPlaces(sortType: SortType = SortType.DISTANCE) {
         viewModelScope.launch(Dispatchers.IO) {
             placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }
+                .map { placesList ->
+                    placesList.map { place ->
+                        place.shouldShowCheckBox = isPlaceGeneratedOptionClicked
+                        place.isChecked = isPlaceGeneratedOptionClicked
+                        place
+                    }
+                }
                 .collect { listOfPlaceUiModel ->
-                    nearByPlacesList.clear()
-                    nearByMarkerList.clear()
+                    listOfPlaceUiModel.filter { it.shouldShowCheckBox }.size.apply {
+                        Log.i("JAPAN", "getNearByPlaces: ${this}")
+                    }
 
-                    val latLangs = listOfPlaceUiModel.map { it.latLng }
+                    val latLngs = listOfPlaceUiModel.map { it.latLng }
                     val placesInGroupData = listOfPlaceUiModel.groupBy { it.superType }
                     val places = ArrayList<PlaceTypeUiModel>()
                     placesInGroupData.forEach {
                         places.add(PlaceTypeUiModel(categoryTitle = it.key))
-                        val sortedPlaces = when (sortType) {
-                            SortType.DISTANCE -> {
-                                it.value.map { place ->
-                                    val distance = calculateDistance(
-                                        MyApp.userCurrentLatLng?.latitude!!,
-                                        MyApp.userCurrentLatLng?.longitude!!,
-                                        place.latLng?.latitude!!,
-                                        place.latLng.longitude
-                                    ) / 1000
-                                    place to distance
-                                }
-                                    .sortedBy { it.second }
-                                    .map { it.first }
-                            }
-
-                            SortType.MOST_POPULAR -> {
-                                it.value.sortedBy { it.reviewsCount }
-                            }
-
-                            SortType.HIGHEST_RATING -> {
-                                it.value.sortedBy { it.rating }
-                            }
-
-                            SortType.A_TO_Z -> {
-                                it.value.sortedBy { it.name }
-                            }
-
-                            SortType.COST_LOW_TO_HIGH -> {
-                                it.value.map { place ->
-                                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                                        0
-                                    } else if (place.pricingType.equals("Moderate", true)) {
-                                        1
-                                    } else {
-                                        2
-                                    }
-                                    place to priceType
-                                }.sortedBy { it.second }.map { it.first }
-                            }
-
-                            SortType.COST_HIGH_TO_LOW -> {
-                                it.value.map { place ->
-                                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                                        0
-                                    } else if (place.pricingType.equals("Moderate", true)) {
-                                        1
-                                    } else {
-                                        2
-                                    }
-                                    place to priceType
-                                }.sortedByDescending { it.second }.map { it.first }
-                            }
-
-                            SortType.OPEN_NOW -> {
-                                it.value.filter { it.placeOpenStatus.equals("open", true) }
-                            }
-
-                        }
+                        val sortedPlaces = sortPlaceBasedOnSortType(it.value,sortType)
                         val createdPlaces = sortedPlaces.map { uiModel ->
                             PlaceTypeUiModel(
                                 place = uiModel
@@ -250,7 +201,6 @@ class HomeViewModel @Inject constructor(
                         }
                         places.addAll(createdPlaces)
                     }
-
                     if (listOfPlaceUiModel.isEmpty()) {
                         _dataState.postValue(DataState.EMPTY_DATA)
                         _nearByPlacesInGroup.postValue(emptyList())
@@ -258,11 +208,13 @@ class HomeViewModel @Inject constructor(
                         _nearByPlacesMarkerPoints.postValue(emptyList())
                         _isLoading.emit(false)
                     } else {
-                        nearByMarkerList.addAll(latLangs)
+                        nearByMarkerList.addAll(latLngs)
                         _dataState.postValue(DataState.DATA)
                         _nearByPlacesInGroup.postValue(places)
-                        _nearByPlaces.postValue(listOfPlaceUiModel)
-                        _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
+                        if(isNewDataFetched){
+                            _nearByPlaces.postValue(listOfPlaceUiModel)
+                            _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
+                        }
                         _isLoading.emit(false)
                         _selectedPlaces.postValue(listOfPlaceUiModel.filter { it.isChecked })
                     }
@@ -271,92 +223,65 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    private suspend fun mapPlacesByType(
-        sortType: SortType = SortType.DISTANCE,
-        places: List<PlaceUiModel>
-    ): MutableList<PlaceTypeUiModel> {
-        // Create a map to store places by type
-        val placeUiTypeUiModel = mutableListOf<PlaceTypeUiModel>()
-        val placesGroupedByType = places.groupBy { it.superType }
-        placeUiTypeUiModel.clear()
-        // Iterate through the place types
-        placesGroupedByType.entries.forEach { mapData ->
-            val sortedPlaces = when (sortType) {
-                SortType.DISTANCE -> {
-                    mapData.value.map { place ->
-                        val distance = calculateDistance(
-                            MyApp.userCurrentLatLng?.latitude!!,
-                            MyApp.userCurrentLatLng?.longitude!!,
-                            place.latLng?.latitude!!,
-                            place.latLng.longitude
-                        ) / 1000
-                        place to distance
-                    }
-                        .sortedBy { it.second }
-                        .map { it.first }
+    private fun sortPlaceBasedOnSortType(sortList : List<PlaceUiModel>,sortType: SortType): List<PlaceUiModel> {
+       return when (sortType) {
+            SortType.DISTANCE -> {
+                sortList.map { place ->
+                    val distance = calculateDistance(
+                        MyApp.userCurrentLatLng?.latitude!!,
+                        MyApp.userCurrentLatLng?.longitude!!,
+                        place.latLng?.latitude!!,
+                        place.latLng.longitude
+                    ) / 1000
+                    place to distance
                 }
-
-                SortType.MOST_POPULAR -> {
-                    mapData.value.sortedBy { it.reviewsCount }
-                }
-
-                SortType.HIGHEST_RATING -> {
-                    mapData.value.sortedBy { it.rating }
-                }
-
-                SortType.A_TO_Z -> {
-                    mapData.value.sortedBy { it.name }
-                }
-
-                SortType.COST_LOW_TO_HIGH -> {
-                    mapData.value.map { place ->
-                        val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                            0
-                        } else if (place.pricingType.equals("Moderate", true)) {
-                            1
-                        } else {
-                            2
-                        }
-                        place to priceType
-                    }.sortedBy { it.second }.map { it.first }
-                }
-
-                SortType.COST_HIGH_TO_LOW -> {
-                    mapData.value.map { place ->
-                        val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                            0
-                        } else if (place.pricingType.equals("Moderate", true)) {
-                            1
-                        } else {
-                            2
-                        }
-                        place to priceType
-                    }.sortedByDescending { it.second }.map { it.first }
-                }
-
-                SortType.OPEN_NOW -> {
-                    mapData.value.filter { it.placeOpenStatus.equals("open", true) }
-                }
-
+                    .sortedBy { it.second }
+                    .map { it.first }
             }
 
-//
-//           if(sortedPlaces.isNotEmpty()){
-//               placeUiTypeUiModel.add(
-//                   PlaceTypeUiModel(
-//                       mapData.key,
-//                       getPlaceTypeIcon(mapData.key.toString()),
-//                       places = sortedPlaces.addUiType(PlaceUiType.LARGE),
-//                       dataType = DataType.DATA
-//                   )
-//               )
-//           }
+            SortType.MOST_POPULAR -> {
+                sortList.sortedBy { it.reviewsCount }
+            }
 
+            SortType.HIGHEST_RATING -> {
+                sortList.sortedBy { it.rating }
+            }
+
+            SortType.A_TO_Z -> {
+                sortList.sortedBy { it.name }
+            }
+
+            SortType.COST_LOW_TO_HIGH -> {
+                sortList.map { place ->
+                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                        0
+                    } else if (place.pricingType.equals("Moderate", true)) {
+                        1
+                    } else {
+                        2
+                    }
+                    place to priceType
+                }.sortedBy { it.second }.map { it.first }
+            }
+
+            SortType.COST_HIGH_TO_LOW -> {
+                sortList.map { place ->
+                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
+                        0
+                    } else if (place.pricingType.equals("Moderate", true)) {
+                        1
+                    } else {
+                        2
+                    }
+                    place to priceType
+                }.sortedByDescending { it.second }.map { it.first }
+            }
+
+            SortType.OPEN_NOW -> {
+                sortList.filter { it.placeOpenStatus.equals("open", true) }
+            }
 
         }
-
-        return placeUiTypeUiModel
     }
 
 
@@ -423,34 +348,34 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onItineraryGenerationClicked() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _showItineraryGenerationLayout.postValue(true)
-            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(true,true)
-        }
+        isPlaceGeneratedOptionClicked = true
+        isNewDataFetched = false
+        _showItineraryGenerationLayout.value = true
+        getNearByPlaces()
     }
 
     fun onItineraryGenerationCancelledClicked(isForceCancel: Boolean = true) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _showItineraryGenerationLayout.postValue(false)
-            if (isForceCancel) {
-                placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false, false)
-            }
-
-        }
+        isNewDataFetched = false
+        isPlaceGeneratedOptionClicked = false
+        _showItineraryGenerationLayout.value = false
+        getNearByPlaces()
     }
 
     fun onPlaceSelectedForItinerary(placeId: String?, checked: Boolean) {
         if (placeId == null) return
+        isNewDataFetched = false
         viewModelScope.launch(Dispatchers.IO) {
             placesRepository.updatePlaceIsChecked(placeId, checked)
         }
     }
 
     fun onOpenNowFilterClicked() {
+        isNewDataFetched = false
         getNearByPlaces(SortType.OPEN_NOW)
     }
 
     fun sortOptionSelected(sortType: SortType) {
+        isNewDataFetched = false
         getNearByPlaces(sortType)
     }
 

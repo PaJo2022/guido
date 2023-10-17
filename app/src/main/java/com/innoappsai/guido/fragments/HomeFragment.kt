@@ -603,6 +603,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
         placesAdapter.setOnLandMarkClicked {
+            if(viewModel.isPlaceGeneratedOptionClicked) return@setOnLandMarkClicked Unit
             Bundle().apply {
                 putString("PLACE_ID", it.placeId)
                 openNavFragment(
