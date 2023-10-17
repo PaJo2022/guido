@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -200,4 +201,16 @@ fun isURLValid(urlString: String): Boolean {
         // Malformed URL or other exceptions indicate it's not valid
         return false
     }
+}
+
+fun isDistanceOverNMeters(
+    lat1: Double,
+    lon1: Double,
+    lat2: Double,
+    lon2: Double,
+    meters : Double
+): Boolean {
+    val distance = calculateDistance(lat1, lon1, lat2, lon2)
+    Log.i("JAPAN", "distance: ${distance}")
+    return distance > meters
 }

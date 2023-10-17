@@ -1,30 +1,23 @@
 package com.innoappsai.guido.fragments
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.SeekBar
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
-import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
-import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.CHIPS_VIEW
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentProfileNewBinding
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.services.HyperLocalPlacesSearchService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,9 +64,17 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
         binding.apply {
             tvEditProfile.setOnClickListener {
-                OpenNavFragment(
-                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
-                )
+                val serviceIntent =
+                    Intent(requireContext(), HyperLocalPlacesSearchService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    requireActivity().startForegroundService(serviceIntent)
+                } else {
+                    requireActivity().startService(serviceIntent)
+                }
+
+//                OpenNavFragment(
+//                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
+//                )
             }
             tvMyPlaces.setOnClickListener { OpenNavFragment(
                 MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId

@@ -46,6 +46,25 @@
 
 
     <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_tv_place_pricing_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/shimmer_tv_place_opening_status"
+        app:layout_constraintStart_toEndOf="@+id/shimmer_tv_place_opening_status"
+        app:layout_constraintTop_toTopOf="@+id/shimmer_tv_place_opening_status">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@color/color_light_grey_50"
+            android:text="$$$"
+            android:textColor="@color/transparent" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_place_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

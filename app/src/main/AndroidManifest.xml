@@ -68,7 +68,10 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove"></provider>
+            tools:node="remove"/>
+
+        <service android:name=".services.HyperLocalPlacesSearchService"
+            android:foregroundServiceType="location"/>
 
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"

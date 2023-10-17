@@ -116,20 +116,6 @@
 
 
 
-                  <LinearLayout
-                      android:id="@+id/ll_place_costing"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_marginStart="@dimen/_8sdp"
-                      android:orientation="horizontal"
-                      app:layout_constraintBottom_toBottomOf="@+id/ll_location_primary_details"
-                      app:layout_constraintStart_toEndOf="@+id/ll_location_primary_details"
-                      app:layout_constraintTop_toTopOf="@+id/ll_location_primary_details">
-
-
-
-                  </LinearLayout>
-
                   <TextView
                       android:id="@+id/tv_place_description"
                       android:layout_width="0dp"

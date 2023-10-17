@@ -31,6 +31,18 @@
         app:layout_constraintStart_toStartOf="@+id/tv_place_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
 
+    <TextView
+        android:id="@+id/place_pricing_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:textColor="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="@+id/place_opening_status"
+        app:layout_constraintStart_toEndOf="@+id/place_opening_status"
+        app:layout_constraintTop_toTopOf="@+id/place_opening_status"
+        tools:text="$$$" />
+
     <RatingBar
         android:id="@+id/place_rating"
         style="?android:attr/ratingBarStyleSmall"

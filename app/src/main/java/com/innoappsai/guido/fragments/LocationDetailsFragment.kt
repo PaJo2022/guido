@@ -347,16 +347,8 @@ class LocationDetailsFragment :
     }
 
     private fun setPlacePricingType(pricingType : String?){
-        val numberOfDollars = if(pricingType.equals("Expensive",true)) 3 else if(pricingType.equals("Moderate",true)) 2 else if(pricingType.equals("Inexpensive",true)) 1 else 0
-        for(i in 0 until numberOfDollars){
-            val imageView = ImageView(requireContext())
-            imageView.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            imageView.setImageResource(R.drawable.ic_dollar)
-            binding.llPlaceCosting.addView(imageView)
-        }
+        val numberOfDollars = if(pricingType.equals("Expensive",true)) "$$$" else if(pricingType.equals("Moderate",true)) "$$" else if(pricingType.equals("Inexpensive",true)) "$" else ""
+        binding.llLocationPrimaryDetails.placePricingType.text = numberOfDollars
     }
 
     private fun openNavFragment(
