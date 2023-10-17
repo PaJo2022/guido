@@ -12,7 +12,7 @@
         <item name="android:statusBarColor">@color/card_color4</item>
     </style>
 
-    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
+    <style name="Widget.App.Chip" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
 

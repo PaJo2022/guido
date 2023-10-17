@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.auth.repo.user.UserRepository
@@ -14,6 +13,9 @@ import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.model.MarkerData
+import com.innoappsai.guido.model.PlaceFilter.PlaceFilter
+import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
+import com.innoappsai.guido.model.PlaceFilter.placeFiltersList
 import com.innoappsai.guido.model.SortType
 import com.innoappsai.guido.model.placesUiModel.DUMMY_PLACE_TYPE_UI_MODEL
 import com.innoappsai.guido.model.placesUiModel.PlaceTypeUiModel
@@ -88,12 +90,27 @@ class HomeViewModel @Inject constructor(
     private val _selectedPlaces: MutableLiveData<List<PlaceUiModel>> = MutableLiveData()
     val selectedPlaces: LiveData<List<PlaceUiModel>> get() = _selectedPlaces
 
-    private var isNewDataFetched : Boolean = false
+    private val _selectedFilters: MutableLiveData<ArrayList<PlaceFilter>> = MutableLiveData()
+    val selectedFilters: LiveData<ArrayList<PlaceFilter>> get() = _selectedFilters
+
+    private var isNewDataFetched: Boolean = false
     var isPlaceGeneratedOptionClicked = false
+
+    private var sortType: SortType = SortType.DISTANCE
+    private var filterOptions = ArrayList(placeFiltersList)
 
 
     init {
         getNearByPlaces()
+    }
+
+    fun onFilterOptionClicked(placeFilterType: PlaceFilterType) {
+        viewModelScope.launch(Dispatchers.IO) {
+            filterOptions.forEach {
+                it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
+            }
+            _selectedFilters.postValue(filterOptions)
+        }
     }
 
     private fun fetchCurrentAddressFromGeoCoding(
@@ -173,7 +190,7 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    private fun getNearByPlaces(sortType: SortType = SortType.DISTANCE) {
+    private fun getNearByPlaces() {
         viewModelScope.launch(Dispatchers.IO) {
             placesRepository.getPlacesNearMeFromLocalDb().map { ArrayList(it) }
                 .map { placesList ->
@@ -192,16 +209,18 @@ class HomeViewModel @Inject constructor(
                     val placesInGroupData = listOfPlaceUiModel.groupBy { it.superType }
                     val places = ArrayList<PlaceTypeUiModel>()
                     placesInGroupData.forEach {
-                        places.add(PlaceTypeUiModel(categoryTitle = it.key))
-                        val sortedPlaces = sortPlaceBasedOnSortType(it.value,sortType)
-                        val createdPlaces = sortedPlaces.map { uiModel ->
-                            PlaceTypeUiModel(
-                                place = uiModel
-                            )
+                        val sortedPlaces = sortPlaceBasedOnSortType(it.value, sortType)
+                        if (sortedPlaces.isNotEmpty()) {
+                            val createdPlaces = sortedPlaces.map { uiModel ->
+                                PlaceTypeUiModel(
+                                    place = uiModel
+                                )
+                            }
+                            places.add(PlaceTypeUiModel(categoryTitle = it.key))
+                            places.addAll(createdPlaces)
                         }
-                        places.addAll(createdPlaces)
                     }
-                    if (listOfPlaceUiModel.isEmpty()) {
+                    if (places.isEmpty()) {
                         _dataState.postValue(DataState.EMPTY_DATA)
                         _nearByPlacesInGroup.postValue(emptyList())
                         _nearByPlaces.postValue(ArrayList(emptyList()))
@@ -211,7 +230,7 @@ class HomeViewModel @Inject constructor(
                         nearByMarkerList.addAll(latLngs)
                         _dataState.postValue(DataState.DATA)
                         _nearByPlacesInGroup.postValue(places)
-                        if(isNewDataFetched){
+                        if (isNewDataFetched) {
                             _nearByPlaces.postValue(listOfPlaceUiModel)
                             _nearByPlacesMarkerPoints.postValue(listOfPlaceUiModel)
                         }
@@ -371,12 +390,14 @@ class HomeViewModel @Inject constructor(
 
     fun onOpenNowFilterClicked() {
         isNewDataFetched = false
-        getNearByPlaces(SortType.OPEN_NOW)
+        sortType = SortType.OPEN_NOW
+        getNearByPlaces()
     }
 
     fun sortOptionSelected(sortType: SortType) {
         isNewDataFetched = false
-        getNearByPlaces(sortType)
+        this.sortType = sortType
+        getNearByPlaces()
     }
 
     enum class PlaceUiState {

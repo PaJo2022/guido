@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -42,6 +41,7 @@ import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlaceFilterHorizontalAdapter
 import com.innoappsai.guido.adapters.PlaceFilterHorizontalItemDecorator
+import com.innoappsai.guido.adapters.PlaceVerticalItemDecorator
 import com.innoappsai.guido.adapters.PlacesGroupListAdapter
 import com.innoappsai.guido.adapters.PlacesHorizontalListAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
@@ -86,7 +86,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var placesHorizontalAdapter: PlacesHorizontalListAdapter
     private lateinit var placeFilterAdapter: PlaceFilterHorizontalAdapter
     private var googleMap: GoogleMap? = null
-    private val workManager: WorkManager by lazy { WorkManager.getInstance(requireContext()) }
     private var doubleBackToExitPressedOnce = false
 
     private val zoom = 13f
@@ -251,6 +250,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 askForNotificationPermission()
             }
             bottomsheetPlaceList.rvPlaces.apply {
+                addItemDecoration(PlaceVerticalItemDecorator(requireContext()))
                 adapter = placesAdapter
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -390,13 +390,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         observeWorkers()
 
         placeFilterAdapter.setOnFilterItemClicked{placeFilter->
+            viewModel.onFilterOptionClicked(placeFilter.placeFilterType)
             when(placeFilter.placeFilterType){
                 PlaceFilterType.FULL_FILTER -> {
                     startActivity(Intent(requireContext(), FilterActivity()::class.java))
                 }
+
                 PlaceFilterType.UNLOCK_FILTERS -> {
 
                 }
+
                 PlaceFilterType.SORT -> {
                     bottomSheetFragment = BottomPlaceSortOptions()
                     bottomSheetFragment?.show(childFragmentManager, bottomSheetFragment?.tag)
@@ -406,9 +409,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
                     }
                 }
+
                 PlaceFilterType.OPEN_NOW -> {
                     viewModel.onOpenNowFilterClicked()
                 }
+
                 PlaceFilterType.MORE_FILTERS -> {
                     startActivity(Intent(requireContext(), FilterActivity()::class.java))
                 }
@@ -488,6 +493,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun observeData() {
         viewModel.apply {
+            selectedFilters.observe(viewLifecycleOwner) {
+                placeFilterAdapter.setFilters(it)
+            }
             selectedPlaces.observe(viewLifecycleOwner) {
                 binding.bottomsheetPlaceList.tvSelectedPlaces.text =
                     "${it.size} Landmarks are selected"
