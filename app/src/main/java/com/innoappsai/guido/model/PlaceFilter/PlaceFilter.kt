@@ -11,13 +11,14 @@ data class PlaceFilter(
 )
 
 enum class PlaceFilterType {
-    FULL_FILTER, UNLOCK_FILTERS, SORT, OPEN_NOW, MORE_FILTERS,TRAVEL_ITINERARY
+    FULL_FILTER, UNLOCK_FILTERS, SORT, OPEN_NOW, MORE_FILTERS,TRAVEL_ITINERARY,HYPER_LOCAL_PLACE_SEARCH
 }
 
 
 val placeFiltersList = listOf(
     PlaceFilter(leftIcon = R.drawable.ic_filter, placeFilterType = PlaceFilterType.FULL_FILTER),
     PlaceFilter(leftIcon = R.drawable.ic_generate, title = "Generate Travel Itinerary", placeFilterType = PlaceFilterType.TRAVEL_ITINERARY),
+    PlaceFilter(leftIcon = R.drawable.ic_generate, title = "HyperLocal Places", placeFilterType = PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH),
     PlaceFilter(
         title = "Sort",
         rightIcon = R.drawable.ic_sort,

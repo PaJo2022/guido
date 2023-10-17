@@ -38,9 +38,9 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
     }
 
     private fun OpenNavFragment(
-        f: Fragment?,
+        f: Fragment,
         fm: FragmentManager,
-        FragmentName: String,
+        fragmentName: String,
         view: View,
         args: Bundle? = null
     ) {
@@ -48,7 +48,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
         // Pass the bundle as arguments to the fragment, if provided
         if (args != null) {
-            f?.arguments = args
+            f.arguments = args
         }
         ft.setCustomAnimations(
             R.anim.in_from_right,
@@ -56,7 +56,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
             R.anim.in_from_left,
             R.anim.out_to_right
         )
-        ft.replace(view.id, f!!, FragmentName).addToBackStack(FragmentName).commit()
+        ft.replace(view.id, f, fragmentName).addToBackStack(fragmentName).commit()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,17 +64,9 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
         binding.apply {
             tvEditProfile.setOnClickListener {
-                val serviceIntent =
-                    Intent(requireContext(), HyperLocalPlacesSearchService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    requireActivity().startForegroundService(serviceIntent)
-                } else {
-                    requireActivity().startService(serviceIntent)
-                }
-
-//                OpenNavFragment(
-//                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
-//                )
+                OpenNavFragment(
+                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
+                )
             }
             tvMyPlaces.setOnClickListener { OpenNavFragment(
                 MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId

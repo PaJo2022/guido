@@ -103,13 +103,26 @@ class HomeViewModel @Inject constructor(
         getNearByPlaces()
     }
 
+    fun toggleHyperLocalPlaceSearchOnPlaceFilterMenu(isEnabled: Boolean) {
+        filterOptions.find { it.placeFilterType == PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH }?.isSelected =
+            isEnabled
+        _selectedFilters.value = filterOptions
+    }
+
     fun onFilterOptionClicked(placeFilterType: PlaceFilterType) {
         viewModelScope.launch(Dispatchers.IO) {
-            filterOptions.forEach {
-                if (placeFilterType != PlaceFilterType.MORE_FILTERS && placeFilterType != PlaceFilterType.FULL_FILTER && placeFilterType != PlaceFilterType.TRAVEL_ITINERARY){
-                    it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
+            if (placeFilterType == PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH) {
+                filterOptions.find { it.placeFilterType == placeFilterType }?.isSelected =
+                    !filterOptions.find { it.placeFilterType == placeFilterType }?.isSelected!!
+            } else {
+                filterOptions.forEach {
+                    if (placeFilterType != PlaceFilterType.MORE_FILTERS && placeFilterType != PlaceFilterType.FULL_FILTER && placeFilterType != PlaceFilterType.TRAVEL_ITINERARY) {
+                        it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
+                    }
+
                 }
             }
+
             _selectedFilters.postValue(filterOptions)
         }
     }

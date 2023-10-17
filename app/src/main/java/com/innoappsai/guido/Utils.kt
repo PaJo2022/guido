@@ -1,5 +1,6 @@
 package com.innoappsai.guido
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.model.LatLng
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -213,4 +215,22 @@ fun isDistanceOverNMeters(
     val distance = calculateDistance(lat1, lon1, lat2, lon2)
     Log.i("JAPAN", "distance: ${distance}")
     return distance > meters
+}
+
+fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    val activityManager = context.getSystemService(AppCompatActivity.ACTIVITY_SERVICE) as ActivityManager
+
+    // Get a list of the currently running services
+    val runningServices = activityManager.getRunningServices(Int.MAX_VALUE)
+
+    // Loop through the running services and check if the specified service is running
+    for (service in runningServices) {
+        if (service.service.className == serviceClass.name) {
+            // The service is running
+            return true
+        }
+    }
+
+    // The service is not running
+    return false
 }

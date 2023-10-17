@@ -32,6 +32,8 @@ class MyApp : Application(), Configuration.Provider {
         var tempPlaceInterestes: List<PlaceType> ?= null
         var tempPlaceDistance: Int ?= null
         var isNewInterestsSet: Boolean = false
+
+        var isHyperLocalServiceIsRunning : MutableLiveData<Boolean> = MutableLiveData()
     }
     override fun onCreate() {
         super.onCreate()

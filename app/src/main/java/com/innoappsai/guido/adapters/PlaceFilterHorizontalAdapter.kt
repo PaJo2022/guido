@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.LayoutPlaceFilterViewBinding
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilter
+import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.PlaceFilter.placeFiltersList
 
 class PlaceFilterHorizontalAdapter(private val appContext: Context) :
@@ -34,7 +35,11 @@ class PlaceFilterHorizontalAdapter(private val appContext: Context) :
         fun bindItem(placeFilter: PlaceFilter) {
             binding.apply {
                 val colorStateList = if (placeFilter.isSelected) {
-                    ContextCompat.getColorStateList(appContext, R.color.color_primary)
+                    if (placeFilter.placeFilterType == PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH) {
+                        ContextCompat.getColorStateList(appContext, R.color.color_secondary)
+                    } else {
+                        ContextCompat.getColorStateList(appContext, R.color.color_primary)
+                    }
                 } else {
                     ContextCompat.getColorStateList(appContext, R.color.color_light_grey)
                 }

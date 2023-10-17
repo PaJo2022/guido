@@ -51,11 +51,13 @@ import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentHomeBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.getScreenHeight
+import com.innoappsai.guido.isServiceRunning
 import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.placeFilter.FilterActivity
+import com.innoappsai.guido.services.HyperLocalPlacesSearchService
 import com.innoappsai.guido.showToast
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import com.innoappsai.guido.workers.WorkerState
@@ -421,8 +423,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 PlaceFilterType.TRAVEL_ITINERARY -> {
                     if (MyApp.userCurrentFormattedAddress != null) {
                         viewModel.onItineraryGenerationClicked()
-                    }else{
+                    } else {
 
+                    }
+                }
+
+                PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH -> {
+                    val serviceIntent =
+                        Intent(requireContext(), HyperLocalPlacesSearchService::class.java)
+                    if (isServiceRunning(
+                            requireContext(),
+                            HyperLocalPlacesSearchService::class.java
+                        )
+                    ) {
+                        requireActivity().stopService(serviceIntent)
+                    } else {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            requireActivity().startForegroundService(serviceIntent)
+                        } else {
+                            requireActivity().startService(serviceIntent)
+                        }
                     }
                 }
             }
@@ -587,7 +608,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
         sharedViewModel.apply {
             onPreferencesSaved.observe(viewLifecycleOwner) {
-                if(it){
+                if (it) {
                     viewModel.resetSearchWithNewInterestes()
                     sharedViewModel.onPreferenceRead()
                 }
@@ -597,7 +618,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 checkLocationPermission(true)
             }
         }
-
+        MyApp.isHyperLocalServiceIsRunning.observe(viewLifecycleOwner) {
+            viewModel.toggleHyperLocalPlaceSearchOnPlaceFilterMenu(it)
+        }
         placesHorizontalAdapter.setOnLandMarkClicked {
             Bundle().apply {
                 putString("PLACE_ID", it.placeId)

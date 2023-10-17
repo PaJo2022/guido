@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MainActivity
+import com.innoappsai.guido.MyApp.Companion.isHyperLocalServiceIsRunning
 import com.innoappsai.guido.R
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
@@ -28,6 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -45,6 +47,7 @@ class HyperLocalPlacesSearchService : Service() {
     private val notificationChannelId = "Hyper Local Place Service"
     private val notificationChannelName = "Hyper Local Notifications"
     private val notificationId = 1
+    private val PLACE_NOTIFICATION_ID = 2
     private var notificationBuilder: NotificationCompat.Builder? = null
     private var lastLocation: LatLng? = null
 
@@ -58,6 +61,7 @@ class HyperLocalPlacesSearchService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        isHyperLocalServiceIsRunning.value = true
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -73,9 +77,10 @@ class HyperLocalPlacesSearchService : Service() {
         // Start the foreground service
 
         startForeground(notificationId, createNotification().build())
-        updateNotification()
+        createPlaceNotification().build()
         // Start the periodic task using coroutines
         CoroutineScope(Dispatchers.IO).launch {
+            isHyperLocalServiceIsRunning.postValue(true)
             while (true) {
                 // Perform API request (replace with your own logic)
                 // val response = performApiRequest(YOUR_API_URL)
@@ -89,9 +94,6 @@ class HyperLocalPlacesSearchService : Service() {
                     currentLocation.longitude,
                     200.0
                 )
-                Log.i("JAPAN", "lastLocation: ${lastLocation}")
-                Log.i("JAPAN", "currentLocation: ${currentLocation}")
-                Log.i("JAPAN", "shouldFetchApi: ${shouldFetchApi}")
                 lastLocation = currentLocation
                 if (!shouldFetchApi) {
                     continue
@@ -110,12 +112,17 @@ class HyperLocalPlacesSearchService : Service() {
                 withContext(Dispatchers.Main) {
                     updateNotification("Places Near You", notificationText)
                 }
-                delay(30.seconds)
+                delay(5.minutes)
 
             }
         }
 
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isHyperLocalServiceIsRunning.value = false
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -138,6 +145,29 @@ class HyperLocalPlacesSearchService : Service() {
     }
 
     private fun createNotification(
+        newContentTitle: String = "",
+        newContentText: String = "",
+        imageUrl: String? = null
+    ): NotificationCompat.Builder {
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+
+        return NotificationCompat.Builder(this, notificationChannelId)
+            .setContentTitle(newContentTitle)
+            .setContentText(newContentText)
+            .setSmallIcon(R.drawable.ic_website)
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+    }
+
+    private fun createPlaceNotification(
         newContentTitle: String = "Searching Places Near You",
         newContentText: String = "Checking Your Surrounding",
         imageUrl: String? = null
@@ -175,7 +205,7 @@ class HyperLocalPlacesSearchService : Service() {
             ) {
                 return
             }
-            notify(notificationId, updatedNotification.build())
+            notify(PLACE_NOTIFICATION_ID, updatedNotification.build())
         }
     }
 
