@@ -418,6 +418,18 @@
                       app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toBottomOf="@+id/tv_place_videos" />
 
+                  <com.google.android.material.tabs.TabLayout
+                      android:id="@+id/vp_place_videos_indicator"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:background="@color/transparent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/view_pager_videos"
+                      app:tabBackground="@drawable/tab_selector"
+                      app:tabGravity="center"
+                      app:tabIndicatorHeight="0dp" />
+
 
                   <TextView
                       android:id="@+id/tv_place_reviews"
@@ -431,7 +443,7 @@
                       android:textSize="@dimen/_12ssp"
                       app:layout_constraintEnd_toEndOf="parent"
                       app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toBottomOf="@+id/view_pager_videos" />
+                      app:layout_constraintTop_toBottomOf="@+id/vp_place_videos_indicator" />
 
                   <TextView
                       android:id="@+id/tv_no_reviews_yet"

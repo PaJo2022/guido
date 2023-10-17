@@ -86,7 +86,9 @@ class LocationDetailsFragment :
 
         binding.viewPagerVideos.adapter = adapterVideos
         binding.viewPagerVideos.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        TabLayoutMediator(binding.vpPlaceVideosIndicator, binding.viewPagerVideos) { tab, position ->
 
+        }.attach()
 
     }
 
@@ -136,6 +138,7 @@ class LocationDetailsFragment :
             landMarkVideoData.observe(viewLifecycleOwner) {
                 binding.tvPlaceVideos.isVisible = it.isNotEmpty()
                 binding.viewPagerVideos.isVisible = it.isNotEmpty()
+                binding.vpPlaceVideosIndicator.isVisible = it.isNotEmpty()
                 adapterVideos.setVideos(ArrayList(it))
             }
             placeMoreData.observe(viewLifecycleOwner) {

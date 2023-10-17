@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.LayoutPlaceTypeItemBinding
 import com.innoappsai.guido.model.PlaceType
@@ -37,7 +38,7 @@ class PlacesTypeAdapter(private val appContext: Context) :
                 }
                 tvPlaceType.text = type.displayName
                 cbPlaceType.isChecked = type.isSelected
-
+                Glide.with(appContext).load(type.iconDrawable).into(ivPlaceType)
                 cbPlaceType.setOnCheckedChangeListener { compoundButton, b ->
                     onItemClickListener?.invoke(type)
                 }

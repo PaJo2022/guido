@@ -1,6 +1,5 @@
 package com.innoappsai.guido.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -107,7 +106,9 @@ class HomeViewModel @Inject constructor(
     fun onFilterOptionClicked(placeFilterType: PlaceFilterType) {
         viewModelScope.launch(Dispatchers.IO) {
             filterOptions.forEach {
-                it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
+                if (placeFilterType != PlaceFilterType.MORE_FILTERS && placeFilterType != PlaceFilterType.FULL_FILTER && placeFilterType != PlaceFilterType.TRAVEL_ITINERARY){
+                    it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
+                }
             }
             _selectedFilters.postValue(filterOptions)
         }
@@ -196,15 +197,10 @@ class HomeViewModel @Inject constructor(
                 .map { placesList ->
                     placesList.map { place ->
                         place.shouldShowCheckBox = isPlaceGeneratedOptionClicked
-                        place.isChecked = isPlaceGeneratedOptionClicked
                         place
                     }
                 }
                 .collect { listOfPlaceUiModel ->
-                    listOfPlaceUiModel.filter { it.shouldShowCheckBox }.size.apply {
-                        Log.i("JAPAN", "getNearByPlaces: ${this}")
-                    }
-
                     val latLngs = listOfPlaceUiModel.map { it.latLng }
                     val placesInGroupData = listOfPlaceUiModel.groupBy { it.superType }
                     val places = ArrayList<PlaceTypeUiModel>()
@@ -259,11 +255,11 @@ class HomeViewModel @Inject constructor(
             }
 
             SortType.MOST_POPULAR -> {
-                sortList.sortedBy { it.reviewsCount }
+                sortList.sortedByDescending { it.reviewsCount }
             }
 
             SortType.HIGHEST_RATING -> {
-                sortList.sortedBy { it.rating }
+                sortList.sortedByDescending { it.rating }
             }
 
             SortType.A_TO_Z -> {
@@ -271,26 +267,24 @@ class HomeViewModel @Inject constructor(
             }
 
             SortType.COST_LOW_TO_HIGH -> {
-                sortList.map { place ->
-                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                        0
-                    } else if (place.pricingType.equals("Moderate", true)) {
-                        1
-                    } else {
-                        2
+                sortList.filter { it.pricingType != null }.mapNotNull { place ->
+                    val priceType = when (place.pricingType?.toLowerCase()) {
+                        "inexpensive" -> 0
+                        "moderate" -> 1
+                        "expensive" -> 2
+                        else -> -1
                     }
                     place to priceType
                 }.sortedBy { it.second }.map { it.first }
             }
 
             SortType.COST_HIGH_TO_LOW -> {
-                sortList.map { place ->
-                    val priceType = if (place.pricingType.equals("Inexpensive", true)) {
-                        0
-                    } else if (place.pricingType.equals("Moderate", true)) {
-                        1
-                    } else {
-                        2
+                sortList.filter { it.pricingType != null }.mapNotNull { place ->
+                    val priceType = when (place.pricingType?.toLowerCase()) {
+                        "inexpensive" -> 0
+                        "moderate" -> 1
+                        "expensive" -> 2
+                        else -> -1
                     }
                     place to priceType
                 }.sortedByDescending { it.second }.map { it.first }
@@ -370,14 +364,22 @@ class HomeViewModel @Inject constructor(
         isPlaceGeneratedOptionClicked = true
         isNewDataFetched = false
         _showItineraryGenerationLayout.value = true
-        getNearByPlaces()
+        viewModelScope.launch(Dispatchers.IO) {
+            placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(true,true)
+        }
     }
 
     fun onItineraryGenerationCancelledClicked(isForceCancel: Boolean = true) {
         isNewDataFetched = false
         isPlaceGeneratedOptionClicked = false
         _showItineraryGenerationLayout.value = false
-        getNearByPlaces()
+        if(isForceCancel){
+            getNearByPlaces()
+        }else{
+            viewModelScope.launch(Dispatchers.IO) {
+                placesRepository.updateAllPlacesIsCheckedAndCheckBoxFor(false,false)
+            }
+        }
     }
 
     fun onPlaceSelectedForItinerary(placeId: String?, checked: Boolean) {

@@ -10,7 +10,7 @@ interface VideoApi {
     @GET("/youtube/v3/search")
     suspend fun fetchVideosFromYoutube(
         @Query("part") part : String="snippet",
-        @Query("q") q : String,
+        @Query("q",encoded = true) q : String,
         @Query("maxResults") maxResults : Int = 5,
         @Query("key") key : String,
         @Query("order") order : String = "viewCount",

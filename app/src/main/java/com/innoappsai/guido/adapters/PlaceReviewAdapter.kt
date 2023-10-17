@@ -41,7 +41,7 @@ class PlaceReviewAdapter(
             binding.tvAuthorName.text = reviewUiModel.user?.displayName
             binding.tvReviewStar.rating = reviewUiModel.rating?.toFloat() ?: 0.0f
             binding.tvReviewDate.isVisible = false
-            binding.tvReviewTitle.text = reviewUiModel.description
+            binding.tvReviewTitle.text = reviewUiModel.title
             binding.tvReviewDescription.text = reviewUiModel.description
             binding.rvPlaceReviewImagesVideos.apply {
                 adapter = adapterMedia
