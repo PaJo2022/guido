@@ -221,7 +221,7 @@ class LandMarkDetailsViewModel @Inject constructor(
             val landMarkVideoJob = async { fetchVideosForTheLandMarkName(placeUiModel) }
             val landMarkVideo = landMarkVideoJob.await()
             _videoLinkList.addAll(landMarkVideo.map {
-                VideoItem(videoType = VideoType.YOUTUBE_VIDEO, it.videoUrl.toString())
+                VideoItem(videoType = VideoType.YOUTUBE_VIDEO, it.videoUrl.toString(),title = it.title,description = it.description)
             })
             _landMarkVideoData.postValue(_videoLinkList)
         }

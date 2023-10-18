@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -101,10 +102,10 @@ class HyperLocalPlacesSearchService : Service() {
                     200.0
                 )
                 lastLocation = currentLocation
-//                if (!shouldFetchApi) {
-//                    delay(30.seconds)
-//                    continue
-//                }
+                if (!shouldFetchApi) {
+                    delay(10.seconds)
+                    continue
+                }
                 val interestList = placesRepository.getAllSavedPlaceTypePreferences()
                 val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
                     currentLocation.latitude,
@@ -114,7 +115,7 @@ class HyperLocalPlacesSearchService : Service() {
                     false
                 )
                 if (response.data.isNullOrEmpty()) {
-                    delay(10.seconds)
+                    delay(1.minutes)
                     continue
                 }
                 var place: PlaceDTO? = null
@@ -139,7 +140,7 @@ class HyperLocalPlacesSearchService : Service() {
                     val timeDifferenceMillis = currentTimeMillis - obj.lashPushNotificationShown
 
                     // Check if the time has passed 30 minutes (30 * 60 * 1000 milliseconds)
-                    val thirtyMinutesInMillis = 1 * 60 * 1000
+                    val thirtyMinutesInMillis = 15 * 60 * 1000
                     if (timeDifferenceMillis >= thirtyMinutesInMillis) {
                         place = placeDTO
                         dao.updateAllPlacesIsCheckedAndCheckBoxFor(
@@ -150,7 +151,6 @@ class HyperLocalPlacesSearchService : Service() {
                         break
                     }
                 }
-                Log.i("JAPAN", "onStartCommand: ${response.data?.size}")
                 if (place != null) {
                     val firstPlaceName = place.placeName
                     val firstPlaceId = place.placeId
@@ -162,7 +162,7 @@ class HyperLocalPlacesSearchService : Service() {
                         updateNotification("Places Near You", notificationText, firstPlaceId)
                     }
                 }
-                delay(10.seconds)
+                delay(5.minutes)
             }
         }
 

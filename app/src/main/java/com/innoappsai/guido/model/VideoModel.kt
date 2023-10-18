@@ -5,6 +5,8 @@ enum class VideoType{
 }
 
 data class VideoItem(
-    val videoType : VideoType,
-    val videoLink : String
+    val videoType: VideoType,
+    val videoLink: String,
+    val title: String? = null,
+    val description: String? = null
 )

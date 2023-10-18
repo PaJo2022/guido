@@ -59,7 +59,13 @@ class VideoAdapter(private val context: Context) :
             webSettings.pluginState = WebSettings.PluginState.ON
 
             // Load the YouTube video URL
-            binding.wvPlaceVideo.loadUrl(videoItem.videoLink)
+            binding.apply {
+                wvPlaceVideo.loadUrl(videoItem.videoLink)
+                tvVideoTitle.text = videoItem.title
+                tvVideoDescription.text = videoItem.description
+                tvVideoDescription.isSelected = true
+                tvVideoTitle.isSelected = true
+            }
 
             // Set a WebViewClient to handle redirects and other events
             val webViewClient = object : WebViewClient() {

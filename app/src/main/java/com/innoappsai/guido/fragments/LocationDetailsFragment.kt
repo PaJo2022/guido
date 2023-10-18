@@ -306,46 +306,6 @@ class LocationDetailsFragment :
         }
     }
 
-    private fun startUploadingPlaceData(placeId: String, latitude: Double, longitude: Double) {
-        val mapUrl = generateStaticMapUrl(latitude, longitude)
-        val inputData = Data.Builder()
-            .putString(
-                DownloadImageWorker.KEY_IMAGE_URL,
-                mapUrl
-            )
-            .putString("PLACE_ID", placeId)
-            .putString(DownloadImageWorker.KEY_CACHE_FILE_NAME, "cached_image.jpg")
-            .build()
-
-
-        val downloadImageWorker =
-            OneTimeWorkRequestBuilder<DownloadImageWorker>().setInputData(inputData)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-        val uploadImageWorker =
-            OneTimeWorkRequestBuilder<UploadWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-        val updatePlaceStaticMapUpdateWorker =
-            OneTimeWorkRequestBuilder<UpdatePlaceStaticMapWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-        workManager
-            .beginUniqueWork(
-                "creating_static_map_url",
-                ExistingWorkPolicy.KEEP,
-                downloadImageWorker
-            )
-            .then(uploadImageWorker)
-            .then(updatePlaceStaticMapUpdateWorker)
-            .enqueue()
-
-
-    }
-
     private fun setPlacePricingType(pricingType : String?){
         val numberOfDollars = if(pricingType.equals("Expensive",true)) "$$$" else if(pricingType.equals("Moderate",true)) "$$" else if(pricingType.equals("Inexpensive",true)) "$" else ""
         binding.llLocationPrimaryDetails.placePricingType.text = numberOfDollars
