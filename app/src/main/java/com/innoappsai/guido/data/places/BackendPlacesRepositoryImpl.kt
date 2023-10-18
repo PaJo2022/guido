@@ -1,11 +1,15 @@
 package com.innoappsai.guido.data.places
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.innoappsai.guido.api.GuidoApi
+import com.innoappsai.guido.api.UserApi
+import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.db.MyAppDataBase
 import com.innoappsai.guido.model.FullPlaceData
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
+import com.innoappsai.guido.model.UserPlacePreferenceRequestDTO
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
@@ -16,27 +20,33 @@ import com.innoappsai.guido.utils.Resource
 import com.innoappsai.guido.utils.networkBoundResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BackendPlacesRepositoryImpl @Inject constructor(
     private val api: GuidoApi,
-    private val db: MyAppDataBase
+    private val userApi: UserApi,
+    private val db: MyAppDataBase,
+    private val appPrefs: AppPrefs
 ) : PlacesRepository {
     override suspend fun fetchPlacesNearMeAndSaveInLocalDb(
         latitude: Double,
         longitude: Double,
         radius: Int,
-        types: List<String>
+        types: List<String>,
+        shouldCache : Boolean
     ): Resource<List<PlaceDTO>> {
         val response = api.fetchPlacesNearMe(latitude, longitude, radius, types)
         val places =  response.body()
        return if(response.isSuccessful && places != null){
-            db.withTransaction {
-                db.placeDao().apply {
-                    deleteAllPlaces()
-                    insertPlaces(places)
+            if(shouldCache){
+                db.withTransaction {
+                    db.placeDao().apply {
+                        deleteAllPlaces()
+                        insertPlaces(places)
+                    }
                 }
             }
             Resource.Success(places)
@@ -125,22 +135,12 @@ class BackendPlacesRepositoryImpl @Inject constructor(
     override  fun fetchSinglePlacesDetails(
         placeId: String
     ): Flow<Resource<PlaceUiModel>> {
-        return networkBoundResource(
-            query = {
-                db.placeDao().getPlaceById(placeId).map { it.toPlaceUiModel() }
-            },
-            fetch = {
-                api.fetchPlacesDetails(placeId).body()
-            },
-            shouldFetch = {
-                true
-            },
-            saveFetchResult = { place ->
-                db.withTransaction {
-                    db.placeDao().updatePlace(place)
-                }
-            }
-        )
+        return flow {
+            val data = api.fetchPlacesDetails(placeId).body()
+            data?.let {
+                emit(Resource.Success(it.toPlaceUiModel()))
+            } ?: emit(Resource.Error(Throwable("Null")))
+        }
     }
 
     override suspend fun fetchAddressFromLatLng(
@@ -178,6 +178,17 @@ class BackendPlacesRepositoryImpl @Inject constructor(
                     }
                 }
             }
+        }
+        withContext(Dispatchers.IO){
+            val userId = appPrefs.userId ?: return@withContext
+            val placeSearchDistance = appPrefs.prefDistance / 1000
+            userApi.updateUserPlacePreference(
+                userId = userId,
+                userPlacePreferenceRequestDTO = UserPlacePreferenceRequestDTO(
+                    placePreferences = preferences.map { it.id },
+                    placePreferenceDistance = placeSearchDistance
+                )
+            )
         }
     }
 

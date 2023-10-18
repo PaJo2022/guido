@@ -21,7 +21,10 @@ import com.innoappsai.guido.MyApp.Companion.isHyperLocalServiceIsRunning
 import com.innoappsai.guido.R
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.db.MyAppDataBase
 import com.innoappsai.guido.isDistanceOverNMeters
+import com.innoappsai.guido.model.PlaceIdWithName.PlaceWithIdAndTime
+import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +32,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -43,6 +45,10 @@ class HyperLocalPlacesSearchService : Service() {
 
     @Inject
     lateinit var locationClient: LocationClient
+
+    @Inject
+    lateinit var db: MyAppDataBase
+
 
     private val notificationChannelId = "Hyper Local Place Service"
     private val notificationChannelName = "Hyper Local Notifications"
@@ -95,25 +101,68 @@ class HyperLocalPlacesSearchService : Service() {
                     200.0
                 )
                 lastLocation = currentLocation
-                if (!shouldFetchApi) {
-                    continue
-                }
+//                if (!shouldFetchApi) {
+//                    delay(30.seconds)
+//                    continue
+//                }
                 val interestList = placesRepository.getAllSavedPlaceTypePreferences()
                 val response = placesRepository.fetchPlacesNearMeAndSaveInLocalDb(
                     currentLocation.latitude,
                     currentLocation.longitude,
-                    appPrefs.prefDistance,
-                    interestList.map { it.id }
+                    100,
+                    interestList.map { it.id },
+                    false
                 )
-
-                val notificationText =
-                    "There are ${response.data?.size} Places near you"
-                // Display a local notification
-                withContext(Dispatchers.Main) {
-                    updateNotification("Places Near You", notificationText)
+                if (response.data.isNullOrEmpty()) {
+                    delay(10.seconds)
+                    continue
                 }
-                delay(5.minutes)
+                var place: PlaceDTO? = null
+                val dao = db.placeIdWithTimeDao()
+                val currentTimeMillis = System.currentTimeMillis()
+                for (placeDTO in response.data) {
+                    // Convert the time from double to milliseconds
+                    val obj = db.placeIdWithTimeDao().getPlaceIdWithTime(placeDTO.placeId)
+                    if (obj == null) {
+                        place = placeDTO
+                        dao.onPlacePushNotificationSend(
+                            PlaceWithIdAndTime(
+                                id = place.placeId,
+                                lashPushNotificationShown = currentTimeMillis
+                            )
+                        )
+                        break
+                    }
 
+
+                    // Calculate the time difference in milliseconds
+                    val timeDifferenceMillis = currentTimeMillis - obj.lashPushNotificationShown
+
+                    // Check if the time has passed 30 minutes (30 * 60 * 1000 milliseconds)
+                    val thirtyMinutesInMillis = 1 * 60 * 1000
+                    if (timeDifferenceMillis >= thirtyMinutesInMillis) {
+                        place = placeDTO
+                        dao.updateAllPlacesIsCheckedAndCheckBoxFor(
+                                placeId = place.placeId,
+                                lashPushNotificationShown = currentTimeMillis
+
+                        )
+                        break
+                    }
+                }
+                Log.i("JAPAN", "onStartCommand: ${response.data?.size}")
+                if (place != null) {
+                    val firstPlaceName = place.placeName
+                    val firstPlaceId = place.placeId
+                    val notificationText =
+                        "You are at ${firstPlaceName}, Want To Know More About It?"
+                    // Display a local notification
+
+                    withContext(Dispatchers.Main) {
+                        updateNotification("Places Near You", notificationText, firstPlaceId)
+                    }
+                }
+                delay(10.seconds)
             }
         }
 
@@ -147,16 +196,23 @@ class HyperLocalPlacesSearchService : Service() {
     private fun createNotification(
         newContentTitle: String = "",
         newContentText: String = "",
-        imageUrl: String? = null
+        placeId: String? = null
     ): NotificationCompat.Builder {
-        val notificationIntent = Intent(this, MainActivity::class.java)
+        Log.i("JAPAN", "createNotification: ${placeId}")
+
+        val deepLinkIntent = Intent(this, MainActivity::class.java)
+        deepLinkIntent.putExtra("PLACE_ID", placeId)
+        deepLinkIntent.putExtra("DEEPLINK", "PLACE_DETAILS_SCREEN")
+        val requestCode = placeId?.hashCode() ?: 0 // You can change this value if needed
+        val flags =
+            PendingIntent.FLAG_MUTABLE // Use FLAG_UPDATE_CURRENT to update the PendingIntent if it already exists
         val pendingIntent = PendingIntent.getActivity(
             this,
-            0,
-            notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE
+            requestCode,
+            deepLinkIntent,
+            flags
         )
-
+        Log.i("JAPAN", "deepLinkIntent: ${deepLinkIntent.extras}")
 
         return NotificationCompat.Builder(this, notificationChannelId)
             .setContentTitle(newContentTitle)
@@ -169,8 +225,7 @@ class HyperLocalPlacesSearchService : Service() {
 
     private fun createPlaceNotification(
         newContentTitle: String = "Searching Places Near You",
-        newContentText: String = "Checking Your Surrounding",
-        imageUrl: String? = null
+        newContentText: String = "Checking Your Surrounding"
     ): NotificationCompat.Builder {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -192,9 +247,10 @@ class HyperLocalPlacesSearchService : Service() {
 
     private fun updateNotification(
         newContentTitle: String = "Searching Places Near You",
-        newContentText: String = "Checking Your Surrounding"
+        newContentText: String = "Checking Your Surrounding",
+        placeId: String? = null
     ) {
-        val updatedNotification = createNotification(newContentTitle, newContentText)
+        val updatedNotification = createNotification(newContentTitle, newContentText, placeId)
 
         // Use NotificationManagerCompat to update the notification
         with(NotificationManagerCompat.from(this)) {

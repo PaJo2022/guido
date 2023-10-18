@@ -183,7 +183,8 @@ class HomeViewModel @Inject constructor(
                 latitude,
                 longitude,
                 if (MyApp.tempPlaceDistance != null) MyApp.tempPlaceDistance!! else radius,
-                if (MyApp.tempPlaceInterestes != null) MyApp.tempPlaceInterestes!!.map { it.id } else interestList.map { it.id }
+                if (MyApp.tempPlaceInterestes != null) MyApp.tempPlaceInterestes!!.map { it.id } else interestList.map { it.id },
+                true
             )
             if (response is Resource.Error) {
                 _dataState.postValue(DataState.EMPTY_DATA)
@@ -252,6 +253,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun sortPlaceBasedOnSortType(sortList : List<PlaceUiModel>,sortType: SortType): List<PlaceUiModel> {
+        if (MyApp.userCurrentLatLng == null) return sortList
        return when (sortType) {
             SortType.DISTANCE -> {
                 sortList.map { place ->

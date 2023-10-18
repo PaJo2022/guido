@@ -22,7 +22,9 @@ data class User@JvmOverloads constructor(
     val location: String? = null,
     val profilePicture: String? = null,
     val isUserPremium: Boolean = false,
-    val email: String? = null
+    val email: String? = null,
+    val placePreferences: List<String>? = null,
+    val placePreferenceDistance: Int? = null,
 ) : Parcelable
 
 fun FirebaseUser.toUserModel() = User(

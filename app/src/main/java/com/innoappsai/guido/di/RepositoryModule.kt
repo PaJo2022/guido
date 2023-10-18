@@ -36,8 +36,8 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlacesRepository(api: GuidoApi, db: MyAppDataBase): PlacesRepository =
-        BackendPlacesRepositoryImpl(api, db)
+    fun providePlacesRepository(api: GuidoApi, userApi: UserApi,db: MyAppDataBase,appPrefs: AppPrefs): PlacesRepository =
+        BackendPlacesRepositoryImpl(api, userApi,db,appPrefs)
 
     @Provides
     @Singleton
@@ -62,8 +62,8 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(appPrefs: AppPrefs, userApi: UserApi,db: MyAppDataBase): UserRepository =
-        UserRepositoryImpl(appPrefs = appPrefs, userApi=userApi,db = db)
+    fun provideUserRepository(appPrefs: AppPrefs, userApi: UserApi,db: MyAppDataBase,placesRepository: PlacesRepository): UserRepository =
+        UserRepositoryImpl(appPrefs = appPrefs, userApi=userApi,db = db,placesRepository=placesRepository)
 
     @Provides
     @Singleton

@@ -16,7 +16,24 @@
         android:id="@+id/home_fragment"
         android:name="com.innoappsai.guido.fragments.HomeFragment"
         android:label="fragment_location_search"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_fragment_to_locationDetailsFragment"
+            app:destination="@id/locationDetailsFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_home_fragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_home_fragment_to_bottomSheetAskLocationPermission"
+            app:destination="@id/bottomSheetAskLocationPermission"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_home_fragment_to_discover_fragment"
+            app:destination="@id/discover_fragment"
+            app:launchSingleTop="true" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.innoappsai.guido.fragments.MyPlacesFragment"

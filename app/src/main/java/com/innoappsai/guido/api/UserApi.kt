@@ -1,6 +1,7 @@
 package com.innoappsai.guido.api
 
 import com.innoappsai.guido.model.User
+import com.innoappsai.guido.model.UserPlacePreferenceRequestDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -29,5 +30,11 @@ interface UserApi {
     @POST("update-user")
     suspend fun updateUserData(
         @Body user: User
+    ): Response<User?>
+
+    @POST("update-user-preferences")
+    suspend fun updateUserPlacePreference(
+        @Query("userId") userId: String,
+        @Body userPlacePreferenceRequestDTO: UserPlacePreferenceRequestDTO
     ): Response<User?>
 }

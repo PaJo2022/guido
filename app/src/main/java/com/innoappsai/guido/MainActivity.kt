@@ -3,12 +3,10 @@ package com.innoappsai.guido
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var homeFragment: HomeFragment? = null
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
-
+    private lateinit var navController: NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,27 +30,30 @@ class MainActivity : AppCompatActivity() {
 
         homeFragment = HomeFragment()
 
+        Log.i("JAPAN", "onCreate: ${intent?.extras}")
         openNavFragment(
             homeFragment!!,
-            supportFragmentManager,
             "HomeFragment",
-            findViewById<FrameLayout>(R.id.main_fl_id),
             intent.extras
         )
-
-
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        Log.i(
+            "JAPAN",
+            "onNewIntent: ${intent?.extras?.getString("DEEPLINK")} ${intent?.extras?.getString("PLACE_ID")}"
+        )
         intent?.extras?.getString("DEEPLINK")?.let {
             if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
                 homeFragment?.navigateToGeneratedItinerary()
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
-                val placeId = intent.extras?.getString("ADDED_PLACE_ID") ?: return
+                val placeId = intent.extras?.getString("PLACE_ID") ?: return
+                val bundle = Bundle()
+                bundle.putString("PLACE_ID", placeId)
                 homeFragment?.navigateToPlaceDetailsScreen(placeId)
             } else {
-                // Later DeepLinks
+
             }
 
         }
@@ -60,18 +61,16 @@ class MainActivity : AppCompatActivity() {
 
     fun openNavFragment(
         fragment: Fragment,
-        fragmentManager: FragmentManager,
         fragmentName: String,
-        view: View,
         args: Bundle? = null
     ) {
-        val ft = fragmentManager.beginTransaction()
+        val ft = supportFragmentManager.beginTransaction()
 
         if (args != null) {
             fragment.arguments = args
         }
 
-        ft.replace(view.id, fragment, fragmentName).commit()
+        ft.add(binding.mainFlId.id, fragment, fragmentName).commit()
     }
 
 

@@ -94,7 +94,7 @@ class AddPlaceWorker @AssistedInject constructor(
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val deepLinkIntent = Intent(context, MainActivity::class.java)
-        deepLinkIntent.putExtra("ADDED_PLACE_ID", placeDto?.placeId)
+        deepLinkIntent.putExtra("PLACE_ID", placeDto?.placeId)
         deepLinkIntent.putExtra("DEEPLINK", "PLACE_DETAILS_SCREEN")
         val requestCode = 1 // You can change this value if needed
         val flags =

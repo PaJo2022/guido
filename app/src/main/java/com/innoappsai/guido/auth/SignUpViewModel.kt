@@ -88,7 +88,8 @@ class SignUpViewModel @Inject constructor(
                 id = user.id,
                 email = user.email,
                 displayName = userName,
-                location = location
+                location = location,
+                placePreferences = allSelectedPlaceInterestes.map { it.id }
             )
             val isUserRegistered = authRepository.onRegister(newUser) != null
             if (!isUserRegistered) {

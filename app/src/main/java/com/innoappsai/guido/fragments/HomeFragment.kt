@@ -231,7 +231,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
                 navigateToGeneratedItinerary()
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
-                val placeId = arguments?.getString("ADDED_PLACE_ID") ?: return
+                val placeId = arguments?.getString("PLACE_ID") ?: return
                 navigateToPlaceDetailsScreen(placeId)
             }
 
