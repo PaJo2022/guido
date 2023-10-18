@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:id="@+id/bottomSheet"
     android:layout_height="wrap_content"
-    android:background="@color/color_primary"
 
     >
 
@@ -28,11 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_20sdp"
-        android:fontFamily="@font/font_medium"
+        style="@style/SubtitleTextStyle"
         android:gravity="center"
         android:text="We Need Your Location Access To Serve You The Best Tour Experience"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_16ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/animation_view" />
@@ -44,10 +41,9 @@
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:layout_marginVertical="@dimen/_12sdp"
         android:backgroundTint="@color/color_secondary"
-        android:fontFamily="@font/font_regular"
+        style="@style/TitleTextStyle"
         android:paddingVertical="@dimen/_12sdp"
         android:text="Provide Permission"
-        android:textSize="@dimen/_16ssp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

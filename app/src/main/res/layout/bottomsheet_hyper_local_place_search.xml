@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/location_search_animation" />
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cross"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/color_primary" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:gravity="center"
+        android:text="Enable Hyper Local Places"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animation_view" />
+
+    <TextView
+        android:id="@+id/rv_pajo_pro_message_1"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_4sdp"
+        android:text="Use Guido AI To Make Your Travel Experence To Next Level"
+        android:textSize="@dimen/_10ssp"
+        app:drawableStartCompat="@drawable/ic_blue_check_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
+    <TextView
+        android:id="@+id/rv_pajo_pro_message_2"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_4sdp"
+        android:text="Learn About The Places On The Go"
+        android:textSize="@dimen/_10ssp"
+        app:drawableStartCompat="@drawable/ic_blue_check_circle"
+        app:layout_constraintEnd_toEndOf="@+id/rv_pajo_pro_message_1"
+        app:layout_constraintStart_toStartOf="@+id/rv_pajo_pro_message_1"
+        app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_1" />
+
+
+    <TextView
+        android:id="@+id/rv_pajo_pro_message_3"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_4sdp"
+        android:text="Get Notified About Places Near You"
+        android:textSize="@dimen/_10ssp"
+        app:drawableStartCompat="@drawable/ic_blue_check_circle"
+        app:layout_constraintEnd_toEndOf="@+id/rv_pajo_pro_message_1"
+        app:layout_constraintStart_toStartOf="@+id/rv_pajo_pro_message_1"
+        app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_2" />
+
+    <Button
+        android:id="@+id/btn_permission"
+        style="@style/TitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginVertical="@dimen/_12sdp"
+        android:backgroundTint="@color/card_color4"
+        android:paddingVertical="@dimen/_12sdp"
+        android:text="Start Hyper Places Search"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_3" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,6 +56,7 @@ import com.innoappsai.guido.isVisibleAndEnable
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.PlaceFilter.PlaceFilterType
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.placeFilter.FilterActivity
 import com.innoappsai.guido.services.HyperLocalPlacesSearchService
 import com.innoappsai.guido.showToast
@@ -89,6 +90,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var placeFilterAdapter: PlaceFilterHorizontalAdapter
     private var googleMap: GoogleMap? = null
     private var doubleBackToExitPressedOnce = false
+    private var bottomHyperPlaceSearch: BottomHyperPlaceSearch? = null
+    private var bottomSheetTwoButtonHyperPlaceSearch: BottomTwoButton? = null
 
     private val zoom = 13f
 
@@ -107,10 +110,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         placesHorizontalAdapter = PlacesHorizontalListAdapter(requireContext())
         placeFilterAdapter = PlaceFilterHorizontalAdapter(requireContext())
         checkLocationPermission()
+        bottomHyperPlaceSearch = BottomHyperPlaceSearch()
+        bottomSheetTwoButtonHyperPlaceSearch = BottomTwoButton(
+            title = "Stop Hyper Local Search",
+            description = "Do You Want To Stop Hyper Local Search?",
+            onPositiveButtonClick = {
+                val serviceIntent =
+                    Intent(requireContext(), HyperLocalPlacesSearchService::class.java)
+                requireActivity().stopService(serviceIntent)
+                bottomSheetTwoButtonHyperPlaceSearch?.dismiss()
+            },
+            onNegetiveButtonClick = {
+                bottomSheetTwoButtonHyperPlaceSearch?.dismiss()
+            }
+        )
     }
 
     private fun askForNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the permission is already granted
             val permission = Manifest.permission.POST_NOTIFICATIONS
             if (ContextCompat.checkSelfPermission(requireContext(), permission)
@@ -118,7 +135,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             ) {
                 AddPlaceActivity.startAddPlaceActivity(requireContext())
             } else {
-
                 requestPermissionLauncher.launch(permission)
             }
         } else {
@@ -156,17 +172,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 ) {
                     // Permission is permanently denied (user selected "Never ask again")
                     // You may inform the user or redirect them to app settings
-                    Bundle().apply {
-                        putBoolean("SHOULD_GO_TO_SETTINGS", true)
-                        findNavController().navigate(R.id.bottomSheetAskLocationPermission, this)
-                    }
+                   requireActivity().openAppSettings()
                 } else {
                     // Permission is denied (user selected "Deny" but not "Never ask again")
                     // You can handle this case by showing a rationale
-                    Bundle().apply {
-                        putBoolean("SHOULD_GO_TO_SETTINGS", false)
-                        findNavController().navigate(R.id.bottomSheetAskLocationPermission, this)
-                    }
+                    requireActivity().showToast("Please allow location permission show we can help you with more personalzied travel expereince")
                 }
             }
         }
@@ -392,7 +402,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         observeWorkers()
 
         placeFilterAdapter.setOnFilterItemClicked{placeFilter->
-            viewModel.onFilterOptionClicked(placeFilter.placeFilterType)
+            if(placeFilter.placeFilterType != PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH){
+                viewModel.onFilterOptionClicked(placeFilter.placeFilterType)
+            }
             when(placeFilter.placeFilterType){
                 PlaceFilterType.FULL_FILTER -> {
                     startActivity(Intent(requireContext(), FilterActivity()::class.java))
@@ -429,21 +441,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH -> {
-                    val serviceIntent =
-                        Intent(requireContext(), HyperLocalPlacesSearchService::class.java)
+
                     if (isServiceRunning(
                             requireContext(),
                             HyperLocalPlacesSearchService::class.java
                         )
                     ) {
-                        requireActivity().stopService(serviceIntent)
+                        bottomSheetTwoButtonHyperPlaceSearch?.show(
+                            childFragmentManager,
+                            bottomSheetTwoButtonHyperPlaceSearch?.tag
+                        )
                     } else {
+                        bottomHyperPlaceSearch?.show(
+                            childFragmentManager,
+                            bottomHyperPlaceSearch?.tag
+                        )
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            requireActivity().startForegroundService(serviceIntent)
-                        } else {
-                            requireActivity().startService(serviceIntent)
-                        }
                     }
                 }
             }

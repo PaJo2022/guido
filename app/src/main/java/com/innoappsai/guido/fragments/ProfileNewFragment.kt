@@ -10,9 +10,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
+import com.innoappsai.guido.auth.AuthActivity
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentProfileNewBinding
 import com.innoappsai.guido.db.AppPrefs
@@ -26,6 +28,7 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
     private lateinit var thumbView: View
     private lateinit var viewModel: ProfileViewModel
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val auth by lazy { FirebaseAuth.getInstance() }
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -72,6 +75,12 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                 MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId
             ) }
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            btnLogout.setOnClickListener {
+                auth.signOut()
+                viewModel.signOut()
+                requireActivity().finish()
+                startActivity(Intent(requireContext(), AuthActivity::class.java))
+            }
         }
 
         viewModel.apply {

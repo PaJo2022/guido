@@ -88,7 +88,6 @@ class UserDetailsFragment :
                 binding.etProfileName.isEnabled = editState == UserDetailsViewModel.ProfileEditingState.EDITING
                 binding.etProfileBaseLocation.isEnabled = editState == UserDetailsViewModel.ProfileEditingState.EDITING
                 binding.titleEditProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
-                binding.btnLogout.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
                 binding.btnDeleteAccount.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.IDLE)
                 binding.titleSaveProfile.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
                 binding.ivCancelEdit.toggleEnableAndVisibility(editState == UserDetailsViewModel.ProfileEditingState.EDITING)
@@ -120,18 +119,12 @@ class UserDetailsFragment :
 
         binding.apply {
             btnCreate.isVisible = viewModel.isFromSignUpFlow
-            btnLogout.isVisible = !viewModel.isFromSignUpFlow
             btnDeleteAccount.isVisible = !viewModel.isFromSignUpFlow
 
             ivArrowBack.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
-            btnLogout.setOnClickListener {
-                auth.signOut()
-                viewModel.signOut()
-                requireActivity().finish()
-                startActivity(Intent(requireContext(), AuthActivity::class.java))
-            }
+
             ivEditProfilePicture.setOnClickListener {
                 requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }

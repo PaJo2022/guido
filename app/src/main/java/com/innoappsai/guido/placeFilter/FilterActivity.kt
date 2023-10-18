@@ -11,7 +11,6 @@ import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter
 import com.innoappsai.guido.adapters.PlacesTypeGroupAdapter.Companion.PlaceViewType.CHIPS_VIEW
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.ActivityFilterBinding
-import com.innoappsai.guido.toggleEnableAndAlpha
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -64,6 +63,7 @@ class FilterActivity : AppCompatActivity() {
             tvReset.setOnClickListener {
                 viewModel.getSavedPlaceTypePreferences()
             }
+            ivArrowBack.setOnClickListener { finish() }
         }
 
         viewModel.apply {
@@ -76,10 +76,10 @@ class FilterActivity : AppCompatActivity() {
             isPlaceInterestesSaved.collectIn(this@FilterActivity) {
                 finish()
             }
-            newInterestsSelected.observe(this@FilterActivity) {
-                binding.tvReset.toggleEnableAndAlpha(it)
-                binding.btnSaveChanges.toggleEnableAndAlpha(it)
-            }
+//            newInterestsSelected.observe(this@FilterActivity) {
+//                binding.tvReset.toggleEnableAndAlpha(it)
+//                binding.btnSaveChanges.toggleEnableAndAlpha(it)
+//            }
             isLoading.collectIn(this@FilterActivity) {
                 binding.swipeRefreshLayout.isRefreshing = it
             }

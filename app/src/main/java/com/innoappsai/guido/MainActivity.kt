@@ -3,9 +3,12 @@ package com.innoappsai.guido
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
@@ -30,12 +33,9 @@ class MainActivity : AppCompatActivity() {
 
         homeFragment = HomeFragment()
 
-        Log.i("JAPAN", "onCreate: ${intent?.extras}")
-        openNavFragment(
-            homeFragment!!,
-            "HomeFragment",
-            intent.extras
-        )
+
+        FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!)
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -59,19 +59,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun openNavFragment(
-        fragment: Fragment,
-        fragmentName: String,
-        args: Bundle? = null
-    ) {
-        val ft = supportFragmentManager.beginTransaction()
-
-        if (args != null) {
-            fragment.arguments = args
-        }
-
-        ft.add(binding.mainFlId.id, fragment, fragmentName).commit()
-    }
 
 
 

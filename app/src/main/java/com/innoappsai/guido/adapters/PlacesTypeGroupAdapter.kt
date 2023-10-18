@@ -53,7 +53,7 @@ class PlacesTypeGroupAdapter(
                     tvPlaceType.text = type.type + if(type.isOpened) "" else " (+${type.placeTypes.size})"
                 }
 
-
+                binding.chipGroupPlaces.removeAllViews()
                 type.placeTypes.forEachIndexed { index, it ->
                     addChips(binding.chipGroupPlaces, it, index) { type ->
                         onItemClickListener?.invoke(type)

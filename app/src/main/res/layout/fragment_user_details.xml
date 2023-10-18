@@ -294,18 +294,7 @@
              app:layout_constraintStart_toStartOf="@+id/ti_layout_user_location"
              app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
 
-         <androidx.appcompat.widget.AppCompatButton
-             android:id="@+id/btn_logout"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_marginHorizontal="@dimen/_10sdp"
-             android:layout_marginTop="@dimen/_32sdp"
-             android:background="@drawable/button_backgroud_corner"
-             android:gravity="center"
-             android:text="Logout"
-             android:textColor="@color/white"
-             android:textSize="@dimen/_13sdp"
-             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
+
 
 
          <androidx.appcompat.widget.AppCompatButton
@@ -320,8 +309,8 @@
              android:textColor="@color/white"
              android:textSize="@dimen/_13sdp"
              app:layout_constraintEnd_toEndOf="parent"
-             app:layout_constraintStart_toEndOf="@+id/btn_logout"
-             app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/ti_layout_user_location" />
 
 
          <ProgressBar

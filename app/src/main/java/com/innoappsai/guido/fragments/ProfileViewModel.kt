@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.innoappsai.guido.Constants
+import com.innoappsai.guido.auth.repo.auth.AuthRepository
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val placesRepository: PlacesRepository,
     private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val appPrefs: AppPrefs
 ) :
     ViewModel() {
@@ -108,4 +110,10 @@ class ProfileViewModel @Inject constructor(
     fun getUserData() = userRepository.getUserDetailsFlow()
 
     fun getSavedPreferences() = placesRepository.getAllSavedPlaceTypePreferencesFlow()
+
+    fun signOut() {
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.onLogOut()
+        }
+    }
 }
