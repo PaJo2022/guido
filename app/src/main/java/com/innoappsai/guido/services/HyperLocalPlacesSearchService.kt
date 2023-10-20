@@ -19,12 +19,17 @@ import com.innoappsai.guido.LocationClient
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp.Companion.isHyperLocalServiceIsRunning
 import com.innoappsai.guido.R
+import com.innoappsai.guido.TextToSpeechHelper
 import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.db.MyAppDataBase
 import com.innoappsai.guido.isDistanceOverNMeters
 import com.innoappsai.guido.model.PlaceIdWithName.PlaceWithIdAndTime
+import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
+import com.innoappsai.guido.model.chatGptModel.Message
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
+import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +43,13 @@ import kotlin.time.Duration.Companion.seconds
 @AndroidEntryPoint
 class HyperLocalPlacesSearchService : Service() {
 
+    private lateinit var textToSpeechHelper: TextToSpeechHelper
+
     @Inject
     lateinit var placesRepository: PlacesRepository
+
+    @Inject
+    lateinit var chatGptRepository: ChatGptRepository
 
     @Inject
     lateinit var appPrefs: AppPrefs
@@ -55,20 +65,21 @@ class HyperLocalPlacesSearchService : Service() {
     private val notificationChannelName = "Hyper Local Notifications"
     private val notificationId = 1
     private val PLACE_NOTIFICATION_ID = 2
-    private var notificationBuilder: NotificationCompat.Builder? = null
     private var lastLocation: LatLng? = null
 
-    private val notificationIntent by lazy {
-        val intent = Intent(this, MainActivity::class.java)
-        PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-    }
 
-    private var calls = 0
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
         isHyperLocalServiceIsRunning.value = true
+        textToSpeechHelper = TextToSpeechHelper(this,object : TextToSpeechHelper.TextToSpeechCallback{
+            override fun onError(errorMessage: String) {
+
+            }
+
+        })
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -153,7 +164,28 @@ class HyperLocalPlacesSearchService : Service() {
                 }
                 if (place != null) {
                     val firstPlaceName = place.placeName
+                    val placeUiModel = place.toPlaceUiModel()
                     val firstPlaceId = place.placeId
+                    val message =
+                        "I want you to act as a tour guide and generate a compelling guide details for the place also remember if you want have to introduce your self introduce as I am Guido AI, Your own personal travel assistance. Here are the details you can use:\n" +
+                                "\n" +
+                                "Place Name: ${placeUiModel.name}\n" +
+                                "Street Address: ${placeUiModel.address}\n" +
+                                "City: ${placeUiModel.city}\n" +
+                                "State: ${placeUiModel.state}\n" +
+                                "Country: ${placeUiModel.country}\n" +
+                                "Contact Number: ${placeUiModel.callNumber}\n" +
+                                "Website: ${placeUiModel.website}\n" +
+                                "Instagram: ${placeUiModel.instagram}\n" +
+                                "Facebook: ${placeUiModel.facebook}\n" +
+                                "Business Email: ${placeUiModel.businessEmail}\n" +
+                                "Business Owner: ${placeUiModel.name}\n" +
+                                "Timings: ${placeUiModel.placeTimings}"
+                    val chatGptResponse =  chatGptRepository.getTourDataAboutTheLandMark(
+                        chatGptRequest =  ChatGptRequest(
+                            listOf(Message(message, "user"))
+                        )
+                    )
                     val notificationText =
                         "You are at ${firstPlaceName}, Want To Know More About It?"
                     // Display a local notification
@@ -161,6 +193,7 @@ class HyperLocalPlacesSearchService : Service() {
                     withContext(Dispatchers.Main) {
                         updateNotification("Places Near You", notificationText, firstPlaceId)
                     }
+                    chatGptResponse?.let { textToSpeechHelper.convertTextToSpeech(it) }
                 }
                 delay(5.minutes)
             }
@@ -171,6 +204,7 @@ class HyperLocalPlacesSearchService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        textToSpeechHelper.shutdown()
         isHyperLocalServiceIsRunning.value = false
     }
 
