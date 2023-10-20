@@ -181,11 +181,12 @@ class HyperLocalPlacesSearchService : Service() {
                                 "Business Email: ${placeUiModel.businessEmail}\n" +
                                 "Business Owner: ${placeUiModel.name}\n" +
                                 "Timings: ${placeUiModel.placeTimings}"
-                    val chatGptResponse =  chatGptRepository.getTourDataAboutTheLandMark(
-                        chatGptRequest =  ChatGptRequest(
-                            listOf(Message(message, "user"))
-                        )
-                    )
+                    val chatGptResponse =
+                        if (appPrefs.isTTSEnabled) chatGptRepository.getTourDataAboutTheLandMark(
+                            chatGptRequest = ChatGptRequest(
+                                listOf(Message(message, "user"))
+                            )
+                        ) else null
                     val notificationText =
                         "You are at ${firstPlaceName}, Want To Know More About It?"
                     // Display a local notification
@@ -195,7 +196,7 @@ class HyperLocalPlacesSearchService : Service() {
                     }
                     chatGptResponse?.let { textToSpeechHelper.convertTextToSpeech(it) }
                 }
-                delay(5.minutes)
+                delay(appPrefs.hyperLocalSearchPoolingTime * 60 * 1000)
             }
         }
 

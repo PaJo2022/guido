@@ -18,7 +18,7 @@ enum class PlaceFilterType {
 val placeFiltersList = listOf(
     PlaceFilter(leftIcon = R.drawable.ic_filter, placeFilterType = PlaceFilterType.FULL_FILTER),
     PlaceFilter(leftIcon = R.drawable.ic_generate, title = "Generate Travel Itinerary", placeFilterType = PlaceFilterType.TRAVEL_ITINERARY),
-    PlaceFilter(leftIcon = R.drawable.ic_generate, title = "HyperLocal Places", placeFilterType = PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH),
+    PlaceFilter(leftIcon = R.drawable.ic_generate, title = "Hyper Local Search", placeFilterType = PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH),
     PlaceFilter(
         title = "Sort",
         rightIcon = R.drawable.ic_sort,

@@ -40,7 +40,7 @@
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_20sdp"
         android:gravity="center"
-        android:text="Enable Hyper Local Places"
+        android:text="Enable Hyper Local Seach"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/animation_view" />
@@ -53,7 +53,7 @@
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:drawablePadding="@dimen/_4sdp"
-        android:text="Use Guido AI To Make Your Travel Experence To Next Level"
+        android:text="Use Guido AI To Take Your Travel Experence To Next Level"
         android:textSize="@dimen/_10ssp"
         app:drawableStartCompat="@drawable/ic_blue_check_circle"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,21 +90,90 @@
         app:layout_constraintStart_toStartOf="@+id/rv_pajo_pro_message_1"
         app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_2" />
 
+    <TextView
+        android:id="@+id/tv_budget"
+        style="@style/TitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:text="How Frequent You Want Updates?"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_3" />
+
+
+    <TextView
+        android:id="@+id/tv_min_time"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:text="1 Minute"
+        app:layout_constraintStart_toStartOf="@+id/tv_budget"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget" />
+
+    <SeekBar
+        android:id="@+id/seekbar_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="60"
+        android:min="1"
+        android:progress="1"
+        android:progressTint="@color/card_color4"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_min_time"
+        app:layout_constraintEnd_toStartOf="@+id/tv_max_time"
+        app:layout_constraintStart_toEndOf="@+id/tv_min_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_min_time" />
+
+
+
+    <TextView
+        android:id="@+id/tv_max_time"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:text="60 Minutes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget" />
+
+
+    <TextView
+        android:id="@+id/tv_tts_title"
+        style="@style/SubtitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:text="Text To Speech"
+        app:layout_constraintStart_toStartOf="@+id/tv_min_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_min_time" />
+
+    <ToggleButton
+        android:id="@+id/toggle_tts"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:background="@drawable/toggle_me"
+        android:checked="false"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_tts_title"
+        app:layout_constraintEnd_toEndOf="@+id/tv_max_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_tts_title" />
+
     <Button
         android:id="@+id/btn_permission"
         style="@style/TitleTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
-        android:layout_marginVertical="@dimen/_12sdp"
+        android:layout_marginVertical="@dimen/_20sdp"
         android:backgroundTint="@color/card_color4"
         android:paddingVertical="@dimen/_12sdp"
-        android:text="Start Hyper Places Search"
+        android:text="Start Hyper Local Search"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv_pajo_pro_message_3" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_tts_title" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

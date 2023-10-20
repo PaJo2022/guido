@@ -1,6 +1,7 @@
 package com.innoappsai.guido.fragments
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -9,15 +10,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.innoappsai.guido.databinding.BottomsheetHyperLocalPlaceSearchBinding
+import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.services.HyperLocalPlacesSearchService
 import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BottomHyperPlaceSearch : BottomSheetDialogFragment() {
@@ -26,7 +31,29 @@ class BottomHyperPlaceSearch : BottomSheetDialogFragment() {
     private var _binding: BottomsheetHyperLocalPlaceSearchBinding? = null
     private val binding: BottomsheetHyperLocalPlaceSearchBinding get() = _binding!!
 
+    @Inject
+    lateinit var appPrefs: AppPrefs
 
+    private fun setHeightAsContentHeight(bottomSheet: View) {
+        val layoutParams = bottomSheet.layoutParams
+        bottomSheet.layoutParams = layoutParams
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = BottomSheetDialog(requireContext(), theme)
+        dialog.setOnShowListener {
+
+            val bottomSheetDialog = it as BottomSheetDialog
+            val parentLayout =
+                bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            parentLayout?.let { it ->
+                val behaviour = BottomSheetBehavior.from(it)
+                setHeightAsContentHeight(it)
+                behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+        return dialog
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,18 +68,49 @@ class BottomHyperPlaceSearch : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.apply {
+            toggleTts.isChecked = appPrefs.isTTSEnabled
+            seekbarTime.progress = appPrefs.hyperLocalSearchPoolingTime.toInt()
+            tvMinTime.text = "${appPrefs.hyperLocalSearchPoolingTime} Minutes"
+        }
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            toggleTts.setOnCheckedChangeListener { compoundButton, b ->
+                appPrefs.isTTSEnabled = b
+            }
+            toggleTts.apply {
+                text = null
+                textOn = null
+                textOff = null
+            }
             btnPermission.setOnClickListener {
                 checkLocationPermission()
             }
             ivClose.setOnClickListener {
                 dismiss()
             }
+            seekbarTime.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                    binding.tvMinTime.text = "${p1} Minutes"
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+                    appPrefs.hyperLocalSearchPoolingTime = p0?.progress?.toLong() ?: 1
+
+                }
+
+            })
         }
 
     }
