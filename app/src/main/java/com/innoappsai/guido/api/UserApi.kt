@@ -11,7 +11,7 @@ import retrofit2.http.Query
 
 interface UserApi {
 
-    @GET("user")
+    @GET("login-user-by-id")
     suspend fun getUserById(
         @Query("userId") userId: String
     ): Response<User?>

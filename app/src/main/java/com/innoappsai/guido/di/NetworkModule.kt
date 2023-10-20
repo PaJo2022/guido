@@ -1,10 +1,13 @@
 package com.innoappsai.guido.di
 
 
-import com.innoappsai.guido.api.UserApi
+import com.innoappsai.guido.api.AuthenticatorApi
 import com.innoappsai.guido.api.ChatGptApi
 import com.innoappsai.guido.api.GuidoApi
+import com.innoappsai.guido.api.UserApi
 import com.innoappsai.guido.api.VideoApi
+import com.innoappsai.guido.data.TokenAuthenticator
+import com.innoappsai.guido.db.AppPrefs
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,15 +25,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+    companion object {
+        private const val BASE_URL = "http://64.227.157.189:7000/"
+        //private const val BASE_URL = "https://api.guidoai.com/"
+    }
+
     private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     @Provides
     @Singleton
-    fun provideGuidoApi(okHttpClient: OkHttpClient) : GuidoApi {
-
-        return Retrofit.Builder().baseUrl("http://64.227.157.189:7000/").addConverterFactory(
+    fun provideGuidoApi(okHttpClient: OkHttpClient): GuidoApi {
+        return Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(
             GsonConverterFactory.create()
         ).client(okHttpClient).build().create(GuidoApi::class.java)
     }
@@ -55,7 +62,7 @@ class NetworkModule {
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient.newBuilder().addInterceptor(AuthInterceptor(token)).build())
+            .client(okHttpClient.newBuilder().addInterceptor(ChatGptAuthInterceptor(token)).build())
             .build()
 
         return retrofit.create(ChatGptApi::class.java)
@@ -66,11 +73,9 @@ class NetworkModule {
     @Singleton
     fun provideAuthApi(okHttpClient: OkHttpClient) : UserApi {
 
-        val baseUrl = "http://64.227.157.189:7000/"
-
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient.newBuilder().build())
             .build()
@@ -78,7 +83,20 @@ class NetworkModule {
         return retrofit.create(UserApi::class.java)
     }
 
-    class AuthInterceptor(private val token: String) : Interceptor {
+    @Provides
+    @Singleton
+    fun provideAuthenticatorApi(): AuthenticatorApi {
+
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(AuthenticatorApi::class.java)
+    }
+
+    class ChatGptAuthInterceptor(private val token: String) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $token")
@@ -87,17 +105,32 @@ class NetworkModule {
         }
     }
 
+    class AuthInterceptor(private val token: String?) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request().newBuilder()
+                .addHeader("authorization", token.toString())
+                .build()
+            return chain.proceed(request)
+        }
+    }
+
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient {
+    fun providesOkHttpClient(authenticatorApi: AuthenticatorApi, appPrefs: AppPrefs): OkHttpClient {
         val client = OkHttpClient.Builder()
             .connectTimeout(2, TimeUnit.MINUTES)
             .writeTimeout(2, TimeUnit.MINUTES)
             .readTimeout(2, TimeUnit.MINUTES)
-
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
         client.addInterceptor(logging)
+        client.addInterceptor(AuthInterceptor(appPrefs.authToken))
+        client.authenticator(
+            TokenAuthenticator(
+                api = authenticatorApi,
+                appPrefs = appPrefs
+            )
+        )
 
         return client.build()
     }

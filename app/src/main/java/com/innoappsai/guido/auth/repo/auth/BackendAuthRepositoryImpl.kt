@@ -20,6 +20,7 @@ class BackendAuthRepositoryImpl @Inject constructor(
     override suspend fun onRegister(user: User): User? {
         val apiResponse = userApi.registerUser(user)
         return if (apiResponse.isSuccessful && apiResponse.body() != null) {
+            appPrefs.authToken = apiResponse.headers()["authorization"]
             apiResponse.body()
         } else {
             null
@@ -54,6 +55,7 @@ class BackendAuthRepositoryImpl @Inject constructor(
 
     override suspend fun onLogin(fbUserId: String): User? {
         val apiResponse = userApi.getUserById(fbUserId.trim())
+        appPrefs.authToken = apiResponse.headers()["authorization"]
         return if (apiResponse.isSuccessful && apiResponse.body() != null) {
             apiResponse.body()
         } else {

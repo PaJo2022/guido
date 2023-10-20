@@ -47,7 +47,11 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override fun getUserDetailsFlow() = db.userDao().getUserFlow()
-    override suspend fun getUserDetailsFromServer(userId: String): User? = userApi.getUserById(userId).body()
+    override suspend fun getUserDetailsFromServer(userId: String): User?{
+        val response = userApi.getUserById(userId)
+        appPrefs.authToken = response.headers()["authorization"]
+        return response.body()
+    }
     override suspend fun setProfilePicture(userId: String, pictureUrl: String): User? {
         val response = userApi.setProfilePicture(userId,pictureUrl)
         return response.body()
