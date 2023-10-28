@@ -50,7 +50,7 @@
 
 
     <CalendarView
-        android:id="@+id/rv_day_time_selection"
+        android:id="@+id/calender"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
