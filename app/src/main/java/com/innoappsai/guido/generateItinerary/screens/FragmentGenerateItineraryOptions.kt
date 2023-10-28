@@ -45,6 +45,9 @@ class FragmentGenerateItineraryOptions :
             btnNext.setOnClickListener {
                 onStepDone()
             }
+            btnPrev.setOnClickListener {
+                onStepPrevious()
+            }
         }
 
         addOnBackPressedCallback {

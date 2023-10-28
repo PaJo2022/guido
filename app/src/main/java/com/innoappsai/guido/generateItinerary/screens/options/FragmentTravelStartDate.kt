@@ -16,7 +16,6 @@ class FragmentTravelStartDate : BaseFragment<LayoutItinearyGenerationTravelDateB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-// Get the current date
         val currentDate = Date(System.currentTimeMillis())
 
 

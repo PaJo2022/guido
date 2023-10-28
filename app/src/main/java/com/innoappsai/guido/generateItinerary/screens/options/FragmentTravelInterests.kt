@@ -37,5 +37,9 @@ class FragmentTravelInterests : BaseFragment<LayoutItinearyGenerationTravelInter
                 adapter.setInterestsOptions(it)
             }
         }
+
+        adapter.setOnSliderChangeListener { id, value ->
+            viewModel.onInterestsSliderMoved(id, value)
+        }
     }
 }

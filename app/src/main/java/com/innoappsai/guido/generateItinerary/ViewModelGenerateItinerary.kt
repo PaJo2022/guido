@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.innoappsai.guido.R
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 import com.innoappsai.guido.generateItinerary.model.InterestsSelection
+import com.innoappsai.guido.generateItinerary.model.Item
+import com.innoappsai.guido.generateItinerary.model.travelBudgeItemList
+import com.innoappsai.guido.generateItinerary.model.travelCompanionItemList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -128,8 +131,41 @@ class ViewModelGenerateItinerary @Inject constructor() : ViewModel() {
     }
 
 
+    // Travel Companions Selection Section
+    private val travelCompanionList = ArrayList(travelCompanionItemList)
+    private val _travelCompanionListState: MutableLiveData<ArrayList<Item>> =
+        MutableLiveData()
+    val travelCompanionListState: LiveData<ArrayList<Item>> get() = _travelCompanionListState
+
+    fun onTravelCompanionSelected(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            travelCompanionItemList.forEach {
+                it.isSelected = it.id == id
+            }
+            _travelCompanionListState.postValue(travelCompanionList)
+        }
+    }
+
+
+    // Travel Budget Selection Section
+    private val travelBudgetList = ArrayList(travelBudgeItemList)
+    private val _travelBudgetListState: MutableLiveData<ArrayList<Item>> =
+        MutableLiveData()
+    val travelBudgetListState: LiveData<ArrayList<Item>> get() = _travelBudgetListState
+
+    fun onTravelBudgetSelected(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            travelBudgetList.forEach {
+                it.isSelected = it.id == id
+            }
+            _travelBudgetListState.postValue(travelBudgetList)
+        }
+    }
+
     init {
         _travelDurationState.value = travelDuration
+        _travelCompanionListState.value = travelCompanionList
+        _travelBudgetListState.value = travelBudgetList
         _interestsSliderListState.value = interestsSliderList
     }
 }
