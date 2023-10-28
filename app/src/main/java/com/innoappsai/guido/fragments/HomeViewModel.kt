@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -101,6 +102,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         getNearByPlaces()
+        _selectedFilters.value = filterOptions
     }
 
     fun toggleHyperLocalPlaceSearchOnPlaceFilterMenu(isEnabled: Boolean) {
@@ -111,18 +113,12 @@ class HomeViewModel @Inject constructor(
 
     fun onFilterOptionClicked(placeFilterType: PlaceFilterType) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (placeFilterType == PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH) {
-                filterOptions.find { it.placeFilterType == placeFilterType }?.isSelected =
-                    !filterOptions.find { it.placeFilterType == placeFilterType }?.isSelected!!
-            } else {
-                filterOptions.forEach {
-                    if (placeFilterType != PlaceFilterType.MORE_FILTERS && placeFilterType != PlaceFilterType.FULL_FILTER && placeFilterType != PlaceFilterType.TRAVEL_ITINERARY) {
-                        it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
-                    }
-
+            filterOptions.forEach {
+                if (placeFilterType != PlaceFilterType.MORE_FILTERS && placeFilterType != PlaceFilterType.FULL_FILTER && placeFilterType != PlaceFilterType.TRAVEL_ITINERARY) {
+                    it.isSelected = it.placeFilterType.ordinal == placeFilterType.ordinal
                 }
-            }
 
+            }
             _selectedFilters.postValue(filterOptions)
         }
     }
@@ -252,64 +248,66 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun sortPlaceBasedOnSortType(sortList : List<PlaceUiModel>,sortType: SortType): List<PlaceUiModel> {
+    private suspend fun sortPlaceBasedOnSortType(sortList : List<PlaceUiModel>,sortType: SortType): List<PlaceUiModel> {
         if (MyApp.userCurrentLatLng == null) return sortList
-       return when (sortType) {
-            SortType.DISTANCE -> {
-                sortList.map { place ->
-                    val distance = calculateDistance(
-                        MyApp.userCurrentLatLng?.latitude!!,
-                        MyApp.userCurrentLatLng?.longitude!!,
-                        place.latLng?.latitude!!,
-                        place.latLng.longitude
-                    ) / 1000
-                    place to distance
-                }
-                    .sortedBy { it.second }
-                    .map { it.first }
-            }
+       return withContext(Dispatchers.IO){
+           when (sortType) {
+               SortType.DISTANCE -> {
+                   sortList.map { place ->
+                       val distance = calculateDistance(
+                           MyApp.userCurrentLatLng?.latitude!!,
+                           MyApp.userCurrentLatLng?.longitude!!,
+                           place.latLng?.latitude!!,
+                           place.latLng.longitude
+                       ) / 1000
+                       place to distance
+                   }
+                       .sortedBy { it.second }
+                       .map { it.first }
+               }
 
-            SortType.MOST_POPULAR -> {
-                sortList.sortedByDescending { it.reviewsCount }
-            }
+               SortType.MOST_POPULAR -> {
+                   sortList.sortedByDescending { it.reviewsCount }
+               }
 
-            SortType.HIGHEST_RATING -> {
-                sortList.sortedByDescending { it.rating }
-            }
+               SortType.HIGHEST_RATING -> {
+                   sortList.sortedByDescending { it.rating }
+               }
 
-            SortType.A_TO_Z -> {
-                sortList.sortedBy { it.name }
-            }
+               SortType.A_TO_Z -> {
+                   sortList.sortedBy { it.name }
+               }
 
-            SortType.COST_LOW_TO_HIGH -> {
-                sortList.filter { it.pricingType != null }.mapNotNull { place ->
-                    val priceType = when (place.pricingType?.toLowerCase()) {
-                        "inexpensive" -> 0
-                        "moderate" -> 1
-                        "expensive" -> 2
-                        else -> -1
-                    }
-                    place to priceType
-                }.sortedBy { it.second }.map { it.first }
-            }
+               SortType.COST_LOW_TO_HIGH -> {
+                   sortList.filter { it.pricingType != null }.mapNotNull { place ->
+                       val priceType = when (place.pricingType?.lowercase()) {
+                           "inexpensive" -> 0
+                           "moderate" -> 1
+                           "expensive" -> 2
+                           else -> -1
+                       }
+                       place to priceType
+                   }.sortedBy { it.second }.map { it.first }
+               }
 
-            SortType.COST_HIGH_TO_LOW -> {
-                sortList.filter { it.pricingType != null }.mapNotNull { place ->
-                    val priceType = when (place.pricingType?.toLowerCase()) {
-                        "inexpensive" -> 0
-                        "moderate" -> 1
-                        "expensive" -> 2
-                        else -> -1
-                    }
-                    place to priceType
-                }.sortedByDescending { it.second }.map { it.first }
-            }
+               SortType.COST_HIGH_TO_LOW -> {
+                   sortList.filter { it.pricingType != null }.mapNotNull { place ->
+                       val priceType = when (place.pricingType?.lowercase()) {
+                           "inexpensive" -> 0
+                           "moderate" -> 1
+                           "expensive" -> 2
+                           else -> -1
+                       }
+                       place to priceType
+                   }.sortedByDescending { it.second }.map { it.first }
+               }
 
-            SortType.OPEN_NOW -> {
-                sortList.filter { it.placeOpenStatus.equals("open", true) }
-            }
+               SortType.OPEN_NOW -> {
+                   sortList.filter { it.placeOpenStatus.equals("open", true) }
+               }
 
-        }
+           }
+       }
     }
 
 
@@ -344,7 +342,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onMarkerClicked(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var selectedPosition = 0
             val job = async {
                 markerDataList.forEachIndexed { index, it ->
@@ -363,7 +361,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setThePositionForHorizontalPlaceAdapter(pos: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _selectedMarker.emit(markerDataList[pos])
         }
     }

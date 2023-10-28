@@ -2,6 +2,7 @@ package com.innoappsai.guido.adapters
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -16,7 +17,7 @@ import com.innoappsai.guido.model.PlaceFilter.placeFiltersList
 class PlaceFilterHorizontalAdapter(private val appContext: Context) :
     RecyclerView.Adapter<PlaceFilterHorizontalAdapter.PlaceFilterHorizontalAdapterViewHolder>() {
 
-    private var _places: List<PlaceFilter> = placeFiltersList
+    private var _places: List<PlaceFilter> = emptyList()
 
     fun setFilters(filters: ArrayList<PlaceFilter>) {
         _places = filters
@@ -60,19 +61,18 @@ class PlaceFilterHorizontalAdapter(private val appContext: Context) :
                 tvFilter.setTextColor(textColor)
                 ivLeftIcon.setColorFilter(iconTintColor, PorterDuff.Mode.SRC_IN)
                 ivRightIcon.setColorFilter(iconTintColor, PorterDuff.Mode.SRC_IN)
-
+                ivLeftIcon.isVisible = placeFilter.leftIcon != null
+                ivRightIcon.isVisible = placeFilter.rightIcon != null
+                tvFilter.isVisible = placeFilter.title != null
                 placeFilter.leftIcon?.let {
-                    ivLeftIcon.isVisible = true
                     ivLeftIcon.setImageResource(it)
                 }
 
                 placeFilter.title?.let {
-                    tvFilter.isVisible = true
                     tvFilter.text = it
                 }
 
                 placeFilter.rightIcon?.let {
-                    ivRightIcon.isVisible = true
                     ivRightIcon.setImageResource(it)
                 }
                 parentLayout.setOnClickListener {

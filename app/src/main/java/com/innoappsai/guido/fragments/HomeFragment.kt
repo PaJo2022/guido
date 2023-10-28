@@ -37,6 +37,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.Constants.iconResourceMapping
+import com.innoappsai.guido.FragmentUtils
+import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.PlaceFilterHorizontalAdapter
@@ -212,25 +214,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun openNavFragment(
-        f: Fragment?,
-        fm: FragmentManager,
-        fragmentName: String,
-        view: View,
+        f: Fragment,
         args: Bundle? = null
     ) {
-        val ft = fm.beginTransaction()
-
-        // Pass the bundle as arguments to the fragment, if provided
-        if (args != null) {
-            f?.arguments = args
-        }
-        ft.setCustomAnimations(
-            R.anim.in_from_right,
-            R.anim.out_to_left,
-            R.anim.in_from_left,
-            R.anim.out_to_right
-        )
-        ft.replace(view.id, f!!, fragmentName).addToBackStack(fragmentName).commit()
+        FragmentUtils.replaceFragment((activity as MainActivity), binding.flId.id, f,args,true)
     }
 
 
@@ -279,9 +266,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             tvLastSearchLocation.setOnClickListener {
                 openNavFragment(
                     SearchLocationFragment(),
-                    childFragmentManager,
-                    "SearchLocationFragment",
-                    binding.flId
                 )
             }
 
@@ -291,10 +275,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
             ivUserProfileImage.setOnClickListener {
                 openNavFragment(
-                    ProfileNewFragment(),
-                    childFragmentManager,
-                    "ProfileFragment",
-                    binding.flId
+                    ProfileNewFragment()
                 )
             }
             bottomsheetPlaceList.apply {
@@ -307,11 +288,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                         putString("PLACE_ADDRESS", MyApp.userCurrentFormattedAddress)
                         putString("PLACE_COUNTRY", MyApp.currentCountry)
                         openNavFragment(
-                            FragmentPlaceGenerateItinerary(),
-                            childFragmentManager,
-                            "FragmentPlaceGenerateItineary",
-                            binding.flId,
-                            this
+                            FragmentPlaceGenerateItinerary()
                         )
                     }
                 }
@@ -480,11 +457,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         Bundle().apply {
             putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
             openNavFragment(
-                FragmentPlaceItinerary(),
-                childFragmentManager,
-                "FragmentPlaceItineary",
-                binding.flId,
-                this
+                FragmentPlaceItinerary()
             )
         }
         viewModel.onItineraryGenerationCancelledClicked()
@@ -495,11 +468,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         Bundle().apply {
             putString("PLACE_ID", placeId)
             openNavFragment(
-                LocationDetailsFragment(),
-                childFragmentManager,
-                "LocationDetailsFragment",
-                binding.flId,
-                this
+                LocationDetailsFragment()
             )
         }
     }
@@ -638,11 +607,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             Bundle().apply {
                 putString("PLACE_ID", it.placeId)
                 openNavFragment(
-                    LocationDetailsFragment(),
-                    childFragmentManager,
-                    "LocationDetailsFragment",
-                    binding.flId,
-                    this
+                    LocationDetailsFragment()
                 )
             }
         }
@@ -651,11 +616,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             Bundle().apply {
                 putString("PLACE_ID", it.placeId)
                 openNavFragment(
-                    LocationDetailsFragment(),
-                    childFragmentManager,
-                    "LocationDetailsFragment",
-                    binding.flId,
-                    this
+                    LocationDetailsFragment()
                 )
             }
         }

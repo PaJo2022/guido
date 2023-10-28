@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.FragmentUtils
+import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.auth.AuthActivity
@@ -40,26 +42,11 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
             .inflate(R.layout.layout_seekbar_thumb, null, false)
     }
 
-    private fun OpenNavFragment(
+    private fun openNavFragment(
         f: Fragment,
-        fm: FragmentManager,
-        fragmentName: String,
-        view: View,
         args: Bundle? = null
     ) {
-        val ft = fm.beginTransaction()
-
-        // Pass the bundle as arguments to the fragment, if provided
-        if (args != null) {
-            f.arguments = args
-        }
-        ft.setCustomAnimations(
-            R.anim.in_from_right,
-            R.anim.out_to_left,
-            R.anim.in_from_left,
-            R.anim.out_to_right
-        )
-        ft.replace(view.id, f, fragmentName).addToBackStack(fragmentName).commit()
+        FragmentUtils.replaceFragment((activity as MainActivity), binding.flId.id, f,args,true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,12 +54,12 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
 
         binding.apply {
             tvEditProfile.setOnClickListener {
-                OpenNavFragment(
-                    UserDetailsFragment(), parentFragmentManager, "UserFragment", binding.flId
+                openNavFragment(
+                    UserDetailsFragment()
                 )
             }
-            tvMyPlaces.setOnClickListener { OpenNavFragment(
-                MyPlacesFragment(), parentFragmentManager, "MyPlacesFragment", binding.flId
+            tvMyPlaces.setOnClickListener { openNavFragment(
+                MyPlacesFragment()
             ) }
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             btnLogout.setOnClickListener {

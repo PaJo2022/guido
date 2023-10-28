@@ -102,7 +102,7 @@ class FragmentPlaceGenerateItinerary :
         binding.btnGenerate.setOnClickListener {
             val numberOfDaysUserWantToTravel = binding.etPlaceStayDays.text.toString()
             val extraInformation = binding.etPlaceExtraInfo.text.toString()
-                viewModel.generate(numberOfDaysUserWantToTravel,extraInformation,placeAddress)
+            viewModel.generate(numberOfDaysUserWantToTravel,extraInformation,placeAddress)
         }
 
         viewModel.apply {

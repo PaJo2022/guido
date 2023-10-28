@@ -30,16 +30,12 @@ class MainActivity : AppCompatActivity() {
         homeFragment = HomeFragment()
 
 
-        FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!)
+        FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!,intent?.extras)
 
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.i(
-            "JAPAN",
-            "onNewIntent: ${intent?.extras?.getString("DEEPLINK")} ${intent?.extras?.getString("PLACE_ID")}"
-        )
         intent?.extras?.getString("DEEPLINK")?.let {
             if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
                 homeFragment?.navigateToGeneratedItinerary()
