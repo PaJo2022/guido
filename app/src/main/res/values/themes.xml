@@ -44,14 +44,14 @@
     <!-- Title Text Style -->
     <style name="TitleTextStyle">
         <item name="android:textSize">@dimen/_16ssp</item>  <!-- Text size for title -->
-        <item name="android:textColor">@color/light_text_color</item>  <!-- Text color for title -->
+        <item name="android:textColor">@color/black</item>  <!-- Text color for title -->
         <item name="android:fontFamily">@font/font_bold</item>  <!-- Font for title -->
     </style>
 
     <!-- Subtitle Text Style -->
     <style name="SubtitleTextStyle">
         <item name="android:textSize">@dimen/_14ssp</item>  <!-- Text size for subtitle -->
-        <item name="android:textColor">@color/light_text_color
+        <item name="android:textColor">@color/black
         </item>  <!-- Text color for subtitle -->
         <item name="android:fontFamily">@font/font_medium</item>  <!-- Font for subtitle -->
     </style>
@@ -59,7 +59,7 @@
     <!-- Description Text Style -->
     <style name="DescriptionTextStyle">
         <item name="android:textSize">@dimen/_12ssp</item>  <!-- Text size for description -->
-        <item name="android:textColor">@color/light_text_color
+        <item name="android:textColor">@color/black
         </item>  <!-- Text color for description -->
         <item name="android:fontFamily">@font/font_regular</item>  <!-- Font for description -->
     </style>
