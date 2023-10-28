@@ -3,7 +3,11 @@ package com.innoappsai.guido.generateItinerary.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelBudgetBinding
+import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelCompanionsBinding
+import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelDateBinding
 import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelDurationBinding
+import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelInterestsBinding
 import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelTimeDistributionBinding
 import com.innoappsai.guido.generateItinerary.model.TravelItineraryGenerationOption
 
@@ -19,11 +23,45 @@ class AdapterItineraryGenerationOptions : RecyclerView.Adapter<RecyclerView.View
     inner class AdapterItineraryGenerationTravelDurationOptionViewHolder(private val binding: LayoutItinearyGenerationTravelDurationBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        fun bind() {
+
+        }
     }
 
     inner class AdapterItineraryGenerationTravelEachDayTravelTimeOptionViewHolder(private val binding: LayoutItinearyGenerationTravelTimeDistributionBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
 
+        }
+    }
+
+    inner class AdapterItineraryGenerationTravelDatesOptionViewHolder(private val binding: LayoutItinearyGenerationTravelDateBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+
+        }
+    }
+
+    inner class AdapterItineraryGenerationTravelGroupTypeOptionViewHolder(private val binding: LayoutItinearyGenerationTravelCompanionsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+
+        }
+    }
+
+    inner class AdapterItineraryGenerationTravelInterestsOptionViewHolder(private val binding: LayoutItinearyGenerationTravelInterestsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+
+        }
+    }
+
+
+    inner class AdapterItineraryGenerationTravelBudgetTypeOptionViewHolder(private val binding: LayoutItinearyGenerationTravelBudgetBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -48,7 +86,48 @@ class AdapterItineraryGenerationOptions : RecyclerView.Adapter<RecyclerView.View
                 )
             }
 
-            else ->
+            viewType == TravelItineraryGenerationOption.TRAVEL_DATE.ordinal -> {
+                AdapterItineraryGenerationTravelDatesOptionViewHolder(
+                    LayoutItinearyGenerationTravelDateBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            viewType == TravelItineraryGenerationOption.TRAVEL_COMPANION.ordinal -> {
+                AdapterItineraryGenerationTravelGroupTypeOptionViewHolder(
+                    LayoutItinearyGenerationTravelCompanionsBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            viewType == TravelItineraryGenerationOption.TRAVEL_INTERESTS.ordinal -> {
+                AdapterItineraryGenerationTravelInterestsOptionViewHolder(
+                    LayoutItinearyGenerationTravelInterestsBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            viewType == TravelItineraryGenerationOption.TRAVEL_BUDGET.ordinal -> {
+                AdapterItineraryGenerationTravelBudgetTypeOptionViewHolder(
+                    LayoutItinearyGenerationTravelBudgetBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+
+            else -> throw Exception("No Layout Inflated")
         }
     }
 
@@ -61,6 +140,30 @@ class AdapterItineraryGenerationOptions : RecyclerView.Adapter<RecyclerView.View
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        when (holder) {
+            is AdapterItineraryGenerationTravelDurationOptionViewHolder -> {
+                holder.bind()
+            }
+
+            is AdapterItineraryGenerationTravelEachDayTravelTimeOptionViewHolder -> {
+                holder.bind()
+            }
+
+            is AdapterItineraryGenerationTravelDatesOptionViewHolder -> {
+                holder.bind()
+            }
+
+            is AdapterItineraryGenerationTravelGroupTypeOptionViewHolder -> {
+                holder.bind()
+            }
+
+            is AdapterItineraryGenerationTravelInterestsOptionViewHolder -> {
+                holder.bind()
+            }
+
+            is AdapterItineraryGenerationTravelBudgetTypeOptionViewHolder -> {
+                holder.bind()
+            }
+        }
     }
 }

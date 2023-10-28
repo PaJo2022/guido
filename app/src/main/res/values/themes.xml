@@ -65,6 +65,20 @@
     </style>
 
 
+    <style name="CalenderViewCustom" parent="Theme.AppCompat">
+
+    </style>
+
+    <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
+    <style name="CalenderViewWeekCustomText" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
+
+
 
 
 </resources>

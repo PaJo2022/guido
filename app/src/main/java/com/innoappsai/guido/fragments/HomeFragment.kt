@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -52,6 +51,7 @@ import com.innoappsai.guido.calculateDistance
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentHomeBinding
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.generateItinerary.GenerateItineraryActivity
 import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isServiceRunning
 import com.innoappsai.guido.isVisibleAndEnable
@@ -410,11 +410,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 PlaceFilterType.TRAVEL_ITINERARY -> {
-                    if (MyApp.userCurrentFormattedAddress != null) {
-                        viewModel.onItineraryGenerationClicked()
-                    } else {
-
-                    }
+                    GenerateItineraryActivity.startActivity(requireContext())
+//                    if (MyApp.userCurrentFormattedAddress != null) {
+//                        viewModel.onItineraryGenerationClicked()
+//                    } else {
+//
+//                    }
                 }
 
                 PlaceFilterType.HYPER_LOCAL_PLACE_SEARCH -> {
