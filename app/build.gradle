@@ -158,4 +158,6 @@ dependencies {
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
 
+    implementation 'com.github.vipulasri:timelineview:1.1.5'
+
 }

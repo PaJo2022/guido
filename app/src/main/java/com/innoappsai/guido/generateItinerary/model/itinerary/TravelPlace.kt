@@ -1,6 +1,6 @@
 package com.innoappsai.guido.generateItinerary.model.itinerary
 
-data class Place(
+data class TravelPlace(
     val placeId: String,
     val placeName: String,
     val placePhotos: List<String>,

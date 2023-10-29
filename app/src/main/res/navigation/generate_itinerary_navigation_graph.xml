@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/auth_navigation_graph.xml"
-    app:startDestination="@id/fragmentGenerateItineraryOptions">
+    app:startDestination="@id/fragmentPlaceItinerary">
     <fragment
         android:id="@+id/fragmentGenerateItineraryOptions"
         android:name="com.innoappsai.guido.generateItinerary.screens.FragmentGenerateItineraryOptions"

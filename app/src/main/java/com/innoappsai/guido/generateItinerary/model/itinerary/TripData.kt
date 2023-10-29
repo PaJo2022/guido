@@ -6,5 +6,5 @@ data class TripData(
     @SerializedName("Day")
     val day: String,
     @SerializedName("Places")
-    val places: List<Place>
+    val travelPlaces: List<TravelPlace>
 )

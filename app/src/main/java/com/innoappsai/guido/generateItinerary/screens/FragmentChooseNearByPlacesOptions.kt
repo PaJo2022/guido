@@ -123,6 +123,5 @@ class FragmentChooseNearByPlacesOptions :
 
     override fun onSwipeCompleted() {
         parentViewModel.generateAiTextForItinerary()
-        // findNavController().navigate(R.id.fragmentPlaceItinerary)
     }
 }
