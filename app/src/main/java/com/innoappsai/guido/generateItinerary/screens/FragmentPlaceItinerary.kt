@@ -1,11 +1,8 @@
-package com.innoappsai.guido.fragments
+package com.innoappsai.guido.generateItinerary.screens
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.work.Data
@@ -14,22 +11,21 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
+import com.innoappsai.guido.fragments.FragmentPlaceItinearyViewModel
 import com.innoappsai.guido.toggleEnableAndAlpha
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentPlaceItinerary : BottomSheetDialogFragment() {
+class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(FragmentPlaceItinearyBinding::inflate) {
 
 
     private val viewModel: FragmentPlaceItinearyViewModel by viewModels()
 
-    private var _binding: FragmentPlaceItinearyBinding? = null
-    private val binding: FragmentPlaceItinearyBinding get() = _binding!!
+
 
     private lateinit var workManager: WorkManager
 
@@ -38,17 +34,6 @@ class FragmentPlaceItinerary : BottomSheetDialogFragment() {
         workManager = WorkManager.getInstance(requireContext())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            ?.let { bottomSheet ->
-                val behavior = BottomSheetBehavior.from(bottomSheet)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        _binding = FragmentPlaceItinearyBinding.inflate(inflater)
-        return binding.root
-    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,14 +44,8 @@ class FragmentPlaceItinerary : BottomSheetDialogFragment() {
             parentFragmentManager.popBackStack()
         }
 
-        if (itineraryDbId != null) {
-            viewModel.generatePlaceItineraryById(itineraryDbId)
-
-        } else {
-            viewModel.itineraryId?.let { viewModel.generatePlaceItineraryById(it) }
-            message?.let {
-                startGenerating(it)
-            }
+        message?.let {
+            startGenerating(it)
         }
 
 

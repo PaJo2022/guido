@@ -52,6 +52,7 @@ import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentHomeBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateItinerary.GenerateItineraryActivity
+import com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary
 import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.isServiceRunning
 import com.innoappsai.guido.isVisibleAndEnable
@@ -410,7 +411,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 PlaceFilterType.TRAVEL_ITINERARY -> {
-                    GenerateItineraryActivity.startActivity(requireContext())
+                    GenerateItineraryActivity.startActivity(
+                        requireContext(),
+                        MyApp.currentPlace.toString(),
+                        MyApp.userCurrentFormattedAddress.toString()
+                    )
 //                    if (MyApp.userCurrentFormattedAddress != null) {
 //                        viewModel.onItineraryGenerationClicked()
 //                    } else {

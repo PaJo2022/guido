@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_light_grey">
 
-    <com.asynctaskcoffee.cardstack.CardContainer
+    <com.guido.cardstack.CardContainer
         android:id="@+id/cardContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

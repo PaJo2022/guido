@@ -2,9 +2,11 @@ package com.innoappsai.guido.generateItinerary.screens.options
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelDateBinding
 import com.innoappsai.guido.databinding.LayoutItinearyGenerationTravelDurationBinding
+import com.innoappsai.guido.generateItinerary.ViewModelGenerateItinerary
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -14,6 +16,7 @@ import java.util.Date
 @AndroidEntryPoint
 class FragmentTravelStartDate : BaseFragment<LayoutItinearyGenerationTravelDateBinding>(LayoutItinearyGenerationTravelDateBinding::inflate) {
 
+    private val viewModel: ViewModelGenerateItinerary by activityViewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentDate = Date(System.currentTimeMillis())
@@ -33,6 +36,7 @@ class FragmentTravelStartDate : BaseFragment<LayoutItinearyGenerationTravelDateB
             val sdf = SimpleDateFormat("dd/MM/yyyy")
             val formattedDate = sdf.format(selectedDate)
             // Do something with the selected date
+            viewModel.travelStartDate(formattedDate)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.asynctaskcoffee.cardstack
+package com.guido.cardstack
 
 import android.animation.Animator
 import android.annotation.SuppressLint
@@ -293,12 +293,12 @@ class CardContainer(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             .rotation(if (rotate) {if (xPos > 0) 45f else -45f} else 0f)
             .setInterpolator(AccelerateInterpolator())
             .setDuration(300)
-            .setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+            .setListener(object : Animator.AnimatorListener{
+                override fun onAnimationStart(animation: Animator) {
 
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     card.parent?.let { viewParent ->
                         val viewGroup = viewParent as FrameLayout
                         viewGroup.removeView(card)
@@ -318,13 +318,14 @@ class CardContainer(context: Context, attrs: AttributeSet?) : FrameLayout(contex
                     }
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
 
                 }
 
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
 
                 }
+
             })
     }
 

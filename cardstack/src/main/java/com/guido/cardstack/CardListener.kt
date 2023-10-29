@@ -1,4 +1,4 @@
-package com.asynctaskcoffee.cardstack
+package com.guido.cardstack
 
 interface CardListener {
     fun onLeftSwipe(position: Int, model: Any)

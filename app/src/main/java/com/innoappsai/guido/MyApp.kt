@@ -24,6 +24,7 @@ class MyApp : Application(), Configuration.Provider {
         var userCurrentLocation: MutableSharedFlow<Pair<Double, Double>> = MutableSharedFlow()
         var userCurrentFormattedAddress: String? = null
         var currentCountry: String? = null
+        var currentPlace: String? = null
         var isPrefUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
 

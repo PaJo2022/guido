@@ -13,6 +13,7 @@ import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyGenerationBinding
+import com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -132,6 +132,7 @@ class HomeViewModel @Inject constructor(
                 latitude, longitude
             )
             MyApp.userCurrentFormattedAddress = fullPlaceData?.address.toString()
+            MyApp.currentPlace = fullPlaceData?.cityOrVillage.toString()
             MyApp.currentCountry = fullPlaceData?.country.toString()
 
             _searchedFormattedAddress.postValue(fullPlaceData?.address.toString())

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.SnapHelper
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentItinearyGenerationStep1Binding
 import com.innoappsai.guido.generateItinerary.ViewModelGenerateItinerary
@@ -86,7 +88,8 @@ class FragmentGenerateItineraryOptions :
         if(currentPosition == 0){
             viewModel.getListOnDayWiseTimeSelection()
         }
-        val newPosition = if (currentPosition == itineraryGenerationOptionList.size) {
+        val newPosition = if (currentPosition == itineraryGenerationOptionList.size - 1) {
+            findNavController().navigate(R.id.fragmentChooseNearByPlacesOptions)
             return
         } else {
             currentPosition + 1

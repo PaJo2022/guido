@@ -118,9 +118,9 @@ class NetworkModule {
     @Singleton
     fun providesOkHttpClient(authenticatorApi: AuthenticatorApi, appPrefs: AppPrefs): OkHttpClient {
         val client = OkHttpClient.Builder()
-            .connectTimeout(2, TimeUnit.MINUTES)
-            .writeTimeout(2, TimeUnit.MINUTES)
-            .readTimeout(2, TimeUnit.MINUTES)
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
         client.addInterceptor(logging)

@@ -1,4 +1,4 @@
-package com.asynctaskcoffee.cardstack
+package com.guido.cardstack
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator

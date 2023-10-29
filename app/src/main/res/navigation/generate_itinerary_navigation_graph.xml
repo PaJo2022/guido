@@ -8,4 +8,12 @@
         android:id="@+id/fragmentGenerateItineraryOptions"
         android:name="com.innoappsai.guido.generateItinerary.screens.FragmentGenerateItineraryOptions"
         android:label="FragmentGenerateItineraryOptions" />
+    <fragment
+        android:id="@+id/fragmentChooseNearByPlacesOptions"
+        android:name="com.innoappsai.guido.generateItinerary.screens.FragmentChooseNearByPlacesOptions"
+        android:label="FragmentChooseNearByPlacesOptions" />
+    <fragment
+        android:id="@+id/fragmentPlaceItinerary"
+        android:name="com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary"
+        android:label="FragmentPlaceItinerary" />
 </navigation>
