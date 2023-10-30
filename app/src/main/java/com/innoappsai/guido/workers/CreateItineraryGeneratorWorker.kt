@@ -75,7 +75,6 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
                 sendErrorPushNotification("Please re login again")
                 return Result.failure()
             }
-            Log.i("message", " ${query}")
             val aiResponse = chatGptRepository.getTourDataAboutTheLandMark(
                 userDbId = currentUser.dbId,
                 shouldSendEmail = false,
@@ -83,14 +82,6 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
                     listOf(Message(query, "user"))
                 )
             )
-            Log.i("JAPAN", " ${aiResponse}")
-            try {
-                val gson = Gson()
-                val travelData: ItineraryModel = gson.fromJson(aiResponse, ItineraryModel::class.java)
-                Log.i("JAPAN", "travelData: ${travelData}")
-            }catch (e : Exception){
-                Log.i("JAPAN", "Error: ${e }")
-            }
             if (aiResponse != null) {
                 itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, aiResponse))
                 sendPushNotificationOnSuccessFullPlaceAdd()

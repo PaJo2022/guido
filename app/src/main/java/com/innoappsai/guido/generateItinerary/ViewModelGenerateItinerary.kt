@@ -180,54 +180,28 @@ class ViewModelGenerateItinerary @Inject constructor(
         MutableSharedFlow()
     val onItineraryGeneration: SharedFlow<String> get() = _onItineraryGeneration
     fun generateAiTextForItinerary() {
+        //c634ed54-3255-42b4-be14-40591677a47b
         if (nearByPlaces.isEmpty()) return
         viewModelScope.launch(Dispatchers.IO) {
             val dayWiseTimeString = dayWiseTimeSliderList.map {
                 "${it.dayName} i will start my tour from ${it.startValue} Hours and will end my day at ${it.endValue}"
             }.joinToString(", ")
             val commaSeparatedStringForSelectedPlaces = selectedPlacesList.map {
-                "I want to visit ${it.name} and whoose place Id is ${it.placeId} and the Photo links are ${it.photos}"
+                "I want to visit ${it.name} and whoose place Id is ${it.placeId} and the Photo links are ${it.photos?.firstOrNull()}"
             }.joinToString(", ")
             val message =
-                "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details about this trip."+
-                        "I am willing to go for ${travelDuration} days tour plan with my ${travelCompanionList.find { it.isSelected }?.name}." +
-                        "${dayWiseTimeString}."+
-                        "${commaSeparatedStringForSelectedPlaces}."+
-                        "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details" +
-                        "I am starting my Travel on ${startDate},my budget for this is ${travelBudgetList.find { it.isSelected }?.name}" +
-                        "Number of days i wanna stay there is ${travelDuration}" +
-                        "The timings of my each day is ${dayWiseTimeString}" +
-                        "I am traveling with ${travelCompanionList.find { it.isSelected }?.name}" +
-                        "My Traveling budget is ${travelBudgetList.find { it.isSelected }?.name}" +
+                "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details about this trip.\n" +
+                        "I am willing to go for ${travelDuration} days tour plan with my ${travelCompanionList.find { it.isSelected }?.name}.\n" +
+                        "My budget for this tour is ${travelBudgetList.find { it.isSelected }?.name}.\n" +
+                        "The timings of my each day is ${dayWiseTimeString}\n" +
+                        "I am traveling with ${travelCompanionList.find { it.isSelected }?.name}\n" +
+                        "My Traveling budget is ${travelBudgetList.find { it.isSelected }?.name}\n" +
                         "These are the landmarks i wanna visit ${commaSeparatedStringForSelectedPlaces}" +
-                        "Now using this data create me a josn structure using the demon json structure" +
-                        "{\n" +
-                        "  \"Place Name\": \"place name\",\n" +
-                        "  \"Address\": \"place address\",\n" +
-                        "  \"Trip Length\": 1,\n" +
-                        "  \"Trip Partners\":\"traveling with\",\n" +
-                        "  \"Start Date\": \"2023-11-01\",\n" +
-                        "  \"End Date\": \"2023-11-01\",\n" +
-                        "  \"tripData\": [\n" +
-                        "    {\n" +
-                        "      \"Day\": \"Day 1\",\n" +
-                        "      \"Places\": [\n" +
-                        "        {\n" +
-                        "          \"timeSlots\": \"Time Slot Based On User Times\",\n" +
-                        "          \"placeId\": \"Place Id\",\n" +
-                        "          \"placeName\": \"Place Name\",\n" +
-                        "          \"placePhotos\": [\n" +
-                        "            \"images\"\n" +
-                        "          ]\n" +
-                        "        }\n" +
-                        "\n" +
-                        "      ]\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}\n"
+                        "Now using this data create me a json structure using the demon json structure" +
+                        "{\"Place Name\":\"place name\",\"Address\":\"place address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
 
 
-            Log.i("JAPAN", ": ${message}")
+                        Log.i("JAPAN", ": ${message}")
             _onItineraryGeneration.emit(message)
         }
 
