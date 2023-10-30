@@ -321,4 +321,39 @@ object Constants {
 
 
 
+
+    val travelTypes = listOf(
+        PlaceType("airport", "Airport", "Travel", iconDrawable = R.drawable.ic_airport),
+        PlaceType("bus_station", "Bus Station", "Travel", iconDrawable = R.drawable.ic_bus_station),
+        PlaceType("taxi_stand", "Taxi Stand", "Travel", iconDrawable = R.drawable.ic_taxi_stand),
+        PlaceType("travel_agency", "Travel Agency", "Travel", iconDrawable = R.drawable.ic_travel_agency),
+        PlaceType("subway_station", "Subway Station", "Travel", iconDrawable = R.drawable.ic_subway),
+        PlaceType("train_station", "Train Station", "Travel", iconDrawable = R.drawable.ic_train_station),
+        PlaceType("transit_station", "Transit Station", "Travel"),
+        PlaceType("light_rail_station", "Light Rail Station", "Travel"),
+        PlaceType("parking", "Parking", "Travel", iconDrawable = R.drawable.icon_parking),
+        PlaceType("lodging", "Lodging", "Travel", iconDrawable = R.drawable.icon_hotel),
+        PlaceType("amusement_park", "Amusement Park", "Entertainment", iconDrawable = R.drawable.amusment_park_marker),
+        PlaceType("aquarium", "Aquarium", "Entertainment", iconDrawable = R.drawable.ic_aquarium),
+        PlaceType("art_gallery", "Art Gallery", "Entertainment", iconDrawable = R.drawable.ic_art_gallery),
+        PlaceType("casino", "Casino", "Entertainment", iconDrawable = R.drawable.ic_casino),
+        PlaceType("bowling_alley", "Bowling Alley", "Entertainment", iconDrawable = R.drawable.ic_bowling_alley),
+        PlaceType("movie_rental", "Movie Rental", "Entertainment", iconDrawable = R.drawable.ic_movie_rental),
+        PlaceType("movie_theater", "Movie Theater", "Entertainment", iconDrawable = R.drawable.ic_movie_theater),
+        PlaceType("moving_company", "Moving Company", "Entertainment", iconDrawable = R.drawable.ic_moving_company),
+        PlaceType("night_club", "Night Club", "Entertainment", iconDrawable = R.drawable.icon_night_club),
+        PlaceType("restaurant", "Restaurant", "Food & Beverages", iconDrawable = R.drawable.icon_restaurant),
+        PlaceType("cafe", "Cafe", "Food & Beverages", iconDrawable = R.drawable.ic_cafe_marker),
+        PlaceType("tourist_attraction", "Tourist Attraction", "Tourist Spots", iconDrawable = R.drawable.ic_tourist_attraction),
+        PlaceType("museum", "Museum", "Tourist Spots", iconDrawable = R.drawable.icon_museum),
+        PlaceType("stadium", "Stadium", "Tourist Spots", iconDrawable = R.drawable.ic_stadium),
+        PlaceType("park", "Park", "Tourist Spots", iconDrawable = R.drawable.ic_park),
+        PlaceType("rv_park", "RV Park", "Tourist Spots", iconDrawable = R.drawable.ic_park),
+        PlaceType("library", "Library", "Education", iconDrawable = R.drawable.ic_library),
+        PlaceType("university", "University", "Education", iconDrawable = R.drawable.ic_university),
+        PlaceType("school", "School", "Education", iconDrawable = R.drawable.ic_school),
+        PlaceType("primary_school", "Primary School", "Education", iconDrawable = R.drawable.ic_school),
+        PlaceType("secondary_school", "Secondary School", "Education", iconDrawable = R.drawable.ic_school)
+    )
+
 }

@@ -227,7 +227,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         arguments?.getString("DEEPLINK")?.let {
             if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
-                navigateToGeneratedItinerary()
+                val itineraryId = arguments?.getString("ITINERARY_DB_ID") ?: return
+                navigateToGeneratedItinerary(itineraryId)
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
                 val placeId = arguments?.getString("PLACE_ID") ?: return
                 navigateToPlaceDetailsScreen(placeId)
@@ -243,7 +244,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.getMapAsync(this)
         binding.apply {
             llItineraryIsAdded.root.setOnClickListener {
-                navigateToGeneratedItinerary()
+                CreateItineraryGeneratorWorker.itineraryDbId?.let { it1 ->
+                    navigateToGeneratedItinerary(
+                        it1
+                    )
+                }
             }
             swipeRefreshLayout.isEnabled = false
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {
@@ -459,13 +464,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     }
 
-    fun navigateToGeneratedItinerary() {
-        Bundle().apply {
-            putString("ITINERARY_DB_ID", CreateItineraryGeneratorWorker.itineraryDbId)
-            openNavFragment(
-                FragmentPlaceItinerary()
-            )
-        }
+    fun navigateToGeneratedItinerary(itineraryDbId: String) {
+        val bundle = Bundle()
+        bundle.putString("ITINERARY_DB_ID", itineraryDbId)
+        openNavFragment(
+            FragmentPlaceItinerary(), bundle
+        )
         viewModel.onItineraryGenerationCancelledClicked()
         CreateItineraryGeneratorWorker.onObserved()
     }

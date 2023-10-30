@@ -18,6 +18,7 @@ import javax.inject.Inject
 class MyApp : Application(), Configuration.Provider {
 
     companion object{
+        var itineraryGenerationMessage: String = ""
         val isMapFetched: Boolean = false
         var userCurrentLatLng: LatLng? = null
         var isCurrentLocationFetched: Boolean = false

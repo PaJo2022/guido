@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -16,13 +17,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.google.gson.Gson
 import com.innoappsai.guido.MainActivity
+import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.TravelItinerary
 import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.Message
 import dagger.assisted.Assisted
@@ -60,7 +64,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             // Retrieve the list of byte arrays from input data
-            val query = inputData.getString("ITINERARY_QUERY") ?: return Result.failure()
+            val query = MyApp.itineraryGenerationMessage
             itineraryIdForDB = inputData.getString("ITINERARY_ID") ?: return Result.failure()
             itineraryDbId = itineraryIdForDB
             _workerState.postValue(WorkerState.RUNNING)
@@ -71,14 +75,22 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
                 sendErrorPushNotification("Please re login again")
                 return Result.failure()
             }
-
+            Log.i("message", " ${query}")
             val aiResponse = chatGptRepository.getTourDataAboutTheLandMark(
                 userDbId = currentUser.dbId,
-                shouldSendEmail = true,
+                shouldSendEmail = false,
                 chatGptRequest = ChatGptRequest(
                     listOf(Message(query, "user"))
                 )
             )
+            Log.i("JAPAN", " ${aiResponse}")
+            try {
+                val gson = Gson()
+                val travelData: ItineraryModel = gson.fromJson(aiResponse, ItineraryModel::class.java)
+                Log.i("JAPAN", "travelData: ${travelData}")
+            }catch (e : Exception){
+                Log.i("JAPAN", "Error: ${e }")
+            }
             if (aiResponse != null) {
                 itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, aiResponse))
                 sendPushNotificationOnSuccessFullPlaceAdd()
@@ -123,7 +135,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
     private fun sendPushNotificationOnSuccessFullPlaceAdd() {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
+        Log.i("JAPAN", "sendPushNotificationOnSuccessFullPlaceAdd: ${itineraryIdForDB}")
         val deepLinkIntent = Intent(context, MainActivity::class.java)
         deepLinkIntent.putExtra("ITINERARY_DB_ID", itineraryIdForDB)
         deepLinkIntent.putExtra("DEEPLINK", "PLACE_ITINERARY_SCREEN")

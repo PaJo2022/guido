@@ -1,6 +1,5 @@
 package com.innoappsai.guido.data.places
 
-import android.util.Log
 import androidx.room.withTransaction
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.api.UserApi
@@ -49,16 +48,25 @@ class BackendPlacesRepositoryImpl @Inject constructor(
                     }
                 }
             }
-            Resource.Success(places)
-        }else{
-            Resource.Error(Throwable(response.message()),null)
-        }
+           Resource.Success(places)
+       } else {
+           Resource.Error(Throwable(response.message()), null)
+       }
 
 
     }
 
     override fun getPlacesNearMeFromLocalDb() =
         db.placeDao().getAllPlaces().map { it.toPlaceUiModel() }
+
+    override suspend fun fetchPlacesNearLocation(
+        latitude: Double,
+        longitude: Double,
+        radius: Int,
+        types: List<String>
+    ): List<PlaceUiModel> =
+        api.fetchPlacesNearMe(latitude, longitude, radius, types).body()?.toPlaceUiModel()
+            ?: emptyList()
 
 
     override suspend fun fetchPlacesNearMe(

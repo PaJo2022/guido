@@ -19,6 +19,7 @@ import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelComp
 import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelDuration
 import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelEachDayTiming
 import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelInterests
+import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelPlaceTypes
 import com.innoappsai.guido.generateItinerary.screens.options.FragmentTravelStartDate
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -66,7 +67,7 @@ class FragmentGenerateItineraryOptions :
                 FragmentTravelEachDayTiming(),
                 FragmentTravelStartDate(),
                 FragmentTravelCompanionType(),
-                FragmentTravelInterests(),
+                FragmentTravelPlaceTypes(),
                 FragmentTravelBudgetType(),
             )
         )
@@ -89,7 +90,7 @@ class FragmentGenerateItineraryOptions :
             viewModel.getListOnDayWiseTimeSelection()
         }
         val newPosition = if (currentPosition == itineraryGenerationOptionList.size - 1) {
-            findNavController().navigate(R.id.fragmentChooseNearByPlacesOptions)
+            findNavController().navigate(R.id.fragmentPlaceDreamCard)
             return
         } else {
             currentPosition + 1

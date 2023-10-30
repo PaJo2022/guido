@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
+import com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         homeFragment = HomeFragment()
 
-
+//        val homeFragment = FragmentPlaceItinerary()
         FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!,intent?.extras)
 
     }
@@ -38,7 +39,8 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         intent?.extras?.getString("DEEPLINK")?.let {
             if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
-                homeFragment?.navigateToGeneratedItinerary()
+                val itineraryId = intent.extras?.getString("ITINERARY_DB_ID") ?: return
+                homeFragment?. navigateToGeneratedItinerary(itineraryId)
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
                 val placeId = intent.extras?.getString("PLACE_ID") ?: return
                 val bundle = Bundle()

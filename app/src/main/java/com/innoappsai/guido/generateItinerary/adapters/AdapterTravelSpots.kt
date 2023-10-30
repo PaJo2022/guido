@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.github.vipulasri.timelineview.TimelineView
 import com.innoappsai.guido.databinding.LayoutTravelSpotTimelineBinding
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
+import com.innoappsai.guido.updateApiKey
 
 
 class AdapterTravelSpots(
@@ -60,7 +61,7 @@ class AdapterTravelSpots(
 
         fun bind(timeLinePlaceModel: TravelPlace) {
             binding.apply {
-                Glide.with(appContext).load(timeLinePlaceModel.placePhotos.firstOrNull())
+                Glide.with(appContext).load(updateApiKey(timeLinePlaceModel.placePhotos?.firstOrNull()))
                     .into(ivPlace)
                 tvTimeSlot.text = timeLinePlaceModel.timeSlots
                 tvPlaceName.text = timeLinePlaceModel.placeName

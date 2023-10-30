@@ -4,14 +4,16 @@ import com.google.gson.annotations.SerializedName
 
 data class ItineraryModel(
     @SerializedName("Address")
-    val address: String,
+    val address: String?,
     @SerializedName("End Date")
-    val endData: String,
+    val endData: String?,
     @SerializedName("Place Name")
-    val placeName: String,
+    val placeName: String?,
     @SerializedName("Start Date")
-    val startDate: String,
+    val startDate: String?,
     @SerializedName("Trip Length")
-    val tripLength : Int,
-    val tripData: List<TripData>
+    val tripLength : String?,
+    @SerializedName("Trip Partners")
+    val tripPartners : String?,
+    val tripData: List<TripData>?
 )

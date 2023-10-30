@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TripData(
     @SerializedName("Day")
-    val day: String,
+    val day: String?,
     @SerializedName("Places")
-    val travelPlaces: List<TravelPlace>
+    val travelPlaces: List<TravelPlace>?
 )

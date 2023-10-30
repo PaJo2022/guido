@@ -7,4 +7,11 @@
     <string name="label_password">Password</string>
     <string name="label_user_name">User Name</string>
     <string name="label_location">Location</string>
+
+    <string-array name="list_array">
+        <item>What goes up and down but does not move?</item>
+        <item>Where should a 500 pound alien go?</item>
+        <item>What did one toilet say to the other?</item>
+        <item>Why did the picture go to jail?</item>
+    </string-array>
 </resources>

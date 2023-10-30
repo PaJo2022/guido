@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.guido.cardstack.CardListener
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentChooseNearByPlacesBinding
@@ -22,7 +21,6 @@ import com.innoappsai.guido.generateItinerary.ViewModelChooseNearByPlaces
 import com.innoappsai.guido.generateItinerary.ViewModelGenerateItinerary
 import com.innoappsai.guido.generateItinerary.adapters.MainAdapter
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
-import com.innoappsai.guido.toggleEnableAndAlpha
 import com.innoappsai.guido.workers.CreateItineraryGeneratorWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
@@ -52,10 +50,10 @@ class FragmentChooseNearByPlacesOptions :
 //            setEmptyView(
 //                LayoutInflater.from(requireContext()).inflate(R.layout.empty_layout, null, false)
 //            )
-            addFooterView(
-                LayoutInflater.from(requireContext())
-                    .inflate(R.layout.example_footer_view, null, false)
-            )
+//            addFooterView(
+//                LayoutInflater.from(requireContext())
+//                    .inflate(R.layout.example_footer_view, null, false)
+//            )
 //            addHeaderView(
 //                LayoutInflater.from(requireContext())
 //                    .inflate(R.layout.example_header_view, null, false)
@@ -64,20 +62,23 @@ class FragmentChooseNearByPlacesOptions :
         viewModel.apply {
             fetchNearByPlace()
             nearByPlacesState.observe(viewLifecycleOwner) {
-                adapter.setData(it)
+
             }
         }
         parentViewModel.apply {
-            onItineraryGeneration.collectIn(viewLifecycleOwner) {message->
+            fetchPlacesNearLocation()
+            onItineraryGeneration.collectIn(viewLifecycleOwner) { message ->
+                MyApp.itineraryGenerationMessage = message
                 startGenerating(message)
+            }
+            selectedTypePlacesNearLocation.observe(viewLifecycleOwner) {
+                adapter.setData(it)
             }
         }
     }
 
     private fun startGenerating(message: String) {
-        val inputData = Data.Builder().putString(
-            "ITINERARY_QUERY", message
-        ).putString("ITINERARY_ID", UUID.randomUUID().toString()).build()
+        val inputData = Data.Builder().putString("ITINERARY_ID", UUID.randomUUID().toString()).build()
 
         val createItineraryGenerationWork =
             OneTimeWorkRequestBuilder<CreateItineraryGeneratorWorker>().addTag(
@@ -105,23 +106,22 @@ class FragmentChooseNearByPlacesOptions :
     }
 
     override fun onLeftSwipe(position: Int, model: Any) {
-        Log.i("JAPAN", "onLeftSwipe: ")
     }
 
     override fun onRightSwipe(position: Int, model: Any) {
-        Log.i("JAPAN", "onRightSwipe: ")
         parentViewModel.cardRightSwiped(model as PlaceUiModel)
     }
 
     override fun onItemShow(position: Int, model: Any) {
-        Log.i("JAPAN", "onItemShow: ")
+
     }
 
     override fun onSwipeCancel(position: Int, model: Any) {
-        Log.i("JAPAN", "onSwipeCancel: ")
+
     }
 
     override fun onSwipeCompleted() {
+        Log.i("JAPAN", "onSwipeCompleted: ")
         parentViewModel.generateAiTextForItinerary()
     }
 }

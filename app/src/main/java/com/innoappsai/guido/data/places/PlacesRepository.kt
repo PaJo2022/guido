@@ -21,6 +21,13 @@ interface PlacesRepository {
 
     fun getPlacesNearMeFromLocalDb(): Flow<List<PlaceUiModel>>
 
+    suspend fun fetchPlacesNearLocation(
+        latitude: Double,
+        longitude: Double,
+        radius: Int,
+        types: List<String>
+    ): List<PlaceUiModel>
+
     suspend fun fetchPlacesNearMe(
         latitude: Double,
         longitude: Double,
