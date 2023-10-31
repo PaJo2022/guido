@@ -5,61 +5,79 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
-import com.innoappsai.guido.generateItinerary.FragmentPlaceItineraryViewModel
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelDate
-import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelSpots
-import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
+import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelSpotViewPager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(FragmentPlaceItinearyBinding::inflate) {
 
     private var saveItineraryId: String = ""
-    private val viewModel: FragmentPlaceItineraryViewModel by viewModels()
+    private val viewModel: ViewModelFragmentPlaceItinerary by viewModels()
     private lateinit var mAdapter: AdapterTravelDate
+    private lateinit var adapterTravelSpotViewPager: AdapterTravelSpotViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        saveItineraryId = arguments?.getString("ITINERARY_DB_ID", "") ?: ""
+        saveItineraryId = "77f9543d-4cca-4b86-9b97-cb0cfbc1197a"
         mAdapter = AdapterTravelDate(requireContext())
+        adapterTravelSpotViewPager = AdapterTravelSpotViewPager(requireContext())
     }
 
     private fun initRecyclerView() {
-        val mLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-        binding.rvTravelDates.layoutManager = mLayoutManager
-        binding.rvTravelDates.adapter = mAdapter
+        val snapHelper = PagerSnapHelper()
+        binding.apply {
+            rvTravelDates.apply {
+                layoutManager =
+                    LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+                adapter = mAdapter
+            }
+            rvTravelTimeline.apply {
+                snapHelper.attachToRecyclerView(this)
+                layoutManager =
+                    LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+                adapter = adapterTravelSpotViewPager
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        if(saveItineraryId.isNotBlank()){
-            viewModel.apply {
+        viewModel.apply {
+            if (saveItineraryId.isNotEmpty()) {
                 generatePlaceItineraryById(saveItineraryId)
-                generatedItinerary.observe(viewLifecycleOwner) { json ->
-                    try {
-                        val gson = Gson()
-                        val travelData: ItineraryModel = gson.fromJson(json, ItineraryModel::class.java)
-
-                        binding.apply {
-                            tvPlaceName.text = travelData.placeName
-                            tvPlaceName.isSelected = true
-                            tvPlaceAddress.text = travelData.address
-                            tvPlaceAddress.isSelected = true
-                            tvTripExtraDetails.text =
-                                "${travelData.tripLength}, ${travelData.tripPartners}"
-                        }
-                        travelData.tripData?.let { mAdapter.setData(it) }
-                    }catch (e : Exception){
-                        Log.i("JAPAN", "Error: ${e }")
-                    }
+            }
+            itineraryBasicDetails.observe(viewLifecycleOwner) { travelData ->
+                binding.apply {
+                    tvPlaceName.text = travelData.placeName
+                    tvPlaceName.isSelected = true
+                    tvPlaceAddress.text = travelData.address
+                    tvPlaceAddress.isSelected = true
+                    tvTripExtraDetails.text =
+                        "${travelData.tripLength}, ${travelData.tripPartners}"
                 }
+                try {
+                    travelData.tripData?.let { adapterTravelSpotViewPager.setData(it) }
+                } catch (e: Exception) {
+                    Log.i("JAPAN", "Error: ${e}")
+                }
+            }
+            generatedItinerary.observe(viewLifecycleOwner) { tripData ->
+                try {
+                    mAdapter.setData(tripData)
+                } catch (e: Exception) {
+                    Log.i("JAPAN", "Error: ${e}")
+                }
+            }
+            moveToDayIndex.observe(viewLifecycleOwner){
+                binding.rvTravelTimeline.smoothScrollToPosition(it)
             }
         }
         initRecyclerView()
@@ -69,7 +87,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
         }
 
         mAdapter.setOnTravelDateClickListener{
-
+            viewModel.onDaySelected(it)
         }
 
     }

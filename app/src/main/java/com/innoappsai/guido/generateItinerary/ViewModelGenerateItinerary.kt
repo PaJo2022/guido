@@ -187,10 +187,9 @@ class ViewModelGenerateItinerary @Inject constructor(
                 "${it.dayName} i will start my tour from ${it.startValue} Hours and will end my day at ${it.endValue}"
             }.joinToString(", ")
             val commaSeparatedStringForSelectedPlaces = selectedPlacesList.map {
-                "I want to visit ${it.name} and whoose place Id is ${it.placeId} and the Photo links are ${it.photos?.firstOrNull()}"
+                "I want to visit ${it.name} and whose place Id is ${it.placeId} and the Photo links are ${it.photos?.firstOrNull()} and latitude is ${it.latLng?.latitude} and longitude is ${it.latLng?.longitude}"
             }.joinToString(", ")
-            val message =
-                "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details about this trip.\n" +
+            val message = "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details about this trip.\n" +
                         "I am willing to go for ${travelDuration} days tour plan with my ${travelCompanionList.find { it.isSelected }?.name}.\n" +
                         "My budget for this tour is ${travelBudgetList.find { it.isSelected }?.name}.\n" +
                         "The timings of my each day is ${dayWiseTimeString}\n" +
@@ -198,10 +197,8 @@ class ViewModelGenerateItinerary @Inject constructor(
                         "My Traveling budget is ${travelBudgetList.find { it.isSelected }?.name}\n" +
                         "These are the landmarks i wanna visit ${commaSeparatedStringForSelectedPlaces}" +
                         "Now using this data create me a json structure using the demon json structure" +
-                        "{\"Place Name\":\"place name\",\"Address\":\"place address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
+                        "{\"Place Name\":\"place name\",\"Address\":\"place address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"latitude\":\"Place Latitude\",\"longitude\":\"Place Longitude\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
 
-
-                        Log.i("JAPAN", ": ${message}")
             _onItineraryGeneration.emit(message)
         }
 

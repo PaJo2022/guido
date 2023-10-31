@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class TripData(
     @SerializedName("Day")
     val day: String?,
-    val isSelected : Boolean = false,
     @SerializedName("Places")
-    val travelPlaces: List<TravelPlace>?
+    val travelPlaces: List<TravelPlace>?,
+    var isSelected : Boolean = false
 )

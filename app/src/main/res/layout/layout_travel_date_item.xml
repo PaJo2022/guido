@@ -4,6 +4,7 @@
     android:id="@+id/bottomSheet"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/_4sdp"
     android:background="@color/color_light_grey"
     app:cardBackgroundColor="@color/color_secondary"
     app:cardCornerRadius="@dimen/_12sdp">
@@ -22,6 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
             android:text="Day 3" />
 
         <TextView
@@ -30,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
             android:text="Monday 30" />
 
 

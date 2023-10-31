@@ -38,6 +38,7 @@ class AdapterTravelDate(private val appContext : Context) :
                 tvDay.setTextColor(ContextCompat.getColor(appContext,textColor))
                 tvDate.setTextColor(ContextCompat.getColor(appContext,textColor))
                 tvDay.text = item.day
+                tvDate.text = "30/10/2023"
                 bottomSheet.setOnClickListener {
                     _onTravelDateSelectedListener?.invoke(item.day.toString())
                 }
