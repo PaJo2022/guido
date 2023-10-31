@@ -5,15 +5,15 @@ import com.google.gson.annotations.SerializedName
 data class ItineraryModel(
     @SerializedName("countryName")
     val countryName: String?,
-    @SerializedName("End Date")
+    @SerializedName("tripEndDate")
     val endData: String?,
-    @SerializedName("Place Name")
+    @SerializedName("placeName")
     val placeName: String?,
-    @SerializedName("Start Date")
+    @SerializedName("tripStartDate")
     val startDate: String?,
-    @SerializedName("Trip Length")
+    @SerializedName("tripLength")
     val tripLength : String?,
-    @SerializedName("Trip Partners")
+    @SerializedName("tripPartners")
     val tripPartners : String?,
     val tripData: List<TripData>?
 )

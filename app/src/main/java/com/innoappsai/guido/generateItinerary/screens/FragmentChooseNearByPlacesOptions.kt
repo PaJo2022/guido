@@ -69,7 +69,7 @@ class FragmentChooseNearByPlacesOptions :
             fetchPlacesNearLocation()
             onItineraryGeneration.collectIn(viewLifecycleOwner) { message ->
                 MyApp.itineraryGenerationMessage = message
-                startGenerating(message)
+                startGenerating()
             }
             selectedTypePlacesNearLocation.observe(viewLifecycleOwner) {
                 adapter.setData(it)
@@ -77,8 +77,8 @@ class FragmentChooseNearByPlacesOptions :
         }
     }
 
-    private fun startGenerating(message: String) {
-        val inputData = Data.Builder().putString("ITINERARY_ID", UUID.randomUUID().toString()).build()
+    private fun startGenerating() {
+        val inputData = Data.Builder().build()
 
         val createItineraryGenerationWork =
             OneTimeWorkRequestBuilder<CreateItineraryGeneratorWorker>().addTag(

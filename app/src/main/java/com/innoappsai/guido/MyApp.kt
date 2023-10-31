@@ -7,6 +7,7 @@ import androidx.work.Configuration
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
+import com.google.gson.JsonObject
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.review.ReviewRequestDTO
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class MyApp : Application(), Configuration.Provider {
 
     companion object{
-        var itineraryGenerationMessage: String = ""
+        var itineraryGenerationMessage: JsonObject = JsonObject()
         val isMapFetched: Boolean = false
         var userCurrentLatLng: LatLng? = null
         var isCurrentLocationFetched: Boolean = false

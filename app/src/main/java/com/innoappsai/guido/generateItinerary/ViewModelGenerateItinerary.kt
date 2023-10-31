@@ -1,17 +1,20 @@
 package com.innoappsai.guido.generateItinerary
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
+import com.innoappsai.guido.convertToAMPM
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 import com.innoappsai.guido.generateItinerary.model.InterestsSelection
 import com.innoappsai.guido.generateItinerary.model.Item
+import com.innoappsai.guido.generateItinerary.model.generateItinerary.PlaceToVisit
+import com.innoappsai.guido.generateItinerary.model.generateItinerary.createTripData
 import com.innoappsai.guido.generateItinerary.model.travelBudgeItemList
 import com.innoappsai.guido.generateItinerary.model.travelCompanionItemList
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
@@ -177,9 +180,9 @@ class ViewModelGenerateItinerary @Inject constructor(
 
     // Itinerary Generation
 
-    private val _onItineraryGeneration: MutableSharedFlow<String> =
+    private val _onItineraryGeneration: MutableSharedFlow<JsonObject> =
         MutableSharedFlow()
-    val onItineraryGeneration: SharedFlow<String> get() = _onItineraryGeneration
+    val onItineraryGeneration: SharedFlow<JsonObject> get() = _onItineraryGeneration
     fun generateAiTextForItinerary() {
         //c634ed54-3255-42b4-be14-40591677a47b
         if (nearByPlaces.isEmpty()) return
@@ -190,16 +193,34 @@ class ViewModelGenerateItinerary @Inject constructor(
             val commaSeparatedStringForSelectedPlaces = selectedPlacesList.map {
                 "I want to visit ${it.name} and whose place Id is ${it.placeId} and the Photo links are ${it.photos?.firstOrNull()} and latitude is ${it.latLng?.latitude} and longitude is ${it.latLng?.longitude}"
             }.joinToString(", ")
-            val message = "I want you to act as a travel agent and generate a compelling travel itinerary for me for my next travel to place name ${selectedPlaceName} and the place address is ${selectedPlaceAddress} these are my details about this trip.\n" +
-                        "I am willing to go for ${travelDuration} days tour plan with my ${travelCompanionList.find { it.isSelected }?.name}.\n" +
-                        "My budget for this tour is ${travelBudgetList.find { it.isSelected }?.name}.\n" +
-                        "The timings of my each day is ${dayWiseTimeString}\n" +
-                        "I am traveling with ${travelCompanionList.find { it.isSelected }?.name}\n" +
-                        "My Traveling budget is ${travelBudgetList.find { it.isSelected }?.name}\n" +
-                        "These are the landmarks i wanna visit ${commaSeparatedStringForSelectedPlaces}" +
-                        "Now using this data create me a json structure using the demon json structure" +
-                        "{\"Place Name\":\"place name\",\"countryName\":\"place country name from address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Date\":\"Date Of the Day in this format  Saturady,25\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"latitude\":\"Place Latitude\",\"longitude\":\"Place Longitude\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
-            _onItineraryGeneration.emit(message)
+            val placeToVisitList = selectedPlacesList.map {
+                PlaceToVisit(
+                    placeId = it.placeId,
+                    latitude = it.latLng?.latitude,
+                    longitude = it.latLng?.longitude,
+                    placeName = it.name,
+                    placePhotos = listOf("${it.photos?.firstOrNull()}")
+                )
+            }
+            val tripEachDayTimings = dayWiseTimeSliderList.mapIndexed { index, data ->
+                Triple(
+                    "Day ${index}",
+                    convertToAMPM(data.startValue.toInt()),
+                    convertToAMPM(data.endValue.toInt())
+                )
+            }
+            val jsonData = createTripData(
+                placeName = selectedPlaceName,
+                placeCountry = selectedPlaceAddress,
+                tripLength = "${travelDuration} Days and ${travelDuration - 1} Night",
+                tripPartners = travelCompanionList.find { it.isSelected }?.name.toString(),
+                tripStartDate = startDate,
+                tripEndDate = "2023-11-04",
+                tripBudget = travelBudgetList.find { it.isSelected }?.name.toString(),
+                tripEachDayTimings = tripEachDayTimings,
+                tripPlacesWannaVisit = placeToVisitList
+            )
+            _onItineraryGeneration.emit(jsonData)
         }
 
     }

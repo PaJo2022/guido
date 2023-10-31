@@ -41,7 +41,6 @@ class FragmentTravelEachDayTiming : BaseFragment<LayoutItinearyGenerationTravelT
         }
 
         adapter.setOnSliderChangeListener { id, startTime, endTime ->
-            Log.i("JAPAN", "onViewCreated: ${id} ${startTime} ${endTime}")
               viewModel.onTimeSelectionSliderMoved(id, startTime, endTime)
         }
     }

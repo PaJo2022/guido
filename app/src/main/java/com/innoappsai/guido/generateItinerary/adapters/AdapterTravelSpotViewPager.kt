@@ -3,6 +3,7 @@ package com.innoappsai.guido.generateItinerary.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.databinding.LayoutTravelSpotViewpagerItemBinding
@@ -31,6 +32,10 @@ class AdapterTravelSpotViewPager(
                 layoutManager = LinearLayoutManager(appContext, LinearLayoutManager.VERTICAL, false)
             }
             tripData.travelPlaces?.let { adapterTravelSpots.setData(it) }
+            binding.apply {
+                rvEachDayTravelSpot.isVisible = tripData.travelPlaces?.isNotEmpty() == true
+                tvNoActivitiesAdded.isVisible = tripData.travelPlaces?.isNotEmpty() == false
+            }
         }
     }
 

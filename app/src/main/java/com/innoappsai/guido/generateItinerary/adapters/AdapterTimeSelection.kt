@@ -3,6 +3,7 @@ package com.innoappsai.guido.generateItinerary.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.innoappsai.guido.convertToAMPM
 import com.innoappsai.guido.databinding.LayoutTravelTimeSelectionBinding
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 
@@ -35,7 +36,7 @@ class AdapterTimeSelection :
                 rangeSlider.addOnChangeListener { slider, value, fromUser ->
                     val values = rangeSlider.values
                     if (fromUser) {
-                        tvDayTiming.text = "${values[0]} - ${values[1]}"
+                        tvDayTiming.text = "${convertToAMPM(values[0].toInt())} - ${convertToAMPM(values[1].toInt())}"
                         _onSliderChangeListener?.invoke(
                             item.id,
                             values[0],

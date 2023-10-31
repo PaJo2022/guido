@@ -103,7 +103,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun observeWorkers() {
         CreateItineraryGeneratorWorker.workerState.observe(viewLifecycleOwner) { workState ->
-            binding.llItineraryIsAdded.root.isVisible = workState == WorkerState.COMPLETE
+           // binding.llItineraryIsAdded.root.isVisible = workState == WorkerState.COMPLETE
         }
     }
 
@@ -244,11 +244,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.mapView.getMapAsync(this)
         binding.apply {
             llItineraryIsAdded.root.setOnClickListener {
-                CreateItineraryGeneratorWorker.itineraryDbId?.let { it1 ->
-                    navigateToGeneratedItinerary(
-                        it1
-                    )
-                }
+                navigateToGeneratedItinerary(
+                    ""
+                )
             }
             swipeRefreshLayout.isEnabled = false
             bottomsheetPlaceList.btnAddNewPlace.setOnClickListener {

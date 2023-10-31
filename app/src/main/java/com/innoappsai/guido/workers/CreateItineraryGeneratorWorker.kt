@@ -31,6 +31,7 @@ import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.chatGptModel.Message
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.util.UUID
 
 @HiltWorker
 class CreateItineraryGeneratorWorker @AssistedInject constructor(
@@ -65,7 +66,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
         return try {
             // Retrieve the list of byte arrays from input data
             val query = MyApp.itineraryGenerationMessage
-            itineraryIdForDB = inputData.getString("ITINERARY_ID") ?: return Result.failure()
+            itineraryIdForDB = UUID.randomUUID().toString()
             itineraryDbId = itineraryIdForDB
             _workerState.postValue(WorkerState.RUNNING)
             setForeground(getForegroundInfo(applicationContext))
@@ -75,15 +76,13 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
                 sendErrorPushNotification("Please re login again")
                 return Result.failure()
             }
-            val aiResponse = chatGptRepository.getTourDataAboutTheLandMark(
+            val travelData = chatGptRepository.getTravelItinerary(
                 userDbId = currentUser.dbId,
                 shouldSendEmail = false,
-                chatGptRequest = ChatGptRequest(
-                    listOf(Message(query, "user"))
-                )
+                jsonObject = query
             )
-            if (aiResponse != null) {
-                itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, aiResponse))
+            if (travelData != null) {
+                itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, travelData))
                 sendPushNotificationOnSuccessFullPlaceAdd()
             } else {
                 sendErrorPushNotification("Something went wrong please try again!")

@@ -74,7 +74,7 @@ class AdapterTravelSpots(
                     openDirection(
                         appContext, timeLinePlaceModel.placeName.toString(), LatLng(
                             timeLinePlaceModel.latitude ?: 0.0,
-                            timeLinePlaceModel.latitude ?: 0.0
+                            timeLinePlaceModel.longitude ?: 0.0
                         )
                     )
                 }

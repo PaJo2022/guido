@@ -234,3 +234,15 @@ fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
     // The service is not running
     return false
 }
+
+fun convertToAMPM(hour: Int): String {
+    return if (hour in 0..23) {
+        if (hour < 12) {
+            if (hour == 0) "12 AM" else "$hour AM"
+        } else {
+            if (hour == 12) "12 PM" else "${hour - 12} PM"
+        }
+    } else {
+        "6 AM"
+    }
+}

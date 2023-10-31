@@ -12,10 +12,11 @@ class ItineraryRepositoryImpl @Inject constructor(
 ) : ItineraryRepository {
     override suspend fun addItinerary(itinerary: TravelItinerary) {
         withContext(Dispatchers.IO) {
+            db.itineraryDao().deleteAllTravelItinerary()
             db.itineraryDao().insertItinerary(itinerary)
         }
     }
 
-    override fun getItineraryById(id: String) = db.itineraryDao().getTravelItineraryById(id)
+    override fun getItineraryById(id: String) = db.itineraryDao().getAllTravelItinerary()
 
 }

@@ -1,5 +1,6 @@
 package com.innoappsai.guido.generateItinerary.screens
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,16 +35,16 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     private var itineraryModel: ItineraryModel? = null
 
 
-    fun generatePlaceItineraryById(itineraryId: String) {
+    fun generatePlaceItineraryById() {
         viewModelScope.launch(Dispatchers.IO) {
-            val generatedItinerary = itineraryRepository.getItineraryById(itineraryId).first()
+            val generatedItinerary = itineraryRepository.getItineraryById("").first()
+            Log.i("JAPAN", "generatePlaceItineraryById: ${generatedItinerary}")
             generatedItinerary?.let {
-                val travelData: ItineraryModel =
-                    gson.fromJson(it.valueInText, ItineraryModel::class.java)
-                travelData.tripData?.firstOrNull()?.isSelected = true
-                itineraryModel = travelData
-                _itineraryBasicDetails.postValue(travelData)
-                travelData.tripData?.let { tripData ->
+                itineraryModel = generatedItinerary.travelItineraryData
+                itineraryModel?.let {
+                    _itineraryBasicDetails.postValue(it)
+                }
+                itineraryModel?.tripData?.let { tripData ->
                     _generatedItinerary.postValue(tripData)
                 }
             }

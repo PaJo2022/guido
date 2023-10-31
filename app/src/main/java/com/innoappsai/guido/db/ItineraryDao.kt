@@ -19,4 +19,8 @@ interface ItineraryDao {
     @Query("SELECT * FROM TRAVEL_ITINERARY_TABLE")
     fun getAllTravelItinerary() : Flow<TravelItinerary?>
 
+
+    @Query("DELETE  FROM TRAVEL_ITINERARY_TABLE")
+    suspend fun deleteAllTravelItinerary()
+
 }

@@ -3,11 +3,11 @@ package com.innoappsai.guido.generateItinerary.model.itinerary
 import com.google.gson.annotations.SerializedName
 
 data class TripData(
-    @SerializedName("Day")
+    @SerializedName("day")
     val day: String?,
-    @SerializedName("Date")
+    @SerializedName("date")
     val date: String?,
-    @SerializedName("Places")
+    @SerializedName("landMarks")
     val travelPlaces: List<TravelPlace>?,
     var isSelected : Boolean = false
 )

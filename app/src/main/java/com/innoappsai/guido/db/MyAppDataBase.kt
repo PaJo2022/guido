@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.innoappsai.guido.TravelItinerary
 import com.innoappsai.guido.data.PlaceIdWithTimeDao
+import com.innoappsai.guido.db.typeconverters.ItineraryModelTypeConverter
 import com.innoappsai.guido.db.typeconverters.PlaceDTOConverter
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceIdWithName.PlaceWithIdAndTime
@@ -24,7 +25,7 @@ import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
     version = 3,
     exportSchema = false
 )
-@TypeConverters(PlaceDTOConverter::class)
+@TypeConverters(PlaceDTOConverter::class, ItineraryModelTypeConverter::class)
 abstract class MyAppDataBase : RoomDatabase() {
     abstract fun placeTypeDao(): PlaceTypeDao
     abstract fun locationSearchDao() : LocationSearchDao
