@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.vipulasri.timelineview.TimelineView
+import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.databinding.LayoutTravelSpotTimelineBinding
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
+import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.updateApiKey
 
 
@@ -61,12 +63,21 @@ class AdapterTravelSpots(
 
         fun bind(timeLinePlaceModel: TravelPlace) {
             binding.apply {
-                Glide.with(appContext).load(updateApiKey(timeLinePlaceModel.placePhotos?.firstOrNull()))
+                Glide.with(appContext)
+                    .load(updateApiKey(timeLinePlaceModel.placePhotos?.firstOrNull()))
                     .into(ivPlace)
                 tvTimeSlot.text = timeLinePlaceModel.timeSlots
                 tvPlaceName.text = timeLinePlaceModel.placeName
                 placeRating.rating = 4.5f
                 tvRating.text = "13,781 reviews"
+                btnNavigate.setOnClickListener {
+                    openDirection(
+                        appContext, timeLinePlaceModel.placeName.toString(), LatLng(
+                            timeLinePlaceModel.latitude ?: 0.0,
+                            timeLinePlaceModel.latitude ?: 0.0
+                        )
+                    )
+                }
             }
         }
 

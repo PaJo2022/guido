@@ -24,7 +24,8 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        saveItineraryId = "77f9543d-4cca-4b86-9b97-cb0cfbc1197a"
+        saveItineraryId = "188e5285-38d4-4e40-b329-c0797d0132bf"
+        //saveItineraryId = arguments?.getString("ITINERARY_DB_ID", "") ?: ""
         mAdapter = AdapterTravelDate(requireContext())
         adapterTravelSpotViewPager = AdapterTravelSpotViewPager(requireContext())
     }
@@ -58,8 +59,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
                 binding.apply {
                     tvPlaceName.text = travelData.placeName
                     tvPlaceName.isSelected = true
-                    tvPlaceAddress.text = travelData.address
-                    tvPlaceAddress.isSelected = true
+                    tvPlaceCountry.text = travelData.countryName
                     tvTripExtraDetails.text =
                         "${travelData.tripLength}, ${travelData.tripPartners}"
                 }

@@ -3,8 +3,8 @@ package com.innoappsai.guido.generateItinerary.model.itinerary
 import com.google.gson.annotations.SerializedName
 
 data class ItineraryModel(
-    @SerializedName("Address")
-    val address: String?,
+    @SerializedName("countryName")
+    val countryName: String?,
     @SerializedName("End Date")
     val endData: String?,
     @SerializedName("Place Name")

@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         viewModel.removeAllSavedPlaces()
 
-        //homeFragment = HomeFragment()
+//        homeFragment = HomeFragment()
 
         val homeFragment = FragmentPlaceItinerary()
         FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!,intent?.extras)

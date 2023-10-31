@@ -107,6 +107,7 @@ class ViewModelGenerateItinerary @Inject constructor(
                 25000,
                 selectPlaceTypes
             )
+            nearByPlaces = nearByPlaces.filter { it.photos?.isNotEmpty() == true }
             _selectedTypePlacesNearLocation.postValue(nearByPlaces)
         }
     }
@@ -197,8 +198,7 @@ class ViewModelGenerateItinerary @Inject constructor(
                         "My Traveling budget is ${travelBudgetList.find { it.isSelected }?.name}\n" +
                         "These are the landmarks i wanna visit ${commaSeparatedStringForSelectedPlaces}" +
                         "Now using this data create me a json structure using the demon json structure" +
-                        "{\"Place Name\":\"place name\",\"Address\":\"place address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"latitude\":\"Place Latitude\",\"longitude\":\"Place Longitude\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
-
+                        "{\"Place Name\":\"place name\",\"countryName\":\"place country name from address\",\"Trip Length\":1,\"Trip Partners\":\"traveling with\",\"Start Date\":\"2023-11-01\",\"End Date\":\"2023-11-01\",\"tripData\":[{\"Day\":\"Day 1\",\"Date\":\"Date Of the Day in this format  Saturady,25\",\"Places\":[{\"timeSlots\":\"Time Slot Based On User Times\",\"placeId\":\"Place Id\",\"latitude\":\"Place Latitude\",\"longitude\":\"Place Longitude\",\"placeName\":\"Place Name\",\"placePhotos\":[\"images\"]}]}]}\n"
             _onItineraryGeneration.emit(message)
         }
 

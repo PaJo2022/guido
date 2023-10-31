@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:fillViewport="true"
+    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +27,7 @@
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/color_light_grey_50"
+            android:background="#1A1C4BD7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map_view">
 
@@ -41,80 +41,93 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_travel_dates"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_100sdp"
-                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/layout_travel_date_item"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginHorizontal="@dimen/_20sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline_horizontal2" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_travel_timeline"
-                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/rv_travel_dates"
+                app:layout_constraintStart_toStartOf="@+id/rv_travel_dates"
                 app:layout_constraintTop_toBottomOf="@+id/rv_travel_dates" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_marginHorizontal="@dimen/_20sdp"
-            android:background="@drawable/rounded_background_primary"
-            android:backgroundTint="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/map_view"
-            app:layout_constraintTop_toBottomOf="@+id/map_view"
-            tools:layout_editor_absoluteX="26dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardElevation="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/map_view">
 
-            <TextView
-                android:id="@+id/tv_place_name"
-                style="@style/TitleTextStyle"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:text="Kolkata"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+         >
 
-            <TextView
-                android:id="@+id/tv_place_address"
-                style="@style/DescriptionTextStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_12sdp"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:text="Kolkata"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tv_trip_extra_details"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+                <TextView
+                    android:id="@+id/tv_place_name"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:text="Kolkata"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_trip_extra_details"
-                style="@style/DescriptionTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_12sdp"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:text="3 days, solo, 2023"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+                <TextView
+                    android:id="@+id/tv_place_country"
+                    style="@style/DescriptionTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:text="Kolkata"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_trip_extra_details"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
+
+                <TextView
+                    android:id="@+id/tv_trip_extra_details"
+                    style="@style/DescriptionTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:text="3 days, solo, 2023"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+</ScrollView>

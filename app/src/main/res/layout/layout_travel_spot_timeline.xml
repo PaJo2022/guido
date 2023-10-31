@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_light_grey">
+    android:layout_height="wrap_content">
 
     <com.github.vipulasri.timelineview.TimelineView
         android:id="@+id/timeline"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/_12sdp"
         app:endLineColor="@color/color_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,9 +23,9 @@
         android:id="@+id/materialCardView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
+        android:layout_marginStart="@dimen/_8sdp"
         app:cardBackgroundColor="@color/quantum_grey50"
-        app:contentPadding="10dp"
+        app:contentPadding="@dimen/_12sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/timeline"
         app:layout_constraintTop_toTopOf="parent">
@@ -59,9 +57,11 @@
                 app:layout_constraintTop_toTopOf="@+id/iv_clock" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cv_place_iamge"
+                android:id="@+id/cv_place_image"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_150sdp"
+                app:cardCornerRadius="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_time_slot">
@@ -82,7 +82,7 @@
                 android:text="Place Name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cv_place_iamge" />
+                app:layout_constraintTop_toBottomOf="@+id/cv_place_image" />
 
             <RatingBar
                 android:id="@+id/place_rating"
@@ -107,6 +107,21 @@
                 app:layout_constraintBottom_toBottomOf="@+id/place_rating"
                 app:layout_constraintStart_toEndOf="@+id/place_rating"
                 app:layout_constraintTop_toTopOf="@+id/place_rating" />
+
+            <ImageView
+                android:id="@+id/btn_navigate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_background"
+                android:backgroundTint="@color/color_secondary"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:padding="@dimen/_8sdp"
+                android:src="@drawable/ic_map"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_rating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_rating" />
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
