@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/_12sdp"
     android:layout_marginVertical="@dimen/_2sdp"
-    android:background="@drawable/rounded_background"
+    android:background="@drawable/rounded_background_corner"
     android:backgroundTint="@color/color_light_grey">
 
     <LinearLayout

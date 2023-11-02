@@ -161,6 +161,86 @@ fun openDirection(context: Context, placeName: String?, latLng: LatLng?) {
         Toast.makeText(context, "Can Not Open The Maps", Toast.LENGTH_SHORT).show()
     }
 }
+fun calculateDistanceInKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val R = 6371.0 // Earth's radius in kilometers
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLon = Math.toRadians(lon2 - lon1)
+    val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLon / 2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+}
+
+
+enum class TraveingType{
+    WALKING,DRIVING
+}
+fun calculateTravelTimeAndMode(
+    originLat: Double,
+    originLon: Double,
+    destinationLat: Double,
+    destinationLon: Double
+): Pair<TraveingType, String> {
+    val distance = calculateDistanceInKm(originLat, originLon, destinationLat, destinationLon)
+    val walkingSpeedKmph = 5.0 // Average walking speed in km/h
+    val drivingSpeedKmph = 50.0 // Average driving speed in km/h
+
+    val walkingTimeHours = distance / walkingSpeedKmph
+    val drivingTimeHours = distance / drivingSpeedKmph
+
+    val walkingTimeMinutes = (walkingTimeHours * 60).toInt()
+    val drivingTimeMinutes = (drivingTimeHours * 60).toInt()
+
+    val travelMode: TraveingType
+    val travelTime: String
+
+    if (distance < 5.0) {
+        travelMode = TraveingType.WALKING
+        if (walkingTimeMinutes >= 60) {
+            val walkingTimeHoursInt = walkingTimeMinutes / 60
+            val walkingTimeMinutesInt = walkingTimeMinutes % 60
+            travelTime = "$walkingTimeHoursInt hours ${walkingTimeMinutesInt} minutes"
+        } else {
+            travelTime = "$walkingTimeMinutes minutes"
+        }
+    } else {
+        travelMode = TraveingType.DRIVING
+        if (drivingTimeMinutes >= 60) {
+            val drivingTimeHoursInt = drivingTimeMinutes / 60
+            val drivingTimeMinutesInt = drivingTimeMinutes % 60
+            travelTime = "$drivingTimeHoursInt hours ${drivingTimeMinutesInt} minutes"
+        } else {
+            travelTime = "$drivingTimeMinutes minutes"
+        }
+    }
+
+    return Pair(travelMode, travelTime)
+}
+
+
+
+fun showDirectionsOnGoogleMaps(
+    context: Context,
+    sourceLat: Double,
+    sourceLon: Double,
+    sourceName: String,
+    destinationLat: Double,
+    destinationLon: Double,
+    destinationName: String
+) {
+    val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=$sourceLat,$sourceLon&origin_place=$sourceName&destination=$destinationLat,$destinationLon&destination_place=$destinationName")
+    val mapIntent = Intent(Intent.ACTION_VIEW, uri)
+    mapIntent.setPackage("com.google.android.apps.maps") // Ensure Google Maps is used if available
+
+    if (mapIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(mapIntent)
+    } else {
+        // Handle the case where Google Maps is not installed
+        // You can open a web browser with the same URL as a fallback option
+        val webIntent = Intent(Intent.ACTION_VIEW, uri)
+        context.startActivity(webIntent)
+    }
+}
+
 
 fun updateApiKey(originalString: String?): String {
     // Check if the originalString contains "GCP_KEY"

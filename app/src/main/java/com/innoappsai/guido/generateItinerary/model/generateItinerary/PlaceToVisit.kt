@@ -18,7 +18,6 @@ fun createTripData(
     tripLength: String,
     tripPartners: String,
     tripStartDate: String,
-    tripEndDate: String,
     tripBudget: String,
     tripEachDayTimings: List<Triple<String, String, String>>,
     tripPlacesWannaVisit: List<PlaceToVisit>
@@ -29,7 +28,6 @@ fun createTripData(
     tripData.addProperty("tripLength", tripLength)
     tripData.addProperty("tripPartners", tripPartners)
     tripData.addProperty("tripStartDate", tripStartDate)
-    tripData.addProperty("tripEndDate", tripEndDate)
     tripData.addProperty("tripBudget", tripBudget)
 
     val tripEachDayTimingsArray = JsonArray()
@@ -45,20 +43,20 @@ fun createTripData(
     val tripPlacesWannaVisitArray = JsonArray()
     tripPlacesWannaVisit.forEach { place ->
         val placeObject = JsonObject()
-        placeObject.addProperty("placeId", place.placeId)
-        placeObject.addProperty("latitude", place.latitude)
-        placeObject.addProperty("longitude", place.longitude)
-        placeObject.addProperty("placeName", place.placeName)
+        placeObject.addProperty("landMarkId", place.placeId)
+        placeObject.addProperty("landMarkLatitude", place.latitude)
+        placeObject.addProperty("landMarkLongitude", place.longitude)
+        placeObject.addProperty("landMarkName", place.placeName)
 
         val placePhotosArray = JsonArray()
         place.placePhotos?.forEach { photo ->
             placePhotosArray.add(photo)
         }
-        placeObject.add("placePhotos", placePhotosArray)
+        placeObject.add("landMarkPhotos", placePhotosArray)
 
         tripPlacesWannaVisitArray.add(placeObject)
     }
-    tripData.add("tripPlacesWannaVisit", tripPlacesWannaVisitArray)
+    tripData.add("landMarks", tripPlacesWannaVisitArray)
 
     return tripData
 }

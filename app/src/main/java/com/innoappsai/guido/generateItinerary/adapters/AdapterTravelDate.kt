@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.LayoutTravelDateItemBinding
 import com.innoappsai.guido.generateItinerary.model.itinerary.TripData
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class AdapterTravelDate(private val appContext : Context) :
@@ -38,11 +40,24 @@ class AdapterTravelDate(private val appContext : Context) :
                 tvDay.setTextColor(ContextCompat.getColor(appContext,textColor))
                 tvDate.setTextColor(ContextCompat.getColor(appContext,textColor))
                 tvDay.text = item.day
-                tvDate.text = item.date
+                tvDate.text = item.date?.let { formatDateToDayAndDate(it) }
                 bottomSheet.setOnClickListener {
                     _onTravelDateSelectedListener?.invoke(item.day.toString())
                 }
             }
+        }
+    }
+
+    fun formatDateToDayAndDate(inputDate: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("EEEE, dd", Locale.getDefault())
+
+        try {
+            val date = inputFormat.parse(inputDate)
+            return outputFormat.format(date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ""
         }
     }
 

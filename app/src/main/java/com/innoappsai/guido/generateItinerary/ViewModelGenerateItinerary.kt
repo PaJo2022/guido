@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonObject
-import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.convertToAMPM
 import com.innoappsai.guido.data.places.PlacesRepository
@@ -13,8 +11,9 @@ import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 import com.innoappsai.guido.generateItinerary.model.InterestsSelection
 import com.innoappsai.guido.generateItinerary.model.Item
+import com.innoappsai.guido.generateItinerary.model.Trip
+import com.innoappsai.guido.generateItinerary.model.TripDayTiming
 import com.innoappsai.guido.generateItinerary.model.generateItinerary.PlaceToVisit
-import com.innoappsai.guido.generateItinerary.model.generateItinerary.createTripData
 import com.innoappsai.guido.generateItinerary.model.travelBudgeItemList
 import com.innoappsai.guido.generateItinerary.model.travelCompanionItemList
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
@@ -97,23 +96,9 @@ class ViewModelGenerateItinerary @Inject constructor(
         selectPlaceTypes = types
     }
 
-    private val _selectedTypePlacesNearLocation: MutableLiveData<List<PlaceUiModel>> =
-        MutableLiveData()
-    val selectedTypePlacesNearLocation: LiveData<List<PlaceUiModel>> get() = _selectedTypePlacesNearLocation
+    fun getSelectedPlaceTypes() = selectPlaceTypes
 
-    fun fetchPlacesNearLocation() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val latLng = MyApp.userCurrentLatLng ?: return@launch
-            nearByPlaces = placesRepository.fetchPlacesNearLocation(
-                latLng.latitude,
-                latLng.longitude,
-                25000,
-                selectPlaceTypes
-            )
-            nearByPlaces = nearByPlaces.filter { it.photos?.isNotEmpty() == true }
-            _selectedTypePlacesNearLocation.postValue(nearByPlaces)
-        }
-    }
+
 
 
     // Interests Selection Section
@@ -173,26 +158,23 @@ class ViewModelGenerateItinerary @Inject constructor(
 
     // Place Selection
     private val selectedPlacesList: ArrayList<PlaceUiModel> = ArrayList()
+
+    private val _onNearByPlaceSelected: MutableLiveData<ArrayList<PlaceUiModel>> =
+        MutableLiveData()
+    val onNearByPlaceSelected: LiveData<ArrayList<PlaceUiModel>> get() = _onNearByPlaceSelected
     fun cardRightSwiped(placeUiModel: PlaceUiModel) {
         selectedPlacesList.add(placeUiModel)
+        _onNearByPlaceSelected.value = selectedPlacesList
     }
 
 
     // Itinerary Generation
 
-    private val _onItineraryGeneration: MutableSharedFlow<JsonObject> =
+    private val _onItineraryGeneration: MutableSharedFlow<String> =
         MutableSharedFlow()
-    val onItineraryGeneration: SharedFlow<JsonObject> get() = _onItineraryGeneration
+    val onItineraryGeneration: SharedFlow<String> get() = _onItineraryGeneration
     fun generateAiTextForItinerary() {
-        //c634ed54-3255-42b4-be14-40591677a47b
-        if (nearByPlaces.isEmpty()) return
         viewModelScope.launch(Dispatchers.IO) {
-            val dayWiseTimeString = dayWiseTimeSliderList.map {
-                "${it.dayName} i will start my tour from ${it.startValue} Hours and will end my day at ${it.endValue}"
-            }.joinToString(", ")
-            val commaSeparatedStringForSelectedPlaces = selectedPlacesList.map {
-                "I want to visit ${it.name} and whose place Id is ${it.placeId} and the Photo links are ${it.photos?.firstOrNull()} and latitude is ${it.latLng?.latitude} and longitude is ${it.latLng?.longitude}"
-            }.joinToString(", ")
             val placeToVisitList = selectedPlacesList.map {
                 PlaceToVisit(
                     placeId = it.placeId,
@@ -203,26 +185,61 @@ class ViewModelGenerateItinerary @Inject constructor(
                 )
             }
             val tripEachDayTimings = dayWiseTimeSliderList.mapIndexed { index, data ->
-                Triple(
-                    "Day ${index}",
+                TripDayTiming(
+                    "Day ${index + 1}",
                     convertToAMPM(data.startValue.toInt()),
                     convertToAMPM(data.endValue.toInt())
                 )
             }
-            val jsonData = createTripData(
+
+            val trip = Trip(
                 placeName = selectedPlaceName,
                 placeCountry = selectedPlaceAddress,
                 tripLength = "${travelDuration} Days and ${travelDuration - 1} Night",
                 tripPartners = travelCompanionList.find { it.isSelected }?.name.toString(),
                 tripStartDate = startDate,
-                tripEndDate = "2023-11-04",
                 tripBudget = travelBudgetList.find { it.isSelected }?.name.toString(),
                 tripEachDayTimings = tripEachDayTimings,
                 tripPlacesWannaVisit = placeToVisitList
             )
-            _onItineraryGeneration.emit(jsonData)
+
+
+            _onItineraryGeneration.emit(createTripSummary(trip))
         }
 
+    }
+
+
+    fun createTripSummary(trip: Trip): String {
+        val sb = StringBuilder()
+
+        // Title
+        sb.append("I am going for a Trip to ${trip.placeName}, and using the bellow details create me a travel itinerary\n")
+        sb.append("-----------------\n")
+
+        // Location, Duration, Partners, Dates, Budget
+        sb.append("Location: ${trip.placeCountry}\n")
+        sb.append("Duration: ${trip.tripLength}\n")
+        sb.append("Traveling with: ${trip.tripPartners}\n")
+        sb.append("Trip Start Date: ${trip.tripStartDate}\n")
+        sb.append("Budget: ${trip.tripBudget}\n")
+
+        // Daily Schedule
+        sb.append("\nDaily Schedule:\n")
+        for ((index, dayTiming) in trip.tripEachDayTimings.withIndex()) {
+            sb.append("- ${dayTiming.day}: start day on ${dayTiming.tripStartTime} - and end day on ${dayTiming.tripEndTime}\n")
+        }
+
+        // Landmarks to Visit
+        sb.append("\nLandmarks to Visit:\n")
+        for ((index, landmark) in trip.tripPlacesWannaVisit.withIndex()) {
+            sb.append("${index + 1}. ${landmark.placeName}\n")
+            sb.append("LandMark Id: ${landmark.placeId}\n")
+            sb.append("LandMark: [Latitude: ${landmark.latitude}, Longitude: ${landmark.longitude}]\n")
+            sb.append("LandMark Image: ${landmark.placePhotos?.firstOrNull() ?: ""}\n")
+        }
+
+        return sb.toString()
     }
 
     // Travel Start Date

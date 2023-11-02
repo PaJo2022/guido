@@ -3,13 +3,17 @@ package com.innoappsai.guido.generateItinerary.screens
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.FragmentUtils
+import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
+import com.innoappsai.guido.fragments.LocationDetailsFragment
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelDate
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelSpotViewPager
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +57,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
         viewModel.apply {
             generatePlaceItineraryById()
             itineraryBasicDetails.observe(viewLifecycleOwner) { travelData ->
+                Log.i("JAPAN", "onViewCreated: ${travelData}")
                 binding.apply {
                     tvPlaceName.text = travelData.placeName
                     tvPlaceName.isSelected = true
@@ -60,15 +65,18 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
                     tvTripExtraDetails.text =
                         "${travelData.tripLength}, ${travelData.tripPartners}"
                 }
+            }
+
+            generatedItinerary.observe(viewLifecycleOwner) { tripData ->
                 try {
-                    travelData.tripData?.let { adapterTravelSpotViewPager.setData(it) }
+                    mAdapter.setData(tripData)
                 } catch (e: Exception) {
                     Log.i("JAPAN", "Error: ${e}")
                 }
             }
-            generatedItinerary.observe(viewLifecycleOwner) { tripData ->
+            generatedItineraryWithTravelPlaceAndDirection.observe(viewLifecycleOwner){
                 try {
-                    mAdapter.setData(tripData)
+                    adapterTravelSpotViewPager.setData(it)
                 } catch (e: Exception) {
                     Log.i("JAPAN", "Error: ${e}")
                 }
@@ -79,6 +87,10 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
         }
         initRecyclerView()
 
+        adapterTravelSpotViewPager.setOnTravelDateClickListener{
+            navigateToPlaceDetailsScreen(it)
+        }
+
         addOnBackPressedCallback {
             parentFragmentManager.popBackStack()
         }
@@ -87,5 +99,21 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
             viewModel.onDaySelected(it)
         }
 
+    }
+
+    private fun navigateToPlaceDetailsScreen(placeId: String) {
+        Bundle().apply {
+            putString("PLACE_ID", placeId)
+            openNavFragment(
+                LocationDetailsFragment(),this
+            )
+        }
+    }
+
+    private fun openNavFragment(
+        f: Fragment,
+        args: Bundle? = null
+    ) {
+        FragmentUtils.replaceFragment((activity as MainActivity), binding.mainLayout.id, f,args,true)
     }
 }

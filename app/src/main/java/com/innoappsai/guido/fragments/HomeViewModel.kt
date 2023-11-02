@@ -134,7 +134,6 @@ class HomeViewModel @Inject constructor(
             MyApp.userCurrentFormattedAddress = fullPlaceData?.address.toString()
             MyApp.currentPlace = fullPlaceData?.cityOrVillage.toString()
             MyApp.currentCountry = fullPlaceData?.country.toString()
-
             _searchedFormattedAddress.postValue(fullPlaceData?.address.toString())
         }
     }
@@ -168,6 +167,7 @@ class HomeViewModel @Inject constructor(
     ) {
         val radius = appPrefs.prefDistance
         lastSearchLocationLatLng = LatLng(latitude, longitude)
+        MyApp.userCurrentLatLng = LatLng(latitude, longitude)
         fetchCurrentAddressFromGeoCoding(latitude, longitude)
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)

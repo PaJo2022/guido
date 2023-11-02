@@ -11,6 +11,6 @@ interface ChatGptRepository {
     ): String?
 
     suspend fun getTravelItinerary(
-        userDbId: String? = null, shouldSendEmail: Boolean = false, jsonObject: JsonObject
+        userDbId: String? = null, shouldSendEmail: Boolean = false, query: String
     ): ItineraryModel?
 }

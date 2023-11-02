@@ -79,7 +79,7 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
             val travelData = chatGptRepository.getTravelItinerary(
                 userDbId = currentUser.dbId,
                 shouldSendEmail = false,
-                jsonObject = query
+                query = query
             )
             if (travelData != null) {
                 itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, travelData))

@@ -27,10 +27,5 @@ val placeFiltersList = listOf(
     PlaceFilter(
         title = "Open Now",
         placeFilterType = PlaceFilterType.OPEN_NOW
-    ),
-    PlaceFilter(
-        leftIcon = R.drawable.ic_more_filters,
-        title = "More Filters",
-        placeFilterType = PlaceFilterType.MORE_FILTERS
     )
 )

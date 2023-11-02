@@ -1,6 +1,5 @@
 package com.innoappsai.guido.api
 
-import com.google.gson.JsonObject
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
@@ -9,6 +8,7 @@ import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
 import com.innoappsai.guido.model.review.ReviewRequestDTO
 import com.innoappsai.guido.model.review.ReviewResponseDTO
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -94,6 +94,6 @@ interface GuidoApi {
     suspend fun generateTravelItinerary(
         @Query("userId") userId: String?,
         @Query("shouldSendEmail") shouldSendEmail: Boolean,
-        @Body jsonObject: JsonObject,
+        @Body body : RequestBody,
     ): Response<ItineraryModel?>
 }

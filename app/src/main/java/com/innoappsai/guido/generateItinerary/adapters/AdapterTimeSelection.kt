@@ -36,7 +36,7 @@ class AdapterTimeSelection :
                 rangeSlider.addOnChangeListener { slider, value, fromUser ->
                     val values = rangeSlider.values
                     if (fromUser) {
-                        tvDayTiming.text = "${convertToAMPM(values[0].toInt())} - ${convertToAMPM(values[1].toInt())}"
+                        tvDayTiming.text = "${convertToAMPM(values[0].toInt()-1)} - ${convertToAMPM(values[1].toInt()-1)}"
                         _onSliderChangeListener?.invoke(
                             item.id,
                             values[0],

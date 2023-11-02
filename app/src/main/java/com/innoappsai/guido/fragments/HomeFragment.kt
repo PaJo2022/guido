@@ -103,7 +103,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun observeWorkers() {
         CreateItineraryGeneratorWorker.workerState.observe(viewLifecycleOwner) { workState ->
-           // binding.llItineraryIsAdded.root.isVisible = workState == WorkerState.COMPLETE
+           binding.llItineraryIsAdded.root.isVisible = workState == WorkerState.COMPLETE
         }
     }
 
@@ -624,7 +624,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             Bundle().apply {
                 putString("PLACE_ID", it.placeId)
                 openNavFragment(
-                    LocationDetailsFragment()
+                    LocationDetailsFragment(),this
                 )
             }
         }

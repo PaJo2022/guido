@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.databinding.LayoutTravelSpotViewpagerItemBinding
+import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TripData
 
 
@@ -14,27 +15,38 @@ class AdapterTravelSpotViewPager(
     private val appContext: Context
 ) : RecyclerView.Adapter<AdapterTravelSpotViewPager.AdapterTravelSpotViewPagerViewHolder>() {
 
-    private var _eachDayTravelSpotItemList: List<TripData> = ArrayList()
+    private var _eachDayTravelSpotItemList: List<List<TravelPlaceWithTravelDirection>> = ArrayList()
 
-    fun setData(eachDayTravelSpotItemList: List<TripData>) {
+    fun setData(eachDayTravelSpotItemList: List<List<TravelPlaceWithTravelDirection>>) {
         _eachDayTravelSpotItemList = eachDayTravelSpotItemList
         notifyDataSetChanged()
     }
+
+    private var _onLandMarkSelectedListener: ((id : String) -> Any?)? =
+        null
+
+    fun setOnTravelDateClickListener(onLandMarkSelectedListener: ((id : String) -> Any?)) {
+        _onLandMarkSelectedListener = onLandMarkSelectedListener
+    }
+
 
     inner class AdapterTravelSpotViewPagerViewHolder(
         private val adapterTravelSpots: AdapterTravelSpots,
         private val binding: LayoutTravelSpotViewpagerItemBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(tripData: TripData) {
+        fun bind(travelPlaces: List<TravelPlaceWithTravelDirection>) {
             binding.rvEachDayTravelSpot.apply {
                 adapter = adapterTravelSpots
                 layoutManager = LinearLayoutManager(appContext, LinearLayoutManager.VERTICAL, false)
             }
-            tripData.travelPlaces?.let { adapterTravelSpots.setData(it) }
+            adapterTravelSpots.setData(travelPlaces)
+            adapterTravelSpots.setOnTravelDateClickListener {
+                _onLandMarkSelectedListener?.invoke(it)
+            }
             binding.apply {
-                rvEachDayTravelSpot.isVisible = tripData.travelPlaces?.isNotEmpty() == true
-                tvNoActivitiesAdded.isVisible = tripData.travelPlaces?.isNotEmpty() == false
+                rvEachDayTravelSpot.isVisible = travelPlaces.isNotEmpty()
+                tvNoActivitiesAdded.isVisible = travelPlaces.isNotEmpty() == false
             }
         }
     }

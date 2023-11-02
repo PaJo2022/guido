@@ -1,11 +1,15 @@
 package com.innoappsai.guido.data.tourData
 
-import android.util.Log
-import com.google.gson.JsonObject
+import android.R.attr.text
 import com.innoappsai.guido.api.GuidoApi
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
+
 
 class TourDataRepositoryImpl @Inject constructor(
     private val api: GuidoApi
@@ -26,10 +30,11 @@ class TourDataRepositoryImpl @Inject constructor(
     override suspend fun getTravelItinerary(
         userDbId: String?,
         shouldSendEmail: Boolean,
-        jsonObject : JsonObject
+        query : String
     ): ItineraryModel? {
         return try {
-            val response = api.generateTravelItinerary(userDbId,shouldSendEmail,jsonObject)
+            val body: RequestBody = query.toRequestBody("text/plain".toMediaTypeOrNull())
+            val response = api.generateTravelItinerary(userDbId,shouldSendEmail,body)
             response.body()
         } catch (e: Exception) {
             null
