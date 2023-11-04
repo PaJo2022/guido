@@ -17,6 +17,7 @@ data class TripData(
 
 data class Landmark(
     val travelTiming : String?,
+    val travelDateAndTiming : String?,
     val landMarkId : String?,
     val landMarkName : String?,
     val landMarkDescription : String?,

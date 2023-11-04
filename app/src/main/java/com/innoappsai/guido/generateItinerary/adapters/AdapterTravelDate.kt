@@ -51,15 +51,14 @@ class AdapterTravelDate(private val appContext : Context) :
     }
 
     fun formatDateToDayAndDate(inputDate: String): String {
-        val inputFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("EEEE, dd", Locale.getDefault())
-
-        try {
+        return try {
             val date = inputFormat.parse(inputDate)
-            return outputFormat.format(date)
+            outputFormat.format(date)
         } catch (e: Exception) {
             e.printStackTrace()
-            return ""
+            ""
         }
     }
 

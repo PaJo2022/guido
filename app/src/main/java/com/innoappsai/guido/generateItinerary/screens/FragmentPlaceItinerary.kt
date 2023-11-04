@@ -1,5 +1,10 @@
 package com.innoappsai.guido.generateItinerary.screens
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,7 +21,12 @@ import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
 import com.innoappsai.guido.fragments.LocationDetailsFragment
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelDate
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelSpotViewPager
+import com.innoappsai.guido.generateItinerary.receiver.TripNotificationBroadCastReceiver
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(FragmentPlaceItinearyBinding::inflate) {
@@ -72,15 +82,20 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
                     Log.i("JAPAN", "Error: ${e}")
                 }
             }
-            generatedItineraryWithTravelPlaceAndDirection.observe(viewLifecycleOwner){
+            generatedItineraryWithTravelPlaceAndDirection.observe(viewLifecycleOwner) {
                 try {
                     adapterTravelSpotViewPager.setData(it)
                 } catch (e: Exception) {
                     Log.i("JAPAN", "Error: ${e}")
                 }
             }
-            moveToDayIndex.observe(viewLifecycleOwner){
-                binding.rvTravelTimeline.setCurrentItem(it,true)
+            tripPlaceNotificationList.observe(viewLifecycleOwner) {
+                it.forEachIndexed {index,item->
+                    setTripNotifications(index,item)
+                }
+            }
+            moveToDayIndex.observe(viewLifecycleOwner) {
+                binding.rvTravelTimeline.setCurrentItem(it, true)
             }
         }
         initRecyclerView()
@@ -93,17 +108,79 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
             parentFragmentManager.popBackStack()
         }
 
-        mAdapter.setOnTravelDateClickListener{
+        mAdapter.setOnTravelDateClickListener {
             viewModel.onDaySelected(it)
         }
 
     }
 
+    private fun setTripNotifications(id:Int,data: Triple<String, String, String>) {
+        val alarmMgr = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val alarmIntent = Intent(requireContext(), TripNotificationBroadCastReceiver::class.java)
+        alarmIntent.putExtra("TRIP_PLACE_NAME", data.second)
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(), id, alarmIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        Log.i("JAPAN", "alarmIntent: ${alarmIntent}")
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        val date = sdf.parse(data.third)
+        getTimeDifferenceInMinutes(data.third)
+
+//        val calendar = Calendar.getInstance().apply {
+//            timeInMillis = System.currentTimeMillis()
+//            set(Calendar.HOUR_OF_DAY, hour)  // Replace selectedHour with your desired hour
+//            set(Calendar.MINUTE, minute)     // Replace selectedMinute with your desired minute
+//            set(Calendar.SECOND, 0)
+//            if (timeInMillis < System.currentTimeMillis()) {
+//                add(Calendar.DAY_OF_YEAR, 1)
+//            }
+//        }
+        if (date == null) {
+            Log.i("JAPAN", "NOT ALARM SET")
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Check if the device can schedule exact alarms on Android 12+
+            if (alarmMgr.canScheduleExactAlarms()) {
+                alarmMgr.setExact(AlarmManager.RTC_WAKEUP, date.time, pendingIntent)
+            } else {
+                // Handle the case where exact alarms can't be scheduled
+                // You may consider using inexact alarms in this case
+                // Or adapt your app's functionality accordingly
+            }
+        } else {
+            // For devices prior to Android 12, use setExact directly
+            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, date.time, pendingIntent)
+        }
+        Log.i("JAPAN", "ALARM SET")
+    }
+
+    fun getTimeDifferenceInMinutes(formattedTime: String) {
+        val currentTime = Date()
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        val formattedDate = sdf.format(currentTime)
+
+        // Parse the formattedTime and current time
+        val formattedDateTime = sdf.parse(formattedTime)
+        val currentDateTime = sdf.parse(formattedDate)
+
+        // Calculate the time difference in milliseconds
+        val timeDifferenceMillis = formattedDateTime.time - currentDateTime.time
+
+        // Convert the time difference to minutes
+        val timeDifferenceMinutes = TimeUnit.MILLISECONDS.toMinutes(timeDifferenceMillis)
+
+        Log.i("JAPAN", "getTimeDifferenceInMinutes: ${timeDifferenceMinutes}")
+    }
+
+
     private fun navigateToPlaceDetailsScreen(placeId: String) {
         Bundle().apply {
             putString("PLACE_ID", placeId)
             openNavFragment(
-                LocationDetailsFragment(),this
+                LocationDetailsFragment(), this
             )
         }
     }
