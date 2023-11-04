@@ -53,7 +53,6 @@ class LocationDetailsFragment :
     BaseFragment<FragmentLocationDetailsNewBinding>(FragmentLocationDetailsNewBinding::inflate) {
 
     private lateinit var viewModel: LandMarkDetailsViewModel
-    private lateinit var adapterPlaceImages: ImageAdapter
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
     private lateinit var adapterImageSlider: ImageSliderAdapter
     private lateinit var adapterVideos: VideoAdapter
@@ -67,7 +66,6 @@ class LocationDetailsFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[LandMarkDetailsViewModel::class.java]
-        adapterPlaceImages = ImageAdapter(requireContext())
         adapterPlaceReview = PlaceReviewAdapter(requireContext())
         adapterImageSlider = ImageSliderAdapter(requireContext())
         adapterPlaceExtraInfo = PlaceMoreInfoAdapter()

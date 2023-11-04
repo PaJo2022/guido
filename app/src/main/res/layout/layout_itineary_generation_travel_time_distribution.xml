@@ -55,6 +55,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         tools:itemCount="5"
+        android:background="@color/color_light_grey"
         tools:listitem="@layout/layout_travel_time_selection"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"

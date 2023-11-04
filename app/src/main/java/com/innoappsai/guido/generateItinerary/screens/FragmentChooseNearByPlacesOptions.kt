@@ -78,11 +78,11 @@ class FragmentChooseNearByPlacesOptions :
                 startGenerating()
             }
             onNearByPlaceSelected.observe(viewLifecycleOwner) {
-                val totalPlaceCanBedSelected = 7
+                val totalPlaceCanBedSelected = 15
                 val placeSelected = it.size
                 val progressPercentage = (placeSelected.toFloat() / totalPlaceCanBedSelected) * 100
                 headerBinding.apply {
-                    tvDone.toggleEnableAndAlpha(it.size > 3)
+                    tvDone.toggleEnableAndAlpha(it.size > 6)
                     linearProgressIndicator.setProgress(progressPercentage.toInt(), true)
                     tvCompletion.text = "${progressPercentage.toInt()}%"
                 }

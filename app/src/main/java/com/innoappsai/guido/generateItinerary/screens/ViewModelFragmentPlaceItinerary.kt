@@ -1,17 +1,17 @@
 package com.innoappsai.guido.generateItinerary.screens
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelDirection
+import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TripData
+import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -46,7 +46,6 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     fun generatePlaceItineraryById() {
         viewModelScope.launch(Dispatchers.IO) {
             val generatedItinerary = itineraryRepository.getItineraryById("").first()
-            Log.i("JAPAN", "generatePlaceItineraryById: ${generatedItinerary}")
             generatedItinerary?.let {
                 itineraryModel = generatedItinerary.travelItineraryData
 
@@ -58,21 +57,30 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
                     val travelPlaceWithTravelDirectionList =
                         arrayListOf<TravelPlaceWithTravelDirection>()
                     travelPlaces.forEachIndexed { index, item ->
+                        val currentTravelPlace = item.details?.toPlaceUiModel()
                         var travelDirection: TravelDirection? = null
                         if (index >= 0 && index < travelPlaces.size - 1) {
                             travelDirection = TravelDirection()
-                            val nextPlace = travelPlaces[index + 1]
-                            travelDirection.currentLocation = LatLng(item.latitude, item.longitude)
-                            travelDirection.nextLocation =
-                                LatLng(nextPlace.latitude, nextPlace.longitude)
-                            travelDirection.currentLocationName = item.placeName
-                            travelDirection.nextLocationName = nextPlace.placeName
+
+                            val nextPlace = travelPlaces[index + 1].details?.toPlaceUiModel()
+                            travelDirection.currentLocation = currentTravelPlace?.latLng
+                            travelDirection.nextLocation = nextPlace?.latLng
+                            travelDirection.currentLocationName = currentTravelPlace?.name
+                            travelDirection.nextLocationName = nextPlace?.name
+
 
                         }
 
 
-                        val travelPlaceWithTravelDirection1 =
-                            TravelPlaceWithTravelDirection(travelPlace = item)
+                        val travelPlaceWithTravelDirection1 = TravelPlaceWithTravelDirection(
+                            travelPlace = TravelPlace(
+                                travelTiming = item.travelTiming,
+                                placeId = item.landMarkId.toString(),
+                                placeName = item.landMarkName.toString(),
+                                landMarkDescription = item.landMarkDescription.toString(),
+                                placeDetails = item.details?.toPlaceUiModel()
+                            )
+                        )
 
                         travelPlaceWithTravelDirectionList.add(travelPlaceWithTravelDirection1)
                         if (travelDirection != null) {

@@ -4,10 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.R
 import com.innoappsai.guido.TraveingType
+import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.calculateTravelTimeAndMode
 import com.innoappsai.guido.databinding.LayoutTravelSpotDirectionTimelineBinding
 import com.innoappsai.guido.databinding.LayoutTravelSpotTimelineBinding
@@ -16,7 +18,6 @@ import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
 import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.showDirectionsOnGoogleMaps
-import com.innoappsai.guido.updateApiKey
 
 
 class AdapterTravelSpots(
@@ -58,7 +59,8 @@ class AdapterTravelSpots(
                             parent.context
                         ), parent,
                         false
-                    )
+                    ),
+                    ImageSliderAdapter(appContext)
                 )
             }
 
@@ -91,29 +93,34 @@ class AdapterTravelSpots(
     override fun getItemCount() = _mFeedList.size
 
     inner class TimeLineViewHolder(
-        private val binding: LayoutTravelSpotTimelineBinding
+        private val binding: LayoutTravelSpotTimelineBinding,
+        private val adapterImageSlider: ImageSliderAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(position: Int, travelPlace: TravelPlace) {
-            val timeLineType = if(position == 0) 1 else if(position == _mFeedList.size - 1) 2 else 0
+            val timeLineType =
+                if (position == 0) 1 else if (position == _mFeedList.size - 1) 2 else 0
             binding.apply {
+                val placeUiModel = travelPlace.placeDetails
                 root.setOnClickListener {
-                    _onLandMarkSelectedListener?.invoke(travelPlace.placeId)
+                    placeUiModel?.placeId?.let { it1 -> _onLandMarkSelectedListener?.invoke(it1) }
                 }
                 timeline.initLine(timeLineType)
-                Glide.with(appContext)
-                    .load(updateApiKey(travelPlace.placePhoto))
-                    .centerCrop()
-                    .into(ivPlace)
-                tvTimeSlot.text = travelPlace.timeSlots
-                tvPlaceName.text = travelPlace.placeName
-                placeRating.rating = 4.5f
-                tvRating.text = "13,781 reviews"
+                binding.vpPlaceImages.adapter = adapterImageSlider
+                binding.vpPlaceImages.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                placeUiModel?.photos?.let { adapterImageSlider.setPlacePhotos(it) }
+                TabLayoutMediator(binding.imageIndicators, binding.vpPlaceImages) { tab, position ->
+
+                }.attach()
+                tvTimeSlot.text = travelPlace.travelTiming
+                tvPlaceName.text = placeUiModel?.name
+                placeRating.rating = placeUiModel?.rating?.toFloat() ?: 0f
+                tvRating.text = "${placeUiModel?.reviewsCount} reviews"
                 btnNavigate.setOnClickListener {
                     openDirection(
-                        appContext, travelPlace.placeName, LatLng(
-                            travelPlace.latitude,
-                            travelPlace.longitude
+                        appContext, placeUiModel?.name, LatLng(
+                            placeUiModel?.latLng?.latitude ?: 0.0,
+                            placeUiModel?.latLng?.longitude ?: 0.0
                         )
                     )
                 }

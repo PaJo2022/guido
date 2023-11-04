@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_light_grey">
+    android:layout_height="wrap_content">
 
 
     <TextView
@@ -30,12 +29,14 @@
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/range_slider"
+        app:labelBehavior="gone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_12sdp"
         android:stepSize="1.0"
         android:valueFrom="6.0"
         android:valueTo="24.0"
+        app:tickVisible="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_day_timing"
         app:layout_constraintTop_toBottomOf="@+id/tv_day_timing"

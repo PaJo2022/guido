@@ -3,6 +3,7 @@ package com.innoappsai.guido.generateItinerary.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.slider.LabelFormatter
 import com.innoappsai.guido.convertToAMPM
 import com.innoappsai.guido.databinding.LayoutTravelTimeSelectionBinding
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
@@ -32,11 +33,15 @@ class AdapterTimeSelection :
                 tvDay.text = item.dayName
 
                 //If you only want the slider start and end value and don't care about the previous values
-
+                rangeSlider.setLabelFormatter {
+                    convertToAMPM(it.toInt() - 1)
+                }
                 rangeSlider.addOnChangeListener { slider, value, fromUser ->
                     val values = rangeSlider.values
                     if (fromUser) {
-                        tvDayTiming.text = "${convertToAMPM(values[0].toInt()-1)} - ${convertToAMPM(values[1].toInt()-1)}"
+                        tvDayTiming.text =
+                            "${convertToAMPM(values[0].toInt() - 1)} - ${convertToAMPM(values[1].toInt() - 1)}"
+
                         _onSliderChangeListener?.invoke(
                             item.id,
                             values[0],

@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(FragmentPlaceItinearyBinding::inflate) {
 
-    private var saveItineraryId: String = ""
+
     private val viewModel: ViewModelFragmentPlaceItinerary by viewModels()
     private lateinit var mAdapter: AdapterTravelDate
     private lateinit var adapterTravelSpotViewPager: AdapterTravelSpotViewPager
@@ -42,9 +42,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
                 adapter = mAdapter
             }
             rvTravelTimeline.apply {
-                snapHelper.attachToRecyclerView(this)
-                layoutManager =
-                    LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+                isUserInputEnabled = false
                 adapter = adapterTravelSpotViewPager
             }
         }
@@ -57,7 +55,6 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
         viewModel.apply {
             generatePlaceItineraryById()
             itineraryBasicDetails.observe(viewLifecycleOwner) { travelData ->
-                Log.i("JAPAN", "onViewCreated: ${travelData}")
                 binding.apply {
                     tvPlaceName.text = travelData.placeName
                     tvPlaceName.isSelected = true
@@ -69,6 +66,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
 
             generatedItinerary.observe(viewLifecycleOwner) { tripData ->
                 try {
+
                     mAdapter.setData(tripData)
                 } catch (e: Exception) {
                     Log.i("JAPAN", "Error: ${e}")
@@ -82,7 +80,7 @@ class FragmentPlaceItinerary : BaseFragment<FragmentPlaceItinearyBinding>(Fragme
                 }
             }
             moveToDayIndex.observe(viewLifecycleOwner){
-                binding.rvTravelTimeline.smoothScrollToPosition(it)
+                binding.rvTravelTimeline.setCurrentItem(it,true)
             }
         }
         initRecyclerView()
