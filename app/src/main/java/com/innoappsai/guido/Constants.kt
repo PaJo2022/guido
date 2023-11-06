@@ -1,5 +1,8 @@
 package com.innoappsai.guido
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import com.innoappsai.guido.model.PlaceFeature
 import com.innoappsai.guido.model.PlaceType
 
@@ -7,6 +10,11 @@ object Constants {
     const val GCP_API_KEY = "AIzaSyBLXHjQ9_gyeSoRfndyiAz0lfvm-3fgpxY"
 
 
+    fun isAlarmSet(context: Context, requestCode: Int, intent: Intent): Boolean {
+        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)
+        return pendingIntent != null
+    }
     // Finance category
     val financeList = listOf(
         PlaceType("accounting", "Accounting", "Finance"),

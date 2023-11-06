@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.databinding.ActivityGenerateItineraryBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +34,9 @@ class GenerateItineraryActivity : AppCompatActivity() {
         val placeAddress = intent.getStringExtra("PLACE_ADDRESS")
 
         viewModel.selectedPlaceName = placeName.toString()
+        viewModel.selectedLatitude = MyApp.userCurrentLatLng?.latitude
+        viewModel.selectedLongitude = MyApp.userCurrentLatLng?.longitude
+        viewModel.selectedPlaceCountryName = MyApp.currentCountry.toString()
         viewModel.selectedPlaceAddress = placeAddress.toString()
     }
 

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.BaseFragment
+import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.databinding.FragmentPlaceDreamCardBinding
 import com.innoappsai.guido.generateItinerary.adapters.DreamCardAdapter
@@ -49,6 +50,8 @@ class FragmentPlaceDreamCard
             }
         }
         binding.apply {
+            tvLetsDreamDescription.text = "Time to make your Dream Board for ${MyApp.currentPlace},${MyApp.currentCountry}! Don't worry about logistics or budget quite yet.\n" +
+                    "Right now just focus on what would get you the most excited. We will prioritize things later."
             rvDreamCards.apply {
                 addItemDecoration(DreamCardItemDecorator(requireContext()))
                 addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {

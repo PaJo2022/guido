@@ -28,20 +28,18 @@ class FragmentGenerateItineraryOptions :
     BaseFragment<FragmentItinearyGenerationStep1Binding>(FragmentItinearyGenerationStep1Binding::inflate) {
 
     private val viewModel: ViewModelGenerateItinerary by activityViewModels()
-    private lateinit var adapter: ItineraryOptionPagerAdapter
+    private lateinit var itineraryOptionPagerAdapter: ItineraryOptionPagerAdapter
 
     private var currentStep = 1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        adapter = ItineraryOptionPagerAdapter(requireActivity())
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        itineraryOptionPagerAdapter = ItineraryOptionPagerAdapter(requireActivity())
         binding.apply {
             rvItineraryGenerationOptions.apply {
-                adapter = this@FragmentGenerateItineraryOptions.adapter
+                adapter = itineraryOptionPagerAdapter
                 isUserInputEnabled = false
             }
             onFirstStep()
@@ -61,10 +59,9 @@ class FragmentGenerateItineraryOptions :
             }
         }
 
-        adapter.setItineraryOptions(
+        itineraryOptionPagerAdapter.setItineraryOptions(
             arrayListOf(
                 FragmentTravelDuration(),
-                FragmentTravelEachDayTiming(),
                 FragmentTravelStartDate(),
                 FragmentTravelCompanionType(),
                 FragmentTravelPlaceTypes(),

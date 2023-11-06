@@ -21,7 +21,7 @@ class FragmentTravelPlaceTypes : BaseFragment<LayoutItinearyGenerationTravelPlac
 
     private val viewModel: ViewModelGenerateItinerary by activityViewModels()
     private lateinit var adapter: AdapterInterestsSelection
-    private val maxSelectionCount = 5
+    val selectedChips = mutableSetOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +30,15 @@ class FragmentTravelPlaceTypes : BaseFragment<LayoutItinearyGenerationTravelPlac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cgTravelTypes.setOnCheckedStateChangeListener { group, checkedId ->
-            if (checkedId.size <= 5) {
+        binding.cgTravelTypes.setOnCheckedStateChangeListener { group, checkedIds ->
+            if (checkedIds.size <= 5) {
                 val selectedChipListType =
-                    checkedId.map { group.findViewById<Chip>(it).tag.toString() }
+                    checkedIds.map { group.findViewById<Chip>(it).tag.toString() }
                 viewModel.onPlaceTypeSelected(selectedChipListType)
             } else {
+                checkedIds.firstOrNull()
+                    ?.let { binding.cgTravelTypes.findViewById<Chip>(it).isChecked = false }
+                binding.cgTravelTypes.checkedChipIds.removeAt(0)
                 requireActivity().showToast("Max 5 types can be selected")
             }
         }

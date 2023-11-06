@@ -7,7 +7,6 @@ enum class TravelItineraryGenerationOption {
 
 val itineraryGenerationOptionList = arrayListOf(
     TravelItineraryGenerationOption.TRAVEL_DURATION,
-    TravelItineraryGenerationOption.TRAVEL_TIME_ALLOCATION,
     TravelItineraryGenerationOption.TRAVEL_DATE,
     TravelItineraryGenerationOption.TRAVEL_COMPANION,
     TravelItineraryGenerationOption.TRAVEL_INTERESTS,

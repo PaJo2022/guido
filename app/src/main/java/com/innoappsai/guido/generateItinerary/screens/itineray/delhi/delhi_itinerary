@@ -1,0 +1,157 @@
+Generate a 3-day itinerary for my Couple trip to New Delhi, India, whose location coordinates are Latitude:28.6139  and Longitude: 77.2090 starting my trip on 2023-11-08.
+I want to visit a maximum of 3 landmarks each day.
+I am going as Friends.
+
+
+Landmarks I Want To Visit and the time i want to spent at each landmarks:
+
+1. Patel nagar embassy(id: 1)
+2. Beat Guru Studio(id: 2)
+3. The Ahuja Crib(id: 3r)
+4. Delly Belly Lounge Bar(id: 4)
+5. The Hide Out Cafe & Lounge(id: 5)
+6. OwlOwnwithlush(id: 6)
+
+And here are the top food places for each day's breakfast, lunch, and dinner:
+
+1. The Grill House(id: 7)
+2. Mama's Food(id: 8)
+3. Blue Water Grille Express(id: 9)
+4. SUBWAY(id: 10)
+11. Oberoi Biryani(id: 11)
+12. Cafe Resto, Jaypee Siddharth - Best 5 Star Dining Restaurants in Delhi(id: 12)
+13. Forty 3 East(id: 13)
+14. McDonald's India(id: 14)
+15. Food Square(id: 15)
+
+
+
+{
+  "placeName": "New Delhi",
+  "countryName": "India",
+  "placeLatitude": 28.6139,
+  "placeLongitude": 77.2090,
+  "tripLength": 3,
+  "tripPartners": "Friends",
+  "tripStartDate": "2023-12-18",
+ "tripData": [
+    {
+      "day": "Day 1",
+      "date": "2023-12-18",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 09:30 AM",
+          "timingDateAndTime": "2023-12-18 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "10:00 AM - 12:00 AM",
+          "timingDateAndTime": "2023-12-18 11:00",
+          "landMarkId": "1",
+          "landMarkName": "Patel nagar embassy"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "12:30 PM - 1:30 PM",
+          "timingDateAndTime": "2023-12-18 12:30"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "02:00 PM - 04:00 PM",
+          "timingDateAndTime": "2023-12-18 14:00",
+          "landMarkId": "2",
+          "landMarkName": "Beat Guru Studio"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "04:30 PM - 06:30 PM",
+          "timingDateAndTime": "2023-12-18 16:30",
+          "landMarkId": "3",
+          "landMarkName": "The Ahuja Crib"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-18 21:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 2",
+      "date": "2023-12-19",
+       "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 09:30 AM",
+          "timingDateAndTime": "2023-12-19 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "10:00 AM - 12:00 AM",
+          "timingDateAndTime": "2023-12-19 10:00",
+          "landMarkId": "4",
+          "landMarkName": "Delly Belly Lounge Bar"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "12:30 PM - 1:30 PM",
+          "timingDateAndTime": "2023-12-19 12:30"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "02:00 PM - 04:00 PM",
+          "timingDateAndTime": "2023-12-19 14:00",
+          "landMarkId": "5",
+          "landMarkName": "The Hide Out Cafe & Lounge"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "04:30 PM - 06:30 PM",
+          "timingDateAndTime": "2023-12-19 16:30",
+          "landMarkId": "6",
+          "landMarkName": "OwlOwnwithlush"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-19 21:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 3",
+      "date": "2023-12-20",
+       "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "8:00 AM - 9:00 AM",
+          "timingDateAndTime": "2023-12-20 08:00"
+        },
+        {
+          "activityType": "activity_free_time",
+          "activityTiming": "10:00 AM - 06:30 PM",
+          "timingDateAndTime": "2023-12-20 10:00"
+
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-20 21:00"
+        }
+      ]
+    }
+  ],
+  "restaurants":["7","8","9","10","11","12","13","14","15"]
+}
+
+
+
+
+
+
+
+
+
+
+

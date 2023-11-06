@@ -9,12 +9,16 @@ data class ItineraryModel(
     val endData: String?,
     @SerializedName("placeName")
     val placeName: String?,
+    @SerializedName("placeLatitude")
+    val placeLatitude: Double?,
+    @SerializedName("placeLongitude")
+    val placeLongitude: Double?,
     @SerializedName("tripStartDate")
     val startDate: String?,
     @SerializedName("tripLength")
-    val tripLength : String?,
+    var tripLength: String?,
     @SerializedName("tripPartners")
-    val tripPartners : String?,
+    val tripPartners: String?,
     @SerializedName("tripData")
     val tripData: List<TripData>?
 )

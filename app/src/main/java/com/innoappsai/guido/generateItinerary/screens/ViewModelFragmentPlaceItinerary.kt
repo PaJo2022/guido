@@ -6,14 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
+import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
+import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.generateItinerary.model.itinerary.Landmark
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TripData
+import com.innoappsai.guido.model.MarkerData
+import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +31,7 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     private val itineraryRepository: ItineraryRepository
 ) : ViewModel() {
 
-    private var gson: Gson = Gson()
+    val markerDataList: ArrayList<MarkerData> = ArrayList()
 
     private val _itineraryBasicDetails: MutableLiveData<ItineraryModel> = MutableLiveData()
     val itineraryBasicDetails: LiveData<ItineraryModel> = _itineraryBasicDetails
@@ -41,10 +44,18 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     val generatedItineraryWithTravelPlaceAndDirection: LiveData<List<List<TravelPlaceWithTravelDirection>>> =
         _generatedItineraryWithTravelPlaceAndDirection
 
-    private val _tripPlaceNotificationList: MutableLiveData<List<Triple<String, String, String>>> =
+    private val _tripPlaceNotificationList: MutableLiveData<List<TripDataForNotification>> =
         MutableLiveData()
-    val tripPlaceNotificationList: LiveData<List<Triple<String, String, String>>> =
+    val tripPlaceNotificationList: LiveData<List<TripDataForNotification>> =
         _tripPlaceNotificationList
+
+    private val _tripLocation: MutableLiveData<List<PlaceUiModel?>> =
+        MutableLiveData()
+    val tripLocation: LiveData<List<PlaceUiModel?>> =
+        _tripLocation
+
+    private val _moveMapTo: MutableLiveData<LatLng?> = MutableLiveData()
+    val moveMapTo: LiveData<LatLng?> = _moveMapTo
 
     private val _moveToDayIndex: MutableLiveData<Int> = MutableLiveData()
     val moveToDayIndex: LiveData<Int> = _moveToDayIndex
@@ -53,13 +64,13 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     private var itineraryModel: ItineraryModel? = null
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun generatePlaceItineraryById() {
         viewModelScope.launch(Dispatchers.IO) {
             val generatedItinerary = itineraryRepository.getItineraryById("").first()
             val listOfLandMarks = mutableListOf<Landmark>()
             generatedItinerary?.let {
                 itineraryModel = generatedItinerary.travelItineraryData
+                itineraryModel?.tripLength = "${itineraryModel?.tripData?.size}"
                 val tripData = generatedItinerary.travelItineraryData.tripData!!
                 val data =
                     ArrayList<ArrayList<TravelPlaceWithTravelDirection>>()
@@ -110,7 +121,15 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
                 itineraryModel?.let {
                     _itineraryBasicDetails.postValue(it)
                 }
-                itineraryModel?.tripData?.firstOrNull()?.isSelected = true
+                itineraryModel?.tripData?.firstOrNull()?.apply {
+                    isSelected = true
+                    val tripPlaceList = travelPlaces?.map { landMarks ->
+                        landMarks.details?.toPlaceUiModel()
+                    } ?: emptyList()
+                    _tripLocation.postValue(tripPlaceList)
+                    val firstPlace = tripPlaceList.firstOrNull()
+                    _moveMapTo.postValue(firstPlace?.latLng)
+                }
                 itineraryModel?.tripData?.let { tripData ->
                     _generatedItinerary.postValue(tripData)
                 }
@@ -118,15 +137,17 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun createAlarmTimeListsForThePlaces(travelPlaces: List<Landmark>) {
         val allTimeListWithPlaceIdAndName = travelPlaces.map {
-            Triple(
+            TripDataForNotification(
                 it.landMarkId.toString(),
                 it.landMarkName.toString(),
+                it.details?.photos?.firstOrNull(),
                 it.travelDateAndTiming.toString()
             )
         }
+
         _tripPlaceNotificationList.postValue(allTimeListWithPlaceIdAndName)
 
 //        allTimeListWithPlaceIdAndName.forEach {
@@ -168,6 +189,14 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
             }
             itineraryModel?.tripData?.let {
                 _generatedItinerary.postValue(it)
+            }
+            itineraryModel?.tripData?.getOrNull(indexToMove)?.let {
+                val tripPlaceList = it.travelPlaces?.map { landMarks ->
+                    landMarks.details?.toPlaceUiModel()
+                } ?: emptyList()
+                _tripLocation.postValue(tripPlaceList)
+                val firstPlace = tripPlaceList.firstOrNull()
+                _moveMapTo.postValue(firstPlace?.latLng)
             }
             _moveToDayIndex.postValue(indexToMove)
         }

@@ -1,0 +1,286 @@
+Generate a 7-day itinerary for my Couple trip to Paris, France, whose location coordinates are Latitude:48.8566  and Longitude: 2.3522 starting my trip on 14/03/2024
+I want to visit a maximum of 3 landmarks each day.
+I am going as Solo.
+
+
+Landmarks I Want To Visit and the time i want to spent at each landmarks:
+
+1. Hôtel 7 Eiffel by Malone(id: ChIJly2889hv5kcRY6ywseROIsU
+2. Buddha-Bar(id: ChIJRS81ac1v5kcRRUqQBmTTJJU)
+3. Concorde Atlantique boat(id: ChIJP8b4ZClu5kcRTzPznvEwddA)
+4. Don Camilo(id: ChIJkQyaGShu5kcR7TNGrzV9-1o)
+5. Chez Papa Jazz Club(id: ChIJRTLuHthx5kcRZhnmhOIE-lY)
+6. Le Rive Gauche(id: ChIJz1y5E9dx5kcRU-k_1BL2lcU)
+7. Le Flow(id: ChIJ4cnkH9Fv5kcR-oUZPDe5nJg)
+8. Faust(id: ChIJqYySwtBv5kcRTkxIcv6eRcs)
+9. Restaurant Chiquette(id: ChIJw5WFridw5kcRIJ5S3H_t8M8r)
+10. The Club(id: ChIJWXuWvtlv5kcRtGReUcoY_nM)
+11. Solum Paris(id: ChIJB16-WX9v5kcR_nyOhqycn20)
+12. Bridge Club(id: ChIJF4qP9rxv5kcR0d9sBBnsono)
+13. Bar Aristide(id: ChIJEyZFVcZx5kcRnh9eUvB41XE)
+14. Maggy's Club Paris(id: ChIJ_aewPS9x5kcRR2wcymUTa4c)
+
+And here are the top food places for each day's breakfast, lunch, and dinner:
+
+15. Arpège(id: ChIJQ-oAFypw5kcR2T9NszPcZO4)
+
+
+{
+  "placeName": "Paris",
+  "countryName": "France",
+  "placeLatitude": 48.8566,
+  "placeLongitude": 2.3522,
+  "tripLength": 7,
+  "tripPartners": "Solo",
+  "tripStartDate": "2024-03-14",
+  "tripData": [
+    {
+      "day": "Day 1",
+      "date": "2024-03-14",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-14 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-14 11:00",
+          "landMarkId": "ChIJly2889hv5kcRY6ywseROIsU",
+          "landMarkName": "Hôtel 7 Eiffel by Malone"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-14 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-14 15:00",
+          "landMarkId": "ChIJRS81ac1v5kcRRUqQBmTTJJU",
+          "landMarkName": "Buddha-Bar"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-14 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 2",
+      "date": "2024-03-15",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-15 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-15 11:00",
+          "landMarkId": "ChIJP8b4ZClu5kcRTzPznvEwddA",
+          "landMarkName": "Concorde Atlantique boat"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-15 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-15 15:00",
+          "landMarkId": "ChIJkQyaGShu5kcR7TNGrzV9-1o",
+          "landMarkName": "Don Camilo"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-15 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 3",
+      "date": "2024-03-16",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-16 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-16 11:00",
+          "landMarkId": "ChIJRTLuHthx5kcRZhnmhOIE-lY",
+          "landMarkName": "Chez Papa Jazz Club"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-16 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-16 15:00",
+          "landMarkId": "ChIJz1y5E9dx5kcRU-k_1BL2lcU",
+          "landMarkName": "Le Rive Gauche"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-16 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 4",
+      "date": "2024-03-17",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-17 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-17 11:00",
+          "landMarkId": "ChIJ4cnkH9Fv5kcR-oUZPDe5nJg",
+          "landMarkName": "Le Flow"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-17 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-17 15:00",
+          "landMarkId": "ChIJqYySwtBv5kcRTkxIcv6eRcs",
+          "landMarkName": "Faust"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-17 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 5",
+      "date": "2024-03-18",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-18 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-18 11:00",
+          "landMarkId": "ChIJw5WFridw5kcRIJ5S3H_t8M8r",
+          "landMarkName": "Restaurant Chiquette"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-18 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-18 15:00",
+          "landMarkId": "ChIJWXuWvtlv5kcRtGReUcoY_nM",
+          "landMarkName": "The Club"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-18 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 6",
+      "date": "2024-03-19",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-19 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-19 11:00",
+          "landMarkId": "ChIJB16-WX9v5kcR_nyOhqycn20",
+          "landMarkName": "Solum Paris"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-19 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-19 15:00",
+          "landMarkId": "ChIJF4qP9rxv5kcR0d9sBBnsono",
+          "landMarkName": "Bridge Club"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-19 19:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 7",
+      "date": "2024-03-20",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 10:00 AM",
+          "timingDateAndTime": "2024-03-20 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "11:00 AM - 12:00 PM",
+          "timingDateAndTime": "2024-03-20 11:00",
+          "landMarkId": "ChIJEyZFVcZx5kcRnh9eUvB41XE",
+          "landMarkName": "Bar Aristide"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "01:00 PM - 02:00 PM",
+          "timingDateAndTime": "2024-03-20 13:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "03:00 PM - 04:00 PM",
+          "timingDateAndTime": "2024-03-20 15:00",
+          "landMarkId": "ChIJ_aewPS9x5kcRR2wcymUTa4c",
+          "landMarkName": "Maggy's Club Paris"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "07:00 PM - 08:00 PM",
+          "timingDateAndTime": "2024-03-20 19:00"
+        }
+      ]
+    }
+  ],
+  "restaurants": [
+    "ChIJQ-oAFypw5kcR2T9NszPcZO4"
+  ]
+}

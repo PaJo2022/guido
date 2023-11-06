@@ -20,7 +20,7 @@
         android:background="@drawable/rounded_background"
         android:backgroundTint="@color/color_sound_compose_selected_color7"
         android:padding="@dimen/_10sdp"
-        android:src="@drawable/ic_website"
+        android:src="@drawable/ic_two_people"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white" />

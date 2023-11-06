@@ -32,6 +32,9 @@ class ViewModelGenerateItinerary @Inject constructor(
 
     //
     var selectedPlaceName: String = ""
+    var selectedPlaceCountryName: String = ""
+    var selectedLatitude: Double ?= null
+    var selectedLongitude: Double ?= null
     var selectedPlaceAddress: String = ""
 
     // Time Duration
@@ -178,14 +181,20 @@ class ViewModelGenerateItinerary @Inject constructor(
                 Landmark(
                     id = it.placeId,
                     name = it.name,
+                    landMarkType = it.typeName
                 )
             }
             val tripMessage = generateTravelItineraryString(
                 TravelItinerary(
                     placeName = selectedPlaceName,
-                    countryName = "India",
+                    placeLatitude = selectedLatitude,
+                    placeLongitude = selectedLongitude,
+                    travelingAs = travelCompanionList.find { it.isSelected }?.name,
+                    countryName = selectedPlaceCountryName,
                     tripLength = travelDuration,
                     tripStartDate = startDate,
+                    tripBudget = travelBudgetList.find { it.isSelected }?.name,
+                    dailySchedule = dayWiseTimeSliderList,
                     landmarks = placeToVisitList
                 )
             )

@@ -1,0 +1,189 @@
+Generate a 6-day itinerary for my Couple trip to Darjeeling, India, whose location coordinates are Latitude:27.0410  and Longitude: 88.2663 starting my trip on 2023-12-01
+I want to visit a maximum of 6 landmarks each day.
+I am going as Couple.
+
+
+
+Landmarks I Want To Visit and the time i want to spent at each landmarks:
+
+1. High Mast Indian National Flag(id: 1)
+2. I Love D.H.R(id: 2)
+3. divinemountains Holiday & Adventures(id: 3)
+4. Rangaroon Tea Estate(id: 4)
+5. Gandhi Road Hill view Point(id: 5)
+6. Jorebunglow Filter House(id: 6)
+7. Darjeeling(id: 7)
+8. Himalayan Tibet Museum(id: 8)
+9. Morsalim Mallick(id: 9)
+10. Ramdhura(id: 10)
+11. Ghoom museum(id: 11)
+12. Bird watching area(id: 12)
+
+And here are the top food places for each day's breakfast, lunch, and dinner:
+
+13. Biryani Baari(id: 13)
+14. Nawangs Restaurant(id: 14)
+15. KFC(id: 15)
+
+
+
+{
+  "placeName": "Darjeeling",
+  "countryName": "India",
+  "placeLatitude": 27.0410,
+  "placeLongitude": 88.2663,
+  "tripLength": 6,
+  "tripPartners": "Couple",
+  "tripStartDate": "2023-12-01",
+  "tripData": [
+    {
+      "day": "Day 1",
+      "date": "2023-12-01",
+      "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 09:30 AM",
+          "timingDateAndTime": "2023-12-01 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "10:00 AM - 12:00 AM",
+          "timingDateAndTime": "2023-12-01 11:00",
+          "landMarkId": "1",
+          "landMarkName": "High Mast Indian National Flag"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "12:30 PM - 1:30 PM",
+          "timingDateAndTime": "2023-12-01 12:30"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "02:00 PM - 04:00 PM",
+          "timingDateAndTime": "2023-12-01 14:00",
+          "landMarkId": "2",
+          "landMarkName": "I Love D.H.R"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "04:30 PM - 06:30 PM",
+          "timingDateAndTime": "2023-12-01 16:30",
+          "landMarkId": "3",
+          "landMarkName": "divinemountains Holiday & Adventures"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-01 21:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 2",
+      "date": "2023-11-02",
+       "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 09:30 AM",
+          "timingDateAndTime": "2023-12-02 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "10:00 AM - 12:00 AM",
+          "timingDateAndTime": "2023-12-02 10:00",
+          "landMarkId": "4",
+          "landMarkName": "Rangaroon Tea Estate"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "12:30 PM - 1:30 PM",
+          "timingDateAndTime": "2023-12-02 12:30"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "02:00 PM - 04:00 PM",
+          "timingDateAndTime": "2023-12-03 14:00",
+          "landMarkId": "5",
+          "landMarkName": "Gandhi Road Hill view Point"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "04:30 PM - 06:30 PM",
+          "timingDateAndTime": "2023-12-04 16:30",
+          "landMarkId": "6",
+          "landMarkName": "Jorebunglow Filter House"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-04 21:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 3",
+        "date": "2023-12-05",
+     "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "09:00 AM - 09:30 AM",
+          "timingDateAndTime": "2023-12-05 09:00"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "10:00 AM - 12:00 AM",
+          "timingDateAndTime": "2023-12-05 10:00",
+          "landMarkId": "10",
+          "landMarkName": "Ramdhura"
+        },
+        {
+          "activityType": "activity_lunch",
+          "activityTiming": "12:30 PM - 1:30 PM",
+          "timingDateAndTime": "2023-12-05 12:30"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "02:00 PM - 04:00 PM",
+          "timingDateAndTime": "2023-12-05 14:00",
+          "landMarkId": "11",
+          "landMarkName": "Ghoom museum"
+        },
+        {
+          "activityType": "activity_landmark",
+          "activityTiming": "04:30 PM - 06:30 PM",
+          "timingDateAndTime": "2023-12-05 16:30",
+          "landMarkId": "12",
+          "landMarkName": "Bird watching area"
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-12-05 21:00"
+        }
+      ]
+    },
+    {
+      "day": "Day 4",
+      "date": "2023-11-11",
+       "activities": [
+        {
+          "activityType": "activity_breakfast",
+          "activityTiming": "8:00 AM - 9:00 AM",
+          "timingDateAndTime": "2023-11-17 08:00"
+        },
+        {
+          "activityType": "activity_free_time",
+          "activityTiming": "10:00 AM - 06:30 PM",
+          "timingDateAndTime": "2023-11-17 10:00"
+
+        },
+        {
+          "activityType": "activity_dinner",
+          "activityTiming": "9:00 PM - 10:00 PM",
+          "timingDateAndTime": "2023-11-17 21:00"
+        }
+      ]
+    }
+  ],
+  "restaurants":["13","14","15"]
+}

@@ -1,25 +1,33 @@
 package com.innoappsai.guido.generateItinerary.model.generateItinerary
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
+import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 
 data class TravelItinerary(
     val placeName: String,
+    val placeLatitude: Double?,
+    val placeLongitude: Double?,
+    val travelingAs: String?,
     val countryName: String,
     val tripLength: Int,
     val tripStartDate: String,
+    val tripBudget: String?,
+    val dailySchedule: List<DayWiseTimeSelection>,
     val landmarks: List<Landmark>
 )
 
 data class Landmark(
     val id: String?,
-    val name: String?
+    val name: String?,
+    val landMarkType: String?,
+    val timeSpent: String = "1 Hour"
 )
+
+
 
 fun generateTravelItineraryString(itinerary: TravelItinerary): String {
     val sb = StringBuilder()
 
-    sb.append("I want you to create me a travel itinerary for my next travel.")
+    sb.append("I want you to create me a travel itinerary for my next travel to ${itinerary.placeName},${itinerary.countryName} whose coordinates are ${itinerary.placeLatitude},${itinerary.placeLongitude} and traveling as ${itinerary.travelingAs} and my budget is ${itinerary.tripBudget}")
     sb.append(" I will be going for a tour for ${itinerary.tripLength} days.")
     sb.append(" Each day I will start my travel at 10 AM and will travel for 6 hours.")
     sb.append("\n\n")
