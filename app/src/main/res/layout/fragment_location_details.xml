@@ -58,8 +58,7 @@
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:layout_height="match_parent">
 
                     <include
                         android:id="@+id/ll_location_primary_details"

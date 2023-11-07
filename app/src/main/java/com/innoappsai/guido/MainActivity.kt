@@ -6,9 +6,9 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import com.google.firebase.messaging.FirebaseMessaging
 import com.innoappsai.guido.databinding.ActivityMainBinding
 import com.innoappsai.guido.fragments.HomeFragment
-import com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,29 +31,46 @@ class MainActivity : AppCompatActivity() {
         homeFragment = HomeFragment()
 
         //val homeFragment = FragmentPlaceItinerary()
-        FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!,intent?.extras)
+        FragmentUtils.replaceFragment(this, R.id.main_fl_id, homeFragment!!, intent?.extras)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("JAPAN", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            viewModel.setFcmKey(token)
+        }
 
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        getDeepLink(intent)
+    }
+
+    private fun getDeepLink(intent: Intent?) {
+        Log.i("JAPAN", "ITINERARY_ID: ${intent}")
         intent?.extras?.getString("DEEPLINK")?.let {
-            if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
+            if (it.equals("PLACE_ITINERARY_SCREEN", true)) {
                 val itineraryId = intent.extras?.getString("ITINERARY_DB_ID") ?: return
-                homeFragment?. navigateToGeneratedItinerary(itineraryId)
+                homeFragment?.navigateToGeneratedItinerary(itineraryId)
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
                 val placeId = intent.extras?.getString("PLACE_ID") ?: return
                 val bundle = Bundle()
                 bundle.putString("PLACE_ID", placeId)
                 homeFragment?.navigateToPlaceDetailsScreen(placeId)
+            } else if (it.equals("ITINERARY_GENERATED", true)) {
+                val itineraryId = intent.extras?.getString("VALUE") ?: return
+                val bundle = Bundle()
+                bundle.putString("ITINERARY_ID", itineraryId)
+
             } else {
 
             }
 
         }
     }
-
-
 
 
 }

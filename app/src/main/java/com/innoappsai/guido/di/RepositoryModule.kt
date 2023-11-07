@@ -77,7 +77,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTravelItineraryRepositoryImpl(myAppDataBase: MyAppDataBase): ItineraryRepository =
-        ItineraryRepositoryImpl(myAppDataBase)
+    fun provideTravelItineraryRepositoryImpl(myAppDataBase: MyAppDataBase,api : GuidoApi): ItineraryRepository =
+        ItineraryRepositoryImpl(myAppDataBase,api)
 
 }

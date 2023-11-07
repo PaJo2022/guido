@@ -105,10 +105,11 @@ class NetworkModule {
         }
     }
 
-    class AuthInterceptor(private val token: String?) : Interceptor {
+    class AuthInterceptor(private val token: String?, private val fcmKey: String?) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request().newBuilder()
                 .addHeader("authorization", token.toString())
+                .addHeader("fcmKey", fcmKey.toString())
                 .build()
             return chain.proceed(request)
         }
@@ -124,7 +125,7 @@ class NetworkModule {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
         client.addInterceptor(logging)
-        client.addInterceptor(AuthInterceptor(appPrefs.authToken))
+        client.addInterceptor(AuthInterceptor(appPrefs.authToken, appPrefs.fcmKey))
         client.authenticator(
             TokenAuthenticator(
                 api = authenticatorApi,

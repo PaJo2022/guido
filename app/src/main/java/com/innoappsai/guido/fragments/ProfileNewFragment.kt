@@ -1,12 +1,10 @@
 package com.innoappsai.guido.fragments
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -20,7 +18,6 @@ import com.innoappsai.guido.auth.AuthActivity
 import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentProfileNewBinding
 import com.innoappsai.guido.db.AppPrefs
-import com.innoappsai.guido.services.HyperLocalPlacesSearchService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -58,9 +55,16 @@ class ProfileNewFragment : BaseFragment<FragmentProfileNewBinding>(FragmentProfi
                     UserDetailsFragment()
                 )
             }
-            tvMyPlaces.setOnClickListener { openNavFragment(
-                MyPlacesFragment()
-            ) }
+            tvMyPlaces.setOnClickListener {
+                openNavFragment(
+                    MyPlacesFragment()
+                )
+            }
+            tvMyItinerary.setOnClickListener {
+                openNavFragment(
+                    MyTravelItineraryListFragment()
+                )
+            }
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             btnLogout.setOnClickListener {
                 auth.signOut()

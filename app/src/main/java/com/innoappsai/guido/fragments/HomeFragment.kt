@@ -232,6 +232,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
                 val placeId = arguments?.getString("PLACE_ID") ?: return
                 navigateToPlaceDetailsScreen(placeId)
+            }else if (it.equals("ITINERARY_GENERATED", false)) {
+                val itineraryId = arguments?.getString("VALUE") ?: return
+                val bundle = Bundle()
+                Log.i("JAPAN", "onViewCreated: ${itineraryId}")
             }
 
         }

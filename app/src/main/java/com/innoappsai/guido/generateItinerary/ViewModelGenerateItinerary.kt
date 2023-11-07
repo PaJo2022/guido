@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.innoappsai.guido.R
-import com.innoappsai.guido.data.places.PlacesRepository
+import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateItinerary.model.DayWiseTimeSelection
 import com.innoappsai.guido.generateItinerary.model.InterestsSelection
@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewModelGenerateItinerary @Inject constructor(
-    private val placesRepository: PlacesRepository,
+    private val chatGptRepository: ChatGptRepository,
     private val appPrefs: AppPrefs,
 ) : ViewModel() {
 
@@ -198,10 +198,18 @@ class ViewModelGenerateItinerary @Inject constructor(
                     landmarks = placeToVisitList
                 )
             )
-
             _onItineraryGeneration.emit(tripMessage)
         }
 
+    }
+
+    fun startGeneratingItinerary(message: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            chatGptRepository.getTravelItinerary(
+                userId = appPrefs.userId.toString(),
+                query = message
+            )
+        }
     }
 
 

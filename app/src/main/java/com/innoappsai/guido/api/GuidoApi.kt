@@ -1,5 +1,6 @@
 package com.innoappsai.guido.api
 
+import com.innoappsai.guido.TravelItinerary
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
@@ -92,8 +93,12 @@ interface GuidoApi {
 
     @POST("generate-travel-itinerary")
     suspend fun generateTravelItinerary(
-        @Query("userId") userId: String?,
-        @Query("shouldSendEmail") shouldSendEmail: Boolean,
+        @Query("userId") userId: String,
         @Body body : RequestBody,
     ): Response<ItineraryModel?>
+
+    @GET("user-generated-travel-itinerary")
+    suspend fun getAllGenerateTravelItineraryListByUserId(
+        @Query("userId") userId: String
+    ): Response<List<TravelItinerary>>
 }

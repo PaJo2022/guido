@@ -17,7 +17,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.google.gson.Gson
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
@@ -26,9 +25,6 @@ import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.tourData.ChatGptRepository
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
 import com.innoappsai.guido.db.AppPrefs
-import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
-import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
-import com.innoappsai.guido.model.chatGptModel.Message
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.UUID
@@ -77,16 +73,15 @@ class CreateItineraryGeneratorWorker @AssistedInject constructor(
                 return Result.failure()
             }
             val travelData = chatGptRepository.getTravelItinerary(
-                userDbId = currentUser.dbId,
-                shouldSendEmail = false,
+                userId = appPrefs.userId.toString(),
                 query = query
             )
-            if (travelData != null) {
-                itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, travelData))
-                sendPushNotificationOnSuccessFullPlaceAdd()
-            } else {
-                sendErrorPushNotification("Something went wrong please try again!")
-            }
+//            if (travelData != null) {
+//                itineraryRepository.addItinerary(TravelItinerary(itineraryIdForDB, travelData))
+//                sendPushNotificationOnSuccessFullPlaceAdd()
+//            } else {
+//                sendErrorPushNotification("Something went wrong please try again!")
+//            }
             _workerState.postValue(WorkerState.COMPLETE)
             Result.success()
         } catch (e: Exception) {

@@ -12,6 +12,12 @@ class AppPrefs(context: Context) {
     private val prefs: SharedPreferences
     private val editor: SharedPreferences.Editor
 
+
+    var fcmKey: String? get() = prefs.getString(PREF_FCM_KEY, null)
+        set(value) {
+            editor.putString(PREF_FCM_KEY, value)
+            editor.apply()
+        }
     var userId: String? get() = prefs.getString(PREF_USER_ID, null)
         set(value) {
             editor.putString(PREF_USER_ID, value)
@@ -58,6 +64,7 @@ class AppPrefs(context: Context) {
         const val PREF_POLLING_TIME = "PREF_DPREF_POLLING_TIMEISTANCE"
         const val PREF_TTS = "PREF_TTS"
         const val PREF_USER_ID = "PREF_USER_ID"
+        const val PREF_FCM_KEY = "PREF_FCM_KEY"
         const val PREF_AUTH_TOKEN = "PREF_AUTH_TOKEN"
         const val PREF_IS_DEMO_LOGGED_IN = "PREF_IS_DEMO_LOGGED_IN"
         const val PREF_NAME = "PREF_NAME"

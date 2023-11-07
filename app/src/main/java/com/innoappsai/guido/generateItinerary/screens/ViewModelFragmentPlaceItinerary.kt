@@ -69,9 +69,9 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
             val generatedItinerary = itineraryRepository.getItineraryById("").first()
             val listOfLandMarks = mutableListOf<Landmark>()
             generatedItinerary?.let {
-                itineraryModel = generatedItinerary.travelItineraryData
+                itineraryModel = generatedItinerary.itineraryModel
                 itineraryModel?.tripLength = "${itineraryModel?.tripData?.size}"
-                val tripData = generatedItinerary.travelItineraryData.tripData!!
+                val tripData = generatedItinerary.itineraryModel?.tripData!!
                 val data =
                     ArrayList<ArrayList<TravelPlaceWithTravelDirection>>()
                 tripData.forEach {

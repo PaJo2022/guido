@@ -204,6 +204,20 @@
                    app:layout_constraintStart_toStartOf="parent"
                    app:layout_constraintTop_toBottomOf="@+id/tv_edit_profile" />
 
+               <TextView
+                   android:id="@+id/tv_my_itinerary"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginHorizontal="@dimen/_12sdp"
+                   android:layout_marginTop="@dimen/_12sdp"
+                   android:drawableTint="@color/color_primary"
+                   android:fontFamily="@font/font_semi_bold"
+                   android:text="My Travel Itinerary"
+                   android:textColor="@color/quantum_black_100"
+                   android:textSize="@dimen/_16ssp"
+                   app:drawableEndCompat="@drawable/ic_arrow_right"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintTop_toBottomOf="@+id/tv_my_places" />
 
                <androidx.appcompat.widget.AppCompatButton
                    android:id="@+id/btn_logout"

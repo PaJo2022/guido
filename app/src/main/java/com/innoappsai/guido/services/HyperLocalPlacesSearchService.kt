@@ -86,7 +86,7 @@ class HyperLocalPlacesSearchService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 notificationChannelId,
-                "Channel Name",
+                notificationChannelName,
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
