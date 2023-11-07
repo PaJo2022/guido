@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -16,17 +15,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.R
 import com.innoappsai.guido.adapters.DividerItemDecoration
-import com.innoappsai.guido.adapters.ImageAdapter
 import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.adapters.PlaceMoreInfoAdapter
 import com.innoappsai.guido.adapters.PlaceReviewAdapter
@@ -34,15 +28,15 @@ import com.innoappsai.guido.adapters.VideoAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.callToNumber
 import com.innoappsai.guido.collectIn
-import com.innoappsai.guido.databinding.FragmentLocationDetailsNewBinding
+import com.innoappsai.guido.databinding.FragmentLocationDetailsBinding
 import com.innoappsai.guido.db.AppPrefs
 import com.innoappsai.guido.generateStaticMapUrl
 import com.innoappsai.guido.openAppSettings
 import com.innoappsai.guido.openDirection
 import com.innoappsai.guido.openWebsite
+import com.innoappsai.guido.toggleEnableAndAlpha
 import com.innoappsai.guido.toggleEnableAndVisibility
 import com.innoappsai.guido.workers.DownloadImageWorker
-import com.innoappsai.guido.workers.UpdatePlaceStaticMapWorker
 import com.innoappsai.guido.workers.UploadWorker
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -50,7 +44,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LocationDetailsFragment :
-    BaseFragment<FragmentLocationDetailsNewBinding>(FragmentLocationDetailsNewBinding::inflate) {
+    BaseFragment<FragmentLocationDetailsBinding>(FragmentLocationDetailsBinding::inflate) {
 
     private lateinit var viewModel: LandMarkDetailsViewModel
     private lateinit var adapterPlaceReview: PlaceReviewAdapter
@@ -74,11 +68,11 @@ class LocationDetailsFragment :
     }
 
     private fun setUpViewPager() {
-        binding.ivPlaceImage.adapter = adapterImageSlider
-        binding.ivPlaceImage.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.vpPlaceImage.adapter = adapterImageSlider
+        binding.vpPlaceImage.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         val currentPageIndex = 1
-        binding.ivPlaceImage.currentItem = currentPageIndex
-        TabLayoutMediator(binding.vpPlaceImageIndicator, binding.ivPlaceImage) { tab, position ->
+        binding.vpPlaceImage.currentItem = currentPageIndex
+        TabLayoutMediator(binding.vpPlaceImageIndicator, binding.vpPlaceImage) { tab, position ->
 
         }.attach()
 
@@ -100,7 +94,8 @@ class LocationDetailsFragment :
         val placeId = arguments?.getString("PLACE_ID")
         setUpViewPager()
         binding.apply {
-            ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
+            swipeRefreshLayout.isEnabled = false
+//            ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
             rvReviews.apply {
                 adapter = adapterPlaceReview
                 layoutManager =
@@ -123,7 +118,7 @@ class LocationDetailsFragment :
                 binding.swipeRefreshLayout.isRefreshing = it
             }
             isPlaceAIDataFetching.collectIn(viewLifecycleOwner) {
-                binding.circularProgressPlaceDescription.isVisible = it
+                binding.tvPlaceShimmerLayout.isVisible = it
                 if (!it) {
                     val layoutParams = binding.tvPlaceDescription.layoutParams
                     layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -144,8 +139,8 @@ class LocationDetailsFragment :
             }
             singlePlaceData.observe(viewLifecycleOwner) { placeUiModel ->
                 setPlacePricingType(placeUiModel?.pricingType)
-                binding.ivCall.isVisible = placeUiModel?.callNumber != null
-                binding.ivWebsite.isVisible = placeUiModel?.website != null
+                binding.ivCall.toggleEnableAndAlpha(placeUiModel?.callNumber != null)
+                binding.ivWebsite.toggleEnableAndAlpha(placeUiModel?.website != null)
                 binding.ratingBarForPlace.setOnRatingBarChangeListener { ratingBar, fl, b ->
                     Bundle().apply {
                         putFloat("PLACE_RATING", fl)
@@ -154,13 +149,12 @@ class LocationDetailsFragment :
                             AddReviewFragment(),
                             childFragmentManager,
                             "ProfileFragment",
-                            binding.flId,
+                            binding.mainLayout,
                             this
                         )
                     }
                 }
                 binding.apply {
-
                     ivWebsite.setOnClickListener {
                         placeUiModel?.website?.let { it1 -> openWebsite(requireContext(), it1) }
                     }
@@ -174,7 +168,7 @@ class LocationDetailsFragment :
                                 AddReviewFragment(),
                                 childFragmentManager,
                                 "ProfileFragment",
-                                binding.flId,
+                                binding.mainLayout,
                                 this
                             )
                         }
@@ -182,16 +176,16 @@ class LocationDetailsFragment :
                     ivAddPhoto.setOnClickListener {
                        //Add Photo Logic
                     }
-                    ivPlaceOptions.apply {
-                        isVisible = placeUiModel?.createdBy == appPrefs.userId
-                        setOnClickListener {
-                            val bundle = Bundle()
-                            bundle.putParcelable("PLACE_DATA", placeUiModel)
-                            bottomSheetFragment.arguments = bundle
-                            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
-                        }
-                    }
-                    ivAddPhoto.isVisible = placeUiModel?.createdBy == appPrefs.userId
+//                    ivPlaceOptions.apply {
+//                        isVisible = placeUiModel?.createdBy == appPrefs.userId
+//                        setOnClickListener {
+//                            val bundle = Bundle()
+//                            bundle.putParcelable("PLACE_DATA", placeUiModel)
+//                            bottomSheetFragment.arguments = bundle
+//                            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+//                        }
+//                    }
+                    ivAddPhoto.toggleEnableAndAlpha(placeUiModel?.createdBy == appPrefs.userId)
                     llLocationPrimaryDetails.placeOpeningStatus.text = placeUiModel?.placeOpenStatus ?: "Closed"
                     llLocationPrimaryDetails.tvPlaceName.text = placeUiModel?.name
                     llLocationPrimaryDetails.tvPlaceName.isSelected = true
@@ -239,7 +233,7 @@ class LocationDetailsFragment :
                     ReviewMediaListFragment(),
                     childFragmentManager,
                     "ReviewMediaListFragment",
-                    binding.flId,
+                    binding.mainLayout,
                     this
                 )
             }
