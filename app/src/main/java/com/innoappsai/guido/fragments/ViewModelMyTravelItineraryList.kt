@@ -21,17 +21,15 @@ class ViewModelMyTravelItineraryList @Inject constructor(
     private val appPrefs: AppPrefs
 ) : ViewModel() {
 
-    private val _itineraryList: MutableLiveData<List<ItineraryModel?>> =
+    private val _itineraryList: MutableLiveData<List<TravelItinerary?>> =
         MutableLiveData()
-    val itineraryList: LiveData<List<ItineraryModel?>> get() = _itineraryList
+    val itineraryList: LiveData<List<TravelItinerary?>> get() = _itineraryList
 
     fun getListOfGeneratedItineraryList() {
         viewModelScope.launch(Dispatchers.IO) {
             val userId = appPrefs.userId ?: return@launch
             val itineraryList = itineraryRepository.getAllTravelItineraryList(userId)
-            itineraryList.map { it.itineraryModel }.let {
-                _itineraryList.postValue(it)
-            }
+            _itineraryList.postValue(itineraryList)
         }
     }
 

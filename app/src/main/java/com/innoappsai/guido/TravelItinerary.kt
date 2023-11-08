@@ -11,5 +11,6 @@ data class TravelItinerary(
     @PrimaryKey(autoGenerate = false)
     val id: String,
     val userId: String?,
+    @SerializedName("rawItineraryModel")
     val itineraryModel : ItineraryModel?
 )

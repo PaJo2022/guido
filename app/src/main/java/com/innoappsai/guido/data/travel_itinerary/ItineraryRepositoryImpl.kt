@@ -19,7 +19,7 @@ class ItineraryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getItineraryById(id: String) = db.itineraryDao().getAllTravelItinerary()
+    override suspend fun getItineraryById(itineraryId: String) = api.getItineraryDetails(itineraryId).body()
     override suspend fun getAllTravelItineraryList(userId: String): List<TravelItinerary> {
         val response = api.getAllGenerateTravelItineraryListByUserId(userId)
         return if (response.isSuccessful && response.body() != null) {

@@ -55,6 +55,7 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:fillViewport="true"
+                android:background="@color/white"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

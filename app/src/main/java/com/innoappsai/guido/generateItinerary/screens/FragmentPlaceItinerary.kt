@@ -62,10 +62,12 @@ class FragmentPlaceItinerary :
     private lateinit var mAdapter: AdapterTravelDate
     private lateinit var adapterTravelSpotViewPager: AdapterTravelSpotViewPager
     private var googleMap: GoogleMap? = null
+    private var itineraryId : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAdapter = AdapterTravelDate(requireContext())
         adapterTravelSpotViewPager = AdapterTravelSpotViewPager(requireContext())
+        itineraryId = arguments?.getString("ITINERARY_ID")
     }
 
     private fun initRecyclerView() {
@@ -398,6 +400,6 @@ class FragmentPlaceItinerary :
                 MyApp.userCurrentLatLng!!, zoom
             )
         )
-        viewModel.generatePlaceItineraryById()
+        itineraryId?.let { viewModel.generatePlaceItineraryById(it) }
     }
 }

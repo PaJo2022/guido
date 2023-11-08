@@ -64,9 +64,9 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     private var itineraryModel: ItineraryModel? = null
 
 
-    fun generatePlaceItineraryById() {
+    fun generatePlaceItineraryById(itineraryId : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val generatedItinerary = itineraryRepository.getItineraryById("").first()
+            val generatedItinerary = itineraryRepository.getItineraryById(itineraryId)
             val listOfLandMarks = mutableListOf<Landmark>()
             generatedItinerary?.let {
                 itineraryModel = generatedItinerary.itineraryModel

@@ -74,6 +74,8 @@ class FragmentChooseNearByPlacesOptions :
         }
         parentViewModel.apply {
             onItineraryGeneration.collectIn(viewLifecycleOwner) { message ->
+//                MyApp.itineraryGenerationMessage = message
+//                startGenerating()
                 parentViewModel.startGeneratingItinerary(message)
                 binding.apply {
                     cardContainer.isVisible = false

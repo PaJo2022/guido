@@ -101,4 +101,9 @@ interface GuidoApi {
     suspend fun getAllGenerateTravelItineraryListByUserId(
         @Query("userId") userId: String
     ): Response<List<TravelItinerary>>
+
+    @GET("travel-itinerary-details")
+    suspend fun getItineraryDetails(
+        @Query("itineraryId") itineraryid: String
+    ): Response<TravelItinerary?>
 }

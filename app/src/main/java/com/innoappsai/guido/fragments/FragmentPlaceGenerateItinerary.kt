@@ -108,16 +108,7 @@ class FragmentPlaceGenerateItinerary :
 
         viewModel.apply {
             generateItinerary.collectIn(viewLifecycleOwner) {
-                Bundle().apply {
-                    putString("GENERATE_ITINEARY_MESSAGE", it)
-                    openNavFragment(
-                        FragmentPlaceItinerary(),
-                        childFragmentManager,
-                        "FragmentPlaceItineary",
-                        binding.bottomSheet,
-                        this
-                    )
-                }
+
             }
         }
 

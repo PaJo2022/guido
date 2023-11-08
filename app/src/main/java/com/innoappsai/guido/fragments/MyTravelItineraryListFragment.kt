@@ -15,6 +15,7 @@ import com.innoappsai.guido.addOnBackPressedCallback
 import com.innoappsai.guido.databinding.FragmentMyPlacesBinding
 import com.innoappsai.guido.databinding.FragmentMyTravelItineraryListBinding
 import com.innoappsai.guido.db.AppPrefs
+import com.innoappsai.guido.generateItinerary.screens.FragmentPlaceItinerary
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,12 +45,13 @@ class MyTravelItineraryListFragment :
             }
         }
         adapterItineraryList.setOnItemClicked {
-//            Bundle().apply {
-//                FragmentUtils.replaceFragment(
-//                    (requireActivity() as MainActivity), binding.flId.id, LocationDetailsFragment(),
-//                    this, true
-//                )
-//            }
+            Bundle().apply {
+            putString("ITINERARY_ID", it)
+                FragmentUtils.replaceFragment(
+                    (requireActivity() as MainActivity), binding.flId.id, FragmentPlaceItinerary(),
+                    this, true
+                )
+            }
         }
         binding.apply {
             ivArrowBack.setOnClickListener { parentFragmentManager.popBackStack() }
