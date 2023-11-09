@@ -11,9 +11,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +25,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.Constants
+import com.innoappsai.guido.DeepLinkHelper
 import com.innoappsai.guido.FragmentUtils
 import com.innoappsai.guido.MainActivity
 import com.innoappsai.guido.MyApp
@@ -39,7 +39,6 @@ import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelDate
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelSpotViewPager
 import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.receiver.TripNotificationBroadCastReceiver
-import com.innoappsai.guido.getScreenHeight
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +47,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class FragmentPlaceItinerary :
@@ -57,7 +55,6 @@ class FragmentPlaceItinerary :
 
 
     private val zoom = 13f
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private val viewModel: ViewModelFragmentPlaceItinerary by viewModels()
     private lateinit var mAdapter: AdapterTravelDate
     private lateinit var adapterTravelSpotViewPager: AdapterTravelSpotViewPager
@@ -71,7 +68,7 @@ class FragmentPlaceItinerary :
     }
 
     private fun initRecyclerView() {
-        binding.bottomsheetPlaceItineary.apply {
+        binding.apply {
             rvTravelDates.apply {
                 layoutManager =
                     LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
@@ -109,67 +106,6 @@ class FragmentPlaceItinerary :
         binding.mapView.onSaveInstanceState(outState)
     }
 
-    private fun setBottomSheetBehavior() {
-        bottomSheetBehavior =
-            BottomSheetBehavior.from(binding.bottomsheetPlaceItineary.mainLayout)
-
-        val screenHeight = requireContext().getScreenHeight()
-        val peekHeight1 = (screenHeight * 0.18).roundToInt()
-        bottomSheetBehavior.peekHeight = peekHeight1
-        val margin = (screenHeight * 0.10).roundToInt()
-        val maxHeight = (screenHeight * 0.80).roundToInt()
-        bottomSheetBehavior.maxHeight = maxHeight
-        bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        // BottomSheet is fully expanded
-                        googleMap?.setPadding(
-                            0,
-                            0,
-                            0,
-                            (requireContext().getScreenHeight() * 0.60).toInt()
-                        )
-                        googleMap?.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                MyApp.userCurrentLatLng!!, zoom
-                            )
-                        )
-                    }
-
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        googleMap?.setPadding(
-                            0,
-                            0,
-                            0,
-                            0
-                        )
-                        googleMap?.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                MyApp.userCurrentLatLng!!, zoom
-                            )
-                        )
-
-                    }
-
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        // BottomSheet is hidden
-                    }
-                    // You can handle other states as needed
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // This method is called when the BottomSheet is being dragged or settled
-                // You can perform actions based on the slideOffset if needed
-            }
-        })
-
-    }
 
     private fun moveCamera(latLng: LatLng, shouldAnimateTheCamera: Boolean) {
         if (ContextCompat.checkSelfPermission(
@@ -179,12 +115,6 @@ class FragmentPlaceItinerary :
         ) {
             googleMap?.isMyLocationEnabled = true
         }
-        googleMap?.setPadding(
-            0,
-            0,
-            0,
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) 0 else (requireContext().getScreenHeight() * 0.60).toInt()
-        )
         if (shouldAnimateTheCamera) {
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
@@ -207,15 +137,34 @@ class FragmentPlaceItinerary :
 
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
-        setBottomSheetBehavior()
         viewModel.apply {
             itineraryBasicDetails.observe(viewLifecycleOwner) { travelData ->
-                binding.bottomsheetPlaceItineary.apply {
-                    tvPlaceName.text = travelData.placeName
-                    tvPlaceName.isSelected = true
-                    tvPlaceCountry.text = travelData.countryName
-                    tvTripExtraDetails.text =
-                        "${travelData.tripLength}, ${travelData.tripPartners}"
+                binding.apply {
+                    titleUi.root.isVisible = true
+                    shimmerTitleUi.root.isVisible = false
+                    mainProgress.isVisible = false
+                    titleUi.apply {
+                        tvShare.setOnClickListener {
+                            val deeplink = itineraryId?.let { it1 ->
+                                DeepLinkHelper.generateItineraryGenerationDeeplink(
+                                    it1
+                                )
+                            }
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, deeplink)
+                                type = "text/plain"
+                            }
+
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            startActivity(shareIntent)
+                        }
+                        tvPlaceName.text = travelData.placeName
+                        tvPlaceName.isSelected = true
+                        tvPlaceCountry.text = travelData.countryName
+                        tvTripExtraDetails.text =
+                            "${travelData.tripLength}, ${travelData.tripPartners}"
+                    }
                 }
             }
 
@@ -240,7 +189,7 @@ class FragmentPlaceItinerary :
                 }
             }
             moveToDayIndex.observe(viewLifecycleOwner) {
-                binding.bottomsheetPlaceItineary.rvTravelTimeline.setCurrentItem(it, true)
+                binding.rvTravelTimeline.setCurrentItem(it, true)
             }
             tripLocation.observe(viewLifecycleOwner) {
                 googleMap?.clear()
@@ -395,11 +344,7 @@ class FragmentPlaceItinerary :
         } catch (e: Resources.NotFoundException) {
             Log.e("JAPAN", "Can't find style. Error: ", e)
         }
-        googleMap?.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                MyApp.userCurrentLatLng!!, zoom
-            )
-        )
+
         itineraryId?.let { viewModel.generatePlaceItineraryById(it) }
     }
 }

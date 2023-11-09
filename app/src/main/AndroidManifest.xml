@@ -22,6 +22,7 @@
 
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -37,7 +38,7 @@
         tools:targetApi="31">
         <activity
             android:name=".generateItinerary.GenerateItineraryActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".placeFilter.FilterActivity"
             android:exported="false" />
@@ -60,17 +61,20 @@
             android:name=".MainActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
-            <intent-filter>
+            <intent-filter android:exported="true"
+                android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="example"
-                    android:host="gizmos" />
+                <data android:scheme="https"/>
+                <data android:host="www.guidoai.com"/>
+                <data android:path="/sharing"/>
+                <data android:path="/itinerary"/>
+
             </intent-filter>
 
         </activity>

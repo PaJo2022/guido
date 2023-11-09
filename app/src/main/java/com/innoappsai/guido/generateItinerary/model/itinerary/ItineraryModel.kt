@@ -19,6 +19,8 @@ data class ItineraryModel(
     var tripLength: String?,
     @SerializedName("tripPartners")
     val tripPartners: String?,
+    @SerializedName("placeMapUrl")
+    val placeMapUrl: String?,
     @SerializedName("tripData")
     val tripData: List<TripData>?
 )

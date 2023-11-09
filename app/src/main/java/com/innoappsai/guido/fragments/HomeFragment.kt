@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -224,21 +225,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        arguments?.getString("DEEPLINK")?.let {
-            if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
-                val itineraryId = arguments?.getString("ITINERARY_DB_ID") ?: return
-                navigateToGeneratedItinerary(itineraryId)
-            } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
-                val placeId = arguments?.getString("PLACE_ID") ?: return
-                navigateToPlaceDetailsScreen(placeId)
-            }else if (it.equals("ITINERARY_GENERATED", false)) {
-                val itineraryId = arguments?.getString("VALUE") ?: return
-                val bundle = Bundle()
-                Log.i("JAPAN", "onViewCreated: ${itineraryId}")
+        if (Intent.ACTION_VIEW == requireActivity().intent?.action) {
+            // Get the Uri from the intent data
+            val uri: Uri? = requireActivity().intent?.data
+            when(uri?.path){
+                "/itinerary"->{
+                    val itineraryId: String = uri.getQueryParameter("id").toString()
+                    navigateToItineraryDetailsScreen(itineraryId)
+                }
             }
+        }else{
+            arguments?.getString("DEEPLINK")?.let {
+                if (it.equals("PLACE_ITINERARY_SCREEN", false)) {
+                    val itineraryId = arguments?.getString("ITINERARY_DB_ID") ?: return
+                    navigateToGeneratedItinerary(itineraryId)
+                } else if (it.equals("PLACE_DETAILS_SCREEN", false)) {
+                    val placeId = arguments?.getString("PLACE_ID") ?: return
+                    navigateToPlaceDetailsScreen(placeId)
+                }else if (it.equals("ITINERARY_GENERATED", false)) {
+                    val itineraryId = arguments?.getString("VALUE") ?: return
+                    val bundle = Bundle()
+                    Log.i("JAPAN", "onViewCreated: ${itineraryId}")
+                }
 
+            }
         }
+
 
         val snapHelper1: SnapHelper = PagerSnapHelper()
         val placeCardHorizontalLayoutManager =
@@ -481,6 +493,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             putString("PLACE_ID", placeId)
             openNavFragment(
                 LocationDetailsFragment()
+            )
+        }
+    }
+
+    fun navigateToItineraryDetailsScreen(itineraryId: String) {
+        Bundle().apply {
+            putString("ITINERARY_ID", itineraryId)
+            FragmentUtils.replaceFragment(
+                (requireActivity() as MainActivity), binding.flId.id, FragmentPlaceItinerary(),
+                this, true
             )
         }
     }
