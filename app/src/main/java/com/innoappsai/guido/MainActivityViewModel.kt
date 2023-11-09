@@ -2,6 +2,7 @@ package com.innoappsai.guido
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.innoappsai.guido.auth.repo.user.UserRepository
 import com.innoappsai.guido.data.places.PlacesRepository
 import com.innoappsai.guido.db.AppPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val placesRepository: PlacesRepository,private val appPrefs: AppPrefs) :
+class MainActivityViewModel @Inject constructor(private val placesRepository: PlacesRepository,private val appPrefs: AppPrefs,private val userRepository: UserRepository) :
     ViewModel() {
 
     fun setFcmKey(fcmKey : String){
@@ -21,4 +22,6 @@ class MainActivityViewModel @Inject constructor(private val placesRepository: Pl
             placesRepository.deleteAllPlacesFromDB()
         }
     }
+
+    fun getUserData() = userRepository.getUserDetailsFlow()
 }
