@@ -57,6 +57,20 @@
                 app:layout_constraintStart_toEndOf="@+id/iv_clock"
                 app:layout_constraintTop_toTopOf="@+id/iv_clock" />
 
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/iv_toggle_trip_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:theme="@style/SCBSwitch"
+                android:enabled="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_time_slot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_place_image"
                 android:layout_width="match_parent"

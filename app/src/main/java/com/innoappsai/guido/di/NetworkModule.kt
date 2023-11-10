@@ -112,18 +112,11 @@ class NetworkModule {
 
     class AuthInterceptor(private val context : Context,private val token: String?, private val fcmKey: String?) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            return try {
-                val request = chain.request().newBuilder()
-                    .addHeader("authorization", token.toString())
-                    .addHeader("fcmKey", fcmKey.toString())
-                    .build()
-                chain.proceed(request)
-            }catch (e : Exception){
-                val intent = Intent(context, AuthActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context.startActivity(intent)
-                chain.proceed(chain.request())
-            }
+            val request = chain.request().newBuilder()
+                .addHeader("authorization", token.toString())
+                .addHeader("fcmKey", fcmKey.toString())
+                .build()
+            return chain.proceed(request)
         }
     }
 

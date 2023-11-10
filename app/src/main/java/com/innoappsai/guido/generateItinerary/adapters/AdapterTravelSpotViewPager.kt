@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.innoappsai.guido.databinding.LayoutTravelSpotViewpagerItemBinding
+import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TripData
 
@@ -30,6 +31,13 @@ class AdapterTravelSpotViewPager(
     }
 
 
+    private var _onLandMarkNotificationToggle: ((tripDataForNotification : TripDataForNotification,isEnabled : Boolean) -> Any?)? =
+        null
+
+    fun setOnLandMarkNotificationToggle(onLandMarkNotificationToggle: ((tripDataForNotification : TripDataForNotification, isEnabled : Boolean) -> Any?)) {
+        _onLandMarkNotificationToggle = onLandMarkNotificationToggle
+    }
+
     inner class AdapterTravelSpotViewPagerViewHolder(
         private val adapterTravelSpots: AdapterTravelSpots,
         private val binding: LayoutTravelSpotViewpagerItemBinding
@@ -43,6 +51,9 @@ class AdapterTravelSpotViewPager(
             adapterTravelSpots.setData(travelPlaces)
             adapterTravelSpots.setOnTravelDateClickListener {
                 _onLandMarkSelectedListener?.invoke(it)
+            }
+            adapterTravelSpots.setOnLandMarkNotificationToggle { time, isEnabled ->
+                _onLandMarkNotificationToggle?.invoke(time, isEnabled)
             }
             binding.apply {
                 rvEachDayTravelSpot.isVisible = travelPlaces.isNotEmpty()

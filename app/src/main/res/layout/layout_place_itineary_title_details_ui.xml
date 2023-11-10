@@ -20,19 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_share"
-        style="@style/TitleTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:drawableStart="@drawable/ic_share"
-        android:drawableTint="@color/color_secondary"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="Share"
-        app:layout_constraintEnd_toEndOf="@+id/tv_trip_extra_details"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_place_country"

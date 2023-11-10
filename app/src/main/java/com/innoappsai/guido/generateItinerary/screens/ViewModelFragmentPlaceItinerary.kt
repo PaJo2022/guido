@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.data.travel_itinerary.ItineraryRepository
+import com.innoappsai.guido.generateItinerary.model.ItineraryDataForModel
 import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.generateItinerary.model.itinerary.Landmark
@@ -20,7 +21,9 @@ import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.toPlaceUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -31,6 +34,8 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     private val itineraryRepository: ItineraryRepository
 ) : ViewModel() {
 
+    private var itineraryId: String? = null
+    private var allTimeListWithPlaceIdAndName: List<TripDataForNotification> = emptyList()
     val markerDataList: ArrayList<MarkerData> = ArrayList()
 
     private val _itineraryBasicDetails: MutableLiveData<ItineraryModel> = MutableLiveData()
@@ -49,6 +54,15 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
     val tripPlaceNotificationList: LiveData<List<TripDataForNotification>> =
         _tripPlaceNotificationList
 
+    enum class TripItineraryAlarmStatus {
+        ACTIVE, NOT_ACTIVE
+    }
+
+    private val _tripItineraryAlarmStatus: MutableSharedFlow<TripItineraryAlarmStatus> =
+        MutableSharedFlow()
+    val tripItineraryAlarmStatus: SharedFlow<TripItineraryAlarmStatus> =
+        _tripItineraryAlarmStatus.asSharedFlow()
+
     private val _tripLocation: MutableLiveData<List<PlaceUiModel?>> =
         MutableLiveData()
     val tripLocation: LiveData<List<PlaceUiModel?>> =
@@ -65,6 +79,8 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
 
 
     fun generatePlaceItineraryById(itineraryId : String) {
+        this.itineraryId = itineraryId
+        checkItineraryAlarmStatus(itineraryId = itineraryId)
         viewModelScope.launch(Dispatchers.IO) {
             val generatedItinerary = itineraryRepository.getItineraryById(itineraryId)
             val listOfLandMarks = mutableListOf<Landmark>()
@@ -98,6 +114,7 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
                         val travelPlaceWithTravelDirection1 = TravelPlaceWithTravelDirection(
                             travelPlace = TravelPlace(
                                 travelTiming = item.travelTiming,
+                                travelDateAndTiming = item.travelDateAndTiming,
                                 placeId = item.landMarkId.toString(),
                                 placeName = item.landMarkName.toString(),
                                 landMarkDescription = item.landMarkDescription.toString(),
@@ -139,7 +156,7 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
 
 
     private fun createAlarmTimeListsForThePlaces(travelPlaces: List<Landmark>) {
-        val allTimeListWithPlaceIdAndName = travelPlaces.map {
+        allTimeListWithPlaceIdAndName = travelPlaces.map {
             TripDataForNotification(
                 it.landMarkId.toString(),
                 it.landMarkName.toString(),
@@ -147,20 +164,6 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
                 it.travelDateAndTiming.toString()
             )
         }
-
-        _tripPlaceNotificationList.postValue(allTimeListWithPlaceIdAndName)
-
-//        allTimeListWithPlaceIdAndName.forEach {
-//            Log.i(
-//                "JAPAN",
-//                "Place Name: ${it.second} and Its Id is  ${it.second} and timer should go on ${
-//                    calculateNotificationTime(
-//                        it.third.toString(),
-//                        30
-//                    )
-//                }"
-//            )
-//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -199,6 +202,53 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
                 _moveMapTo.postValue(firstPlace?.latLng)
             }
             _moveToDayIndex.postValue(indexToMove)
+        }
+    }
+
+
+    private fun checkItineraryAlarmStatus(itineraryId: String) {
+        viewModelScope.launch {
+            itineraryRepository.isAlarmSetForTheItineraryIdUsingFlow(itineraryId).collect { it ->
+                if (it != null) {
+                    _tripItineraryAlarmStatus.emit(TripItineraryAlarmStatus.ACTIVE)
+                } else {
+                    _tripItineraryAlarmStatus.emit(TripItineraryAlarmStatus.NOT_ACTIVE)
+                }
+            }
+
+        }
+    }
+
+    private fun setAlarmForItineraryId(itineraryId: String) {
+        viewModelScope.launch {
+            itineraryRepository.addItineraryIdWhenAlarmIsSet(
+                ItineraryDataForModel(
+                    itineraryId = itineraryId
+                )
+            )
+            _tripPlaceNotificationList.postValue(allTimeListWithPlaceIdAndName)
+            _tripItineraryAlarmStatus.emit(TripItineraryAlarmStatus.ACTIVE)
+        }
+    }
+
+    private fun cancelAlarmForItineraryId(itineraryId: String) {
+        viewModelScope.launch {
+            itineraryRepository.deleteItineraryAlarmForTheItineraryId(itineraryId)
+            _tripItineraryAlarmStatus.emit(TripItineraryAlarmStatus.NOT_ACTIVE)
+        }
+    }
+
+    fun toggleNotificationAlarmForItinerary() {
+        if (itineraryId == null) return
+        viewModelScope.launch {
+            val isAlarmEnabled =
+                itineraryRepository.isAlarmSetForTheItineraryId(itineraryId!!) != null
+            if (isAlarmEnabled) {
+                cancelAlarmForItineraryId(itineraryId!!)
+                _tripItineraryAlarmStatus.emit(TripItineraryAlarmStatus.ACTIVE)
+            } else {
+                setAlarmForItineraryId(itineraryId!!)
+            }
         }
     }
 

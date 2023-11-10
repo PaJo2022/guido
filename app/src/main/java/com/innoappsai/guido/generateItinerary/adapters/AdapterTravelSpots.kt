@@ -1,6 +1,7 @@
 package com.innoappsai.guido.generateItinerary.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.innoappsai.guido.adapters.ImageSliderAdapter
 import com.innoappsai.guido.calculateTravelTimeAndMode
 import com.innoappsai.guido.databinding.LayoutTravelSpotDirectionTimelineBinding
 import com.innoappsai.guido.databinding.LayoutTravelSpotTimelineBinding
+import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelDirection
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlace
 import com.innoappsai.guido.generateItinerary.model.itinerary.TravelPlaceWithTravelDirection
@@ -35,13 +37,19 @@ class AdapterTravelSpots(
         notifyDataSetChanged()
     }
 
-    private var _onLandMarkSelectedListener: ((id : String) -> Any?)? =
+    private var _onLandMarkSelectedListener: ((id: String) -> Any?)? =
         null
 
-    fun setOnTravelDateClickListener(onLandMarkSelectedListener: ((id : String) -> Any?)) {
+    fun setOnTravelDateClickListener(onLandMarkSelectedListener: ((id: String) -> Any?)) {
         _onLandMarkSelectedListener = onLandMarkSelectedListener
     }
 
+    private var _onLandMarkNotificationToggle: ((tripDataForNotification: TripDataForNotification, isEnabled: Boolean) -> Any?)? =
+        null
+
+    fun setOnLandMarkNotificationToggle(onLandMarkNotificationToggle: ((tripDataForNotification: TripDataForNotification, isEnabled: Boolean) -> Any?)) {
+        _onLandMarkNotificationToggle = onLandMarkNotificationToggle
+    }
 
 
     override fun getItemViewType(position: Int): Int {
@@ -123,6 +131,18 @@ class AdapterTravelSpots(
                             placeUiModel?.latLng?.longitude ?: 0.0
                         )
                     )
+                }
+                ivToggleTripNotification.setOnCheckedChangeListener { buttonView, isChecked ->
+                    travelPlace.travelDateAndTiming?.let {
+                        _onLandMarkNotificationToggle?.invoke(
+                            TripDataForNotification(
+                                placeId = placeUiModel?.placeId.toString(),
+                                placeName = placeUiModel?.name.toString(),
+                                placeImage = placeUiModel?.photos?.firstOrNull(),
+                                notificationDateAndTime = "2023-11-10 14:35"
+                            ), isChecked
+                        )
+                    }
                 }
             }
         }

@@ -30,9 +30,9 @@ import com.innoappsai.guido.Constants
 import com.innoappsai.guido.DeepLinkHelper
 import com.innoappsai.guido.FragmentUtils
 import com.innoappsai.guido.MainActivity
-import com.innoappsai.guido.MyApp
 import com.innoappsai.guido.R
 import com.innoappsai.guido.addOnBackPressedCallback
+import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentPlaceItinearyBinding
 import com.innoappsai.guido.fragments.LocationDetailsFragment
 import com.innoappsai.guido.generateItinerary.adapters.AdapterTravelDate
@@ -140,25 +140,30 @@ class FragmentPlaceItinerary :
         viewModel.apply {
             itineraryBasicDetails.observe(viewLifecycleOwner) { travelData ->
                 binding.apply {
+                    fabNotification.setOnClickListener {
+                        viewModel.toggleNotificationAlarmForItinerary()
+                    }
+                    fabShare.setOnClickListener {
+                        val deeplink = itineraryId?.let { it1 ->
+                            DeepLinkHelper.generateItineraryGenerationDeeplink(
+                                it1
+                            )
+                        }
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, deeplink)
+                            type = "text/plain"
+                        }
+
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        startActivity(shareIntent)
+                    }
                     titleUi.root.isVisible = true
+                    fabShare.isVisible = true
+                    fabNotification.isVisible = true
                     shimmerTitleUi.root.isVisible = false
                     mainProgress.isVisible = false
                     titleUi.apply {
-                        tvShare.setOnClickListener {
-                            val deeplink = itineraryId?.let { it1 ->
-                                DeepLinkHelper.generateItineraryGenerationDeeplink(
-                                    it1
-                                )
-                            }
-                            val sendIntent: Intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, deeplink)
-                                type = "text/plain"
-                            }
-
-                            val shareIntent = Intent.createChooser(sendIntent, null)
-                            startActivity(shareIntent)
-                        }
                         tvPlaceName.text = travelData.placeName
                         tvPlaceName.isSelected = true
                         tvPlaceCountry.text = travelData.countryName
@@ -183,11 +188,6 @@ class FragmentPlaceItinerary :
                     Log.i("JAPAN", "Error: ${e}")
                 }
             }
-            tripPlaceNotificationList.observe(viewLifecycleOwner) {
-                it.forEach { item ->
-                    setTripNotifications(item)
-                }
-            }
             moveToDayIndex.observe(viewLifecycleOwner) {
                 binding.rvTravelTimeline.setCurrentItem(it, true)
             }
@@ -204,11 +204,34 @@ class FragmentPlaceItinerary :
                     moveCamera(it, false)
                 }
             }
+            tripPlaceNotificationList.observe(viewLifecycleOwner) {
+                it.forEach { tripNotificationData ->
+                    setTripNotifications(tripNotificationData)
+                }
+            }
+            tripItineraryAlarmStatus.collectIn(viewLifecycleOwner) {
+                when (it) {
+                    ViewModelFragmentPlaceItinerary.TripItineraryAlarmStatus.ACTIVE -> {
+                        val newIconTint =
+                            ContextCompat.getColor(requireContext(), R.color.color_secondary)
+                        binding.fabNotification.setColorFilter(newIconTint)
+                    }
+
+                    ViewModelFragmentPlaceItinerary.TripItineraryAlarmStatus.NOT_ACTIVE -> {
+                        val newIconTint = ContextCompat.getColor(requireContext(), R.color.white)
+                        binding.fabNotification.setColorFilter(newIconTint)
+                    }
+                }
+            }
         }
         initRecyclerView()
 
-        adapterTravelSpotViewPager.setOnTravelDateClickListener{
+        adapterTravelSpotViewPager.setOnTravelDateClickListener {
             navigateToPlaceDetailsScreen(it)
+        }
+        adapterTravelSpotViewPager.setOnLandMarkNotificationToggle { tripDataForNotification, isEnabled ->
+            Log.i("JAPAN", "onViewCreated: ${isAlarmSet(tripDataForNotification)}")
+
         }
 
         addOnBackPressedCallback {
@@ -278,7 +301,27 @@ class FragmentPlaceItinerary :
             // For devices prior to Android 12, use setExact directly
             alarmMgr.setExact(AlarmManager.RTC_WAKEUP, date.time, pendingIntent)
         }
-        Log.i("JAPAN", "ALARM SET")
+    }
+
+    private fun cancelAlarm(data: TripDataForNotification) {
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(requireContext(), TripNotificationBroadCastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(), abs(data.placeId.hashCode()), alarmIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Cancel the alarm
+        alarmManager.cancel(pendingIntent)
+    }
+
+    private fun isAlarmSet(data: TripDataForNotification): PendingIntent? {
+        val alarmIntent = Intent(requireContext(), TripNotificationBroadCastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(), 5, alarmIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        return pendingIntent
     }
 
     private fun getTimeDifferenceInMinutes(formattedTime: String) {

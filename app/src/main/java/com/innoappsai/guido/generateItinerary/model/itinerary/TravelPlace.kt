@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 
 data class TravelPlace(
-    @SerializedName("landMarkId")
+    @SerializedName("travelTiming")
     val travelTiming: String?,
+    @SerializedName("travelDateAndTiming")
+    val travelDateAndTiming: String?,
     @SerializedName("landMarkId")
     val placeId: String?,
     @SerializedName("landMarkName")
