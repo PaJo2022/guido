@@ -49,5 +49,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_place_name" />
 
 
+    <ImageView
+        android:id="@+id/iv_expired"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_expired"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tv_trip_extra_details"
+        app:layout_constraintEnd_toEndOf="@+id/tv_trip_extra_details"
+        app:layout_constraintStart_toEndOf="@+id/tv_place_country"
+        app:layout_constraintTop_toTopOf="@+id/tv_place_name" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

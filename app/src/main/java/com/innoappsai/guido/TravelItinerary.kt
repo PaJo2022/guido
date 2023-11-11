@@ -12,5 +12,6 @@ data class TravelItinerary(
     val id: String,
     val userId: String?,
     @SerializedName("rawItineraryModel")
-    val itineraryModel : ItineraryModel?
+    val itineraryModel : ItineraryModel?,
+    val isExpired : Boolean?
 )

@@ -3,6 +3,7 @@ package com.innoappsai.guido.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.innoappsai.guido.TravelItinerary
@@ -35,6 +36,7 @@ class AdapterItineraryList(private val appContext: Context) :
                 tvDescription.text =
                     "Check Your Next Travel At ${travelItinerary.itineraryModel?.placeName}"
                  Glide.with(appContext).load(travelItinerary.itineraryModel?.placeMapUrl).centerCrop().into(ivTravelMap)
+                ivExpired.isVisible = travelItinerary.isExpired == true
                 root.setOnClickListener {
                     onItemClickListener?.invoke(travelItinerary.id)
                 }

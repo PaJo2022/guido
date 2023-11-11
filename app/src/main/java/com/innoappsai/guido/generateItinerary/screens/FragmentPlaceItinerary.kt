@@ -41,6 +41,7 @@ import com.innoappsai.guido.generateItinerary.model.TripDataForNotification
 import com.innoappsai.guido.generateItinerary.receiver.TripNotificationBroadCastReceiver
 import com.innoappsai.guido.model.MarkerData
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
+import com.innoappsai.guido.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -159,8 +160,9 @@ class FragmentPlaceItinerary :
                         startActivity(shareIntent)
                     }
                     titleUi.root.isVisible = true
-                    fabShare.isVisible = true
-                    fabNotification.isVisible = true
+                    titleUi.ivExpired.isVisible = viewModel.isItineraryIsExpired
+                    fabShare.isVisible = !viewModel.isItineraryIsExpired
+                    fabNotification.isVisible = !viewModel.isItineraryIsExpired
                     shimmerTitleUi.root.isVisible = false
                     mainProgress.isVisible = false
                     titleUi.apply {
@@ -212,12 +214,14 @@ class FragmentPlaceItinerary :
             tripItineraryAlarmStatus.collectIn(viewLifecycleOwner) {
                 when (it) {
                     ViewModelFragmentPlaceItinerary.TripItineraryAlarmStatus.ACTIVE -> {
+                        requireActivity().showToast("Notifications Are Set For Your Itinerary")
                         val newIconTint =
                             ContextCompat.getColor(requireContext(), R.color.color_secondary)
                         binding.fabNotification.setColorFilter(newIconTint)
                     }
 
                     ViewModelFragmentPlaceItinerary.TripItineraryAlarmStatus.NOT_ACTIVE -> {
+                        requireActivity().showToast("Notifications Are Canceled For Your Itinerary")
                         val newIconTint = ContextCompat.getColor(requireContext(), R.color.white)
                         binding.fabNotification.setColorFilter(newIconTint)
                     }

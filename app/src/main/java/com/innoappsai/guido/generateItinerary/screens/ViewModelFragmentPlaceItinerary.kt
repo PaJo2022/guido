@@ -76,6 +76,7 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
 
 
     private var itineraryModel: ItineraryModel? = null
+    var isItineraryIsExpired = false
 
 
     fun generatePlaceItineraryById(itineraryId : String) {
@@ -86,6 +87,7 @@ class ViewModelFragmentPlaceItinerary @Inject constructor(
             val listOfLandMarks = mutableListOf<Landmark>()
             generatedItinerary?.let {
                 itineraryModel = generatedItinerary.itineraryModel
+                isItineraryIsExpired = generatedItinerary.isExpired == true
                 itineraryModel?.tripLength = "${itineraryModel?.tripData?.size}"
                 val tripData = generatedItinerary.itineraryModel?.tripData!!
                 val data =
