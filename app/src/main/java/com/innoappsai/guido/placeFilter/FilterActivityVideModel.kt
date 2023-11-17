@@ -95,14 +95,13 @@ class FilterActivityVideModel @Inject constructor(
 
     fun onPlaceInterestClicked(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            placeTypesList.forEach {
-                it.isSelected = it.id == id
-            }
-//            val selectedInterestsId = placeTypesList.filter { it.isSelected }.map { it.id }
-//            val set1 = selectedInterestsId.toSet()
-//            val set2 = savedPlaceInterestsId.toSet()
-//            val isNewPlaceInterestesSelected =
-//                set1.subtract(set2).isNotEmpty() || set2.subtract(set1).isNotEmpty()
+            val isSelected = placeTypesList.find { it.id == id }?.isSelected ?: false
+            placeTypesList.find { it.id == id }?.isSelected = !isSelected
+            val selectedInterestsId = placeTypesList.filter { it.isSelected }.map { it.id }
+            val set1 = selectedInterestsId.toSet()
+            val set2 = savedPlaceInterestsId.toSet()
+            val isNewPlaceInterestesSelected =
+                set1.subtract(set2).isNotEmpty() || set2.subtract(set1).isNotEmpty()
             val groupedPlaceTypes = placeTypesList.groupBy { it.type }
 
             val placeTypeContainers = groupedPlaceTypes.map { (type, placeTypeList) ->
@@ -112,8 +111,8 @@ class FilterActivityVideModel @Inject constructor(
                     placeTypeList.find { it.isSelected } != null)
             }
             _userInterestes.postValue(placeTypeContainers)
-//            isPreferenceChanged = isNewPlaceInterestesSelected
-//            _newInterestsSelected.postValue((isNewPlaceInterestesSelected || isDistanceChange))
+            isPreferenceChanged = isNewPlaceInterestesSelected
+            _newInterestsSelected.postValue((isNewPlaceInterestesSelected || isDistanceChange))
         }
     }
 

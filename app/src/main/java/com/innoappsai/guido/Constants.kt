@@ -92,11 +92,31 @@ object Constants {
         return "airport"
     }
 
+    val placeTypes2 = listOf(
+        PlaceType("restaurant", "Restaurant", "Food & Beverages", iconDrawable = R.drawable.icon_restaurant),
+        PlaceType("cafe", "Cafe", "Food & Beverages", iconDrawable = R.drawable.ic_cafe_marker),
+        PlaceType("hotel", "Hotel", "Lodging", iconDrawable = R.drawable.icon_hotel),
+        PlaceType("tourist_information", "Tourist Information", "Travel", iconDrawable = R.drawable.ic_tourist_attraction),
+        PlaceType("atm", "ATM", "Finance", iconDrawable = R.drawable.ic_atm),
+        PlaceType("supermarket", "Supermarket", "Shopping", iconDrawable = R.drawable.ic_super_market),
+        PlaceType("pharmacy", "Pharmacy", "Medical", iconDrawable = R.drawable.icon_pharmacy),
+        PlaceType("bus_station", "Bus Station", "Travel", iconDrawable = R.drawable.ic_bus_station),
+        PlaceType("car_rental", "Car Rental", "Services", iconDrawable = R.drawable.ic_car_rental),
+        PlaceType("charging_station", "Charging Station", "Services", iconDrawable = R.drawable.car_repair),
+        PlaceType("airport", "Airport", "Travel", iconDrawable = R.drawable.ic_airport),
+        PlaceType("picnic_site", "Picnic Spot", "Travel", iconDrawable = R.drawable.icon_campground),
+        PlaceType("museum", "Museum", "Tourist Spots", iconDrawable = R.drawable.icon_museum),
+        PlaceType("hospital", "Hospital", "Medical", iconDrawable = R.drawable.hospital_marker),
+        PlaceType("historic_site", "Historic Site", "Travel", iconDrawable = R.drawable.ic_travel_agency),
+        PlaceType("gallery", "Art Gallery", "Travel", iconDrawable = R.drawable.ic_art_gallery),
+        PlaceType("park", "Park", "Tourist Spots", iconDrawable = R.drawable.ic_park),
+        PlaceType("beach", "Beach", "Tourist Spots", iconDrawable = R.drawable.ic_park),
+        PlaceType("viewpoint", "View Point", "Tourist Spots", iconDrawable = R.drawable.ic_park),
 
+    )
 
 
     val placeTypes = listOf(
-        PlaceType("accounting", "Accounting", "Finance", iconDrawable = R.drawable.ic_account_firm),
         PlaceType("atm", "ATM", "Finance", iconDrawable = R.drawable.ic_atm),
         PlaceType("bank", "Bank", "Finance", iconDrawable = R.drawable.ic_bank),
         PlaceType(

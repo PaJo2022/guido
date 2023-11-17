@@ -36,7 +36,7 @@ class AdapterItineraryList(private val appContext: Context) :
                 tvDescription.text =
                     "Check Your Next Travel At ${travelItinerary.itineraryModel?.placeName}"
                  Glide.with(appContext).load(travelItinerary.itineraryModel?.placeMapUrl).centerCrop().into(ivTravelMap)
-                ivExpired.isVisible = travelItinerary.isExpired == true
+//                ivExpired.isVisible = travelItinerary.isExpired == true
                 root.setOnClickListener {
                     onItemClickListener?.invoke(travelItinerary.id)
                 }

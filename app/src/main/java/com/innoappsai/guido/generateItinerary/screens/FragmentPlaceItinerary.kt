@@ -160,7 +160,7 @@ class FragmentPlaceItinerary :
                         startActivity(shareIntent)
                     }
                     titleUi.root.isVisible = true
-                    titleUi.ivExpired.isVisible = viewModel.isItineraryIsExpired
+//                    titleUi.ivExpired.isVisible = viewModel.isItineraryIsExpired
                     fabShare.isVisible = !viewModel.isItineraryIsExpired
                     fabNotification.isVisible = !viewModel.isItineraryIsExpired
                     shimmerTitleUi.root.isVisible = false
