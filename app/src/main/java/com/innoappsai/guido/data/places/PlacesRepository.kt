@@ -4,6 +4,7 @@ import com.innoappsai.guido.model.FullPlaceData
 import com.innoappsai.guido.model.PlaceAutocomplete
 import com.innoappsai.guido.model.PlaceType
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
+import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteLatLngDTO
 import com.innoappsai.guido.model.placesUiModel.PlaceUiModel
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
@@ -75,6 +76,8 @@ interface PlacesRepository {
     suspend fun fetchPlaceAutoCompleteSuggestion(
         query: String
     ): List<PlaceAutoCompleteDTO>
+
+    suspend fun getSearchedPlaceLatLng(placeId : String): PlaceAutoCompleteLatLngDTO?
 
     suspend fun saveFavouritePlacePreferences(preferences: List<PlaceType>)
     suspend fun getAllSavedPlaceTypePreferences(): List<PlaceType>

@@ -125,14 +125,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             suggestedLocations.observe(viewLifecycleOwner) {
                 adapterPlaceAutoComplete.setPredications(it)
             }
-
+            navigateBack.collectIn(viewLifecycleOwner){placeAutocomplete->
+                searchViewModel.onPredictionSelected()
+                adapterPlaceAutoComplete.setPredications(emptyList())
+                binding.llCreateAccount.etLocation.setText(placeAutocomplete.area)
+                binding.llCreateAccount.etLocation.requestFocus()
+            }
         }
 
         adapterPlaceAutoComplete.setOnPlaceSelected { placeAutocomplete ->
-            searchViewModel.onPredictionSelected()
-            adapterPlaceAutoComplete.setPredications(emptyList())
-            binding.llCreateAccount.etLocation.setText(placeAutocomplete.area)
-            binding.llCreateAccount.etLocation.requestFocus()
+            searchViewModel.getSelectedPlaceLatLon(placeAutocomplete)
         }
         placesTypeGroupAdapter.setOnPlaceTypeSelected {
             viewModel.onPlaceInterestClicked(it.id)

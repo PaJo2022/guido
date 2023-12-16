@@ -1,7 +1,5 @@
 package com.innoappsai.guido.fragments
 
-import android.graphics.Typeface
-import android.text.style.CharacterStyle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +10,8 @@ import com.innoappsai.guido.model.place_autocomplete.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -27,6 +27,9 @@ class SearchLocationViewModel @Inject constructor(
     private val _suggestedLocations: MutableLiveData<List<PlaceAutocomplete>> = MutableLiveData()
     val suggestedLocations: LiveData<List<PlaceAutocomplete>> = _suggestedLocations
 
+
+    private val _navigateBack: MutableSharedFlow<PlaceAutocomplete> = MutableSharedFlow()
+    val navigateBack: SharedFlow<PlaceAutocomplete> = _navigateBack
 
     fun onPredictionSelected() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -114,6 +117,17 @@ class SearchLocationViewModel @Inject constructor(
 
     fun removePredictions() {
         _suggestedLocations.value = emptyList()
+    }
+
+    fun getSelectedPlaceLatLon(placeAutocomplete: PlaceAutocomplete) {
+        viewModelScope.launch {
+            val placeId = placeAutocomplete.placeId
+            val placeLocation = placesRepository.getSearchedPlaceLatLng(placeId) ?: return@launch
+            placeAutocomplete.latitude = placeLocation.latitude ?: 0.0
+            placeAutocomplete.longitude = placeLocation.longitude ?: 0.0
+            saveSearchPlaceLocationToDb(placeAutocomplete)
+            _navigateBack.emit(placeAutocomplete)
+        }
     }
 
 

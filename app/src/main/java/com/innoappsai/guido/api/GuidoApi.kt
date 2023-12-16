@@ -4,6 +4,7 @@ import com.innoappsai.guido.TravelItinerary
 import com.innoappsai.guido.generateItinerary.model.itinerary.ItineraryModel
 import com.innoappsai.guido.model.chatGptModel.ChatGptRequest
 import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteDTO
+import com.innoappsai.guido.model.place_autocomplete.PlaceAutoCompleteLatLngDTO
 import com.innoappsai.guido.model.places.geoCoding.ReverseGeoCodingDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceDTO
 import com.innoappsai.guido.model.places_backend_dto.PlaceRequestDTO
@@ -52,6 +53,11 @@ interface GuidoApi {
     suspend fun fetchPlaceAutoCompleteSuggestion(
         @Query("query", encoded = true) query : String
     ) : Response<List<PlaceAutoCompleteDTO>>
+
+    @GET("place-lat-lon")
+    suspend fun fetchSearchedPlaceLatLng(
+        @Query("placeId", encoded = true) placeId : String
+    ) : Response<PlaceAutoCompleteLatLngDTO>
 
     @GET("places-by-user-id")
     suspend fun fetchPlacesByUserId(

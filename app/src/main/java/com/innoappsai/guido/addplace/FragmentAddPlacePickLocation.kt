@@ -90,15 +90,19 @@ class FragmentAddPlacePickLocation :
                 binding.rvPlaceSuggestions.isVisible = it.isNotEmpty()
                 adapterPlaceAutoComplete.setPredications(it)
             }
+            navigateBack.collectIn(viewLifecycleOwner){
+                binding.rvPlaceSuggestions.isVisible = false
+                binding.etSearchLocation.setText("")
+                googleMap?.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(it.latitude, it.longitude),
+                        zoom
+                    )
+                )
+            }
         }
         adapterPlaceAutoComplete.setOnPlaceSelected {
-            binding.rvPlaceSuggestions.isVisible = false
-            googleMap?.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(it.latitude, it.longitude),
-                    zoom
-                )
-            )
+            searchLocationViewModel.getSelectedPlaceLatLon(it)
         }
     }
 

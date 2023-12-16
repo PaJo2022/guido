@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.innoappsai.guido.BaseFragment
 import com.innoappsai.guido.adapters.PlacesAutoCompleteAdapter
 import com.innoappsai.guido.addOnBackPressedCallback
+import com.innoappsai.guido.collectIn
 import com.innoappsai.guido.databinding.FragmentSearchLocationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,18 +54,19 @@ class SearchLocationFragment : BaseFragment<FragmentSearchLocationBinding>(Fragm
        }
 
         viewModel.apply {
-            suggestedLocations.observe(viewLifecycleOwner){
+            suggestedLocations.observe(viewLifecycleOwner) {
                 adapterPlaceAutoComplete.setPredications(it)
+            }
+            navigateBack.collectIn(viewLifecycleOwner) {
+                homeViewModel.resetData()
+                parentFragmentManager.popBackStack()
+                homeViewModel.fetchPlacesDetailsNearMe(it.latitude, it.longitude)
+                homeViewModel.moveToTheLatLng(LatLng(it.latitude, it.longitude))
             }
         }
 
         adapterPlaceAutoComplete.setOnPlaceSelected {
-            viewModel.saveSearchPlaceLocationToDb(it)
-            homeViewModel.resetData()
-            parentFragmentManager.popBackStack()
-            homeViewModel.fetchPlacesDetailsNearMe(it.latitude,it.longitude)
-            homeViewModel.moveToTheLatLng(LatLng(it.latitude,it.longitude))
-
+            viewModel.getSelectedPlaceLatLon(it)
         }
 
         addOnBackPressedCallback {

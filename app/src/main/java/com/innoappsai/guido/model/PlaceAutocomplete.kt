@@ -9,6 +9,6 @@ data class PlaceAutocomplete(
     val placeId: String,
     val area: String,
     val address: String,
-    val latitude : Double,
-    val longitude : Double
+    var latitude : Double,
+    var longitude : Double
 )
